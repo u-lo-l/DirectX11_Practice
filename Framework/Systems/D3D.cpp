@@ -35,6 +35,16 @@ void D3D::SetDesc(const D3DDesc& InDesc)
 	D3dDesc = InDesc;
 }
 
+void D3D::ClearRTV(Color InColor)
+{
+	this->DeviceContext->ClearRenderTargetView(this->RenderTargetView, InColor);
+}
+
+void D3D::Present()
+{
+	this->SwapChain->Present(0, 0);
+}
+
 D3D::D3D()
 {
 	CreateDevice();
@@ -43,7 +53,10 @@ D3D::D3D()
 
 D3D::~D3D()
 {
-	
+	SAFE_RELEASE(RenderTargetView);
+	SAFE_RELEASE(DeviceContext);
+	SAFE_RELEASE(Device);
+	SAFE_RELEASE(SwapChain);
 }
 
 /*

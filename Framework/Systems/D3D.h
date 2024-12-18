@@ -26,6 +26,19 @@ public:
 	static const D3DDesc & GetDesc();
 	static void SetDesc(const D3DDesc& InDesc);
 
+public :
+	ID3D11Device* GetDevice() const { return this->Device; }
+	ID3D11DeviceContext * GetDeviceContext() const{ return this->DeviceContext; }
+	// IDXGISwapChain* GetSwapChain() const { return this->SwapChain; }
+
+	/***
+	 * InColor : Bac
+	 ***/
+	void ClearRTV(Color InColor);
+	/***
+	 * BackBuffer에 있는 것들을 보여주라는 명령
+	 ***/
+	void Present();
 private:
 	D3D();
 	~D3D();
@@ -38,9 +51,8 @@ private:
 	static D3DDesc D3dDesc;
 
 private:
+	IDXGISwapChain* SwapChain;
 	ID3D11Device * Device;
-	IDXGISwapChain * SwapChain;
 	ID3D11DeviceContext* DeviceContext;
-
 	ID3D11RenderTargetView * RenderTargetView;
 };

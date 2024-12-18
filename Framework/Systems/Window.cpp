@@ -126,7 +126,9 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 
 void Window::MainRender()
 {
+	D3D::Get()->ClearRTV({ 0,0,0,0 });
 	Main->Tick();
-
 	Main->Render();
+
+	D3D::Get()->Present();
 }
