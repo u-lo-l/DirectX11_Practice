@@ -45,7 +45,7 @@ WPARAM Window::Run(IExecutable* InMain)
 
 void Window::Create()
 {
-	D3DDesc desc = D3D::GetDesc();
+	D3DDesc Desc = D3D::GetDesc();
 
 	//Regist Window Class
 	{
@@ -55,41 +55,43 @@ void Window::Create()
 		wndClass.lpfnWndProc = WndProc;
 		wndClass.cbClsExtra = 0;
 		wndClass.cbWndExtra = 0;
-		wndClass.hInstance = desc.Instance;
+		wndClass.hInstance = Desc.Instance;
 		wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		wndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 		wndClass.lpszMenuName = nullptr;
-		wndClass.lpszClassName = desc.AppName.c_str();
+		wndClass.lpszClassName = Desc.AppName.c_str();
 
 		ATOM check = RegisterClassEx(&wndClass);
 		assert(check != 0);
 	}
 
 	//Create Window Handle
-	desc.Handle = CreateWindowEx
+	Desc.Handle = CreateWindowEx
 	(
 		0,
-		desc.AppName.c_str(),
-		desc.AppName.c_str(),
+		Desc.AppName.c_str(),
+		Desc.AppName.c_str(),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, //Default - X
 		CW_USEDEFAULT, //Default - Y
-		(int)desc.Width,
-		(int)desc.Height,
+		(int)Desc.Width,
+		(int)Desc.Height,
 		nullptr,
 		nullptr,
-		desc.Instance,
+		Desc.Instance,
 		nullptr
 	);
-	assert(desc.Handle != nullptr);
+	assert(Desc.Handle != nullptr);
 
-	ShowWindow(desc.Handle, SW_SHOWNORMAL);
-	SetForegroundWindow(desc.Handle);
-	SetFocus(desc.Handle);
+	ShowWindow(Desc.Handle, SW_SHOWNORMAL);
+	SetForegroundWindow(Desc.Handle);
+	SetFocus(Desc.Handle);
 
 	ShowCursor(true);
+
+	D3D::SetDesc(Desc);
 }
 
 void Window::Destroy()

@@ -30,7 +30,7 @@ private:
 	D3D();
 	~D3D();
 	void CreateDevice();
-
+	void CreateRTV(); // RTV : Render Target View
 private:
 	static D3D * Instance;
 
@@ -41,4 +41,6 @@ private:
 	ID3D11Device * Device;
 	IDXGISwapChain * SwapChain;
 	ID3D11DeviceContext* DeviceContext;
+
+	ID3D11RenderTargetView * RenderTargetView;
 };
