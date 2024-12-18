@@ -4,5 +4,16 @@
 
 class Main : public IExecutable
 {
+public:
+	void Initialize();
+	void Destroy();
 
+	void Tick();
+	void Render();
+
+private:
+	void Push(IExecutable* execute);
+
+private:
+	vector<IExecutable*> executes;
 };
