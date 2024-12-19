@@ -6,8 +6,9 @@
     <DL>D:\WorkSpace\Atents_SDT\SDT_DX\DirectX_old\Lib\x86</DL>
   </PropertyGroup>
   <PropertyGroup>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <ExternalIncludePath>$(ExternalIncludePath);$(DH)</ExternalIncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH)</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DL)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup>

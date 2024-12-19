@@ -3,6 +3,7 @@
 class IExecutable
 {
 public:
+	virtual ~IExecutable() = default;
 	virtual void Initialize(){}
 	virtual void Destroy(){}
 

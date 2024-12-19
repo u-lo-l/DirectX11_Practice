@@ -1,5 +1,8 @@
 #pragma once
 
+#define CHECK(x) { assert((x) >= 0); }
+#define ASSERT(x, message) { assert((x) >= 0 && (message)); }
+
 #define SAFE_DELETE(x)\
 {\
 	if (x != nullptr)\
@@ -13,7 +16,7 @@
 {\
 	if (x != nullptr)\
 	{\
-		(x)->Release();\
+		x->Release();\
 		(x) = nullptr;\
 	}\
 }

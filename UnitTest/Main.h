@@ -12,8 +12,8 @@ public:
 	void Render();
 
 private:
-	void Push(IExecutable* execute);
+	void Push(IExecutable* Executable);
 
 private:
-	vector<IExecutable*> executes;
+	vector<IExecutable*> Executables;
 };

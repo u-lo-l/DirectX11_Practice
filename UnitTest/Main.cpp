@@ -1,3 +1,4 @@
+// ReSharper disable CppInconsistentNaming
 #include "Pch.h"
 #include "Main.h"
 #include "Systems/Window.h"
@@ -11,51 +12,52 @@ void Main::Initialize()
 
 void Main::Destroy()
 {
-	for (IExecutable* execute : executes)
+	for (IExecutable* executable : Executables)
 	{
-		execute->Destroy();
+		executable->Destroy();
 
-		SAFE_DELETE(execute);
+		SAFE_DELETE(executable);
 	}
 }
 
 void Main::Tick()
 {
-	for (IExecutable* execute : executes)
-		execute->Tick();
+	for (IExecutable* executable : Executables)
+		executable->Tick();
 }
 
 void Main::Render()
 {
-	for (IExecutable* execute : executes)
-		execute->Render();
+	for (IExecutable* executable : Executables)
+		executable->Render();
 }
 
-void Main::Push(IExecutable* execute)
+void Main::Push(IExecutable* Executable)
 {
-	executes.push_back(execute);
+	Executables.push_back(Executable);
 
-	execute->Initialize();
+	Executable->Initialize();
 }
 
-int WINAPI WinMain(HINSTANCE InInstance, HINSTANCE InPrevInstance, LPSTR InParam, int command)
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd )
 {
-	D3DDesc Desc;
-	Desc.AppName = L"D3D Game";
-	Desc.Instance = InInstance;
-	Desc.Handle = nullptr;
+	D3DDesc desc;
+	desc.AppName = L"D3D Game";
+	desc.Instance = hInstance;
+	desc.Handle = nullptr;
 
-	Desc.Width = 1280;
-	Desc.Height = 720;
-	Desc.bVSync = false;
+	desc.Width = 1280;
+	desc.Height = 720;
 
-	Desc.Background = Color(0.3f, 0.3f, 0.3f, 1.0f);
+	desc.Background = Color(0.3f, 0.3f, 0.3f, 1.0f);
 
-	D3D::SetDesc(Desc);
+	D3D::SetDesc(desc);
+
 
 	Main * main = new Main();
-	WPARAM wParam = Window::Run(main);
+	const WPARAM wParam = Window::Run(main);
 	SAFE_DELETE(main);
 
-	return 0;
+	return static_cast<int>(wParam);
 }

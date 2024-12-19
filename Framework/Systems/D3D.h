@@ -8,7 +8,6 @@ struct D3DDesc
 
 	float Width;
 	float Height;
-	bool bVSync;
 
 	Color Background;
 };
@@ -23,36 +22,39 @@ public:
 	static void Destroy();
 
 public:
-	static const D3DDesc & GetDesc();
+	static const D3DDesc& GetDesc();
 	static void SetDesc(const D3DDesc& InDesc);
 
-public :
-	ID3D11Device* GetDevice() const { return this->Device; }
-	ID3D11DeviceContext * GetDeviceContext() const{ return this->DeviceContext; }
-	// IDXGISwapChain* GetSwapChain() const { return this->SwapChain; }
+private:
+	void CreateDevice();
+	void CreateRTV();
+	void CreateViewport();
 
-	/***
-	 * InColor : Bac
-	 ***/
-	void ClearRTV(Color InColor);
-	/***
-	 * BackBuffer에 있는 것들을 보여주라는 명령
-	 ***/
+public:
+	ID3D11Device* GetDevice() { return Device; }
+	ID3D11DeviceContext* GetDeviceContext() { return DeviceContext; }
+
+	void ClearRenderTargetView(Color InColor);
 	void Present();
+
 private:
 	D3D();
 	~D3D();
-	void CreateDevice();
-	void CreateRTV(); // RTV : Render Target View
+
 private:
-	static D3D * Instance;
+	static D3D* Instance;
 
 private:
 	static D3DDesc D3dDesc;
 
 private:
 	IDXGISwapChain* SwapChain;
-	ID3D11Device * Device;
+
+	ID3D11Device* Device;
 	ID3D11DeviceContext* DeviceContext;
-	ID3D11RenderTargetView * RenderTargetView;
+
+	ID3D11RenderTargetView* RenderTargetView;
+
+	D3D11_VIEWPORT* Viewport;
 };
+

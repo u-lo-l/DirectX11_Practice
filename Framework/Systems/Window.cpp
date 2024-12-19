@@ -45,9 +45,9 @@ WPARAM Window::Run(IExecutable* InMain)
 
 void Window::Create()
 {
-	D3DDesc Desc = D3D::GetDesc();
+	D3DDesc desc = D3D::GetDesc();
 
-	//Regist Window Class
+	//Register Window Class
 	{
 		WNDCLASSEX wndClass;
 		wndClass.cbSize = sizeof(WNDCLASSEX);
@@ -55,48 +55,47 @@ void Window::Create()
 		wndClass.lpfnWndProc = WndProc;
 		wndClass.cbClsExtra = 0;
 		wndClass.cbWndExtra = 0;
-		wndClass.hInstance = Desc.Instance;
+		wndClass.hInstance = desc.Instance;
 		wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
+		wndClass.hbrBackground = reinterpret_cast<HBRUSH>((COLOR_WINDOW + 2));
 		wndClass.lpszMenuName = nullptr;
-		wndClass.lpszClassName = Desc.AppName.c_str();
+		wndClass.lpszClassName = desc.AppName.c_str();
 
-		ATOM check = RegisterClassEx(&wndClass);
-		assert(check != 0);
+		const ATOM check = RegisterClassEx(&wndClass);
+		CHECK(check != 0);
 	}
 
 	//Create Window Handle
-	Desc.Handle = CreateWindowEx
+	desc.Handle = CreateWindowEx
 	(
 		0,
-		Desc.AppName.c_str(),
-		Desc.AppName.c_str(),
+		desc.AppName.c_str(),
+		desc.AppName.c_str(),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, //Default - X
 		CW_USEDEFAULT, //Default - Y
-		(int)Desc.Width,
-		(int)Desc.Height,
+		static_cast<int>(desc.Width),
+		static_cast<int>(desc.Height),
 		nullptr,
 		nullptr,
-		Desc.Instance,
+		desc.Instance,
 		nullptr
 	);
-	assert(Desc.Handle != nullptr);
+	CHECK(desc.Handle != nullptr);
 
-	ShowWindow(Desc.Handle, SW_SHOWNORMAL);
-	SetForegroundWindow(Desc.Handle);
-	SetFocus(Desc.Handle);
-
+	ShowWindow(desc.Handle, SW_SHOWNORMAL);
+	SetForegroundWindow(desc.Handle);
+	SetFocus(desc.Handle);
 	ShowCursor(true);
 
-	D3D::SetDesc(Desc);
+	D3D::SetDesc(desc);
 }
 
 void Window::Destroy()
 {
-	D3DDesc desc = D3D::GetDesc();
+	const D3DDesc desc = D3D::GetDesc();
 
 	DestroyWindow(desc.Handle);
 	UnregisterClass(desc.AppName.c_str(), desc.Instance);
@@ -126,7 +125,8 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 
 void Window::MainRender()
 {
-	D3D::Get()->ClearRTV({ 0,0,0,0 });
+	D3D::Get()->ClearRenderTargetView(Color(0, 0, 0, 0));
+
 	Main->Tick();
 	Main->Render();
 
