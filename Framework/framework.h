@@ -28,3 +28,4 @@ typedef D3DXVECTOR3 Vector;
 #include "Systems/D3D.h"
 
 #include "Renders/Shader.h"
+#include "Renders/Shader.h"

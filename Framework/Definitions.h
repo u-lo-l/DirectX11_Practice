@@ -12,6 +12,15 @@
 	}\
 }
 
+#define SAFE_DELETE_ARR(x)\
+{\
+	if (x != nullptr)\
+	{\
+		delete[] (x);\
+		(x) = nullptr;\
+	}\
+}
+
 #define SAFE_RELEASE(x)\
 {\
 	if (x != nullptr)\

@@ -4,10 +4,12 @@
 #include "Systems/Window.h"
 
 #include "Line.h"
+#include "Line2.h"
 
 void Main::Initialize()
 {
-	Push(new Line());
+	//Push(new Line());
+	Push(new Line2());
 }
 
 void Main::Destroy()
@@ -16,7 +18,7 @@ void Main::Destroy()
 	{
 		executable->Destroy();
 
-		SAFE_DELETE(executable);
+		SAFE_DELETE(executable)
 	}
 }
 
@@ -57,7 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	Main * main = new Main();
 	const WPARAM wParam = Window::Run(main);
-	SAFE_DELETE(main);
+	SAFE_DELETE(main)
 
 	return static_cast<int>(wParam);
 }
