@@ -6,13 +6,12 @@
 //#include "Line.h"
 //#include "Line2.h"
 //#include "Line_Circle.h"
-#include "Execute/Triangle_List.h"
+//#include "Execute/Triangle_List.h"
+#include "Execute/Rectangle.h"
 
 void Main::Initialize()
 {
-	//PUSH_MAIN(Line);
-	//PUSH_MAIN(Line2);
-	PUSH_MAIN(Triangle_List);
+	PUSH_MAIN(Sdt::Rectangle);
 }
 
 void Main::Destroy()
