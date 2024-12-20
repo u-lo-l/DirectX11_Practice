@@ -3,13 +3,15 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Line.h"
-#include "Line2.h"
+//#include "Line.h"
+//#include "Line2.h"
+#include "Line_Circle.h"
 
 void Main::Initialize()
 {
-	//Push(new Line());
-	Push(new Line2());
+	//PUSH_MAIN(Line);
+	//PUSH_MAIN(Line2);
+	PUSH_MAIN(Line_Circle);
 }
 
 void Main::Destroy()

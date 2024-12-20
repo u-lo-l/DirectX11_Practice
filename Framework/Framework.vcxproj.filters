@@ -11,6 +11,9 @@
     <ClCompile Include="Renders\Shader.cpp">
       <Filter>Renders</Filter>
     </ClCompile>
+    <ClCompile Include="Utilties\Math.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
@@ -30,6 +33,9 @@
     <ClInclude Include="Renders\VertexLayout.h">
       <Filter>Renders</Filter>
     </ClInclude>
+    <ClInclude Include="Utilties\Math.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Systems">
@@ -37,6 +43,9 @@
     </Filter>
     <Filter Include="Renders">
       <UniqueIdentifier>{a9603d2c-416d-43b1-848e-7fd3c6a62b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{44401d15-ede9-4429-9207-3390d890c9ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

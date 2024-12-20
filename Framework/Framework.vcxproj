@@ -29,6 +29,7 @@
     <ClCompile Include="Systems\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Utilties\Math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Definitions.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="Systems\D3D.h" />
     <ClInclude Include="Systems\IExecutable.h" />
     <ClInclude Include="Systems\Window.h" />
+    <ClInclude Include="Utilties\Math.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

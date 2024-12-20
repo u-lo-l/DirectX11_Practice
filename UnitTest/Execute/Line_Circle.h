@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Renders/VertexLayout.h"
 #include "Systems/IExecutable.h"
 
 class Line_Circle : public IExecutable
