@@ -15,9 +15,9 @@ struct VertexColor
 	VertexColor()
 	: Position(0, 0, 0)
 	, Color(0,0,0,1) {}
-	VertexColor(Vector P, Color C)
-	: Position(P)
-	, Color(C) {}
+	VertexColor(const Vector & Position, const Color & Color)
+	: Position(Position.x, Position.y, Position.z)
+	, Color(Color.r, Color.g, Color.b, Color.a) {}
 	Vector Position;
 	Color Color;
 };

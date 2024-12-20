@@ -5,13 +5,14 @@
 
 //#include "Line.h"
 //#include "Line2.h"
-#include "Line_Circle.h"
+//#include "Line_Circle.h"
+#include "Execute/Triangle_List.h"
 
 void Main::Initialize()
 {
 	//PUSH_MAIN(Line);
 	//PUSH_MAIN(Line2);
-	PUSH_MAIN(Line_Circle);
+	PUSH_MAIN(Triangle_List);
 }
 
 void Main::Destroy()

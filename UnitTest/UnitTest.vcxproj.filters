@@ -3,26 +3,32 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Line.cpp">
+    <ClCompile Include="Execute\Triangle_List.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
-    <ClCompile Include="Line2.cpp">
+    <ClCompile Include="Execute\Line.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
-    <ClCompile Include="Line_Circle.cpp">
+    <ClCompile Include="Execute\Line_Circle.cpp">
+      <Filter>Execute</Filter>
+    </ClCompile>
+    <ClCompile Include="Execute\Line2.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="Line.h">
+    <ClInclude Include="Execute\Triangle_List.h">
       <Filter>Execute</Filter>
     </ClInclude>
-    <ClInclude Include="Line2.h">
+    <ClInclude Include="Execute\Line.h">
       <Filter>Execute</Filter>
     </ClInclude>
-    <ClInclude Include="Line_Circle.h">
+    <ClInclude Include="Execute\Line_Circle.h">
+      <Filter>Execute</Filter>
+    </ClInclude>
+    <ClInclude Include="Execute\Line2.h">
       <Filter>Execute</Filter>
     </ClInclude>
   </ItemGroup>

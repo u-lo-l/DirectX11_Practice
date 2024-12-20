@@ -19,18 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Line.cpp" />
-    <ClCompile Include="Line2.cpp" />
-    <ClCompile Include="Line_Circle.cpp" />
+    <ClCompile Include="Execute\Line.cpp" />
+    <ClCompile Include="Execute\Line2.cpp" />
+    <ClCompile Include="Execute\Line_Circle.cpp" />
+    <ClCompile Include="Execute\Triangle_List.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Line.h" />
-    <ClInclude Include="Line2.h" />
-    <ClInclude Include="Line_Circle.h" />
+    <ClInclude Include="Execute\Line.h" />
+    <ClInclude Include="Execute\Line2.h" />
+    <ClInclude Include="Execute\Line_Circle.h" />
+    <ClInclude Include="Execute\Triangle_List.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

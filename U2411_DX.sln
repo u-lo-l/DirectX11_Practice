@@ -10,11 +10,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "Framework\Framework.vcxproj", "{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{ABEE3AFD-4087-4C41-89A3-6CEE009A0719}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{8FB665DC-68B4-4A7E-A2FB-ECC93ABCD504}"
 	ProjectSection(SolutionItems) = preProject
 		..\_Shaders\04_Line.fx = ..\_Shaders\04_Line.fx
 		..\_Shaders\04_Line2.fx = ..\_Shaders\04_Line2.fx
 		..\_Shaders\04_Line_Circle.fx = ..\_Shaders\04_Line_Circle.fx
+		..\_Shaders\05_Triangle_List.fx = ..\_Shaders\05_Triangle_List.fx
 	EndProjectSection
 EndProject
 Global

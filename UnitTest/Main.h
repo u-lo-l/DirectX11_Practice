@@ -2,14 +2,14 @@
 
 #include "Systems/IExecutable.h"
 
-class Main : public IExecutable
+class Main final : public IExecutable
 {
 public:
-	void Initialize();
-	void Destroy();
+	void Initialize() override;
+	void Destroy() override;
 
-	void Tick();
-	void Render();
+	void Tick() override;
+	void Render() override;
 
 private:
 	void Push(IExecutable* Executable);
