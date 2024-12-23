@@ -11,6 +11,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	D3D::Create();
 	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
 	Gui::Create();
+	Keyboard::Create();
 
 	Main = InMain;
 	Main->Initialize();
@@ -36,6 +37,7 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Main->Destroy();
 
+	Keyboard::Destroy();
 	Gui::Destroy();
 	D3D::Destroy();
 

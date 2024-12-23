@@ -43,6 +43,19 @@ namespace Sdt
 
 	void UserInterface::Tick()
 	{
+		if (Keyboard::Get()->IsPressed('1'))
+		{
+			ImGui::Text("1 Pressing");
+		}
+		static bool showDemo = false;
+		if (Keyboard::Get()->IsDown(VK_F1))
+			showDemo = !showDemo;
+
+		if (showDemo)
+			ImGui::ShowDemoWindow(&showDemo);
+
+
+
 		static float y = 0.5f;
 		ImGui::SliderFloat("test slider", &y, -1.0f, 1.0f);
 

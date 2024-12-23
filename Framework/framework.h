@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <bitset>
 using namespace std;
-
 
 /* DirectX */
 #include <d3dcommon.h>
@@ -15,7 +15,6 @@ using namespace std;
 #include <d3dx10math.h>
 #include <d3dcompiler.h>
 #include <d3dx11effect.h>
-
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
@@ -25,17 +24,15 @@ using namespace std;
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_dx11.h>
 #include <imgui/imgui_impl_win32.h>
-
 #pragma comment(lib, "imgui/IMGUI.lib")
 
 /* My Own */
-typedef D3DXCOLOR Color;
-typedef D3DXVECTOR3 Vector;
-
+typedef D3DXCOLOR	Color;
+typedef D3DXVECTOR3	Vector;
 #include "Definitions.h"
 #include "Systems/D3D.h"
 #include "Systems/Gui.h"
+#include "Systems/Keyboard.h"
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
 #include "Utilties/Math.h"
-
