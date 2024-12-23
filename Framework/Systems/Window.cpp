@@ -4,7 +4,7 @@
 
 IExecutable* Window::Main = nullptr;
 
-WPARAM Window::Run(IExecutable* InMain)
+WPARAM Window::Run(IExecutable * InMain)
 {
 	Create();
 
@@ -16,7 +16,6 @@ WPARAM Window::Run(IExecutable* InMain)
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
-
 	while (true) //Game Loop
 	{
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -64,7 +63,7 @@ void Window::Create()
 		wndClass.lpszClassName = desc.AppName.c_str();
 
 		const ATOM check = RegisterClassEx(&wndClass);
-		CHECK(check != 0);
+		CHECK(static_cast<int>(check != 0));
 	}
 
 	//Create Window Handle
@@ -83,7 +82,7 @@ void Window::Create()
 		desc.Instance,
 		nullptr
 	);
-	CHECK(desc.Handle != nullptr);
+	CHECK(static_cast<int>(desc.Handle != nullptr));
 
 	ShowWindow(desc.Handle, SW_SHOWNORMAL);
 	SetForegroundWindow(desc.Handle);
@@ -125,7 +124,8 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 
 void Window::MainRender()
 {
-	D3D::Get()->ClearRenderTargetView(Color(0, 0, 0, 0));
+	//D3D::Get()->ClearRenderTargetView(Color(0, 0, 0, 0));
+	D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
 
 	Main->Tick();
 	Main->Render();

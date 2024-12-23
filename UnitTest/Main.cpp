@@ -26,17 +26,17 @@ void Main::Destroy()
 
 void Main::Tick()
 {
-	for (IExecutable* executable : Executables)
+	for (IExecutable * executable : Executables)
 		executable->Tick();
 }
 
 void Main::Render()
 {
-	for (IExecutable* executable : Executables)
+	for (IExecutable * executable : Executables)
 		executable->Render();
 }
 
-void Main::Push(IExecutable* Executable)
+void Main::Push(IExecutable * Executable)
 {
 	Executables.push_back(Executable);
 
@@ -50,14 +50,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	desc.AppName = L"D3D Game";
 	desc.Instance = hInstance;
 	desc.Handle = nullptr;
-
 	desc.Width = 1280;
 	desc.Height = 720;
-
 	desc.Background = Color(0.3f, 0.3f, 0.3f, 1.0f);
 
 	D3D::SetDesc(desc);
-
 
 	Main * main = new Main();
 	const WPARAM wParam = Window::Run(main);

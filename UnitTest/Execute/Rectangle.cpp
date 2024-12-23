@@ -1,10 +1,9 @@
 #include "Pch.h"
 #include "Rectangle.h"
 
-#include <cmath>
 namespace Sdt
 {
-	const int Rectangle::VERTEX_COUNT = 6;
+	const int Rectangle::VERTEX_COUNT = 4;
 
 	void Rectangle::Initialize()
 	{
@@ -14,23 +13,25 @@ namespace Sdt
 		Vertices[0] = { +0.0f, +0.0f, +0.0f };
 		Vertices[1] = { +0.0f, +0.5f, +0.0f };
 		Vertices[2] = { +0.5f, +0.0f, +0.0f };
+		Vertices[3] = { +0.5f, +0.5f, +0.0f };
 
-		Vertices[3] = { +0.0f, +0.0f, +0.0f };
-		Vertices[4] = { +0.0f, +0.5f, +0.0f };
-		Vertices[5] = { +0.5f, +0.0f, +0.0f };
+		D3D11_BUFFER_DESC BufferDesc;
+		ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		BufferDesc.ByteWidth = sizeof(InnerVertexType) * VERTEX_COUNT;
+		BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		BufferDesc.CPUAccessFlags = 0;
+		BufferDesc.MiscFlags = 0;
 
+		D3D11_SUBRESOURCE_DATA InitData;
+		ZeroMemory(&InitData, sizeof(D3D11_SUBRESOURCE_DATA));
+		InitData.pSysMem = Vertices;
+		InitData.SysMemPitch = 0;
+		InitData.SysMemSlicePitch = 0;
 
-		D3D11_BUFFER_DESC desc;
-		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(InnerVertexType) * VERTEX_COUNT;
-		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA subResource;
-		ZeroMemory(&subResource, sizeof(D3D11_SUBRESOURCE_DATA));
-		subResource.pSysMem = Vertices;
-
-		const HRESULT hr = D3D::Get()->GetDevice()->CreateBuffer(&desc, &subResource, &VertexBuffer);
-		CHECK(hr)
+		ID3D11Device * Device = D3D::Get()->GetDevice();
+		const HRESULT hr = Device->CreateBuffer(&BufferDesc, &InitData, &VertexBuffer);
+		CHECK(hr);
 	}
 
 	void Rectangle::Destroy()
@@ -50,7 +51,7 @@ namespace Sdt
 		constexpr UINT stride = sizeof(InnerVertexType);
 		constexpr UINT offset = 0;
 
-		D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 		D3D::Get()->GetDeviceContext()->IASetVertexBuffers(0, 1, &VertexBuffer, &stride, &offset);
 		shader->Draw(0, 0, VERTEX_COUNT);

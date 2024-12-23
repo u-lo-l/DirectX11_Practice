@@ -8,6 +8,7 @@ namespace Sdt
 	{
 	private:
 		static const int VERTEX_COUNT;
+
 	public:
 		using InnerVertexType = Vector;
 
@@ -21,8 +22,7 @@ namespace Sdt
 	private:
 		Shader* shader = nullptr;
 
-		//vector<InnerVertexType> Vertices;
-		InnerVertexType * Vertices;
+		InnerVertexType * Vertices = nullptr;
 		ID3D11Buffer* VertexBuffer = nullptr;
 	};
 }
