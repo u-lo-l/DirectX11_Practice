@@ -331,10 +331,10 @@ void Shader::Dispatch(UINT TechniqueIndex, UINT PassIndex, UINT X, UINT Y, UINT 
 //	return Effect->GetVariableByName(Name.c_str())->AsVector();
 //}
 //
-//ID3DX11EffectMatrixVariable* Shader::AsMatrix(const string & Name) const
-//{
-//	return Effect->GetVariableByName(Name.c_str())->AsMatrix();
-//}
+ID3DX11EffectMatrixVariable* Shader::AsMatrix(const string & Name) const
+{
+	return Effect->GetVariableByName(Name.c_str())->AsMatrix();
+}
 //
 //ID3DX11EffectStringVariable* Shader::AsString(const string & Name) const
 //{

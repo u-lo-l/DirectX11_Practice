@@ -51,7 +51,7 @@ public:
 	//ID3DX11EffectVariable * Variable(const string & Name) const;
 	//ID3DX11EffectScalarVariable * AsScalar(const string & Name) const;
 	//ID3DX11EffectVectorVariable * AsVector(const string & Name) const;
-	//ID3DX11EffectMatrixVariable * AsMatrix(const string & Name) const;
+	ID3DX11EffectMatrixVariable * AsMatrix(const string & Name) const;
 	//ID3DX11EffectStringVariable * AsString(const string & Name) const;
 	//ID3DX11EffectShaderResourceVariable * AsSRV(const string & Name) const;
 	//ID3DX11EffectRenderTargetViewVariable * AsRTV(const string & Name) const;

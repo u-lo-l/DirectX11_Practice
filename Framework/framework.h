@@ -16,6 +16,7 @@ using namespace std;
 #include <d3dcompiler.h>
 #include <d3dx11effect.h>
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dx10.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 #pragma comment(lib, "Effects11d.lib")
@@ -29,6 +30,8 @@ using namespace std;
 /* My Own */
 typedef D3DXCOLOR	Color;
 typedef D3DXVECTOR3	Vector;
+typedef D3DXVECTOR2	Vector2D;
+typedef D3DXMATRIX	Matrix;
 #include "Definitions.h"
 #include "Systems/D3D.h"
 #include "Systems/Gui.h"

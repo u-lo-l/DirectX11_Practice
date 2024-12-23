@@ -3,15 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-//#include "Line.h"
-//#include "Line2.h"
-//#include "Line_Circle.h"
-//#include "Execute/Triangle_List.h"
-#include "Execute/UserInterface.h"
+#include "Execute/WorldDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::UserInterface);
+	PUSH_MAIN(Sdt::WorldDemo);
 }
 
 void Main::Destroy()
