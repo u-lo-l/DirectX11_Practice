@@ -14,6 +14,9 @@
     <ClCompile Include="Utilties\Math.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Systems\Gui.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
@@ -35,6 +38,9 @@
     </ClInclude>
     <ClInclude Include="Utilties\Math.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Systems\Gui.h">
+      <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

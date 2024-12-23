@@ -45,6 +45,22 @@ void D3D::Present() const
 	SwapChain->Present(0, 0);
 }
 
+void D3D::ResizeScreen(float InWidth, float InHeight)
+{
+	if (InWidth < 1 || InHeight < 1) // 최소화 모드
+		return;
+	D3D::D3dDesc.Width = InWidth;
+	D3D::D3dDesc.Height = InHeight;
+
+	SAFE_RELEASE(RenderTargetView);
+
+	const HRESULT Hr = SwapChain->ResizeBuffers(0, InWidth, InHeight, DXGI_FORMAT_UNKNOWN, 0);
+	CHECK(Hr);
+
+	CreateRTV();
+	CreateViewport();
+}
+
 D3D::D3D()
 {
 	CreateDeviceAndImmediateContext();

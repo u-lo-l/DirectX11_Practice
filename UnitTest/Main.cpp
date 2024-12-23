@@ -7,11 +7,11 @@
 //#include "Line2.h"
 //#include "Line_Circle.h"
 //#include "Execute/Triangle_List.h"
-#include "Execute/Rectangle.h"
+#include "Execute/UserInterface.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::Rectangle);
+	PUSH_MAIN(Sdt::UserInterface);
 }
 
 void Main::Destroy()

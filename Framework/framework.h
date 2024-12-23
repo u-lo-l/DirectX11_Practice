@@ -9,6 +9,7 @@
 using namespace std;
 
 
+/* DirectX */
 #include <d3dcommon.h>
 #include <d3d11.h>
 #include <d3dx10math.h>
@@ -20,14 +21,21 @@ using namespace std;
 #pragma comment(lib, "D3DCompiler.lib")
 #pragma comment(lib, "Effects11d.lib")
 
+/* ImGui */
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_dx11.h>
+#include <imgui/imgui_impl_win32.h>
+
+#pragma comment(lib, "imgui/IMGUI.lib")
+
+/* My Own */
 typedef D3DXCOLOR Color;
 typedef D3DXVECTOR3 Vector;
 
 #include "Definitions.h"
-
 #include "Systems/D3D.h"
-
+#include "Systems/Gui.h"
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
-
 #include "Utilties/Math.h"
+

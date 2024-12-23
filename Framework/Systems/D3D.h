@@ -84,7 +84,7 @@ public:
 
 	void ClearRenderTargetView(Color InColor) const;
 	void Present() const;
-
+	void ResizeScreen(float InWidth, float InHeight);
 private:
 	D3D();
 	~D3D();

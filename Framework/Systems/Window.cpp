@@ -2,17 +2,18 @@
 #include "Window.h"
 #include "IExecutable.h"
 
-IExecutable* Window::Main = nullptr;
+IExecutable * Window::Main = nullptr;
 
 WPARAM Window::Run(IExecutable * InMain)
 {
 	Create();
 
 	D3D::Create();
+	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
+	Gui::Create();
 
 	Main = InMain;
 	Main->Initialize();
-
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -35,6 +36,7 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Main->Destroy();
 
+	Gui::Destroy();
 	D3D::Destroy();
 
 	Destroy();
@@ -84,6 +86,15 @@ void Window::Create()
 	);
 	CHECK(static_cast<int>(desc.Handle != nullptr));
 
+	//렌더링 사이즈에 맞게 Window 창 크기 설정
+	RECT WinRect = { 0,0, static_cast<long>(desc.Width), static_cast<long>(desc.Height)};
+	const UINT WinCenterX = (GetSystemMetrics(SM_CXSCREEN) - static_cast<UINT>(desc.Width)) / 2;
+	const UINT WinCenterY = (GetSystemMetrics(SM_CYSCREEN) - static_cast<UINT>(desc.Height)) / 2;
+	AdjustWindowRect(&WinRect, WS_OVERLAPPEDWINDOW, FALSE);
+	const UINT WinWidth = WinRect.right - WinRect.left;
+	const UINT WinHeight = WinRect.bottom - WinRect.top;
+	MoveWindow(desc.Handle, WinCenterX, WinCenterY, WinWidth, WinHeight, TRUE);
+
 	ShowWindow(desc.Handle, SW_SHOWNORMAL);
 	SetForegroundWindow(desc.Handle);
 	SetFocus(desc.Handle);
@@ -102,6 +113,23 @@ void Window::Destroy()
 
 LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam)
 {
+	if (Gui::Get()->WndProc(InHandle, InMessage, InwParam, InlParam))
+		return TRUE;
+
+	if (InMessage == WM_SIZE)
+	{
+		if (Main != nullptr)
+		{
+			const float width = LOWORD(InlParam);
+			const float height = HIWORD(InlParam);
+
+			if (D3D::Get() != nullptr)
+			{
+				D3D::Get()->ResizeScreen(width, height);
+			}
+		}
+	}
+
 	if (InMessage == WM_KEYDOWN)
 	{
 		if (InwParam == VK_ESCAPE)
@@ -124,11 +152,14 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 
 void Window::MainRender()
 {
-	//D3D::Get()->ClearRenderTargetView(Color(0, 0, 0, 0));
-	D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
-
+	Gui::Tick();
 	Main->Tick();
-	Main->Render();
+	{
+		D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
 
-	D3D::Get()->Present();
+		Main->Render();
+
+		Gui::Render();
+		D3D::Get()->Present();
+	}
 }
