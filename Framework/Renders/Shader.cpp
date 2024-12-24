@@ -246,6 +246,13 @@ void Shader::Pass::Draw(UINT VertexCount, UINT StartVertexLocation)
 	EndDraw();
 }
 
+void Shader::Pass::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+{
+	BeginDraw();
+	D3D::Get()->GetDeviceContext()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+	EndDraw();
+}
+
 void Shader::Pass::BeginDraw()
 {
 	CHECK(IPass->ComputeStateBlockMask(&StateBlockMask));
@@ -300,6 +307,11 @@ void Shader::Technique::Draw(UINT Pass, UINT VertexCount, UINT StartVertexLocati
 	Passes[Pass].Draw(VertexCount, StartVertexLocation);
 }
 
+void Shader::Technique::DrawIndexed(UINT Pass, UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+{
+	Passes[Pass].DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+}
+
 void Shader::Technique::Dispatch(UINT Pass, UINT X, UINT Y, UINT Z) const
 {
 	Passes[Pass].Dispatch(X, Y, Z);
@@ -314,6 +326,11 @@ void Shader::Dispatch(UINT TechniqueIndex, UINT PassIndex, UINT X, UINT Y, UINT 
 {
 	Techniques[TechniqueIndex].Dispatch(PassIndex, X, Y, Z);
 
+}
+
+void Shader::DrawIndexed(UINT TechniqueIndex, UINT Pass, UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+{
+	Techniques[TechniqueIndex].DrawIndexed(Pass, IndexCount, StartIndexLocation, BaseVertexLocation);
 }
 
 //ID3DX11EffectVariable* Shader::Variable(const string & Name)  const

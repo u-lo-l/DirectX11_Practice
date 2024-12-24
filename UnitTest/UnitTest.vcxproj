@@ -19,14 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Execute\WorldDemo2.cpp" />
+    <ClCompile Include="Execute\Grid.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Execute\WorldDemo2.h" />
+    <ClInclude Include="Execute\Grid.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

@@ -47,6 +47,7 @@ public:
 
 	void Draw(UINT TechniqueIndex, UINT PassIndex, UINT VertexCount, UINT StartVertexLocation = 0);
 	void Dispatch(UINT TechniqueIndex, UINT PassIndex, UINT X, UINT Y, UINT Z) const;
+	void DrawIndexed(UINT TechniqueIndex, UINT Pass, UINT IndexCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0);
 
 	//ID3DX11EffectVariable * Variable(const string & Name) const;
 	ID3DX11EffectScalarVariable * AsScalar(const string & Name) const;
@@ -117,6 +118,7 @@ private:
 		StateBlock* StateBlock;
 
 		void Draw(UINT VertexCount, UINT StartVertexLocation = 0);
+		void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0);
 		void BeginDraw();
 		void EndDraw() const;
 		void Dispatch(UINT X, UINT Y, UINT Z) const;
@@ -133,7 +135,7 @@ private:
 		vector<Pass> Passes;
 
 		void Draw(UINT Pass, UINT VertexCount, UINT StartVertexLocation = 0);
-
+		void DrawIndexed(UINT Pass, UINT IndexCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0);
 		void Dispatch(UINT Pass, UINT X, UINT Y, UINT Z) const;
 	};
 	vector<Technique> Techniques;

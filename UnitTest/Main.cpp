@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/WorldDemo2.h"
+#include "Execute/IndexBufferDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::WorldDemo2);
+	PUSH_MAIN(Sdt::IndexBufferDemo);
 }
 
 void Main::Destroy()
