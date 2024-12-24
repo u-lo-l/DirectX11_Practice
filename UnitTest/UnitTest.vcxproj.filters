@@ -3,14 +3,14 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Execute\WorldDemo.cpp">
+    <ClCompile Include="Execute\WorldDemo2.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="Execute\WorldDemo.h">
+    <ClInclude Include="Execute\WorldDemo2.h">
       <Filter>Execute</Filter>
     </ClInclude>
   </ItemGroup>

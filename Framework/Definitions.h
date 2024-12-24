@@ -1,7 +1,7 @@
 #pragma once
 
 #define CHECK(x) assert((x) >= 0)
-#define ASSERT(x, message) assert((x) >= 0 && message)
+#define ASSERT(x, message) assert(((x) >= 0) && message)
 
 #define SAFE_DELETE(x)\
 {\

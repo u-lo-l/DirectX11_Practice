@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/WorldDemo.h"
+#include "Execute/WorldDemo2.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::WorldDemo);
+	PUSH_MAIN(Sdt::WorldDemo2);
 }
 
 void Main::Destroy()
