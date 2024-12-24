@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/IndexBufferDemo.h"
+#include "Execute/Grid.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::IndexBufferDemo);
+	PUSH_MAIN(Sdt::Grid);
 }
 
 void Main::Destroy()

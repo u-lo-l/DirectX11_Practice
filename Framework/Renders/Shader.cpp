@@ -328,6 +328,7 @@ void Shader::Dispatch(UINT TechniqueIndex, UINT PassIndex, UINT X, UINT Y, UINT 
 
 }
 
+// BaseVertexLocation : StartIndexLocation이 BaseVertexLocation을 기준으로 한다.
 void Shader::DrawIndexed(UINT TechniqueIndex, UINT Pass, UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
 {
 	Techniques[TechniqueIndex].DrawIndexed(Pass, IndexCount, StartIndexLocation, BaseVertexLocation);

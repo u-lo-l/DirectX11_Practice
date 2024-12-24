@@ -4,13 +4,16 @@
 
 namespace Sdt
 {
-	class WorldDemo2 final : public IExecutable
+	class Grid final : public IExecutable
 	{
-	private:
-		static const int VERTEX_COUNT;
-
+	private :
+		static UINT INDEX_PER_GRID;
+		UINT Pass = 1;
+		UINT Width = 4;
+		UINT Height = 4;
 	public:
 		using InnerVertexType = Vertex;
+		using InnerIndexType = UINT;
 
 	public:
 		void Initialize() override;
@@ -20,13 +23,19 @@ namespace Sdt
 		void Render() override;
 
 	private:
-		Shader * shader = nullptr;
+		Shader* shader = nullptr;
 
-		InnerVertexType * Vertices = nullptr;
+		UINT VertexCount = 0;
+		InnerVertexType* Vertices = nullptr;
 		ID3D11Buffer* VertexBuffer = nullptr;
 
-		Matrix WorldMat[3];
+		UINT IndexCount = 0;
+		UINT * Indices = nullptr;
+		ID3D11Buffer* IndexBuffer = nullptr;
+
+		Matrix WorldMat;
 		Matrix ViewMat;
 		Matrix ProjectionMat;
+	private:
 	};
 }
