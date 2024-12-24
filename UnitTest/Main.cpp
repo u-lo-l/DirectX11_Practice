@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/Grid.h"
+#include "Execute/ViewDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::Grid);
+	PUSH_MAIN(Sdt::ViewDemo);
 }
 
 void Main::Destroy()
