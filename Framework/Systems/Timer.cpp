@@ -1,0 +1,48 @@
+#include "Framework.h"
+#include "Timer.h"
+
+namespace Sdt
+{
+	Timer* Timer::Instance = nullptr;
+
+	void Timer::Create()
+	{
+		ASSERT(Instance == nullptr, "Timer Instance must null on Create()");
+
+		Instance = new Timer();
+	}
+
+	void Timer::Destroy()
+	{
+		ASSERT(Instance != nullptr, "Timer Instance must not null on Destroy()");
+
+		SAFE_DELETE(Instance);
+	}
+
+	Timer * Timer::Get()
+	{
+		ASSERT(Instance == nullptr, "Timer Instance must null on Get()");
+
+		return Instance;
+	}
+
+	void Timer::Tick()
+	{
+		chrono::duration<double> temp = (chrono::steady_clock::now() - PrevFrameTime);
+		DeltaTime = static_cast<float>(temp.count());
+
+		ImGui::Text("DeltaTime : %f", DeltaTime);
+
+		PrevFrameTime = chrono::steady_clock::now();
+	}
+
+	Timer::Timer()
+	{
+		//StartTime = chrono::steady_clock::now();
+	}
+
+
+	Timer::~Timer()
+	{
+	}
+}

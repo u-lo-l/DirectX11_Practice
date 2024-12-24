@@ -12,6 +12,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
 	Gui::Create();
 	Keyboard::Create();
+	Sdt::Timer::Create();
 
 	Main = InMain;
 	Main->Initialize();
@@ -37,6 +38,7 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Main->Destroy();
 
+	Sdt::Timer::Destroy();
 	Keyboard::Destroy();
 	Gui::Destroy();
 	D3D::Destroy();
@@ -155,6 +157,7 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 void Window::MainRender()
 {
 	Gui::Tick();
+	Sdt::Timer::Get()->Tick();
 	Main->Tick();
 	{
 		D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);

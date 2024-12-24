@@ -3,9 +3,6 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Execute\ViewDemo.cpp">
-      <Filter>Execute</Filter>
-    </ClCompile>
     <ClCompile Include="Execute\TimerDemo.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
@@ -13,9 +10,6 @@
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="Execute\ViewDemo.h">
-      <Filter>Execute</Filter>
-    </ClInclude>
     <ClInclude Include="Execute\TimerDemo.h">
       <Filter>Execute</Filter>
     </ClInclude>

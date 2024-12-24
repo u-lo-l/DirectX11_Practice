@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <bitset>
+#include <chrono> // for timer, steady_clock
 using namespace std;
 
 /* DirectX */
@@ -35,7 +36,9 @@ typedef D3DXMATRIX	Matrix;
 #include "Definitions.h"
 #include "Systems/D3D.h"
 #include "Systems/Gui.h"
+#include "Systems/Timer.h"
 #include "Systems/Keyboard.h"
+#include "Systems/Mouse.h"
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
 #include "Utilties/Math.h"
