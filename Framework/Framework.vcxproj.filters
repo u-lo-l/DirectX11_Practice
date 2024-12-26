@@ -26,6 +26,12 @@
     <ClCompile Include="Systems\Mouse.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Viewer\Camera.cpp">
+      <Filter>Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renders\Context.cpp">
+      <Filter>Renders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
@@ -60,6 +66,12 @@
     <ClInclude Include="Systems\Mouse.h">
       <Filter>Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Viewer\Camera.h">
+      <Filter>Viewer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renders\Context.h">
+      <Filter>Renders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Systems">
@@ -70,6 +82,9 @@
     </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{44401d15-ede9-4429-9207-3390d890c9ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Viewer">
+      <UniqueIdentifier>{7da68851-9735-4f21-822a-7eae82105356}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

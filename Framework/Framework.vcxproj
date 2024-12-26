@@ -22,6 +22,7 @@
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
     <ClCompile Include="Systems\D3D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -34,10 +35,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Utilties\Math.cpp" />
+    <ClCompile Include="Viewer\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\Shader.h" />
     <ClInclude Include="Renders\VertexLayout.h" />
     <ClInclude Include="Systems\D3D.h" />
@@ -48,6 +51,7 @@
     <ClInclude Include="Systems\Timer.h" />
     <ClInclude Include="Systems\Window.h" />
     <ClInclude Include="Utilties\Math.h" />
+    <ClInclude Include="Viewer\Camera.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

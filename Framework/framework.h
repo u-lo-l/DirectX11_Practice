@@ -39,6 +39,7 @@ typedef D3DXMATRIX	Matrix;
 #include "Systems/Timer.h"
 #include "Systems/Keyboard.h"
 #include "Systems/Mouse.h"
+#include "Viewer/Camera.h"
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
 #include "Utilties/Math.h"

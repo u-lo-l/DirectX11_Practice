@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/MouseDemo.h"
+#include "Execute/015_Camera/CameraDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::MouseDemo);
+	PUSH_MAIN(Sdt::CameraDemo);
 }
 
 void Main::Destroy()
@@ -22,25 +22,24 @@ void Main::Destroy()
 
 void Main::Tick()
 {
-	for (IExecutable * executable : Executables)
+	for (IExecutable* executable : Executables)
 		executable->Tick();
 }
 
 void Main::Render()
 {
-	for (IExecutable * executable : Executables)
+	for (IExecutable* executable : Executables)
 		executable->Render();
 }
 
-void Main::Push(IExecutable * Executable)
+void Main::Push(IExecutable* Executable)
 {
 	Executables.push_back(Executable);
 
 	Executable->Initialize();
 }
 
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd )
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	D3DDesc desc;
 	desc.AppName = L"D3D Game";
@@ -52,7 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	D3D::SetDesc(desc);
 
-	Main * main = new Main();
+	Main* main = new Main();
 	const WPARAM wParam = Window::Run(main);
 	SAFE_DELETE(main)
 
