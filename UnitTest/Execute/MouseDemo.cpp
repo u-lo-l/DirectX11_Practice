@@ -101,13 +101,23 @@ namespace Sdt
 
 	void MouseDemo::Tick()
 	{
-		const bool leftDown = Mouse::Get()->IsPress(0);
-		const bool rightDown = Mouse::Get()->IsPress(1);
-		const bool middleDown = Mouse::Get()->IsPress(2);
+		const bool leftPress = Mouse::Get()->IsPress(0);
+		const bool rightPress = Mouse::Get()->IsPress(1);
+		const bool middlePress = Mouse::Get()->IsPress(2);
 
-		ImGui::LabelText("Left Down", "%d", leftDown ? 1 : 0);
-		ImGui::LabelText("Right Down", "%d", rightDown ? 1 : 0);
-		ImGui::LabelText("Middle Down", "%d", middleDown ? 1 : 0);
+		ImGui::LabelText("Left Press", "%d", leftPress ? 1 : 0);
+		ImGui::LabelText("Right Press", "%d", rightPress ? 1 : 0);
+		ImGui::LabelText("Middle Press", "%d", middlePress ? 1 : 0);
+
+		Vector Position = Mouse::Get()->GetPosition();
+		Vector MoveDelta = Mouse::Get()->GetMoveDelta();
+
+		ImGui::LabelText("Mouse", "Position  : <%.2f, %.2f>", Position.x, Position.y);
+		ImGui::LabelText("Mouse", "MoveDelta : <%.2f, %.2f, %.2f>", MoveDelta.x, MoveDelta.y, MoveDelta.z);
+
+		static Vector Total = { 0,0,0 };
+		Total += MoveDelta;
+		ImGui::LabelText("Mouse", "  Total   : <%.2f, %.2f, %.2f>", Total.x, Total.y, Total.z);
 
 
 		ImGui::SliderInt("Pass", reinterpret_cast<int*>(&Pass), 0, 1);

@@ -119,6 +119,8 @@ void Window::Destroy()
 
 LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam)
 {
+	Sdt::Mouse::Get()->WndProc(InMessage, InwParam, InlParam);
+
 	if (Gui::Get()->WndProc(InHandle, InMessage, InwParam, InlParam))
 		return TRUE;
 

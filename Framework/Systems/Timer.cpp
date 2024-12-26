@@ -28,12 +28,12 @@ namespace Sdt
 
 	void Timer::Tick()
 	{
-		chrono::duration<double> temp = (chrono::steady_clock::now() - PrevFrameTime);
+		const chrono::steady_clock::time_point current = chrono::steady_clock::now();
+
+		chrono::duration<double> temp = (current - PrevFrameTime);
 		DeltaTime = static_cast<float>(temp.count());
-
-		ImGui::Text("DeltaTime : %f", DeltaTime);
-
-		PrevFrameTime = chrono::steady_clock::now();
+		//ImGui::Text("DeltaTime : %f", DeltaTime);
+		PrevFrameTime = current;
 	}
 
 	Timer::Timer()

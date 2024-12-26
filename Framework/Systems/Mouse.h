@@ -24,6 +24,12 @@ namespace Sdt
 		static void Destroy();
 		static Mouse* Get();
 		void Tick();
+		void WndProc(UINT InMessage, WPARAM InWParam, LPARAM InLParam);
+
+	public:
+		__forceinline Vector GetMoveDelta() const { return WheelMoveDelta; }
+		__forceinline Vector GetPosition() const { return Position; }
+
 	public:
 		bool IsDown(MouseButton InType) const;
 		bool IsUp(MouseButton InType) const;
@@ -39,8 +45,6 @@ namespace Sdt
 		Mouse();
 		~Mouse();
 	private:
-		HWND WindowHandle;
-
 		Vector Position;
 
 		BYTE ButtonStatus[MAX_MOUSE_BUTTON];
@@ -51,8 +55,5 @@ namespace Sdt
 		Vector WheelPrevStatus;
 		Vector WheelMoveDelta;
 
-		DWORD StartDoubleClick[MAX_MOUSE_BUTTON];
-		DWORD DoubleClickDelta;
-		DWORD ButtonCount[MAX_MOUSE_BUTTON];
 	};
 }

@@ -21,7 +21,7 @@ namespace Sdt
 
 	Mouse* Mouse::Get()
 	{
-		ASSERT(Instance != nullptr, "Mouse Instance must not null on Get()");
+		//ASSERT(Instance != nullptr, "Mouse Instance must not null on Get()");
 
 		return Instance;
 	}
@@ -51,36 +51,35 @@ namespace Sdt
 				ButtonMaps[i] = MouseButtonState::None;
 		}
 
-		//const DWORD TickCount = GetTickCount();
-		//for (int i = 0 ; i < static_cast<int>(MouseButton::Max) ; i++)
-		//{
-		//	if (ButtonMaps[i] == MouseButtonState::Down)
-		//	{
-		//		if (ButtonCount[i] == 1)
-		//		{
-		//			if (TickCount - StartDoubleClick[i] >= DoubleClickDelta)
-		//			{
-		//				ButtonCount[i] = 0;
-		//			}
-		//		}
-		//		ButtonCount[i]++;
+		POINT CursorPoint;
+		GetCursorPos(&CursorPoint);
+		// GetCursorPos로 얻은 Cursor 위치는, 윈도우의 타이틀바, 경계도 포함한 위치이다.
+		// 이를 Client(출력되는 화면 내부)로 다시 매핑해준다.
+		ScreenToClient(D3D::GetDesc().Handle, &CursorPoint);
 
-		//		if (ButtonCount[i] == 1)
-		//		{
-		//			StartDoubleClick[i] = TickCount;
-		//		}
-		//	}
-		//	//if (ButtonMaps[i] == MouseButtonState::Up)
-		//	//{
-		//	//	if (ButtonCount[i] == 1)
-		//	//	{
-		//	//		if (TickCount - StartDoubleClick[i] >= DoubleClickDelta)
-		//	//		{
-		//	//			ButtonCount[i] = 0;
-		//	//		}
-		//	//	}
-		//	//}
-		//}
+		WheelPrevStatus.x = WheelStatus.x;
+		WheelPrevStatus.y = WheelStatus.y;
+
+		WheelStatus.x = static_cast<float>(CursorPoint.x);
+		WheelStatus.y = static_cast<float>(CursorPoint.y);
+
+		WheelMoveDelta = WheelStatus - WheelPrevStatus;
+		WheelPrevStatus.z = WheelStatus.z;
+	}
+
+	void Mouse::WndProc(UINT InMessage, WPARAM InWParam, LPARAM InLParam)
+	{
+		if (InMessage == WM_MOUSEMOVE)
+		{
+			Position.x = static_cast<float>(LOWORD(InLParam));
+			Position.y = static_cast<float>(HIWORD(InLParam));
+		}
+		if (InMessage == WM_MOUSEWHEEL)
+		{
+			const short Temp = static_cast<short>(HIWORD(InWParam));
+			WheelPrevStatus.z = WheelStatus.z;
+			WheelStatus.z += static_cast<float>(Temp);
+		}
 	}
 
 	bool Mouse::IsDown(MouseButton InType) const
@@ -122,14 +121,6 @@ namespace Sdt
 
 		WheelStatus = WheelPrevStatus = WheelMoveDelta= { 0, 0, 0 };
 
-		ZeroMemory(StartDoubleClick, sizeof(DWORD) * MAX_MOUSE_BUTTON);
-		ZeroMemory(ButtonMaps, sizeof(DWORD) * MAX_MOUSE_BUTTON);
-		DoubleClickDelta = GetDoubleClickTime();
-
-		StartDoubleClick[0] = GetTickCount();
-
-		for (int i = 1; i < MAX_MOUSE_BUTTON; i++)
-			StartDoubleClick[i] = StartDoubleClick[0];
 
 		DWORD Line = 0;
 		SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &Line, 0);
