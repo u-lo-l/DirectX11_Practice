@@ -61,7 +61,7 @@ void Shader::CreateEffect()
 			MessageBoxA(nullptr, str, "Shader Error", MB_OK);
 		}
 
-		ASSERT(static_cast<int>(false), "Fx File not found");
+		ASSERT(false, "Fx File not found");
 	}
 
 //https://learn.microsoft.com/en-us/windows/win32/direct3d11/d3dx11createeffectfrommemory
@@ -75,8 +75,8 @@ void Shader::CreateEffect()
 		0,
 		D3D::Get()->GetDevice(),
 		&Effect);
-	CHECK(hr);
-	CHECK(Effect->GetDesc(&EffectDesc));
+	CHECK(hr >= 0);
+	CHECK(Effect->GetDesc(&EffectDesc) >= 0);
 
 
 	/*
@@ -100,7 +100,7 @@ void Shader::CreateEffect()
 	{
 		Technique technique;
 		technique.ITechnique = Effect->GetTechniqueByIndex(t);
-		CHECK(technique.ITechnique->GetDesc(&technique.Desc));
+		CHECK(technique.ITechnique->GetDesc(&technique.Desc) >= 0);
 
 		technique.Passes.reserve(technique.Desc.Passes);
 		for (UINT p = 0; p < technique.Desc.Passes; p++)
@@ -115,7 +115,7 @@ void Shader::CreateEffect()
 				D3D11_SIGNATURE_PARAMETER_DESC desc;
 
 				const HRESULT Hresult = pass.PassVsDesc.pShaderVariable->GetInputSignatureElementDesc(pass.PassVsDesc.ShaderIndex, s, &desc);
-				CHECK(Hresult);
+				CHECK(Hresult >= 0);
 
 				pass.SignatureDescs.emplace_back(desc);
 			}
@@ -135,14 +135,14 @@ void Shader::CreateEffect()
 	{
 		ID3DX11EffectConstantBuffer * iBuffer = Effect->GetConstantBufferByIndex(i);
 		D3DX11_EFFECT_VARIABLE_DESC vDesc;
-		CHECK(iBuffer->GetDesc(&vDesc));
+		CHECK(iBuffer->GetDesc(&vDesc) >= 0);
 	}
 
 	for (UINT i = 0; i < EffectDesc.GlobalVariables; i++)
 	{
 		ID3DX11EffectVariable * iVariable = Effect->GetVariableByIndex(i);
 		D3DX11_EFFECT_VARIABLE_DESC vDesc;
-		CHECK(iVariable->GetDesc(&vDesc));
+		CHECK(iVariable->GetDesc(&vDesc) >= 0);
 	}*/
 
 	SAFE_RELEASE(fxBlob);
@@ -234,7 +234,7 @@ ID3D11InputLayout * Shader::CreateInputLayout
 		pCodeSize, // 컴파일된 쉐이더의 크기
 		&inputLayout // [out]생성된 InputLayout
 	);
-	CHECK(Hresult);
+	CHECK(Hresult >= 0);
 
 	return inputLayout;
 }
@@ -255,9 +255,9 @@ void Shader::Pass::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT Bas
 
 void Shader::Pass::BeginDraw()
 {
-	CHECK(IPass->ComputeStateBlockMask(&StateBlockMask));
+	CHECK(IPass->ComputeStateBlockMask(&StateBlockMask) >= 0);
 	D3D::Get()->GetDeviceContext()->IASetInputLayout(InputLayout);
-	CHECK(IPass->Apply(0, D3D::Get()->GetDeviceContext()));
+	CHECK(IPass->Apply(0, D3D::Get()->GetDeviceContext()) >= 0);
 }
 
 void Shader::Pass::EndDraw() const
@@ -282,7 +282,7 @@ void Shader::Pass::Dispatch(UINT X, UINT Y, UINT Z) const
 {
 	ID3D11DeviceContext* Context = D3D::Get()->GetDeviceContext();
 
-	CHECK(IPass->Apply(0, Context));
+	CHECK(IPass->Apply(0, Context) >= 0);
 	Context->Dispatch(X, Y, Z);
 
 
@@ -297,9 +297,9 @@ void Shader::Pass::Dispatch(UINT X, UINT Y, UINT Z) const
 
 void Shader::Pass::CheckPassValid()
 {
-	CHECK(IPass->GetDesc(&Desc));
-	CHECK(IPass->GetVertexShaderDesc(&PassVsDesc));
-	CHECK(PassVsDesc.pShaderVariable->GetShaderDesc(PassVsDesc.ShaderIndex, &EffectVsDesc));
+	CHECK(IPass->GetDesc(&Desc) >= 0);
+	CHECK(IPass->GetVertexShaderDesc(&PassVsDesc) >= 0);
+	CHECK(PassVsDesc.pShaderVariable->GetShaderDesc(PassVsDesc.ShaderIndex, &EffectVsDesc) >= 0);
 }
 
 void Shader::Technique::Draw(UINT Pass, UINT VertexCount, UINT StartVertexLocation)

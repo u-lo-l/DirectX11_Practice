@@ -9,7 +9,6 @@ D3DDesc D3D::D3dDesc = D3DDesc();
 D3D* D3D::Get()
 {
 	assert(Instance != nullptr);
-
 	return Instance;
 }
 
@@ -55,7 +54,7 @@ void D3D::ResizeScreen(float InWidth, float InHeight)
 	SAFE_RELEASE(RenderTargetView);
 
 	const HRESULT Hr = SwapChain->ResizeBuffers(0, InWidth, InHeight, DXGI_FORMAT_UNKNOWN, 0);
-	CHECK(Hr);
+	CHECK(Hr >= 0);
 
 	CreateRTV();
 	CreateViewport();
@@ -179,7 +178,7 @@ void D3D::CreateDeviceAndImmediateContext()
 			&FeatureLevels,
 			&DeviceContext
 		);
-		ASSERT(hr, "Device Failed");
+		ASSERT(hr >= 0, "Device Failed");
 	}
 }
 
@@ -187,10 +186,10 @@ void D3D::CreateRTV()
 {
 	ID3D11Texture2D* backBuffer;
 	HRESULT hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	ASSERT(hr, "Back Buffer Failed");
+	ASSERT(hr >= 0, "Back Buffer Failed");
 
 	hr = Device->CreateRenderTargetView(backBuffer, nullptr, &RenderTargetView);
-	ASSERT(hr, "RTV Failed");
+	ASSERT(hr >= 0, "RTV Failed");
 
 	SAFE_RELEASE(backBuffer);
 

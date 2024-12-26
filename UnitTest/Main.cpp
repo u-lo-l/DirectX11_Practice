@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/TimerDemo.h"
+#include "Execute/MouseDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::TimerDemo);
+	PUSH_MAIN(Sdt::MouseDemo);
 }
 
 void Main::Destroy()

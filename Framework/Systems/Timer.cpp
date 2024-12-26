@@ -21,7 +21,7 @@ namespace Sdt
 
 	Timer * Timer::Get()
 	{
-		ASSERT(Instance == nullptr, "Timer Instance must null on Get()");
+		ASSERT(Instance != nullptr, "Timer Instance must not null on Get()");
 
 		return Instance;
 	}

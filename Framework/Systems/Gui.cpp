@@ -19,8 +19,7 @@ void Gui::Destroy()
 
 Gui* Gui::Get()
 {
-	ASSERT(Instance == nullptr, "GUI Instance must null on Get()");
-
+	//ASSERT(Instance != nullptr, "GUI Instance must not null on Get()");
 	return Instance;
 }
 

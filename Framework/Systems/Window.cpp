@@ -12,6 +12,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
 	Gui::Create();
 	Keyboard::Create();
+	Sdt::Mouse::Create();
 	Sdt::Timer::Create();
 
 	Main = InMain;
@@ -39,6 +40,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	Main->Destroy();
 
 	Sdt::Timer::Destroy();
+	Sdt::Mouse::Destroy();
 	Keyboard::Destroy();
 	Gui::Destroy();
 	D3D::Destroy();
@@ -69,7 +71,7 @@ void Window::Create()
 		wndClass.lpszClassName = desc.AppName.c_str();
 
 		const ATOM check = RegisterClassEx(&wndClass);
-		CHECK(static_cast<int>(check != 0));
+		CHECK(check != 0);
 	}
 
 	//Create Window Handle
@@ -88,7 +90,7 @@ void Window::Create()
 		desc.Instance,
 		nullptr
 	);
-	CHECK(static_cast<int>(desc.Handle != nullptr));
+	CHECK(desc.Handle != nullptr);
 
 	//렌더링 사이즈에 맞게 Window 창 크기 설정
 	RECT WinRect = { 0,0, static_cast<long>(desc.Width), static_cast<long>(desc.Height)};
@@ -158,6 +160,7 @@ void Window::MainRender()
 {
 	Gui::Tick();
 	Sdt::Timer::Get()->Tick();
+	Sdt::Mouse::Get()->Tick();
 	Main->Tick();
 	{
 		D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
