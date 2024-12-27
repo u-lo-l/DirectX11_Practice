@@ -13,11 +13,13 @@ using namespace std;
 /* DirectX */
 #include <d3dcommon.h>
 #include <d3d11.h>
+#include <D3DX11tex.h>
 #include <d3dx10math.h>
 #include <d3dcompiler.h>
 #include <d3dx11effect.h>
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dx10.lib")
+#pragma comment(lib, "d3dx11.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
 #pragma comment(lib, "Effects11d.lib")
@@ -29,10 +31,7 @@ using namespace std;
 #pragma comment(lib, "imgui/IMGUI.lib")
 
 /* My Own */
-typedef D3DXCOLOR	Color;
-typedef D3DXVECTOR3	Vector;
-typedef D3DXVECTOR2	Vector2D;
-typedef D3DXMATRIX	Matrix;
+
 #include "Definitions.h"
 #include "Systems/D3D.h"
 #include "Systems/Gui.h"
@@ -42,4 +41,15 @@ typedef D3DXMATRIX	Matrix;
 #include "Viewer/Camera.h"
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
-#include "Utilties/Math.h"
+// #include "Utilties/Math.h"
+
+/* SDT_Math*/
+#include "Core/Vector2D.h"
+#include "Core/Vector.h"
+#include "Core/Vector4.h"
+#include "Core/Quaternion.h"
+#include "Core/Matrix.h"
+#include "Core/Plane.h"
+#include "Core/Point.h"
+#include "Core/Color.h"
+#include "Core/Math.h"

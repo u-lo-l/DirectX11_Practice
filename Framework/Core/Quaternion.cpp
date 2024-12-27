@@ -1,0 +1,739 @@
+#include "Framework.h"
+#include "Quaternion.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+const Quaternion Quaternion::Identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 생성자
+//////////////////////////////////////////////////////////////////////////
+Quaternion::Quaternion(void)
+{
+	X = 0.0f;
+	Y = 0.0f;
+	Z = 0.0f;
+	W = 0.0f;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 생성자
+///@param x : X
+///@param y : Y
+///@param z : Z
+///@param w : W
+//////////////////////////////////////////////////////////////////////////
+Quaternion::Quaternion(float x, float y, float z, float w)
+{
+	X = x;
+	Y = y;
+	Z = z;
+	W = w;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 생성자
+///@param vectorPart : 벡터(XYZ)
+///@param scalarPart : 값(W)
+//////////////////////////////////////////////////////////////////////////
+Quaternion::Quaternion(Vector vectorPart, float scalarPart)
+{
+	X = vectorPart.X;
+	Y = vectorPart.Y;
+	Z = vectorPart.Z;
+	W = scalarPart;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief -
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::operator-(void)
+{
+	Quaternion quaternion1;
+	quaternion1.X = -X;
+	quaternion1.Y = -Y;
+	quaternion1.Z = -Z;
+	quaternion1.W = -W;
+
+	return quaternion1;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief ==
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+bool Quaternion::operator==(const Quaternion& quaternion2) const
+{
+	if (X == quaternion2.X && Y == quaternion2.Y && Z == quaternion2.Z)
+		return W == quaternion2.W;
+	else
+		return false;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief !=
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+bool Quaternion::operator!=(const Quaternion& quaternion2) const
+{
+	if (X == quaternion2.X && Y == quaternion2.Y && Z == quaternion2.Z)
+		return W != quaternion2.W;
+	else
+		return true;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief +
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::operator+(const Quaternion& quaternion2) const
+{
+	Quaternion quaternion;
+	quaternion.X = X + quaternion2.X;
+	quaternion.Y = Y + quaternion2.Y;
+	quaternion.Z = Z + quaternion2.Z;
+	quaternion.W = W + quaternion2.W;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief -
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::operator-(const Quaternion& quaternion2) const
+{
+	Quaternion quaternion;
+	quaternion.X = X - quaternion2.X;
+	quaternion.Y = Y - quaternion2.Y;
+	quaternion.Z = Z - quaternion2.Z;
+	quaternion.W = W - quaternion2.W;
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief *
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::operator*(const Quaternion& quaternion2) const
+{
+	float value1 = Y * quaternion2.Z - Z * quaternion2.Y;
+	float value2 = Z * quaternion2.X - X * quaternion2.Z;
+	float value3 = X * quaternion2.Y - Y * quaternion2.X;
+	float value4 = X * quaternion2.X + Y * quaternion2.Y + Z * quaternion2.Z;
+
+	Quaternion quaternion;
+	quaternion.X = X * quaternion2.W + quaternion2.X * W + value1;
+	quaternion.Y = Y * quaternion2.W + quaternion2.Y * W + value2;
+	quaternion.Z = Z * quaternion2.W + quaternion2.Z * W + value3;
+	quaternion.W = W * quaternion2.W - value4;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief *
+///@param scaleFactor : 값
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::operator*(const float& scaleFactor) const
+{
+	Quaternion quaternion;
+	quaternion.X = X * scaleFactor;
+	quaternion.Y = Y * scaleFactor;
+	quaternion.Z = Z * scaleFactor;
+	quaternion.W = W * scaleFactor;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief *
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::operator/(const Quaternion& quaternion2) const
+{
+	float value1 = 1.0f / quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y + quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
+	float value2 = -quaternion2.X * value1;
+	float value3 = -quaternion2.Y * value1;
+	float value4 = -quaternion2.Z * value1;
+	float value5 = quaternion2.W * value1;
+
+	float multiple1 = Y * value4 - Z * value3;
+	float multiple2 = Z * value2 - X * value4;
+	float multiple3 = X * value3 - Y * value2;
+	float multiple4 = X * value2 + Y * value3 + Z * value4;
+
+	Quaternion quaternion;
+	quaternion.X = X * value5 + value2 * W + multiple1;
+	quaternion.Y = Y * value5 + value3 * W + multiple2;
+	quaternion.Z = Z * value5 + value4 * W + multiple3;
+	quaternion.W = W * value5 - multiple4;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief +=
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::operator+=(const Quaternion& quaternion2)
+{
+	*this = *this + quaternion2;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief -=
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::operator-=(const Quaternion& quaternion2)
+{
+	*this = *this - quaternion2;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief *=
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::operator*=(const Quaternion& quaternion2)
+{
+	*this = *this * quaternion2;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief *=
+///@param scaleFactor : 값
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::operator*=(const float& scaleFactor)
+{
+	*this = *this * scaleFactor;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief /=
+///@param quaternion2 : 쿼터니온
+///@return 결과
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::operator/=(const Quaternion& quaternion2)
+{
+	*this = *this / quaternion2;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 문자열로 변환
+///@param 문자열
+//////////////////////////////////////////////////////////////////////////
+std::wstring Quaternion::ToString()
+{
+	std::wstring temp = L"";
+
+	temp += L"X:" + std::to_wstring(X);
+	temp += L",Y:" + std::to_wstring(Y);
+	temp += L",Z:" + std::to_wstring(Z);
+	temp += L",W:" + std::to_wstring(W);
+
+	return temp;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief D3DXQUATERNION으로 변환
+///@param D3DX 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+D3DXQUATERNION Quaternion::ToDX()
+{
+	return D3DXQUATERNION(X, Y, Z, W);
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 크기 계산
+///@return 결과 값
+//////////////////////////////////////////////////////////////////////////
+float Quaternion::Length()
+{
+	float x = X * X + Y * Y + Z * Z + W * W;
+
+	return sqrtf(x);
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 제곱으로 크기 계산
+///@return 결과 값
+//////////////////////////////////////////////////////////////////////////
+float Quaternion::LengthSquared()
+{
+	return X * X + Y * Y + Z * Z + W * W;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 정규화
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::Normalize()
+{
+	float x = X * X + Y * Y + Z * Z + W * W;
+	float value = 1.0f / sqrtf(x);
+
+	X *= value;
+	Y *= value;
+	Z *= value;
+	W *= value;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 정규화
+///@param value : 쿼터니온
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::Normalize(Quaternion quaternion)
+{
+	float value = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+	float value1 = 1.0f / sqrtf(value);
+
+
+	Quaternion q;
+	q.X = quaternion.X * value1;
+	q.Y = quaternion.Y * value1;
+	q.Z = quaternion.Z * value1;
+	q.W = quaternion.W * value1;
+
+	return q;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 쿼터니온 켤레값
+//////////////////////////////////////////////////////////////////////////
+void Quaternion::Conjugate()
+{
+	X = -X;
+	Y = -Y;
+	Z = -Z;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 쿼터니온 켤레값
+///@param value : 쿼터니온
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::Conjugate(Quaternion value)
+{
+	Quaternion quaternion;
+	quaternion.X = -value.X;
+	quaternion.Y = -value.Y;
+	quaternion.Z = -value.Z;
+	quaternion.W = value.W;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 역 쿼터니온
+///@param quaternion : 쿼터니온
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::Inverse(Quaternion quaternion)
+{
+	float value = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+	float value1 = 1.0f / value;
+
+	Quaternion q;
+	q.X = -quaternion.X * value1;
+	q.Y = -quaternion.Y * value1;
+	q.Z = -quaternion.Z * value1;
+	q.W = quaternion.W * value1;
+
+	return q;
+}
+Quaternion Quaternion::Add(Quaternion quaternion1, Quaternion quaternion2)
+{
+	Quaternion quaternion;
+	quaternion.X = quaternion1.X + quaternion2.X;
+	quaternion.Y = quaternion1.Y + quaternion2.Y;
+	quaternion.Z = quaternion1.Z + quaternion2.Z;
+	quaternion.W = quaternion1.W + quaternion2.W;
+
+	return quaternion;
+}
+Quaternion Quaternion::Divide(Quaternion quaternion1, Quaternion quaternion2)
+{
+	float x = quaternion1.X;
+	float y = quaternion1.Y;
+	float z = quaternion1.Z;
+	float w = quaternion1.W;
+
+	float value = quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y + quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
+	float value1 = 1.0f / value;
+
+	float x1 = -quaternion2.X * value1;
+	float y1 = -quaternion2.Y * value1;
+	float z1 = -quaternion2.Z * value1;
+	float w1 = quaternion2.W * value1;
+
+	float value2 = y * z1 - z * y1;
+	float value3 = z * x1 - x * z1;
+	float value4 = x * y1 - y * x1;
+	float value5 = x * x1 + y * y1 + z * z1;
+
+	Quaternion quaternion;
+	quaternion.X = x * w1 + x1 * w + value2;
+	quaternion.Y = y * w1 + y1 * w + value3;
+	quaternion.Z = z * w1 + z1 * w + value4;
+	quaternion.W = w * w1 - value5;
+
+	return quaternion;
+}
+Quaternion Quaternion::Multiply(Quaternion quaternion1, Quaternion quaternion2)
+{
+	float x = quaternion1.X;
+	float y = quaternion1.Y;
+	float z = quaternion1.Z;
+	float w = quaternion1.W;
+	float value = quaternion2.X;
+	float y1 = quaternion2.Y;
+	float z1 = quaternion2.Z;
+	float w1 = quaternion2.W;
+	float value1 = y * z1 - z * y1;
+	float value2 = z * value - x * z1;
+	float value3 = x * y1 - y * value;
+	float value4 = x * value + y * y1 + z * z1;
+
+	Quaternion quaternion;
+	quaternion.X = x * w1 + value * w + value1;
+	quaternion.Y = y * w1 + y1 * w + value2;
+	quaternion.Z = z * w1 + z1 * w + value3;
+	quaternion.W = w * w1 - value4;
+
+	return quaternion;
+}
+Quaternion Quaternion::Multiply(Quaternion quaternion1, float scaleFactor)
+{
+	Quaternion quaternion;
+	quaternion.X = quaternion1.X * scaleFactor;
+	quaternion.Y = quaternion1.Y * scaleFactor;
+	quaternion.Z = quaternion1.Z * scaleFactor;
+	quaternion.W = quaternion1.W * scaleFactor;
+
+	return quaternion;
+}
+Quaternion Quaternion::Subtract(Quaternion quaternion1, Quaternion quaternion2)
+{
+	Quaternion quaternion;
+	quaternion.X = quaternion1.X - quaternion2.X;
+	quaternion.Y = quaternion1.Y - quaternion2.Y;
+	quaternion.Z = quaternion1.Z - quaternion2.Z;
+	quaternion.W = quaternion1.W - quaternion2.W;
+
+	return quaternion;
+}
+Quaternion Quaternion::Negative(Quaternion quaternion)
+{
+	Quaternion x;
+	x.X = -quaternion.X;
+	x.Y = -quaternion.Y;
+	x.Z = -quaternion.Z;
+	x.W = -quaternion.W;
+
+	return x;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 축과 각도에 의해 회전된 쿼터니온
+///@param axis : 축 벡터
+///@param angle : 각도
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::CreateFromAxisAngle(Vector axis, float angle)
+{
+	float value = angle * 0.5f;
+	float value1 = sinf(value);
+	float value2 = cosf(value);
+
+	Quaternion quaternion;
+	quaternion.X = axis.X * value1;
+	quaternion.Y = axis.Y * value1;
+	quaternion.Z = axis.Z * value1;
+	quaternion.W = value2;
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 각 각도에 의해 회전된 쿼터니온
+///@param yaw : Yaw - Y
+///@param pitch : Pitch - X
+///@param roll : Roll - Z
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+{
+	float value = roll * 0.5f;
+	float value1 = sinf(value);
+	float value2 = cosf(value);
+
+	float value3 = pitch * 0.5f;
+	float value4 = sinf(value3);
+	float value5 = cosf(value3);
+
+	float value6 = yaw * 0.5f;
+	float value7 = sinf(value6);
+	float value8 = cosf(value6);
+
+	Quaternion quaternion;
+	quaternion.X = value8 * value4 * value2 + value7 * value5 * value1;
+	quaternion.Y = value7 * value5 * value2 - value8 * value4 * value1;
+	quaternion.Z = value8 * value5 * value1 - value7 * value4 * value2;
+	quaternion.W = value8 * value5 * value2 + value7 * value4 * value1;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 매트릭스에 의해 회전된 쿼터니온
+///@param matrix : 매트릭스
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::CreateFromRotationMatrix(Matrix matrix)
+{
+	float m11 = matrix.M11 + matrix.M22 + matrix.M33;
+
+	Quaternion q;
+	if (m11 > 0.0f)
+	{
+		float value = sqrtf((m11 + 1.0f));
+		q.W = value * 0.5f;
+		value = 0.5f / value;
+
+		q.X = (matrix.M23 - matrix.M32) * value;
+		q.Y = (matrix.M31 - matrix.M13) * value;
+		q.Z = (matrix.M12 - matrix.M21) * value;
+	}
+	else if (matrix.M11 >= matrix.M22 && matrix.M11 >= matrix.M33)
+	{
+		float value1 = sqrtf((1.0f + matrix.M11 - matrix.M22 - matrix.M33));
+		float value2 = 0.5f / value1;
+
+		q.X = 0.5f * value1;
+		q.Y = (matrix.M12 + matrix.M21) * value2;
+		q.Z = (matrix.M13 + matrix.M31) * value2;
+		q.W = (matrix.M23 - matrix.M32) * value2;
+	}
+	else if (matrix.M22 <= matrix.M33)
+	{
+		float value3 = sqrtf((1.0f + matrix.M33 - matrix.M11 - matrix.M22));
+		float value4 = 0.5f / value3;
+
+		q.X = (matrix.M31 + matrix.M13) * value4;
+		q.Y = (matrix.M32 + matrix.M23) * value4;
+		q.Z = 0.5f * value3;
+		q.W = (matrix.M12 - matrix.M21) * value4;
+	}
+	else
+	{
+		float value5 = sqrtf((1.0f + matrix.M22 - matrix.M11 - matrix.M33));
+		float value6 = 0.5f / value5;
+
+		q.X = (matrix.M21 + matrix.M12) * value6;
+		q.Y = 0.5f * value5;
+		q.Z = (matrix.M32 + matrix.M23) * value6;
+		q.W = (matrix.M31 - matrix.M13) * value6;
+	}
+
+	return q;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 내적
+///@param quaternion1 : 쿼터니온1
+///@param quaternion2 : 쿼터니온2
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+float Quaternion::Dot(Quaternion quaternion1, Quaternion quaternion2)
+{
+	return quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y + quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 구면보간
+///@param quaternion1 : 쿼터니온1
+///@param quaternion2 : 쿼터니온2
+///@param amount : 보간값
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::Slerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
+{
+	float value;
+	float value1;
+	float value2 = amount;
+
+	bool flag = false;
+	float x = quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y + quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
+	if (x < 0.0f)
+	{
+		flag = true;
+		x = -x;
+	}
+	if (x <= 0.999999f)
+	{
+		float value3 = (float)acos((double)x);
+		float value4 = (float)(1 / sin((double)value3));
+		value1 = sinf(((1.0f - value2) * value3)) * value4;
+		value = (flag ? (float)(-sin((double)(value2 * value3))) * value4 : sinf((value2 * value3)) * value4);
+	}
+	else
+	{
+		value1 = 1.0f - value2;
+		value = (flag ? -value2 : value2);
+	}
+
+	Quaternion quaternion;
+	quaternion.X = value1 * quaternion1.X + value * quaternion2.X;
+	quaternion.Y = value1 * quaternion1.Y + value * quaternion2.Y;
+	quaternion.Z = value1 * quaternion1.Z + value * quaternion2.Z;
+	quaternion.W = value1 * quaternion1.W + value * quaternion2.W;
+
+	return quaternion;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 선형보간
+///@param quaternion1 : 쿼터니온1
+///@param quaternion2 : 쿼터니온2
+///@param amount : 보간값
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
+{
+	float value = amount;
+	float value1 = 1.0f - value;
+
+	Quaternion q;
+	if (quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y + quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W < 0.0f)
+	{
+		q.X = value1 * quaternion1.X - value * quaternion2.X;
+		q.Y = value1 * quaternion1.Y - value * quaternion2.Y;
+		q.Z = value1 * quaternion1.Z - value * quaternion2.Z;
+		q.W = value1 * quaternion1.W - value * quaternion2.W;
+	}
+	else
+	{
+		q.X = value1 * quaternion1.X + value * quaternion2.X;
+		q.Y = value1 * quaternion1.Y + value * quaternion2.Y;
+		q.Z = value1 * quaternion1.Z + value * quaternion2.Z;
+		q.W = value1 * quaternion1.W + value * quaternion2.W;
+	}
+
+
+	float q1 = q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W;
+	float value2 = 1.0f / sqrtf(q1);
+
+	q.X *= value2;
+	q.Y *= value2;
+	q.Z *= value2;
+	q.W *= value2;
+
+	return q;
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+///@brief 순서를 바꾸어 곱하기
+///@param value1 : 쿼터니온1
+///@param value2 : 쿼터니온2
+///@return 결과 쿼터니온
+//////////////////////////////////////////////////////////////////////////
+Quaternion Quaternion::Concatenate(Quaternion quaternion1, Quaternion quaternion2)
+{
+	float x = quaternion2.X;
+	float y = quaternion2.Y;
+	float z = quaternion2.Z;
+	float w = quaternion2.W;
+	float value = quaternion1.X;
+
+	float y1 = quaternion1.Y;
+	float z1 = quaternion1.Z;
+	float w1 = quaternion1.W;
+
+	float value1 = y * z1 - z * y1;
+	float value2 = z * value - x * z1;
+	float value3 = x * y1 - y * value;
+	float value4 = x * value + y * y1 + z * z1;
+
+	Quaternion quaternion;
+	quaternion.X = x * w1 + value * w + value1;
+	quaternion.Y = y * w1 + y1 * w + value2;
+	quaternion.Z = z * w1 + z1 * w + value3;
+	quaternion.W = w * w1 - value4;
+
+	return quaternion;
+}

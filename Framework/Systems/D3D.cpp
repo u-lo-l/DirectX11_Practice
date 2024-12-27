@@ -36,7 +36,7 @@ void D3D::SetDesc(const D3DDesc& InDesc)
 
 void D3D::ClearRenderTargetView(Color InColor) const
 {
-	DeviceContext->ClearRenderTargetView(RenderTargetView, InColor);
+	DeviceContext->ClearRenderTargetView(RenderTargetView, InColor.ToDx());
 }
 
 void D3D::Present() const

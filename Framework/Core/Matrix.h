@@ -1,0 +1,119 @@
+#pragma once
+class Vector;
+class Quaternion;
+class Plane;
+//////////////////////////////////////////////////////////////////////////
+///@brief 행렬
+//////////////////////////////////////////////////////////////////////////
+class Matrix
+{
+public:
+	Matrix(void);
+	Matrix(float m11, float m12, float m13, float m14,
+		   float m21, float m22, float m23, float m24,
+		   float m31, float m32, float m33, float m34,
+		   float m41, float m42, float m43, float m44);
+	// Getter, Setter
+	Vector Up();			void Up(Vector value);
+	Vector Down();			void Down(Vector value);
+	Vector Right();			void Right(Vector value);
+	Vector Left();			void Left(Vector value);
+	Vector Forward();		void Forward(Vector value);
+	Vector Backward();		void Backward(Vector value);
+	Vector Translate();		void Translate(Vector value);
+	Matrix operator -();
+	bool operator ==(const Matrix& matrix2) const;
+	bool operator !=(const Matrix& matrix2) const;
+	Matrix operator +(const Matrix& matrix2) const;
+	Matrix operator -(const Matrix& matrix2) const;
+	Matrix operator *(const Matrix& matrix2) const;
+	Matrix operator *(const float& scaleFactor) const;
+	Matrix operator /(const Matrix& matrix2) const;
+	Matrix operator /(const float& divider) const;
+	void operator +=(const Matrix& matrix2);
+	void operator -=(const Matrix& matrix2);
+	void operator *=(const Matrix& matrix2);
+	void operator *=(const float& scaleFactor);
+	void operator /=(const Matrix& matrix2);
+	void operator /=(const float& divider);
+	//////////////////////////////////////////////////////////////////////////
+	///@brief float형의 *연산 처리
+	///@param scalefactor : 값
+	///@param matrix2 : 매트릭스
+	///@return 결과 매트릭스
+	//////////////////////////////////////////////////////////////////////////
+	friend Matrix operator *(const float scaleFactor, const Matrix& matrix2)
+	{
+		return matrix2 * scaleFactor;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	std::wstring ToString();
+	std::wstring ToStringRow1();
+	std::wstring ToStringRow2();
+	std::wstring ToStringRow3();
+	std::wstring ToStringRow4();
+	D3DXMATRIX ToDX();
+	float Determinant();
+	bool Decompose(Vector& scale, Quaternion& rotation, Vector& translation);
+	bool DecomposeUniformScale(float& scale, Quaternion& rotation, Vector& translation);
+	static Matrix Add(const Matrix & matrix1, const Matrix & matrix2);
+	static Matrix Divide(const Matrix & matrix1, const Matrix & matrix2 );
+	static Matrix Divide(const Matrix & matrix1, float divider);
+	static Matrix Multiply(const Matrix & matrix1, const Matrix & matrix2);
+	static Matrix Multiply(const Matrix & matrix1, float scaleFactor);
+	static Matrix Negative(const Matrix & matrix);
+	static Matrix CreateBillboard(Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector* cameraForwardVector = NULL);
+	static Matrix CreateTranslation(Vector position);
+	static Matrix CreateTranslation(float xPosition, float yPosition, float zPosition);
+	static Matrix CreateScale(Vector scales);
+	static Matrix CreateScale(float xScale, float yScale, float zScale);
+	static Matrix CreateScale(float scale);
+	static Matrix CreateRotationX(float radians);
+	static Matrix CreateRotationY(float radians);
+	static Matrix CreateRotationZ(float radians);
+	static Matrix CreateFromAxisAngle(Vector axis, float angle);
+	static Matrix CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
+	static Matrix CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
+	static Matrix CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance);
+	static Matrix CreateLookAt(Vector cameraPosition, Vector cameraTarget, Vector cameraUpVector);
+	static Matrix CreateWorld(Vector position, Vector forward, Vector up);
+	static Matrix CreateFromQuaternion(Quaternion quaternion);
+	static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll);
+	static Matrix CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane);
+	static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
+	static Matrix Transform(const Matrix & value, const Quaternion & rotation);
+	static Matrix Transpose(const Matrix & matrix);
+	static Matrix Invert(const Matrix & matrix);
+	static Matrix Lerp(const Matrix & matrix1, const Matrix & matrix2, float amount);
+private:
+	struct CanonicalBasis
+	{
+		Vector Row0;
+		Vector Row1;
+		Vector Row2;
+	};
+	struct VectorBasis
+	{
+		Vector * Element0;
+		Vector * Element1;
+		Vector * Element2;
+	};
+public:
+	const static Matrix Identity;
+	float M11;
+	float M12;
+	float M13;
+	float M14;
+	float M21;
+	float M22;
+	float M23;
+	float M24;
+	float M31;
+	float M32;
+	float M33;
+	float M34;
+	float M41;
+	float M42;
+	float M43;
+	float M44;
+};

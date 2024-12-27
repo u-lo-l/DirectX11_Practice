@@ -1,10 +1,8 @@
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
 #pragma once
-
+#include "../Core/Matrix.h"
 class Camera
 {
-	static const Vector WORLD_FORWARD;
-	static const Vector WORLD_UP;
-	static const Vector WORLD_RIGHT;
 public:
 	Camera();
 	~Camera();
@@ -12,14 +10,16 @@ public:
 
 public:
 	const Vector& GetPosition() const;
-	const Matrix& GetViewMatrix() const;
+	Matrix& GetViewMatrix();
 	void SetPosition(float X, float Y, float Z);
 	void SetPosition(const Vector & Vec);
 
 	auto GetEulerAngle() const -> const Vector&;
-	void SetRotation(float r, float p, float y);
+	void SetRotation(float R, float P, float Y);
 	void SetRotation(const Vector & InEuler);
 
+	void SetMoveSpeed(float InSpeed);
+	void SetRopSpeed(float InSpeed);
 private :
 	// Camera Translation
 	//void SetMove();
@@ -39,5 +39,5 @@ private:
 	Vector Forward = {0.f, 0.f, 1.f };
 	Vector Up = { 0.f, 1.f, 0.f };
 	Vector Right = { 1.f, 0.f, 0.f };
-	const Vector& At() const;
+	Vector At() const;
 };

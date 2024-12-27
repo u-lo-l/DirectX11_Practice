@@ -57,28 +57,28 @@ namespace Sdt
 		// 이를 Client(출력되는 화면 내부)로 다시 매핑해준다.
 		ScreenToClient(D3D::GetDesc().Handle, &CursorPoint);
 
-		WheelPrevStatus.x = WheelStatus.x;
-		WheelPrevStatus.y = WheelStatus.y;
+		WheelPrevStatus.X = WheelStatus.X;
+		WheelPrevStatus.Y = WheelStatus.Y;
 
-		WheelStatus.x = static_cast<float>(CursorPoint.x);
-		WheelStatus.y = static_cast<float>(CursorPoint.y);
+		WheelStatus.X = static_cast<float>(CursorPoint.x);
+		WheelStatus.Y = static_cast<float>(CursorPoint.y);
 
 		WheelMoveDelta = WheelStatus - WheelPrevStatus;
-		WheelPrevStatus.z = WheelStatus.z;
+		WheelPrevStatus.Z = WheelStatus.Z;
 	}
 
 	void Mouse::WndProc(UINT InMessage, WPARAM InWParam, LPARAM InLParam)
 	{
 		if (InMessage == WM_MOUSEMOVE)
 		{
-			Position.x = static_cast<float>(LOWORD(InLParam));
-			Position.y = static_cast<float>(HIWORD(InLParam));
+			Position.X = static_cast<float>(LOWORD(InLParam));
+			Position.Y = static_cast<float>(HIWORD(InLParam));
 		}
 		if (InMessage == WM_MOUSEWHEEL)
 		{
 			const short Temp = static_cast<short>(HIWORD(InWParam));
-			WheelPrevStatus.z = WheelStatus.z;
-			WheelStatus.z += static_cast<float>(Temp);
+			WheelPrevStatus.Z = WheelStatus.Z;
+			WheelStatus.Z += static_cast<float>(Temp);
 		}
 	}
 

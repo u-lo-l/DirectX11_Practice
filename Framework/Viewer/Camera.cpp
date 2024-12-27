@@ -1,14 +1,10 @@
 #include "framework.h"
 #include "Camera.h"
 
-const Vector Camera::WORLD_FORWARD = {0,0,1};
-const Vector Camera::WORLD_UP = { 0,1,0 };
-const Vector Camera::WORLD_RIGHT = { 1,0,0 };
-
 Camera::Camera()
 {
-	D3DXMatrixIdentity(&RotationMat);
-	D3DXMatrixIdentity(&ViewMat);
+	RotationMat = Matrix::Identity;
+	ViewMat = Matrix::Identity;
 
 	SetRotationMat();
 	SetViewMat();
@@ -17,22 +13,6 @@ Camera::Camera()
 Camera::~Camera()
 = default;
 
-Camera::Camera(const Camera& Other)
-{
-}
-
-Camera::Camera(const Camera&& Other) noexcept
-{
-}
-
-Camera& Camera::operator=(const Camera& Other)
-{
-	return *this;
-}
-
-void Camera::operator=(Camera&& Other) const noexcept
-{
-}
 
 void Camera::Tick()
 {
@@ -68,9 +48,9 @@ void Camera::Tick()
 	SetViewMat();
 
 	const Vector Delta = Sdt::Mouse::Get()->GetMoveDelta();
-	EulerAngle.x += Delta.y * RotationSpeed * DeltaTime;
-	EulerAngle.y += Delta.x * RotationSpeed * DeltaTime;
-	EulerAngle.z = 0;
+	EulerAngle.X += Delta.Y * RotationSpeed * DeltaTime;
+	EulerAngle.Y += Delta.X * RotationSpeed * DeltaTime;
+	EulerAngle.Z = 0;
 
 	SetRotationMat();
 }
@@ -80,7 +60,7 @@ const Vector& Camera::GetPosition() const
 	return Position;
 }
 
-const Matrix& Camera::GetViewMatrix() const
+Matrix& Camera::GetViewMatrix()
 {
 	return ViewMat;
 }
@@ -88,12 +68,12 @@ const Matrix& Camera::GetViewMatrix() const
 void Camera::SetPosition(float X, float Y, float Z)
 {
 	Position = { X, Y, Z };
+	SetViewMat();
 }
 
 void Camera::SetPosition(const Vector& Vec)
 {
 	Position = Vec;
-
 	SetViewMat();
 }
 
@@ -102,9 +82,10 @@ const Vector& Camera::GetEulerAngle() const
 	return EulerAngle;
 }
 
-void Camera::SetRotation(float r, float p, float y)
+void Camera::SetRotation(float R, float P, float Y)
 {
-	EulerAngle = { r, p, y };
+	EulerAngle = { R, P, Y };
+	SetRotationMat();
 }
 
 void Camera::SetRotation(const Vector& InEuler)
@@ -113,31 +94,36 @@ void Camera::SetRotation(const Vector& InEuler)
 	SetRotationMat();
 }
 
+void Camera::SetMoveSpeed( float InSpeed )
+{
+	MoveSpeed = InSpeed;
+}
+
+void Camera::SetRopSpeed( float InSpeed )
+{
+	RotationSpeed = InSpeed;
+}
+
 void Camera::SetViewMat()
 {
-	const Vector At = this->At();
-	D3DXMatrixLookAtLH(&ViewMat, &Position, &At, &Up);
+	ViewMat = Matrix::CreateLookAt(Position, At(), Up);
 }
 
 void Camera::SetRotationMat()
 {
-	/***
-	  DirectX의 D3DXMatrixRotationYawPitchRoll 함수는 Yaw, Pitch, Roll에 해당하는 회전을 한 번에 계산합니다.
-	  Yaw: Y축 회전 (𝐸𝑢𝑙𝑒𝑟𝐴𝑛𝑔𝑙𝑒.𝑧)
-	  Pitch: X축 회전 (𝐸𝑢𝑙𝑒𝑟𝐴𝑛𝑔𝑙𝑒.𝑦)
-	  Roll: Z축 회전 (𝐸𝑢𝑙𝑒𝑟𝐴𝑛𝑔𝑙𝑒.𝑥)
-	  일반적으로 Z축이 위를 가리키는 좌표계와, DX에서 Z축이 전방을 가리키는 좌표계 사이의 차를 고려한 회전이라고 여겨진다.
-	  왜 roll pitch yaw를 이따구로 정의해놨는가...
-	  일반적으로(항공) Yaw가 Z축 회전이고, 좌우(위로 향하는 축을 기준)로 회전한다.
-	  Computer Graphics에서는 위를 향하는 축이 Y축이라 이를 Yaw축이라고 하는 듯 하다.
-	 ***/
-	D3DXMatrixRotationYawPitchRoll(&RotationMat, EulerAngle.y, EulerAngle.x, EulerAngle.z);
-	D3DXVec3TransformNormal(&Forward, &Camera::WORLD_FORWARD, &RotationMat);
-	D3DXVec3TransformNormal(&Up, &Camera::WORLD_UP, &RotationMat);
-	D3DXVec3TransformNormal(&Right, &Camera::WORLD_RIGHT, &RotationMat);
+	Matrix X, Y, Z;
+	X = Matrix::CreateRotationX(EulerAngle.X);
+	Y = Matrix::CreateRotationY(EulerAngle.Y);
+	Z = Matrix::CreateRotationZ(EulerAngle.Z);
+
+	RotationMat =  X * Y * Z;
+	
+	Forward = Vector::TransformNormal(Vector::Forward, RotationMat);
+	Up = Vector::TransformNormal(Vector::Up, RotationMat);
+	Right = Vector::TransformNormal(Vector::Right, RotationMat);
 }
 
-const Vector& Camera::At() const
+Vector Camera::At() const
 {
 	return Position + Forward;
 }
