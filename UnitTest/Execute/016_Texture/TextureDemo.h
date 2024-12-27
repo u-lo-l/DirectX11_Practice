@@ -8,13 +8,8 @@ namespace Sdt
 	{
 	private:
 		Camera* MainCamera = nullptr;
-	private:
-		static UINT IndexPerGrid;
-		UINT Pass = 1;
-		UINT Width = 256;
-		UINT Height = 256;
 	public:
-		using InnerVertexType = Vertex;
+		using InnerVertexType = VertexTexture;
 		using InnerIndexType = UINT;
 
 	public:
@@ -27,16 +22,19 @@ namespace Sdt
 	private:
 		Shader* shader = nullptr;
 
-		UINT VertexCount = 0;
+		UINT Pass = 0;
+		
+		UINT VertexCount = 4;
 		InnerVertexType* Vertices = nullptr;
 		ID3D11Buffer* VertexBuffer = nullptr;
 
-		UINT IndexCount = 0;
+		UINT IndexCount = 6;
 		UINT* Indices = nullptr;
 		ID3D11Buffer* IndexBuffer = nullptr;
 
 		Matrix WorldMat;
 		Matrix ProjectionMat;
-	private:
+
+		ID3D11ShaderResourceView * Srv = nullptr;
 	};
 }
