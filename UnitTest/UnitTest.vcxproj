@@ -97,7 +97,7 @@
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Execute\018_Texture03\TextureDemo3.cpp" />
+    <ClCompile Include="Execute\020_TextureLayering\TextureLayering.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -105,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Execute\016_Texture\TextureDemo.h" />
-    <ClInclude Include="Execute\018_Texture03\TextureDemo3.h" />
+    <ClInclude Include="Execute\020_TextureLayering\TextureLayering.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

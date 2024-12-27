@@ -28,11 +28,31 @@ struct VertexTexture
 {
 	VertexTexture()
 		: Position(0, 0, 0)
-		, UV(0, 0) {}
+		, UV(0, 0) {
+	}
 	VertexTexture(const Vector& Position, const Vector2D& UV)
 		: Position(Position)
-		, UV(UV) {}
+		, UV(UV) {
+	}
 	Vector Position;
 	Vector2D UV;
-
+};
+//---------------------------------------------------------------------------//
+struct VertexTextureColor
+{
+	VertexTextureColor()
+		: Position(0, 0, 0)
+		, UV(0, 0)
+		, Color(0, 0, 0, 1)
+	{
+	}
+	VertexTextureColor(const Vector& Position, const Vector2D& UV, const Color& Color)
+		: Position(Position)
+		, UV(UV)
+		, Color(Color)
+	{
+	}
+	Vector Position;
+	Vector2D UV;
+	Color Color;
 };

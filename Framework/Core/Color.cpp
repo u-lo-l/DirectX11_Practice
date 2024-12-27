@@ -212,22 +212,22 @@ void Color::ToBgra(byte& r, byte& g, byte& b, byte& a)
 	b = (byte)(B * 255.0f);
 }
 
-Vector Color::ToVector3()
+Vector Color::ToVector3() const
 {
 	return Vector(R, G, B);
 }
 
-Vector4 Color::ToVector4()
+Vector4 Color::ToVector4() const
 {
 	return Vector4(R, G, B, A);
 }
 
-D3DXCOLOR Color::ToDx()
+D3DXCOLOR Color::ToDx() const
 {
 	return D3DXCOLOR(R, G, B, A);
 }
 
-std::wstring Color::ToString()
+std::wstring Color::ToString() const
 {
 	std::wstring temp = L"";
 	temp += L" R:" + std::to_wstring(R);
@@ -238,19 +238,19 @@ std::wstring Color::ToString()
 	return temp;
 }
 
-Color Color::Add(Color left, Color right)
+Color Color::Add(const Color& Left, const Color& Right)
 {
-	return Color(left.R + right.R, left.G + right.G, left.B + right.B, left.A + right.A);
+	return { Left.R + Right.R, Left.G + Right.G, Left.B + Right.B, Left.A + Right.A };
 }
 
-Color Color::Subtract(Color left, Color right)
+Color Color::Subtract(const Color& Left, const Color& Right)
 {
-	return Color(left.R - right.R, left.G - right.G, left.B - right.B, left.A - right.A);
+	return { Left.R - Right.R, Left.G - Right.G, Left.B - Right.B, Left.A - Right.A };
 }
 
-Color Color::Modulate(Color left, Color right)
+Color Color::Modulate(const Color& Left, const Color& Right)
 {
-	return Color(left.R * right.R, left.G * right.G, left.B * right.B, left.A * right.A);
+	return Color(Left.R * Right.R, Left.G * Right.G, Left.B * Right.B, Left.A * Right.A);
 }
 
 Color Color::Scale(Color value, float scale)

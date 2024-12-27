@@ -36,15 +36,15 @@ public:
 	int ToBgra() const;
 	void ToBgra(byte& r, byte& g, byte& b, byte& a);
 
-	Vector ToVector3();
-	Vector4 ToVector4();
-	D3DXCOLOR ToDx();
+	Vector ToVector3() const;
+	Vector4 ToVector4() const;
+	D3DXCOLOR ToDx() const;
 
-	std::wstring ToString();
+	std::wstring ToString() const;
 
-	static Color Add(Color left, Color right);
-	static Color Subtract(Color left, Color right);
-	static Color Modulate(Color left, Color right);
+	static Color Add(const Color& Left, const Color& Right);
+	static Color Subtract(const Color& Left, const Color& Right);
+	static Color Modulate(const Color& Left, const Color& Right);
 	static Color Scale(Color value, float scale);
 	static Color Negate(Color value);
 
