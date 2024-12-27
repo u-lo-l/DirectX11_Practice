@@ -21,7 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{8F
 		..\_Shaders\09_World2.fx = ..\_Shaders\09_World2.fx
 		..\_Shaders\11_Grid.fx = ..\_Shaders\11_Grid.fx
 		..\_Shaders\12_Texture.fx = ..\_Shaders\12_Texture.fx
-		..\_Shaders\12_Texture02.fx = ..\_Shaders\12_Texture02.fx
+		..\_Shaders\13_Texture02.fx = ..\_Shaders\13_Texture02.fx
+		..\_Shaders\14_TextureAddress.fx = ..\_Shaders\14_TextureAddress.fx
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IMGUI", "..\IMGUI\IMGUI.vcxproj", "{9DB376E8-8925-4BCA-911F-24D41D295F2B}"

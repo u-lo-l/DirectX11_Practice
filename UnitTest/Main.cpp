@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/017_Texture02/TextureDemo2.h"
+#include "Execute/018_Texture03/TextureDemo3.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::TextureDemo2);
+	PUSH_MAIN(Sdt::TextureDemo3);
 }
 
 void Main::Destroy()
