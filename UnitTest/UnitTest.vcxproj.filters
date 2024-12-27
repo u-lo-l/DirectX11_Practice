@@ -3,14 +3,16 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Execute\015_Camera\CameraDemo.cpp">
+    <ClCompile Include="Execute\016_Texture\TextureDemo.cpp" />
+    <ClCompile Include="Execute\017_Texture02\TextureDemo2.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="Execute\015_Camera\CameraDemo.h">
+    <ClInclude Include="Execute\016_Texture\TextureDemo.h" />
+    <ClInclude Include="Execute\017_Texture02\TextureDemo2.h">
       <Filter>Execute</Filter>
     </ClInclude>
   </ItemGroup>

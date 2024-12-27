@@ -6,9 +6,9 @@ Color::Color()
 	A = R = G = B = 0.0f;
 }
 
-Color::Color(float value)
+Color::Color(float Value)
 {
-	A = R = G = B = value;
+	A = R = G = B = Value;
 }
 
 Color::Color(float r, float g, float b, float a)
@@ -19,28 +19,28 @@ Color::Color(float r, float g, float b, float a)
 	A = a;
 }
 
-Color::Color(const Vector4& value)
+Color::Color(const Vector4& Value)
 {
-	R = value.X;
-	G = value.Y;
-	B = value.Z;
-	A = value.W;
+	R = Value.X;
+	G = Value.Y;
+	B = Value.Z;
+	A = Value.W;
 }
 
-Color::Color(const Vector& value, float alpha)
+Color::Color(const Vector& Value, float Alpha)
 {
-	R = value.X;
-	G = value.Y;
-	B = value.Z;
-	A = alpha;
+	R = Value.X;
+	G = Value.Y;
+	B = Value.Z;
+	A = Alpha;
 }
 
-Color::Color(UINT rgba)
+Color::Color(UINT Rgba)
 {
-	A = ((rgba >> 24) & 255) / 255.0f;
-	B = ((rgba >> 16) & 255) / 255.0f;
-	G = ((rgba >> 8) & 255) / 255.0f;
-	R = (rgba & 255) / 255.0f;
+	A = ((Rgba >> 24) & 255) / 255.0f;
+	B = ((Rgba >> 16) & 255) / 255.0f;
+	G = ((Rgba >> 8) & 255) / 255.0f;
+	R = (Rgba & 255) / 255.0f;
 }
 
 Color::Color(int rgba)
