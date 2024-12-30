@@ -16,13 +16,21 @@ using namespace std;
 #include <D3DX11tex.h>
 #include <d3dx10math.h>
 #include <d3dcompiler.h>
-#include <d3dx11effect.h>
+
+// #include <d3dx11effect.h>
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dx10.lib")
 #pragma comment(lib, "d3dx11.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
-#pragma comment(lib, "Effects11d.lib")
+
+/* Effect */
+#include "effect/d3dx11effect.h"
+#pragma comment(lib, "Effect/Effects11d.lib")
+
+/* DirectX Tex*/
+#include "DirectXTex/DirectXTex.h"
+#pragma comment(lib, "DirectXTex/DirectXTex.lib")
 
 /* ImGui */
 #include <imgui/imgui.h>
@@ -31,7 +39,6 @@ using namespace std;
 #pragma comment(lib, "imgui/IMGUI.lib")
 
 /* My Own */
-
 #include "Definitions.h"
 #include "Systems/D3D.h"
 #include "Systems/Gui.h"
@@ -41,7 +48,9 @@ using namespace std;
 #include "Viewer/Camera.h"
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
-// #include "Utilties/Math.h"
+#include "Renders/Texture.h"
+#include "Utilites/Path.h"
+#include "Utilites/String.h"
 
 /* SDT_Math*/
 #include "Core/Vector2D.h"

@@ -3,11 +3,12 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/020_TextureLayering/TextureLayering.h"
+#include "Execute/021_LoadTexture/HeightMapDemo.h"
+#include "Execute/021_LoadTexture/LoadTextureDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::TextureLayering);
+	PUSH_MAIN(Sdt::HeightMapDemo);
 }
 
 void Main::Destroy()

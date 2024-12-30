@@ -28,11 +28,13 @@
     <ClCompile Include="Core\Vector.cpp" />
     <ClCompile Include="Core\Vector2D.cpp" />
     <ClCompile Include="Core\Vector4.cpp" />
+    <ClCompile Include="Environment\Terrain.cpp" />
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
+    <ClCompile Include="Renders\Texture.cpp" />
     <ClCompile Include="Systems\D3D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -43,6 +45,8 @@
     <ClCompile Include="Systems\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Utilites\Path.cpp" />
+    <ClCompile Include="Utilites\String.cpp" />
     <ClCompile Include="Viewer\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -56,9 +60,11 @@
     <ClInclude Include="Core\Vector2D.h" />
     <ClInclude Include="Core\Vector4.h" />
     <ClInclude Include="Definitions.h" />
+    <ClInclude Include="Environment\Terrain.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\Shader.h" />
+    <ClInclude Include="Renders\Texture.h" />
     <ClInclude Include="Renders\VertexLayout.h" />
     <ClInclude Include="Systems\D3D.h" />
     <ClInclude Include="Systems\Gui.h" />
@@ -67,6 +73,8 @@
     <ClInclude Include="Systems\Mouse.h" />
     <ClInclude Include="Systems\Timer.h" />
     <ClInclude Include="Systems\Window.h" />
+    <ClInclude Include="Utilites\Path.h" />
+    <ClInclude Include="Utilites\String.h" />
     <ClInclude Include="Viewer\Camera.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
