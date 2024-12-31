@@ -78,11 +78,22 @@ void Texture::LoadTexture()
 		&this->SRV) >= 0);
 }
 
-D3D11_TEXTURE2D_DESC Texture::ReadPixels( const DXGI_FORMAT InFormat, vector<Color> & OutPixels ) const
+D3D11_TEXTURE2D_DESC Texture::ReadPixels(vector<Color>& OutPixels) const
 {
-	ID3D11Texture2D * Texture = nullptr;
-	SRV->GetResource(reinterpret_cast<ID3D11Resource **>(&Texture));
-	return ReadPixels(Texture, InFormat, OutPixels);
+	return this->ReadPixels(DXGI_FORMAT_UNKNOWN, OutPixels);
+}
+
+D3D11_TEXTURE2D_DESC Texture::ReadPixels( DXGI_FORMAT InFormat, vector<Color> & OutPixels ) const
+{
+	ID3D11Texture2D * Texture2D = nullptr;
+	SRV->GetResource(reinterpret_cast<ID3D11Resource **>(&Texture2D));
+	if (InFormat == DXGI_FORMAT_UNKNOWN)
+	{
+		D3D11_TEXTURE2D_DESC Desc;
+		Texture2D->GetDesc(&Desc);
+		InFormat = Desc.Format;
+	}
+	return ReadPixels(Texture2D, InFormat, OutPixels);
 }
 
 D3D11_TEXTURE2D_DESC Texture::ReadPixels( ID3D11Texture2D * InSourceTexture, const DXGI_FORMAT InFormat, vector<Color> & OutPixels ) const

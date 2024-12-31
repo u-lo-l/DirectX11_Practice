@@ -65,6 +65,9 @@ Matrix& Camera::GetViewMatrix()
 	return ViewMat;
 }
 
+/**
+ * @param X ,Y, Z : Angle in degrees
+ */
 void Camera::SetPosition(float X, float Y, float Z)
 {
 	Position = { X, Y, Z };
@@ -84,13 +87,13 @@ const Vector& Camera::GetEulerAngle() const
 
 void Camera::SetRotation(float R, float P, float Y)
 {
-	EulerAngle = { R, P, Y };
+	EulerAngle = { Math::ToRadians(R), Math::ToRadians(P), Math::ToRadians(Y) };
 	SetRotationMat();
 }
 
 void Camera::SetRotation(const Vector& InEuler)
 {
-	EulerAngle = InEuler;
+	EulerAngle = { Math::ToRadians(InEuler.X), Math::ToRadians(InEuler.Y), Math::ToRadians(InEuler.Z) };
 	SetRotationMat();
 }
 

@@ -7,13 +7,13 @@ IExecutable * Window::Main = nullptr;
 WPARAM Window::Run(IExecutable * InMain)
 {
 	Create();
-
 	D3D::Create();
 	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
 	Gui::Create();
 	Keyboard::Create();
 	Sdt::Mouse::Create();
 	Sdt::Timer::Create();
+	Context::Create();
 
 	Main = InMain;
 	Main->Initialize();
@@ -36,15 +36,13 @@ WPARAM Window::Run(IExecutable * InMain)
 		}
 	}
 
-
 	Main->Destroy();
-
+	Context::Destroy();
 	Sdt::Timer::Destroy();
 	Sdt::Mouse::Destroy();
 	Keyboard::Destroy();
 	Gui::Destroy();
 	D3D::Destroy();
-
 	Destroy();
 
 	return msg.wParam;
@@ -128,12 +126,16 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 	{
 		if (Main != nullptr)
 		{
-			const float width = LOWORD(InlParam);
-			const float height = HIWORD(InlParam);
+			const float Width  = LOWORD(InlParam);
+			const float Height = HIWORD(InlParam);
 
 			if (D3D::Get() != nullptr)
 			{
-				D3D::Get()->ResizeScreen(width, height);
+				D3D::Get()->ResizeScreen(Width, Height);
+			}
+			if (Context::Get() != nullptr)
+			{
+				Context::Get()->ResizeScreen();
 			}
 		}
 	}
@@ -143,7 +145,6 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 		if (InwParam == VK_ESCAPE)
 		{
 			PostQuitMessage(0);
-
 			return 0;
 		}
 	}
@@ -151,7 +152,6 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 	if (InMessage == WM_CLOSE || InMessage == WM_DESTROY)
 	{
 		PostQuitMessage(0);
-
 		return 0;
 	}
 
@@ -161,15 +161,15 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 void Window::MainRender()
 {
 	Gui::Tick();
-	Sdt::Timer::Get()->Tick();
-	Sdt::Mouse::Get()->Tick();
-	Main->Tick();
-	{
-		D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
+	Sdt::Timer::Get()->Tick();	// DeltaTime 계산
+	Sdt::Mouse::Get()->Tick();	// Mouse변화량 계산
+	Context::Get()->Tick();		//
+	Main->Tick();				// Main에 Push된 IExecutable들 실행
 
-		Main->Render();
-
-		Gui::Render();
-		D3D::Get()->Present();
-	}
+	//말은 클리어지만 배경 색 칠하는거다.
+	D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
+	Context::Get()->Render();
+	Main->Render();
+	Gui::Get()->Render();
+	D3D::Get()->Present();
 }

@@ -11,9 +11,6 @@
     <ClCompile Include="Renders\Shader.cpp">
       <Filter>Renders</Filter>
     </ClCompile>
-    <ClCompile Include="Utilties\Math.cpp">
-      <Filter>Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Systems\Gui.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
@@ -59,6 +56,18 @@
     <ClCompile Include="Core\Vector4.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Utilites\Path.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilites\String.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Renders\Texture.cpp">
+      <Filter>Renders</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment\Terrain.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
@@ -77,9 +86,6 @@
     </ClInclude>
     <ClInclude Include="Renders\VertexLayout.h">
       <Filter>Renders</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilties\Math.h">
-      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Systems\Gui.h">
       <Filter>Systems</Filter>
@@ -126,6 +132,18 @@
     <ClInclude Include="Core\Vector4.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Utilites\Path.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilites\String.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Renders\Texture.h">
+      <Filter>Renders</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment\Terrain.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Systems">
@@ -142,6 +160,9 @@
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{9f072ba8-1117-476c-84fa-8317da71ea4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Environment">
+      <UniqueIdentifier>{540bb914-bbae-4f65-92b0-45ff958a946f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

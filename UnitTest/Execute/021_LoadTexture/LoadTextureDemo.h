@@ -22,7 +22,8 @@ namespace Sdt
 
 	private:
 		Shader* shader = nullptr;
-
+		UINT Pass = 0;
+		
 		UINT VertexCount = 4;
 		InnerVertexType* Vertices = nullptr;
 		ID3D11Buffer* VertexBuffer = nullptr;

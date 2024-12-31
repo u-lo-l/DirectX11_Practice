@@ -49,6 +49,26 @@ LRESULT Gui::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlP
 	return ImGui_ImplWin32_WndProcHandler(InHandle, InMessage, InwParam, InlParam);
 }
 
+void Gui::RenderText( float x, float y, float r, float g, float b, const string & context )
+{
+	GuiText TempText;
+	TempText.Position = {x, y};
+	TempText.Color = {r, g, b, 1.0f};
+	TempText.Content = context;
+
+	Contents.push_back(TempText);
+}
+
+void Gui::RenderText( Vector2D position, Color color, const string & context )
+{
+	GuiText TempText;
+	TempText.Position = position;
+	TempText.Color = color;
+	TempText.Content = context;
+
+	Contents.push_back(TempText);
+}
+
 void Gui::Tick()
 {
 	// 새로운 프레임이 시작되었다고 ImGui에 알려줌
@@ -80,6 +100,14 @@ void Gui::Render()
 		ImGuiWindowFlags_NoBringToFrontOnFocus |
 		ImGuiWindowFlags_NoNavFocus
 	);
+
+	for (GuiText content : Contents)
+	{
+		ImVec2 Position = {content.Position.X, content.Position.Y};
+		ImColor Color = {content.Color.R, content.Color.G, content.Color.B, content.Color.A};
+		ImGui::GetWindowDrawList()->AddText(Position, Color, content.Content.c_str());
+	}
+	Contents.clear();
 
 	ImGui::End();
 

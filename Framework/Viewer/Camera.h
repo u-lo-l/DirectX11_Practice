@@ -14,7 +14,7 @@ public:
 	void SetPosition(float X, float Y, float Z);
 	void SetPosition(const Vector & Vec);
 
-	auto GetEulerAngle() const -> const Vector&;
+	const Vector & GetEulerAngle() const;
 	void SetRotation(float R, float P, float Y);
 	void SetRotation(const Vector & InEuler);
 
@@ -31,7 +31,7 @@ private :
 	Matrix ViewMat;
 	Matrix RotationMat;
 	float MoveSpeed = 20.f;
-	float RotationSpeed = 2.f;
+	float RotationSpeed = 3.f;
 
 private:
 	Vector Position = {0.f, 0.f, 0.f};

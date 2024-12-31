@@ -77,7 +77,7 @@ private:
 	///  스크린 공간 좌표를 뷰포트(ViewPort) 내의 픽셀 좌표로 변환하는 과정이 수행된다.
 	///  따라서 이 단계에서 ViewPort 설정이 수행된다.
 	/// </remarks>
-	void CreateViewport();
+	// void CreateViewport();
 
 public:
 	ID3D11Device* GetDevice() const { return Device; }
@@ -97,6 +97,6 @@ private:
 	// GPU 명령 즉시 실행 컨텍스트
 	ID3D11DeviceContext * DeviceContext;
 	ID3D11RenderTargetView * RenderTargetView;
-	D3D11_VIEWPORT * Viewport;
+	// D3D11_VIEWPORT * Viewport;
 };
 

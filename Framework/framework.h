@@ -49,8 +49,10 @@ using namespace std;
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
 #include "Renders/Texture.h"
+#include "Renders/Context.h"
 #include "Utilites/Path.h"
 #include "Utilites/String.h"
+#include "Environment/Terrain.h"
 
 /* SDT_Math*/
 #include "Core/Vector2D.h"

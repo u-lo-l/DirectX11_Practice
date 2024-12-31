@@ -1,5 +1,5 @@
 #pragma once
-
+#include <immintrin.h>
 class Vector2D;
 class Vector;
 class Matrix;

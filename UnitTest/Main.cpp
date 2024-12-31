@@ -3,12 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/021_LoadTexture/HeightMapDemo.h"
-#include "Execute/021_LoadTexture/LoadTextureDemo.h"
+#include "Execute/022_HeightMap/TerrainDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::HeightMapDemo);
+	PUSH_MAIN(Sdt::TerrainDemo);
 }
 
 void Main::Destroy()
@@ -52,9 +51,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	D3D::SetDesc(desc);
 
-	Main* main = new Main();
+	// ReSharper disable once CppUseAuto
+	Main * main = new Main();
 	const WPARAM wParam = Window::Run(main);
 	SAFE_DELETE(main)
-
 	return static_cast<int>(wParam);
 }

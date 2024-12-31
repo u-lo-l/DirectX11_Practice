@@ -2,7 +2,6 @@
 #include "Vector.h"
 
 //////////////////////////////////////////////////////////////////////////
-
 const Vector Vector::Zero = Vector(0.0f, 0.0f, 0.0f);
 const Vector Vector::One = Vector(1.0f, 1.0f, 1.0f);
 
@@ -16,12 +15,11 @@ const Vector Vector::Right = Vector(1.0f, 0.0f, 0.0f);
 const Vector Vector::Left = Vector(-1.0f, 0.0f, 0.0f);
 const Vector Vector::Forward = Vector(0.0f, 0.0f, 1.0f);
 const Vector Vector::Backward = Vector(0.0f, 0.0f, -1.0f);
-
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╩Щ╪╨юз
+///@brief Л┐²Л└╠Л·░
 //////////////////////////////////////////////////////////////////////////
 Vector::Vector(void)
 {
@@ -33,7 +31,7 @@ Vector::Vector(void)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╩Щ╪╨юз
+///@brief Л┐²Л└╠Л·░
 ///@param X = Y = Z = value
 //////////////////////////////////////////////////////////////////////////
 Vector::Vector(float value)
@@ -44,7 +42,7 @@ Vector::Vector(float value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╩Щ╪╨юз
+///@brief Л┐²Л└╠Л·░
 ///@param x : X
 ///@param y : Y
 ///@param z : Z
@@ -60,7 +58,7 @@ Vector::Vector(float x, float y, float z)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@return ╟А╟З ╨╓ем
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator-(void)
 {
@@ -76,8 +74,8 @@ Vector Vector::operator-(void)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ==
-///@param value2 : ╨╓ем
-///@return ╟А╟З
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪
 //////////////////////////////////////////////////////////////////////////
 bool Vector::operator==(const Vector& value2) const
 {
@@ -91,8 +89,8 @@ bool Vector::operator==(const Vector& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief !=
-///@param value2 : ╨╓ем
-///@return ╟А╟З
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪
 //////////////////////////////////////////////////////////////////////////
 bool Vector::operator!=(const Vector& value2) const
 {
@@ -106,8 +104,8 @@ bool Vector::operator!=(const Vector& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +
-///@param value2 : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator+(const Vector& value2) const
 {
@@ -123,8 +121,8 @@ Vector Vector::operator+(const Vector& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@param value2 : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator-(const Vector& value2) const
 {
@@ -140,8 +138,8 @@ Vector Vector::operator-(const Vector& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param value2 : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator*(const Vector& value2) const
 {
@@ -157,8 +155,8 @@ Vector Vector::operator*(const Vector& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param scaleFactor : ╟╙
-///@return ╟А╟З ╨╓ем
+///@param scaleFactor : Й╟▓
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator*(const float& scaleFactor) const
 {
@@ -174,8 +172,8 @@ Vector Vector::operator*(const float& scaleFactor) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /
-///@param value2 : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator/(const Vector& value2) const
 {
@@ -191,8 +189,8 @@ Vector Vector::operator/(const Vector& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /
-///@param divider : ╟╙
-///@return ╟А╟З ╨╓ем
+///@param divider : Й╟▓
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 Vector Vector::operator/(const float& divider) const
 {
@@ -210,8 +208,8 @@ Vector Vector::operator/(const float& divider) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +=
-///@param value2 : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 void Vector::operator+=(const Vector& value2)
 {
@@ -222,8 +220,8 @@ void Vector::operator+=(const Vector& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -=
-///@param value2 : ╨╓ем 
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟ 
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 void Vector::operator-=(const Vector& value2)
 {
@@ -234,8 +232,8 @@ void Vector::operator-=(const Vector& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *=
-///@param value2 : ╨╓ем 
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟ 
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 void Vector::operator*=(const Vector& value2)
 {
@@ -246,8 +244,8 @@ void Vector::operator*=(const Vector& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param scaleFactor : ╟╙
-///@return ╟А╟З ╨╓ем
+///@param scaleFactor : Й╟▓
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 void Vector::operator*=(const float& scaleFactor)
 {
@@ -258,8 +256,8 @@ void Vector::operator*=(const float& scaleFactor)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param value2 : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@param value2 : К╡║М└╟
+///@return Й╡╟ЙЁ╪ К╡║М└╟
 //////////////////////////////////////////////////////////////////////////
 void Vector::operator/=(const Vector& value2)
 {
@@ -270,8 +268,8 @@ void Vector::operator/=(const Vector& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param divider : ╟╙
-///@return ╟А╟З ╨╓ем
+///@param divider : О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
 void Vector::operator/=(const float& divider)
 {
@@ -281,10 +279,10 @@ void Vector::operator/=(const float& divider)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╧╝юз©╜╥н ╨╞х╞
-///@return ╧╝юз©╜
+///@brief О©╫О©╫О©╫з©О©╫О©╫О©╫ О©╫О©╫х╞
+///@return О©╫О©╫О©╫з©О©╫
 //////////////////////////////////////////////////////////////////////////
-std::wstring Vector::ToString()
+std::wstring Vector::ToString() const
 {
 	std::wstring temp = L"";
 	temp += L"X:" + std::to_wstring(X);
@@ -297,10 +295,10 @@ std::wstring Vector::ToString()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief D3DXVECTOR3╥н ╨╞х╞
-///@return D3DX ╨╓ем 
+///@brief D3DXVECTOR3О©╫О©╫ О©╫О©╫х╞
+///@return D3DX О©╫О©╫О©╫О©╫ 
 //////////////////////////////////////////////////////////////////////////
-D3DXVECTOR3 Vector::ToDX()
+D3DXVECTOR3 Vector::ToDX() const
 {
 	D3DXVECTOR3 vector3;
 	vector3.x = X;
@@ -313,10 +311,10 @@ D3DXVECTOR3 Vector::ToDX()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief е╘╠Б ╟Х╩Й
-///@return ╟А╟З ╟╙
+///@brief е╘О©╫О©╫ О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-float Vector::Length()
+float Vector::Length() const
 {
 	float x = X * X + Y * Y + Z * Z;
 
@@ -326,10 +324,10 @@ float Vector::Length()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief а╕╟Жю╦╥н е╘╠Б ╟Х╩Й
-///@return ╟А╟З ╟╙
+///@brief О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ е╘О©╫О©╫ О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-float Vector::LengthSquared()
+float Vector::LengthSquared() const
 {
 	return X * X + Y * Y + Z * Z;
 }
@@ -337,7 +335,7 @@ float Vector::LengthSquared()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief а╓╠тх╜
+///@brief О©╫О©╫О©╫О©╫х╜
 //////////////////////////////////////////////////////////////////////////
 void Vector::Normalize()
 {
@@ -349,7 +347,7 @@ void Vector::Normalize()
 	Z *= single;
 }
 
-Vector Vector::Add(Vector value1, Vector value2)
+Vector Vector::Add( const Vector & value1, const Vector & value2)
 {
 	Vector vector3;
 	vector3.X = value1.X + value2.X;
@@ -359,7 +357,7 @@ Vector Vector::Add(Vector value1, Vector value2)
 	return vector3;
 }
 
-Vector Vector::Divide(Vector value1, Vector value2)
+Vector Vector::Divide( const Vector & value1, const Vector & value2)
 {
 	Vector vector3;
 	vector3.X = value1.X / value2.X;
@@ -369,7 +367,7 @@ Vector Vector::Divide(Vector value1, Vector value2)
 	return vector3;
 }
 
-Vector Vector::Divide(Vector value1, float value2)
+Vector Vector::Divide( const Vector & value1, float value2)
 {
 	float single = 1.0f / value2;
 
@@ -381,7 +379,7 @@ Vector Vector::Divide(Vector value1, float value2)
 	return vector3;
 }
 
-Vector Vector::Multiply(Vector value1, Vector value2)
+Vector Vector::Multiply( const Vector & value1, const Vector & value2)
 {
 	Vector vector3;
 	vector3.X = value1.X * value2.X;
@@ -391,7 +389,7 @@ Vector Vector::Multiply(Vector value1, Vector value2)
 	return vector3;
 }
 
-Vector Vector::Multiply(Vector value1, float scaleFactor)
+Vector Vector::Multiply( const Vector & value1, float scaleFactor)
 {
 	Vector vector3;
 	vector3.X = value1.X * scaleFactor;
@@ -401,7 +399,7 @@ Vector Vector::Multiply(Vector value1, float scaleFactor)
 	return vector3;
 }
 
-Vector Vector::Subtract(Vector value1, Vector value2)
+Vector Vector::Subtract( const Vector & value1, const Vector & value2)
 {
 	Vector vector3;
 	vector3.X = value1.X - value2.X;
@@ -411,7 +409,7 @@ Vector Vector::Subtract(Vector value1, Vector value2)
 	return vector3;
 }
 
-Vector Vector::Negative(Vector value)
+Vector Vector::Negative( const Vector & value)
 {
 	Vector vector3;
 	vector3.X = -value.X;
@@ -421,7 +419,7 @@ Vector Vector::Negative(Vector value)
 	return vector3;
 }
 
-Vector Vector::Barycentric(Vector value1, Vector value2, Vector value3, float amount1, float amount2)
+Vector Vector::Barycentric( const Vector & value1, const Vector & value2, const Vector & value3, float amount1, float amount2)
 {
 	Vector vector3;
 	vector3.X = value1.X + amount1 * (value2.X - value1.X) + amount2 * (value3.X - value1.X);
@@ -434,12 +432,12 @@ Vector Vector::Barycentric(Vector value1, Vector value2, Vector value3, float am
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╟е╦╝╟Х╩Й
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@return ╟А╟З ╟╙
+///@brief О©╫е╦О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@return О©╫О©╫О©╫ О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-float Vector::Distance(Vector value1, Vector value2)
+float Vector::Distance( const Vector & value1, const Vector & value2)
 {
 	float x = value1.X - value2.X;
 	float y = value1.Y - value2.Y;
@@ -452,12 +450,12 @@ float Vector::Distance(Vector value1, Vector value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief а╕╟Жю╦╥н ╟е╦╝╟Х╩Й
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@return ╟А╟З ╟╙
+///@brief О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫е╦О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@return О©╫О©╫О©╫ О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-float Vector::DistanceSquared(Vector value1, Vector value2)
+float Vector::DistanceSquared( const Vector & value1, const Vector & value2)
 {
 	float x = value1.X - value2.X;
 	float y = value1.Y - value2.Y;
@@ -469,12 +467,12 @@ float Vector::DistanceSquared(Vector value1, Vector value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Ё╩юШ ╟Х╩Й
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@return ╟А╟З ╟╙
+///@brief О©╫О©╫О©╫О©╫ О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@return О©╫О©╫О©╫ О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-float Vector::Dot(Vector value1, Vector value2)
+float Vector::Dot( const Vector & value1, const Vector & value2)
 {
 	return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
 }
@@ -482,11 +480,11 @@ float Vector::Dot(Vector value1, Vector value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief а╓╠тх╜
-///@param value : ╨╓ем
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫О©╫О©╫х╜
+///@param value : О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Normalize(Vector value)
+Vector Vector::Normalize( const Vector & value)
 {
 	float x = value.X * value.X + value.Y * value.Y + value.Z * value.Z;
 	float single = 1.0f / sqrtf(x);
@@ -502,12 +500,12 @@ Vector Vector::Normalize(Vector value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ©эюШ ╟Х╩Й
-///@param vector1 : ╨╓ем1
-///@param vector2 : ╨╓ем2
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫О©╫О©╫ О©╫О©╫О©╫
+///@param vector1 : О©╫О©╫О©╫О©╫1
+///@param vector2 : О©╫О©╫О©╫О©╫2
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Cross(Vector vector1, Vector vector2)
+Vector Vector::Cross( const Vector & vector1, const Vector & vector2)
 {
 	Vector vector3;
 	vector3.X = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
@@ -520,12 +518,12 @@ Vector Vector::Cross(Vector vector1, Vector vector2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╧щ╩Г╟╙
-///@param vector : ╨╓ем
-///@param normal : ЁК╦ж╨╓ем
-///@return ╟А╟З ╨╓ем
+///@brief О©╫щ╩Г╟╙
+///@param vector : О©╫О©╫О©╫О©╫
+///@param normal : О©╫О©╫ж╨О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Reflect(Vector vector, Vector normal)
+Vector Vector::Reflect( const Vector & vector, const Vector & normal)
 {
 	float x = vector.X * normal.X + vector.Y * normal.Y + vector.Z * normal.Z;
 
@@ -539,12 +537,12 @@ Vector Vector::Reflect(Vector vector, Vector normal)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╣н ╨╓ем аъ юшю╨ ╨╓ем
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Min(Vector value1, Vector value2)
+Vector Vector::Min( const Vector & value1, const Vector & value2)
 {
 	Vector vector3;
 	vector3.X = value1.X < value2.X ? value1.X : value2.X;
@@ -557,12 +555,12 @@ Vector Vector::Min(Vector value1, Vector value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╣н ╨╓ем аъ е╚ ╨╓ем
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ е╚ О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Max(Vector value1, Vector value2)
+Vector Vector::Max( const Vector & value1, const Vector & value2)
 {
 	Vector vector3;
 	vector3.X = value1.X > value2.X ? value1.X : value2.X;
@@ -575,12 +573,12 @@ Vector Vector::Max(Vector value1, Vector value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief гь╢Г ╨╓ем╟║ цж╪р╟╙╨╦╢ы юшю╩ ╟Ф©Л цж╪р╟╙, ╧щ╢Кюг ╟Ф©Л цж╢К╟╙
-///@param value1 : ╨╓ем
-///@param min : цж╪р╟╙ ╨╓ем
-///@param max : цж╢К╟╙ ╨╓ем
+///@brief О©╫ь╢О©╫ О©╫О©╫О©╫м╟О©╫ О©╫ж╪р╟О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫ж╪р╟О©╫, О©╫щ╢О©╫О©╫О©╫ О©╫О©╫О©╫ О©╫ж╢К╟╙
+///@param value1 : О©╫О©╫О©╫О©╫
+///@param min : О©╫ж╪р╟О©╫ О©╫О©╫О©╫О©╫
+///@param max : О©╫ж╢К╟╙ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Clamp(Vector value1, Vector min, Vector max)
+Vector Vector::Clamp( const Vector & value1, const Vector & min, const Vector & max)
 {
 	float x = value1.X;
 	x = (x > max.X ? max.X : x);
@@ -605,13 +603,13 @@ Vector Vector::Clamp(Vector value1, Vector min, Vector max)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╣н ╨╓емюг ╪╠гЭ╨╦╟ё
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@param amount : ╨╦╟ё╟╙
-///@return ╟А╟З╨╓ем
+///@brief О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@param amount : О©╫О©╫О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Lerp(Vector value1, Vector value2, float amount)
+Vector Vector::Lerp( const Vector & value1, const Vector & value2, float amount)
 {
 	Vector vector3;
 	vector3.X = value1.X + (value2.X - value1.X) * amount;
@@ -624,13 +622,13 @@ Vector Vector::Lerp(Vector value1, Vector value2, float amount)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╣н ╨╓ем╦╕ ╨н╣Е╥╢╟т ╨╦╟ё
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@param amount : ╨╦╟ё╟╙
-///@return ╟А╟З╨╓ем
+///@brief О©╫О©╫ О©╫О©╫О©╫м╦О©╫ О©╫н╣Е╥╢О©╫О©╫ О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@param amount : О©╫О©╫О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::SmoothStep(Vector value1, Vector value2, float amount)
+Vector Vector::SmoothStep( const Vector & value1, const Vector & value2, float amount)
 {
 	float single;
 	if (amount > 1.0f)
@@ -653,14 +651,14 @@ Vector Vector::SmoothStep(Vector value1, Vector value2, float amount)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief д╚ф╝╧д-╥р ╨╦╟ё
-///@param value1 : ╨╓ем1
-///@param value2 : ╨╓ем2
-///@param value3 : ╨╓ем3
-///@param value4 : ╨╓ем4
-///@return ╟А╟З ╨╓ем
+///@brief д╚ф╝О©╫О©╫-О©╫О©╫ О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@param value3 : О©╫О©╫О©╫О©╫3
+///@param value4 : О©╫О©╫О©╫О©╫4
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::CatmullRom(Vector value1, Vector value2, Vector value3, Vector value4, float amount)
+Vector Vector::CatmullRom( const Vector & value1, const Vector & value2, const Vector & value3, const Vector & value4, float amount)
 {
 	float single = amount * amount;
 	float single1 = amount * single;
@@ -676,15 +674,15 @@ Vector Vector::CatmullRom(Vector value1, Vector value2, Vector value3, Vector va
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ©║╦ё╧лф╝ ╨╦╟ё
-///@param value1 : ╨╓ем1
-///@param tagent1 : ╨╓ем1юг е╨а╗ф╝ ╨╓ем
-///@param value2 : ╨╓ем2
-///@param tagent2 : ╨╓ем2 е╨а╗ф╝ ╨╓ем
-///@param amount : ╨╦╟ё╟╙
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫О©╫О©╫О©╫О©╫ф╝ О©╫О©╫О©╫О©╫
+///@param value1 : О©╫О©╫О©╫О©╫1
+///@param tagent1 : О©╫О©╫О©╫О©╫1О©╫О©╫ е╨О©╫О©╫ф╝ О©╫О©╫О©╫О©╫
+///@param value2 : О©╫О©╫О©╫О©╫2
+///@param tagent2 : О©╫О©╫О©╫О©╫2 е╨О©╫О©╫ф╝ О©╫О©╫О©╫О©╫
+///@param amount : О©╫О©╫О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Hermite(Vector value1, Vector tangent1, Vector value2, Vector tangent2, float amount)
+Vector Vector::Hermite( const Vector & value1, const Vector & tangent1, const Vector & value2, const Vector & tangent2, float amount)
 {
 	float single = amount * amount;
 	float single1 = amount * single;
@@ -704,12 +702,12 @@ Vector Vector::Hermite(Vector value1, Vector tangent1, Vector value2, Vector tan
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╦еф╝╦╞╫╨©║ юггя ╨╓ем ╨╞х╞
-///@param position : ╨╓ем
-///@param matrix : ╦еф╝╦╞╫╨
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫ф╝О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫х╞
+///@param position : О©╫О©╫О©╫О©╫
+///@param matrix : О©╫О©╫ф╝О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Transform(Vector position, Matrix matrix)
+Vector Vector::Transform( const Vector & position, const Matrix & matrix)
 {
 	float x = position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41;
 	float single = position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42;
@@ -726,12 +724,12 @@ Vector Vector::Transform(Vector position, Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief дУем╢о©б©║ юггя ╨╓ем ╨╞х╞
-///@param value : ╨╓ем
-///@param rotation : дУем╢о©б
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫О©╫м╢о©б©О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫х╞
+///@param value : О©╫О©╫О©╫О©╫
+///@param rotation : О©╫О©╫О©╫м╢о©О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::Transform(Vector value, Quaternion rotation)
+Vector Vector::Transform( const Vector & value, const Quaternion & rotation)
 {
 	float x = rotation.X + rotation.X;
 	float y = rotation.Y + rotation.Y;
@@ -763,12 +761,12 @@ Vector Vector::Transform(Vector value, Quaternion rotation)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╦еф╝╦╞╫╨©║ юггя ЁК╦ж╨╓ем ╨╞х╞
-///@param normal : ╧Щ╪╠ ╨╓ем
-///@param matrix : ╦еф╝╦╞╫╨
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫ф╝О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫ж╨О©╫О©╫О©╫ О©╫О©╫х╞
+///@param normal : О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
+///@param matrix : О©╫О©╫ф╝О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::TransformNormal(Vector normal, Matrix matrix)
+Vector Vector::TransformNormal( const Vector & normal, const Matrix & matrix)
 {
 	float x = normal.X * matrix.M11 + normal.Y * matrix.M21 + normal.Z * matrix.M31;
 	float single = normal.X * matrix.M12 + normal.Y * matrix.M22 + normal.Z * matrix.M32;
@@ -785,17 +783,17 @@ Vector Vector::TransformNormal(Vector normal, Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ╦еф╝╦╞╫╨©║ юггя ю╖д║(а╓а║)╨╓ем ╨╞х╞
-///@param position : ю╖д║ ╨╓ем
-///@param matrix : ╦еф╝╦╞╫╨
-///@return ╟А╟З ╨╓ем
+///@brief О©╫О©╫ф╝О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫д║(О©╫О©╫О©╫О©╫)О©╫О©╫О©╫О©╫ О©╫О©╫х╞
+///@param position : О©╫О©╫д║ О©╫О©╫О©╫О©╫
+///@param matrix : О©╫О©╫ф╝О©╫О©╫О©╫О©╫
+///@return О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 //////////////////////////////////////////////////////////////////////////
-Vector Vector::TransformCoord(Vector position, Matrix matrix)
+Vector Vector::TransformCoord( const Vector & position, const Matrix & matrix)
 {
 	float single1 = (matrix.M11 * position.X) + (matrix.M21 * position.Y) + (matrix.M31 * position.Z) + matrix.M41;
 	float single2 = (matrix.M12 * position.X) + (matrix.M22 * position.Y) + (matrix.M32 * position.Z) + matrix.M42;
 	float single3 = (matrix.M13 * position.X) + (matrix.M23 * position.Y) + (matrix.M33 * position.Z) + matrix.M43;
 	float single4 = (matrix.M14 * position.X) + (matrix.M24 * position.Y) + (matrix.M34 * position.Z) + matrix.M44;
 
-	return Vector((single1 / single4), (single2 / single4), (single3 / single4));
+	return {(single1 / single4), (single2 / single4), (single3 / single4)};
 }

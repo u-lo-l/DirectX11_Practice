@@ -57,20 +57,16 @@ void D3D::ResizeScreen(float InWidth, float InHeight)
 	CHECK(Hr >= 0);
 
 	CreateRTV();
-	CreateViewport();
 }
 
 D3D::D3D()
 {
 	CreateDeviceAndImmediateContext();
 	CreateRTV();
-	CreateViewport();
 }
 
 D3D::~D3D()
 {
-	SAFE_DELETE(Viewport);
-
 	SAFE_RELEASE(RenderTargetView);
 	SAFE_RELEASE(DeviceContext);
 	SAFE_RELEASE(Device);
@@ -195,17 +191,4 @@ void D3D::CreateRTV()
 
 	// pDepthStencilView에 nullptr을 전달한다는 것은 BackBuffer를 RenderTarget으로 쓰겠다는 의미.
 	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
-}
-
-void D3D::CreateViewport()
-{
-	this->Viewport = new D3D11_VIEWPORT();
-	this->Viewport->TopLeftX = 0;
-	this->Viewport->TopLeftY = 0;
-	this->Viewport->Width = D3D::D3dDesc.Width;
-	this->Viewport->Height = D3D::D3dDesc.Height;
-	this->Viewport->MinDepth = 0;
-	this->Viewport->MaxDepth = 0;
-
-	DeviceContext->RSSetViewports(1, this->Viewport);
 }

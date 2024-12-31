@@ -2,13 +2,12 @@
 #include "String.h"
 
 #include <codecvt>
-#include <locale.h>
 #include <cvt/wstring>
 
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ���ڿ� �ڸ���
-///@param orgin : ���� ���ڿ�
+///@param InOrigin : ���� ���ڿ�
 ///@param InToken : �ڸ� ������ �Ǵ� ���ڿ�
 ///@return �Ϸ�� ���ڿ� �迭
 //////////////////////////////////////////////////////////////////////////
@@ -16,34 +15,34 @@ void String::SplitString(vector<string>* InResult, string InOrigin, string InTok
 {
 	InResult->clear();
 
-	int cutAt = 0; //�ڸ� ��ġs
-	while ((cutAt = (int)InOrigin.find_first_of(InToken)) != InOrigin.npos)
+	int CutAt; //�ڸ� ��ġs
+	while ((CutAt = static_cast<int>(InOrigin.find_first_of(InToken))) != InOrigin.npos)
 	{
-		if (cutAt > 0) //�ڸ��� ��ġ�� 0����ũ��
-			InResult->push_back(InOrigin.substr(0, cutAt));
+		if (CutAt > 0) //�ڸ��� ��ġ�� 0����ũ��
+			InResult->push_back(InOrigin.substr(0, CutAt));
 
-		InOrigin = InOrigin.substr(cutAt + 1);
+		InOrigin = InOrigin.substr(CutAt + 1);
 	}
 
 	if (InOrigin.length() > 0) //�ڸ��� ���� ���� �ִٸ�
-		InResult->push_back(InOrigin.substr(0, cutAt));
+		InResult->push_back(InOrigin.substr(0, CutAt));
 }
 
 void String::SplitString(vector<wstring>* InResult, wstring InOrigin, wstring InToken)
 {
 	InResult->clear();
 
-	int cutAt = 0; //�ڸ� ��ġs
-	while ((cutAt = (int)InOrigin.find_first_of(InToken)) != InOrigin.npos)
+	int CutAt; //�ڸ� ��ġs
+	while ((CutAt = static_cast<int>(InOrigin.find_first_of(InToken))) != InOrigin.npos)
 	{
-		if (cutAt > 0) //�ڸ��� ��ġ�� 0����ũ��
-			InResult->push_back(InOrigin.substr(0, cutAt));
+		if (CutAt > 0) //�ڸ��� ��ġ�� 0����ũ��
+			InResult->push_back(InOrigin.substr(0, CutAt));
 
-		InOrigin = InOrigin.substr(cutAt + 1);
+		InOrigin = InOrigin.substr(CutAt + 1);
 	}
 
 	if (InOrigin.length() > 0) //�ڸ��� ���� ���� �ִٸ�
-		InResult->push_back(InOrigin.substr(0, cutAt));
+		InResult->push_back(InOrigin.substr(0, CutAt));
 }
 
 
@@ -139,27 +138,28 @@ wstring String::ToWString(string value)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief wstring���� string������ ����
-///@param value : ��ȯ�� ���ڿ�
+///@param InValue : ��ȯ�� ���ڿ�
 ///@return ��ȯ �Ϸ� ���ڿ�
 //////////////////////////////////////////////////////////////////////////
-string String::ToString(const wstring & Value)
+string String::ToString(const wstring & InValue)
 {
-	wstring_convert<codecvt_utf8_utf16<wchar_t>> Converter;
+	wstring_convert<codecvt_utf8<wchar_t>> Converter;
 
-	return Converter.to_bytes(Value);
+	return Converter.to_bytes(InValue);
 }
-string String::Format(const string format, ...)
+
+string String::Format(const string InFormat, ...)
 {
 	va_list args;
 
-	va_start(args, format);
-	size_t len = vsnprintf(nullptr, 0, format.c_str(), args);
+	va_start(args, InFormat);
+	size_t Len = vsnprintf(nullptr, 0, InFormat.c_str(), args);
 	va_end(args);
 
-	vector<char> vec(len + 1);
+	vector<char> vec(Len + 1);
 
-	va_start(args, format);
-	vsnprintf(&vec[0], len + 1, format.c_str(), args);
+	va_start(args, InFormat);
+	vsnprintf(&vec[0], Len + 1, InFormat.c_str(), args);
 	va_end(args);
 
 	return &vec[0];
