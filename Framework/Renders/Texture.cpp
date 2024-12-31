@@ -78,12 +78,12 @@ void Texture::LoadTexture()
 		&this->SRV) >= 0);
 }
 
-D3D11_TEXTURE2D_DESC Texture::ReadPixels(vector<Color>& OutPixels) const
+D3D11_TEXTURE2D_DESC Texture::ReadPixels(vector<Color>& OutPixels)
 {
 	return this->ReadPixels(DXGI_FORMAT_UNKNOWN, OutPixels);
 }
 
-D3D11_TEXTURE2D_DESC Texture::ReadPixels( DXGI_FORMAT InFormat, vector<Color> & OutPixels ) const
+D3D11_TEXTURE2D_DESC Texture::ReadPixels( DXGI_FORMAT InFormat, vector<Color> & OutPixels )
 {
 	ID3D11Texture2D * Texture2D = nullptr;
 	SRV->GetResource(reinterpret_cast<ID3D11Resource **>(&Texture2D));
@@ -96,7 +96,7 @@ D3D11_TEXTURE2D_DESC Texture::ReadPixels( DXGI_FORMAT InFormat, vector<Color> & 
 	return ReadPixels(Texture2D, InFormat, OutPixels);
 }
 
-D3D11_TEXTURE2D_DESC Texture::ReadPixels( ID3D11Texture2D * InSourceTexture, const DXGI_FORMAT InFormat, vector<Color> & OutPixels ) const
+D3D11_TEXTURE2D_DESC Texture::ReadPixels( ID3D11Texture2D * InSourceTexture, const DXGI_FORMAT InFormat, vector<Color> & OutPixels )
 {
 	D3D11_TEXTURE2D_DESC SourceDesc = {};
 	InSourceTexture->GetDesc(&SourceDesc);
@@ -115,7 +115,7 @@ D3D11_TEXTURE2D_DESC Texture::ReadPixels( ID3D11Texture2D * InSourceTexture, con
 	ID3D11Texture2D * Texture;
 	CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, nullptr, &Texture) >= 0);
 	CHECK(D3DX11LoadTextureFromTexture(D3D::Get()->GetDeviceContext(), InSourceTexture, nullptr, Texture) >= 0);
-
+	
 	UINT * Colors = new UINT[TextureDesc.Width * TextureDesc.Height];
 	D3D11_MAPPED_SUBRESOURCE SubResource;
 	CHECK(D3D::Get()->GetDeviceContext()->Map(Texture, 0, D3D11_MAP_READ, 0, &SubResource) >= 0);

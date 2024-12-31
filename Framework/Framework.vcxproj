@@ -32,6 +32,7 @@
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
     <ClCompile Include="Renders\Texture.cpp" />
@@ -62,6 +63,7 @@
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Environment\Terrain.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="Renders\Buffers.h" />
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\Shader.h" />
     <ClInclude Include="Renders\Texture.h" />

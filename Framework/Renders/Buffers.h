@@ -1,0 +1,34 @@
+﻿#pragma once
+
+class VertexBuffer
+{
+public:
+	VertexBuffer(void * InData, UINT InCount, UINT InStride, UINT InSlot = 0, bool InCpuWrite = false, bool InGpuWrite = false);
+	~VertexBuffer();
+
+	void Render();
+private:
+	ID3D11Buffer * Buffer;
+	void * Data;
+	UINT Count;
+	UINT Stride;
+	UINT Slot;
+
+	bool bCpwWrite;
+	bool bGpuWrite;
+};
+
+class IndexBuffer
+{
+public:
+	IndexBuffer(UINT * InData, UINT InCount);
+	~IndexBuffer();
+
+	UINT GetCount() const { return Count; }
+
+	void Render();
+private:
+	ID3D11Buffer * Buffer;
+	UINT * Data;
+	UINT Count;
+};

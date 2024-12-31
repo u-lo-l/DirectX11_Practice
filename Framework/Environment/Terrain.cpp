@@ -10,13 +10,16 @@ Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFile
 	
 	this->CreateVertexData();
 	this->CreateIndexData();
+	this->CreateNormalData();
 	this->CreateBuffer();
-
+	
 	WorldMatrix = Matrix::Identity;
 }
 
 Terrain::~Terrain()
 {
+	SAFE_DELETE(VBuffer);
+	SAFE_DELETE(IBuffer);
 	SAFE_DELETE_ARR(Vertices);
 	SAFE_DELETE(Drawer);
 	SAFE_DELETE(HeightMap);
@@ -31,16 +34,13 @@ void Terrain::Tick()
 	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(static_cast<const float *>(Ctxt->GetProjectionMatrix())) >= 0);
 }
 
-void Terrain::Render()
+void Terrain::Render() const
 {
 	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
-	UINT Stride = sizeof(TerrainVertexType);
-	UINT Offset = 0;
 	
 	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
-	DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, Offset);
-
+	VBuffer->Render();
+	IBuffer->Render();
 	Drawer->DrawIndexed(0, Pass, IndexCount);
 }
 
@@ -49,17 +49,17 @@ void Terrain::CreateVertexData()
 	vector<Color> Pixels;
 	HeightMap->ReadPixels(Pixels);
 
-	
 	VertexCount = Width * Height;
 	Vertices = new TerrainVertexType[VertexCount];
 	for (UINT Z = 0 ; Z < Height ; Z++)
 	{
 		for (UINT X = 0 ; X < Width ; X++)
 		{
-			const UINT PixelIndex = Width * (Height - 1 - Z) + X;
-			Vertices[PixelIndex].Position.X = static_cast<float>(X);
-			Vertices[PixelIndex].Position.Y = Pixels[PixelIndex].R * 40;
-			Vertices[PixelIndex].Position.Z = static_cast<float>(Z);
+			const UINT Index = Z * Width + X;
+			const UINT PixelIndex = (Height - 1 - Z) * Width + X;
+			Vertices[Index].Position.X = static_cast<float>(X);
+			Vertices[Index].Position.Y = Pixels[PixelIndex].R * 40;
+			Vertices[Index].Position.Z = static_cast<float>(Z);
 		}
 	}
 }
@@ -85,26 +85,38 @@ void Terrain::CreateIndexData()
 	}
 }
 
+void Terrain::CreateNormalData()
+{
+	for (UINT i = 0 ; i < IndexCount / 3; i++)
+	{
+		const UINT Index0 = Indices[i * 3 + 0];
+		const UINT Index1 = Indices[i * 3 + 1];
+		const UINT Index2 = Indices[i * 3 + 2];
+
+		TerrainVertexType & Vertex0 = Vertices[Index0];
+		TerrainVertexType & Vertex1 = Vertices[Index1];
+		TerrainVertexType & Vertex2 = Vertices[Index2];
+
+		Vector E1 = (Vertex1.Position - Vertex0.Position);
+		Vector E2 = (Vertex2.Position - Vertex0.Position);
+		Vector Normal = Vector::Cross(E1, E2);
+		Normal.Normalize();
+		
+		Vertex0.Normal += Normal;
+		Vertex1.Normal += Normal;
+		Vertex2.Normal += Normal;
+	}
+
+	for (UINT i = 0 ; i < VertexCount ; i++)
+	{
+		Vertices[i].Normal.Normalize();
+		// Vertices[i].Normal = Vector::Normalize(Vertices[i].Normal); 
+	}
+}
+
 void Terrain::CreateBuffer()
 {
-	ID3D11Device * Device = D3D::Get()->GetDevice();
-	D3D11_BUFFER_DESC BufferDesc;
-	D3D11_SUBRESOURCE_DATA SubresourceData;
-	
-	// VertexBuffer
-	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
-	BufferDesc.ByteWidth = sizeof(TerrainVertexType) * VertexCount;
-	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	ZeroMemory(&SubresourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-	SubresourceData.pSysMem = Vertices;
-	CHECK(Device->CreateBuffer(&BufferDesc, &SubresourceData, &VertexBuffer) >= 0);
-
-	// IndexBuffer
-	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
-	BufferDesc.ByteWidth = sizeof(UINT) * IndexCount;
-	BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ZeroMemory(&SubresourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-	SubresourceData.pSysMem = Indices;
-	CHECK(Device->CreateBuffer(&BufferDesc, &SubresourceData, &IndexBuffer) >= 0);
+	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType));
+	IBuffer = new IndexBuffer(Indices, IndexCount);
 }
 

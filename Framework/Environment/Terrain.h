@@ -3,18 +3,19 @@
 class Terrain
 {
 private:
-	using TerrainVertexType = Vertex;
+	using TerrainVertexType = VertexNormal;
 public:
 	Terrain(const wstring & InShaderFileName, const wstring& InHeightMapFileName);
 	~Terrain();
 
 	void Tick();
-	void Render();
+	void Render() const;
 
 	__forceinline void SetPass( const int InPass ) { Pass = InPass; }
 private:
 	void CreateVertexData();
 	void CreateIndexData();
+	void CreateNormalData();
 	void CreateBuffer();
 private:
 	int Pass = 1;
@@ -23,13 +24,13 @@ private:
 
 	UINT Width, Height;
 	UINT VertexCount;
-	TerrainVertexType* Vertices = nullptr;
+	TerrainVertexType * Vertices = nullptr;
 	
 	UINT IndexCount;
 	UINT * Indices = nullptr;
 
-	ID3D11Buffer* VertexBuffer = nullptr;
-	ID3D11Buffer* IndexBuffer = nullptr;
+	VertexBuffer * VBuffer = nullptr;
+	IndexBuffer * IBuffer = nullptr;
 
 	Matrix WorldMatrix;
 };

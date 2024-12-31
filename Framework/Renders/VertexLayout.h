@@ -56,3 +56,13 @@ struct VertexTextureColor
 	Vector2D UV;
 	Color Color;
 };
+//---------------------------------------------------------------------------//
+struct VertexNormal
+{
+	VertexNormal()
+		: Position(0, 0, 0), Normal(0, 0, 0) {}
+	VertexNormal(const Vector& Position, const Vector& Normal)
+		: Position(Position), Normal(Normal) {}
+	Vector Position;
+	Vector Normal;
+};

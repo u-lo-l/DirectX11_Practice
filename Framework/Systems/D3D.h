@@ -97,6 +97,5 @@ private:
 	// GPU 명령 즉시 실행 컨텍스트
 	ID3D11DeviceContext * DeviceContext;
 	ID3D11RenderTargetView * RenderTargetView;
-	// D3D11_VIEWPORT * Viewport;
 };
 

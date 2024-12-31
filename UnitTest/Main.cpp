@@ -3,7 +3,7 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/022_HeightMap/TerrainDemo.h"
+#include "Execute/024_Terrain/TerrainDemo.h"
 
 void Main::Initialize()
 {
