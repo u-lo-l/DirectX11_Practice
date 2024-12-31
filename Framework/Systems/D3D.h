@@ -53,7 +53,7 @@ private:
 	///   - 즉시 실행 컨텍스트(Immediate Context): 싱글 스레드 환경에서 사용된다.<br/>
 	///   - 지연 실행 컨텍스트(Deferred Context): 다른 스레드에서 명령을 준비하여 실행한다.
 	/// </remarks>
-	void CreateDeviceAndImmediateContext();
+	void CreateDeviceAndContext();
 
 	/// <summary> DirectX11에서 렌더 타겟 뷰(Render Target View, RTV)를 생성. </summary>
 	/// <remarks>
@@ -66,24 +66,14 @@ private:
 	///  결합된 데이터를 렌더 타깃(Render Target)과 깊이-스텐실 뷰(Depth-Stencil View)에 출력
 	/// </remarks>
 	void CreateRTV();
-
-	/// <summary>
-	/// DirectX11에서 ViewPort를 생성하고 설정.
-	/// </summary>
-	/// <remarks>
-	/// ViewPort는 화면에 렌더링할 출력의 영역(크기와 위치)을 정의.  
-	/// 이 함수는 ViewPort를 초기화하고, RS 단계(Rasterizer Stage)에 ViewPort를 설정.
-	///  - RS stage : Rasterize Stage에서는 셰이더 단계에서 처리된 정점 데이터를 기반으로 스크린 공간 좌표를 계산하고,
-	///  스크린 공간 좌표를 뷰포트(ViewPort) 내의 픽셀 좌표로 변환하는 과정이 수행된다.
-	///  따라서 이 단계에서 ViewPort 설정이 수행된다.
-	/// </remarks>
-	// void CreateViewport();
-
+	void CreateDSV();
+	void BindRenderTargets() const;
 public:
 	ID3D11Device* GetDevice() const { return Device; }
 	ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; }
 
-	void ClearRenderTargetView(Color InColor) const;
+	void ClearRenderTargetView( const Color & InColor) const;
+	void ClearDepthStencilView() const;
 	void Present() const;
 	void ResizeScreen(float InWidth, float InHeight);
 private:
@@ -97,5 +87,6 @@ private:
 	// GPU 명령 즉시 실행 컨텍스트
 	ID3D11DeviceContext * DeviceContext;
 	ID3D11RenderTargetView * RenderTargetView;
+	ID3D11DepthStencilView * DepthStencilView;
 };
 

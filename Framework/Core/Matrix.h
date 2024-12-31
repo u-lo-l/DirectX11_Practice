@@ -1,3 +1,4 @@
+// ReSharper disable CppNonExplicitConversionOperator
 #pragma once
 class Vector;
 class Quaternion;
@@ -36,8 +37,8 @@ public:
 	void operator *=(const float& scaleFactor);
 	void operator /=(const Matrix& matrix2);
 	void operator /=(const float& divider);
-	explicit operator float *();
-	explicit operator const float *() const;
+	operator float *();
+	operator const float *() const;
 	//////////////////////////////////////////////////////////////////////////
 	///@brief float형의 *연산 처리
 	///@param scalefactor : 값

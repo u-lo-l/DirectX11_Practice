@@ -5,7 +5,6 @@ D3D * D3D::Instance = nullptr;
 
 D3DDesc D3D::D3dDesc = D3DDesc();
 
-
 D3D* D3D::Get()
 {
 	assert(Instance != nullptr);
@@ -15,7 +14,6 @@ D3D* D3D::Get()
 void D3D::Create()
 {
 	assert(Instance == nullptr);
-
 	Instance = new D3D();
 }
 
@@ -34,14 +32,19 @@ void D3D::SetDesc(const D3DDesc& InDesc)
 	D3dDesc = InDesc;
 }
 
-void D3D::ClearRenderTargetView(Color InColor) const
+void D3D::ClearRenderTargetView( const Color & InColor) const
 {
 	DeviceContext->ClearRenderTargetView(RenderTargetView, InColor.ToDx());
 }
 
+void D3D::ClearDepthStencilView() const
+{
+	DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
+}
+
 void D3D::Present() const
 {
-	SwapChain->Present(0, 0);
+	CHECK(SwapChain->Present(0, 0) >= 0);
 }
 
 void D3D::ResizeScreen(float InWidth, float InHeight)
@@ -57,53 +60,57 @@ void D3D::ResizeScreen(float InWidth, float InHeight)
 	CHECK(Hr >= 0);
 
 	CreateRTV();
+	CreateDSV();
+	BindRenderTargets();
 }
 
 D3D::D3D()
 {
-	CreateDeviceAndImmediateContext();
+	CreateDeviceAndContext();
 	CreateRTV();
+	CreateDSV();
+	BindRenderTargets();
 }
 
 D3D::~D3D()
 {
 	SAFE_RELEASE(RenderTargetView);
+	SAFE_RELEASE(DepthStencilView);
 	SAFE_RELEASE(DeviceContext);
 	SAFE_RELEASE(Device);
 	SAFE_RELEASE(SwapChain);
 }
 
-void D3D::CreateDeviceAndImmediateContext()
+void D3D::CreateDeviceAndContext()
 {
 	//Create Device And SwapChain
 	{
 		// 디스플레이 모드 및 디스플레이 모드에서 스테레오를 지원하는지 여부를 설명하는 객체
-		DXGI_MODE_DESC desc;
-		ZeroMemory(&desc, sizeof(DXGI_MODE_DESC));
+		DXGI_MODE_DESC Desc;
+		ZeroMemory(&Desc, sizeof(DXGI_MODE_DESC));
 
-		desc.Width = (UINT)D3D::D3dDesc.Width;
-		desc.Height = (UINT)D3D::D3dDesc.Height;
-		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		desc.RefreshRate.Numerator = 0;
-		desc.RefreshRate.Denominator = 1;
+		Desc.Width = static_cast<UINT>(D3D::D3dDesc.Width);
+		Desc.Height = static_cast<UINT>(D3D::D3dDesc.Height);
+		Desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		Desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		Desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		Desc.RefreshRate.Numerator = 0;
+		Desc.RefreshRate.Denominator = 1;
 
 		// https://learn.microsoft.com/ko-kr/windows/win32/direct3d11/overviews-direct3d-11-devices-create-ref
-		DXGI_SWAP_CHAIN_DESC swapChainDesc;
-		ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+		ZeroMemory(&SwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-		swapChainDesc.BufferCount = 1;
-		swapChainDesc.BufferDesc = desc;
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		SwapChainDesc.BufferCount = 1;
+		SwapChainDesc.BufferDesc = Desc;
+		SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-		swapChainDesc.OutputWindow = D3D::D3dDesc.Handle;
-		swapChainDesc.SampleDesc.Count = 1;
-		swapChainDesc.SampleDesc.Quality = 0;
-		swapChainDesc.Windowed = true;
-
-
+		SwapChainDesc.OutputWindow = D3D::D3dDesc.Handle;
+		SwapChainDesc.SampleDesc.Count = 1;
+		SwapChainDesc.SampleDesc.Quality = 0;
+		SwapChainDesc.Windowed = true;
+		
 		/*
 		pAdapter
 		   Video Adapter에 대한 포인터이다.
@@ -129,23 +136,18 @@ void D3D::CreateDeviceAndImmediateContext()
 		SDKVersion
 		   SDK 버전을 나타낸다.
 		   항상 D3D11_SDK_VERSION을 사용해야 한다.
-		pSwapChainDesc
-		[in]
+		pSwapChainDesc	[in]
 		   SwapChain의 설정정보를 담은 구조체포인터를 전달한다.
 		   nullptr이면 SwapChain이 생성되지 않는다.
-		ppSwapChain
-		[out]
+		ppSwapChain	[out]
 		   생성된 IDXGISwapChain인터페이스의 포인터를 반환한다.
-		ppDevice
-		[out]
+		ppDevice	[out]
 		   생성된 ID3D11Device에 대한 포인터를 반환한다.
-		pFeatureLevel
-		[out]
+		pFeatureLevel	[out]
 		   생성된 디바이스에서 지원하는 Feature Level을 반환한다.
 		   null이면 GPU가 지원하는 가장 높은 Feature Level이 설정된다.
 		   DirectX의 기능 수준을 확인하거나 특정 기능 사용 가능 여부를 결정한다.
-		ppImmediateContext
-		[out]
+		ppImmediateContext	[out]
 		   생성된 ID3D11DeviceContext 인터페이스에 대한 포인터를 반환한다.
 		   GPU 명령을 실행하는데 사용되는 실행 컨택스트
 		   -> 즉시 실행 컨텍스트
@@ -168,7 +170,7 @@ void D3D::CreateDeviceAndImmediateContext()
 			nullptr, 
 			0, 
 			D3D11_SDK_VERSION, 
-			&swapChainDesc, 
+			&SwapChainDesc, 
 			&SwapChain, 
 			&Device, 
 			&FeatureLevels,
@@ -180,15 +182,44 @@ void D3D::CreateDeviceAndImmediateContext()
 
 void D3D::CreateRTV()
 {
-	ID3D11Texture2D* backBuffer;
-	HRESULT hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	ASSERT(hr >= 0, "Back Buffer Failed");
+	ID3D11Texture2D* BackBuffer;
+	HRESULT Hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&BackBuffer));
+	ASSERT(Hr >= 0, "Back Buffer Failed");
 
-	hr = Device->CreateRenderTargetView(backBuffer, nullptr, &RenderTargetView);
-	ASSERT(hr >= 0, "RTV Failed");
+	Hr = Device->CreateRenderTargetView(BackBuffer, nullptr, &RenderTargetView);
+	ASSERT(Hr >= 0, "RTV Failed");
 
-	SAFE_RELEASE(backBuffer);
+	SAFE_RELEASE(BackBuffer);
+}
 
-	// pDepthStencilView에 nullptr을 전달한다는 것은 BackBuffer를 RenderTarget으로 쓰겠다는 의미.
-	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, nullptr);
+void D3D::CreateDSV()
+{
+	ID3D11Texture2D * DepthStencilBuffer;
+	D3D11_TEXTURE2D_DESC DepthStencilBufferDecs;
+	ZeroMemory(&DepthStencilBufferDecs, sizeof(DepthStencilBufferDecs));
+	DepthStencilBufferDecs.Width = D3D::D3dDesc.Width;
+	DepthStencilBufferDecs.Height = D3D::D3dDesc.Height;
+	DepthStencilBufferDecs.MipLevels = 0;
+	DepthStencilBufferDecs.ArraySize = 1;
+	DepthStencilBufferDecs.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DepthStencilBufferDecs.SampleDesc.Count = 1;
+	DepthStencilBufferDecs.SampleDesc.Quality = 0;
+	DepthStencilBufferDecs.Usage = D3D11_USAGE_DEFAULT;
+	DepthStencilBufferDecs.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	DepthStencilBufferDecs.CPUAccessFlags = 0;
+	DepthStencilBufferDecs.MiscFlags = 0;
+	CHECK(Device->CreateTexture2D(&DepthStencilBufferDecs, nullptr, &DepthStencilBuffer)>= 0);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStencilViewDesc;
+	ZeroMemory(&DepthStencilViewDesc, sizeof(DepthStencilViewDesc));
+	DepthStencilViewDesc.Format = DepthStencilBufferDecs.Format;
+	DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	DepthStencilViewDesc.Texture2D.MipSlice = 0;
+	CHECK(Device->CreateDepthStencilView(DepthStencilBuffer, &DepthStencilViewDesc, &DepthStencilView) >= 0);
+	SAFE_RELEASE(DepthStencilBuffer);
+}
+
+void D3D::BindRenderTargets() const
+{
+	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 }

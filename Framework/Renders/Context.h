@@ -6,7 +6,7 @@ public:
 	static void Create();
 	static void Destroy();
 	static Context* Get();
-	void Tick();
+	void Tick() const;
 	void Render() const;
 	void ResizeScreen();
 public:

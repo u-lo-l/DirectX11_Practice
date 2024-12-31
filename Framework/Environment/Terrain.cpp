@@ -12,8 +12,13 @@ Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFile
 	this->CreateIndexData();
 	this->CreateNormalData();
 	this->CreateBuffer();
+
 	
 	WorldMatrix = Matrix::Identity;
+
+	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
+	
+	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 Terrain::~Terrain()
@@ -21,6 +26,7 @@ Terrain::~Terrain()
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE_ARR(Vertices);
+	SAFE_DELETE_ARR(Indices);
 	SAFE_DELETE(Drawer);
 	SAFE_DELETE(HeightMap);
 }
@@ -29,18 +35,18 @@ void Terrain::Tick()
 {
 	const Context * Ctxt = Context::Get();
 	
-	CHECK(Drawer->AsMatrix("World")->SetMatrix(static_cast<const float *>(WorldMatrix)) >= 0);
-	CHECK(Drawer->AsMatrix("View")->SetMatrix(static_cast<const float *>(Ctxt->GetViewMatrix())) >= 0);
-	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(static_cast<const float *>(Ctxt->GetProjectionMatrix())) >= 0);
+	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
+	CHECK(Drawer->AsMatrix("View")->SetMatrix(Ctxt->GetViewMatrix()) >= 0);
+	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(Ctxt->GetProjectionMatrix()) >= 0);
 }
 
 void Terrain::Render() const
 {
-	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
-	
-	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	VBuffer->Render();
-	IBuffer->Render();
+	// ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
+	//
+	// DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// VBuffer->Render();
+	// IBuffer->Render();
 	Drawer->DrawIndexed(0, Pass, IndexCount);
 }
 
@@ -110,7 +116,6 @@ void Terrain::CreateNormalData()
 	for (UINT i = 0 ; i < VertexCount ; i++)
 	{
 		Vertices[i].Normal.Normalize();
-		// Vertices[i].Normal = Vector::Normalize(Vertices[i].Normal); 
 	}
 }
 
@@ -118,5 +123,8 @@ void Terrain::CreateBuffer()
 {
 	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType));
 	IBuffer = new IndexBuffer(Indices, IndexCount);
+
+	VBuffer->BindToGPU();
+	IBuffer->BindToGPU();
 }
 

@@ -47,10 +47,10 @@ VertexBuffer::~VertexBuffer()
 	SAFE_RELEASE(Buffer);
 }
 
-void VertexBuffer::Render()
+void VertexBuffer::BindToGPU() const
 {
 	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
-	UINT Offset = 0;
+	constexpr UINT Offset = 0;
 	DeviceContext->IASetVertexBuffers(0, 1, &Buffer, &Stride, &Offset);
 }
 
@@ -74,7 +74,7 @@ IndexBuffer::~IndexBuffer()
 	SAFE_RELEASE(this->Buffer);
 }
 
-void IndexBuffer::Render()
+void IndexBuffer::BindToGPU() const
 {
 	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
 	DeviceContext->IASetIndexBuffer(this->Buffer, DXGI_FORMAT_R32_UINT, 0);

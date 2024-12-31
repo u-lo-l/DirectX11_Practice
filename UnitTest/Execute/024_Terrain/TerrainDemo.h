@@ -14,6 +14,5 @@ namespace Sdt
 		void Render() override;
 	private:
 		Terrain * Landscape = nullptr;
-
 	};
 }

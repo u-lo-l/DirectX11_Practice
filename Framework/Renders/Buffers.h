@@ -6,7 +6,7 @@ public:
 	VertexBuffer(void * InData, UINT InCount, UINT InStride, UINT InSlot = 0, bool InCpuWrite = false, bool InGpuWrite = false);
 	~VertexBuffer();
 
-	void Render();
+	void BindToGPU() const;
 private:
 	ID3D11Buffer * Buffer;
 	void * Data;
@@ -26,7 +26,7 @@ public:
 
 	UINT GetCount() const { return Count; }
 
-	void Render();
+	void BindToGPU() const;
 private:
 	ID3D11Buffer * Buffer;
 	UINT * Data;

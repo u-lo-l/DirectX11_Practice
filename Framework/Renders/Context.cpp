@@ -24,20 +24,18 @@ Context * Context::Get()
 	return Instance;
 }
 
-void Context::Tick()
+void Context::Tick() const
 {
 	MainCamera->Tick();
 }
 
 void Context::Render() const
 {
-	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
-
 	string Str = string("FrameRate : ") + to_string(static_cast<int>(ImGui::GetIO().Framerate));
 	Gui::Get()->RenderText(5, 5, 1, 1, 1, Str);
 
-	Vector CamPos = MainCamera->GetPosition();
-	Vector CamRot = MainCamera->GetEulerAngle();
+	const Vector & CamPos = MainCamera->GetPosition();
+	const Vector & CamRot = MainCamera->GetEulerAngle();
 	Str = "Camera Rotation : " + String::ToString(CamRot.ToString());
 	Gui::Get()->RenderText(5, 20, 1, 1, 1, Str);
 	
@@ -49,7 +47,6 @@ void Context::ResizeScreen()
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
 	ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
-	MainCamera->SetPosition(0, 0, -5);
 
 	this->Viewport->TopLeftX = 0;
 	this->Viewport->TopLeftY = 0;
@@ -57,10 +54,11 @@ void Context::ResizeScreen()
 	this->Viewport->Height = D3D::GetDesc().Height;
 	this->Viewport->MinDepth = 0;
 	this->Viewport->MaxDepth = 1;
+
+	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 }
 
 Context::Context()
- : Viewport()
 {
 	MainCamera = new Camera();
 	
@@ -75,6 +73,8 @@ Context::Context()
 	this->Viewport->Height = D3D::GetDesc().Height;
 	this->Viewport->MinDepth = 0;
 	this->Viewport->MaxDepth = 1;
+
+	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 }
 
 Context::~Context()
