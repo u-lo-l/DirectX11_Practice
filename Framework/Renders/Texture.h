@@ -3,6 +3,7 @@
 class Texture
 {
 public:
+public:
 	explicit Texture(const wstring& FileName, D3DX11_IMAGE_INFO * InLoadInfo = nullptr);
 	~Texture();
 public:

@@ -2,7 +2,7 @@
 
 class Terrain
 {
-private:
+public:
 	using TerrainVertexType = VertexNormal;
 public:
 	Terrain(const wstring & InShaderFileName, const wstring& InHeightMapFileName);
@@ -12,10 +12,14 @@ public:
 	void Render() const;
 
 	__forceinline void SetPass( const int InPass ) { Pass = InPass; }
+	__forceinline TerrainVertexType* GetVertice() const { return Vertices; }
+	__forceinline UINT GetWidth() const { return Width; }
+	__forceinline UINT GetHeight() const { return Height; }
+	
 private:
 	void CreateVertexData();
 	void CreateIndexData();
-	void CreateNormalData();
+	void CreateNormalData() const;
 	void CreateBuffer();
 private:
 	int Pass = 1;

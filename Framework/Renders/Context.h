@@ -11,6 +11,7 @@ public:
 	void ResizeScreen();
 public:
 	__forceinline class Camera * GetCamera() const {return MainCamera;}
+	__forceinline const Vector & GetLightDirection() const {return LightDirection;}
 private:
 	static Context * Instance;
 private:
@@ -24,4 +25,6 @@ private:
 	Camera * MainCamera;
 	Matrix ProjectionMat;
 	D3D11_VIEWPORT * Viewport;
+
+	Vector LightDirection = {-1, -1, +1};
 };

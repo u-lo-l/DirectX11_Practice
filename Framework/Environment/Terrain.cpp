@@ -38,10 +38,13 @@ void Terrain::Tick()
 	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
 	CHECK(Drawer->AsMatrix("View")->SetMatrix(Ctxt->GetViewMatrix()) >= 0);
 	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(Ctxt->GetProjectionMatrix()) >= 0);
+	// CHECK(Drawer->AsVector("LightDirection")->SetFloatVector(Context::Get()->GetLightDirection()) >= 0);
 }
 
 void Terrain::Render() const
 {
+	VBuffer->BindToGPU();
+	IBuffer->BindToGPU();
 	Drawer->DrawIndexed(0, Pass, IndexCount);
 }
 
@@ -86,7 +89,7 @@ void Terrain::CreateIndexData()
 	}
 }
 
-void Terrain::CreateNormalData()
+void Terrain::CreateNormalData() const
 {
 	for (UINT i = 0 ; i < IndexCount / 3; i++)
 	{
@@ -108,9 +111,9 @@ void Terrain::CreateNormalData()
 		Vertex2.Normal += Normal;
 	}
 
-	for (UINT i = 0 ; i < VertexCount ; i++)
+	for (UINT I = 0 ; I < VertexCount ; I++)
 	{
-		Vertices[i].Normal.Normalize();
+		Vertices[I].Normal.Normalize();
 	}
 }
 
@@ -118,8 +121,5 @@ void Terrain::CreateBuffer()
 {
 	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType));
 	IBuffer = new IndexBuffer(Indices, IndexCount);
-
-	VBuffer->BindToGPU();
-	IBuffer->BindToGPU();
 }
 
