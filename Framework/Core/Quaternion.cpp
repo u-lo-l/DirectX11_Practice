@@ -9,7 +9,7 @@ const Quaternion Quaternion::Identity = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion::Quaternion(void)
 {
@@ -22,7 +22,7 @@ Quaternion::Quaternion(void)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param x : X
 ///@param y : Y
 ///@param z : Z
@@ -39,9 +39,9 @@ Quaternion::Quaternion(float x, float y, float z, float w)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
-///@param vectorPart : º¤ÅÍ(XYZ)
-///@param scalarPart : °ª(W)
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@param vectorPart : ï¿½ï¿½ï¿½ï¿½(XYZ)
+///@param scalarPart : ï¿½ï¿½(W)
 //////////////////////////////////////////////////////////////////////////
 Quaternion::Quaternion(Vector vectorPart, float scalarPart)
 {
@@ -55,7 +55,7 @@ Quaternion::Quaternion(Vector vectorPart, float scalarPart)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::operator-(void)
 {
@@ -67,13 +67,24 @@ Quaternion Quaternion::operator-(void)
 
 	return quaternion1;
 }
+
+Quaternion::operator float* ()
+{
+	return Q;
+}
+
+Quaternion::operator const float* () const
+{
+	return Q;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ==
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Quaternion::operator==(const Quaternion& quaternion2) const
 {
@@ -87,8 +98,8 @@ bool Quaternion::operator==(const Quaternion& quaternion2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief !=
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Quaternion::operator!=(const Quaternion& quaternion2) const
 {
@@ -102,8 +113,8 @@ bool Quaternion::operator!=(const Quaternion& quaternion2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::operator+(const Quaternion& quaternion2) const
 {
@@ -120,8 +131,8 @@ Quaternion Quaternion::operator+(const Quaternion& quaternion2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::operator-(const Quaternion& quaternion2) const
 {
@@ -137,8 +148,8 @@ Quaternion Quaternion::operator-(const Quaternion& quaternion2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::operator*(const Quaternion& quaternion2) const
 {
@@ -160,8 +171,8 @@ Quaternion Quaternion::operator*(const Quaternion& quaternion2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param scaleFactor : °ª
-///@return °á°ú
+///@param scaleFactor : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::operator*(const float& scaleFactor) const
 {
@@ -178,8 +189,8 @@ Quaternion Quaternion::operator*(const float& scaleFactor) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::operator/(const Quaternion& quaternion2) const
 {
@@ -207,8 +218,8 @@ Quaternion Quaternion::operator/(const Quaternion& quaternion2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +=
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::operator+=(const Quaternion& quaternion2)
 {
@@ -219,8 +230,8 @@ void Quaternion::operator+=(const Quaternion& quaternion2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -=
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::operator-=(const Quaternion& quaternion2)
 {
@@ -231,8 +242,8 @@ void Quaternion::operator-=(const Quaternion& quaternion2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *=
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::operator*=(const Quaternion& quaternion2)
 {
@@ -243,8 +254,8 @@ void Quaternion::operator*=(const Quaternion& quaternion2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *=
-///@param scaleFactor : °ª
-///@return °á°ú
+///@param scaleFactor : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::operator*=(const float& scaleFactor)
 {
@@ -255,8 +266,8 @@ void Quaternion::operator*=(const float& scaleFactor)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param quaternion2 : ÄõÅÍ´Ï¿Â
-///@return °á°ú
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::operator/=(const Quaternion& quaternion2)
 {
@@ -266,8 +277,8 @@ void Quaternion::operator/=(const Quaternion& quaternion2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¹®ÀÚ¿­·Î º¯È¯
-///@param ¹®ÀÚ¿­
+///@brief ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param ï¿½ï¿½ï¿½Ú¿ï¿½
 //////////////////////////////////////////////////////////////////////////
 std::wstring Quaternion::ToString()
 {
@@ -282,21 +293,9 @@ std::wstring Quaternion::ToString()
 }
 //////////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////////
-///@brief D3DXQUATERNIONÀ¸·Î º¯È¯
-///@param D3DX ÄõÅÍ´Ï¿Â
-//////////////////////////////////////////////////////////////////////////
-D3DXQUATERNION Quaternion::ToDX()
-{
-	return D3DXQUATERNION(X, Y, Z, W);
-}
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-///@brief Å©±â °è»ê
-///@return °á°ú °ª
+///@brief Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Quaternion::Length()
 {
@@ -308,8 +307,8 @@ float Quaternion::Length()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¦°öÀ¸·Î Å©±â °è»ê
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Quaternion::LengthSquared()
 {
@@ -319,7 +318,7 @@ float Quaternion::LengthSquared()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¤±ÔÈ­
+///@brief ï¿½ï¿½ï¿½ï¿½È­
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::Normalize()
 {
@@ -335,11 +334,11 @@ void Quaternion::Normalize()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¤±ÔÈ­
-///@param value : ÄõÅÍ´Ï¿Â
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½ï¿½È­
+///@param value : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::Normalize(Quaternion quaternion)
+Quaternion Quaternion::Normalize( const Quaternion & quaternion)
 {
 	float value = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
 	float value1 = 1.0f / sqrtf(value);
@@ -357,7 +356,7 @@ Quaternion Quaternion::Normalize(Quaternion quaternion)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÄõÅÍ´Ï¿Â ÄÓ·¹°ª
+///@brief ï¿½ï¿½ï¿½Í´Ï¿ï¿½ ï¿½Ó·ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Quaternion::Conjugate()
 {
@@ -369,11 +368,11 @@ void Quaternion::Conjugate()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÄõÅÍ´Ï¿Â ÄÓ·¹°ª
-///@param value : ÄõÅÍ´Ï¿Â
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½Í´Ï¿ï¿½ ï¿½Ó·ï¿½ï¿½ï¿½
+///@param value : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::Conjugate(Quaternion value)
+Quaternion Quaternion::Conjugate( const Quaternion & value)
 {
 	Quaternion quaternion;
 	quaternion.X = -value.X;
@@ -387,11 +386,11 @@ Quaternion Quaternion::Conjugate(Quaternion value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¿ª ÄõÅÍ´Ï¿Â
-///@param quaternion : ÄõÅÍ´Ï¿Â
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@param quaternion : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::Inverse(Quaternion quaternion)
+Quaternion Quaternion::Inverse( const Quaternion & quaternion)
 {
 	float value = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
 	float value1 = 1.0f / value;
@@ -404,7 +403,7 @@ Quaternion Quaternion::Inverse(Quaternion quaternion)
 
 	return q;
 }
-Quaternion Quaternion::Add(Quaternion quaternion1, Quaternion quaternion2)
+Quaternion Quaternion::Add( const Quaternion & quaternion1, const Quaternion & quaternion2)
 {
 	Quaternion quaternion;
 	quaternion.X = quaternion1.X + quaternion2.X;
@@ -414,7 +413,7 @@ Quaternion Quaternion::Add(Quaternion quaternion1, Quaternion quaternion2)
 
 	return quaternion;
 }
-Quaternion Quaternion::Divide(Quaternion quaternion1, Quaternion quaternion2)
+Quaternion Quaternion::Divide( const Quaternion & quaternion1, const Quaternion & quaternion2)
 {
 	float x = quaternion1.X;
 	float y = quaternion1.Y;
@@ -442,7 +441,7 @@ Quaternion Quaternion::Divide(Quaternion quaternion1, Quaternion quaternion2)
 
 	return quaternion;
 }
-Quaternion Quaternion::Multiply(Quaternion quaternion1, Quaternion quaternion2)
+Quaternion Quaternion::Multiply( const Quaternion & quaternion1, const Quaternion & quaternion2)
 {
 	float x = quaternion1.X;
 	float y = quaternion1.Y;
@@ -465,7 +464,7 @@ Quaternion Quaternion::Multiply(Quaternion quaternion1, Quaternion quaternion2)
 
 	return quaternion;
 }
-Quaternion Quaternion::Multiply(Quaternion quaternion1, float scaleFactor)
+Quaternion Quaternion::Multiply( const Quaternion & quaternion1, float scaleFactor)
 {
 	Quaternion quaternion;
 	quaternion.X = quaternion1.X * scaleFactor;
@@ -475,7 +474,7 @@ Quaternion Quaternion::Multiply(Quaternion quaternion1, float scaleFactor)
 
 	return quaternion;
 }
-Quaternion Quaternion::Subtract(Quaternion quaternion1, Quaternion quaternion2)
+Quaternion Quaternion::Subtract( const Quaternion & quaternion1, const Quaternion & quaternion2)
 {
 	Quaternion quaternion;
 	quaternion.X = quaternion1.X - quaternion2.X;
@@ -485,7 +484,7 @@ Quaternion Quaternion::Subtract(Quaternion quaternion1, Quaternion quaternion2)
 
 	return quaternion;
 }
-Quaternion Quaternion::Negative(Quaternion quaternion)
+Quaternion Quaternion::Negative( const Quaternion & quaternion)
 {
 	Quaternion x;
 	x.X = -quaternion.X;
@@ -499,12 +498,12 @@ Quaternion Quaternion::Negative(Quaternion quaternion)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Ãà°ú °¢µµ¿¡ ÀÇÇØ È¸ÀüµÈ ÄõÅÍ´Ï¿Â
-///@param axis : Ãà º¤ÅÍ
-///@param angle : °¢µµ
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@param axis : ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param angle : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::CreateFromAxisAngle(Vector axis, float angle)
+Quaternion Quaternion::CreateFromAxisAngle( const Vector & axis, float angle)
 {
 	float value = angle * 0.5f;
 	float value1 = sinf(value);
@@ -521,7 +520,7 @@ Quaternion Quaternion::CreateFromAxisAngle(Vector axis, float angle)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief °¢ °¢µµ¿¡ ÀÇÇØ È¸ÀüµÈ ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 ///@param yaw : Yaw - Y
 ///@param pitch : Pitch - X
 ///@param roll : Roll - Z
@@ -552,11 +551,11 @@ Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¸ÅÆ®¸¯½º¿¡ ÀÇÇØ È¸ÀüµÈ ÄõÅÍ´Ï¿Â
-///@param matrix : ¸ÅÆ®¸¯½º
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@param matrix : ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::CreateFromRotationMatrix(Matrix matrix)
+Quaternion Quaternion::CreateFromRotationMatrix( const Matrix & matrix)
 {
 	float m11 = matrix.M11 + matrix.M22 + matrix.M33;
 
@@ -608,12 +607,12 @@ Quaternion Quaternion::CreateFromRotationMatrix(Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ³»Àû
-///@param quaternion1 : ÄõÅÍ´Ï¿Â1
-///@param quaternion2 : ÄõÅÍ´Ï¿Â2
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½ï¿½
+///@param quaternion1 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½1
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-float Quaternion::Dot(Quaternion quaternion1, Quaternion quaternion2)
+float Quaternion::Dot( const Quaternion & quaternion1, const Quaternion & quaternion2)
 {
 	return quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y + quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
 }
@@ -621,13 +620,13 @@ float Quaternion::Dot(Quaternion quaternion1, Quaternion quaternion2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ±¸¸éº¸°£
-///@param quaternion1 : ÄõÅÍ´Ï¿Â1
-///@param quaternion2 : ÄõÅÍ´Ï¿Â2
-///@param amount : º¸°£°ª
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½éº¸ï¿½ï¿½
+///@param quaternion1 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½1
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½2
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::Slerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
+Quaternion Quaternion::Slerp( const Quaternion & quaternion1, const Quaternion & quaternion2, float amount)
 {
 	float value;
 	float value1;
@@ -642,10 +641,10 @@ Quaternion Quaternion::Slerp(Quaternion quaternion1, Quaternion quaternion2, flo
 	}
 	if (x <= 0.999999f)
 	{
-		float value3 = (float)acos((double)x);
-		float value4 = (float)(1 / sin((double)value3));
+		float value3 = static_cast<float>(acos((double)x));
+		float value4 = static_cast<float>(1 / sin((double)value3));
 		value1 = sinf(((1.0f - value2) * value3)) * value4;
-		value = (flag ? (float)(-sin((double)(value2 * value3))) * value4 : sinf((value2 * value3)) * value4);
+		value = (flag ? static_cast<float>(-sin((double)(value2 * value3))) * value4 : sinf((value2 * value3)) * value4);
 	}
 	else
 	{
@@ -665,13 +664,13 @@ Quaternion Quaternion::Slerp(Quaternion quaternion1, Quaternion quaternion2, flo
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¼±Çüº¸°£
-///@param quaternion1 : ÄõÅÍ´Ï¿Â1
-///@param quaternion2 : ÄõÅÍ´Ï¿Â2
-///@param amount : º¸°£°ª
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@param quaternion1 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½1
+///@param quaternion2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½2
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
+Quaternion Quaternion::Lerp( const Quaternion & quaternion1, const Quaternion & quaternion2, float amount)
 {
 	float value = amount;
 	float value1 = 1.0f - value;
@@ -707,12 +706,12 @@ Quaternion Quaternion::Lerp(Quaternion quaternion1, Quaternion quaternion2, floa
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¼ø¼­¸¦ ¹Ù²Ù¾î °öÇÏ±â
-///@param value1 : ÄõÅÍ´Ï¿Â1
-///@param value2 : ÄõÅÍ´Ï¿Â2
-///@return °á°ú ÄõÅÍ´Ï¿Â
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²Ù¾ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½
+///@param value1 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½Í´Ï¿ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í´Ï¿ï¿½
 //////////////////////////////////////////////////////////////////////////
-Quaternion Quaternion::Concatenate(Quaternion quaternion1, Quaternion quaternion2)
+Quaternion Quaternion::Concatenate( const Quaternion & quaternion1, const Quaternion & quaternion2)
 {
 	float x = quaternion2.X;
 	float y = quaternion2.Y;

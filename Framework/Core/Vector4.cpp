@@ -15,7 +15,7 @@ const Vector4 Vector4::UnitW = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4::Vector4(void)
 {
@@ -28,7 +28,7 @@ Vector4::Vector4(void)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param x : X
 ///@param y : Y
 ///@param z : Z
@@ -45,7 +45,7 @@ Vector4::Vector4(float x, float y, float z, float w)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param value : x, y
 ///@param z : Z
 ///@param w : W
@@ -61,7 +61,7 @@ Vector4::Vector4(Vector2D value, float z, float w)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param value : x, y, z
 ///@param w : W
 //////////////////////////////////////////////////////////////////////////
@@ -76,21 +76,32 @@ Vector4::Vector4(Vector value, float w)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param x = y = z = w = value
 //////////////////////////////////////////////////////////////////////////
 Vector4::Vector4(float value)
 {
 	X = Y = Z = W = value;
 }
+
+Vector4::operator float*()
+{
+	return V;
+}
+
+Vector4::operator const float*() const
+{
+	return V;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@return °á°ú º¤ÅÍ
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::operator-(void)
+Vector4 Vector4::operator-()
 {
 	Vector4 vector4;
 	vector4.X = -X;
@@ -105,8 +116,8 @@ Vector4 Vector4::operator-(void)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ==
-///@param value2 : º¤ÅÍ
-///@return °á°ú
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Vector4::operator==(const Vector4& value2) const
 {
@@ -120,8 +131,8 @@ bool Vector4::operator==(const Vector4& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief !=
-///@param value2 : º¤ÅÍ
-///@return °á°ú
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Vector4::operator!=(const Vector4& value2) const
 {
@@ -135,8 +146,8 @@ bool Vector4::operator!=(const Vector4& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::operator+(const Vector4& value2) const
 {
@@ -153,8 +164,8 @@ Vector4 Vector4::operator+(const Vector4& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::operator-(const Vector4& value2) const
 {
@@ -171,8 +182,8 @@ Vector4 Vector4::operator-(const Vector4& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::operator*(const Vector4& value2) const
 {
@@ -189,8 +200,8 @@ Vector4 Vector4::operator*(const Vector4& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param scaleFactor : °ª
-///@return °á°ú º¤ÅÍ
+///@param scaleFactor : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::operator*(const float& scaleFactor) const
 {
@@ -207,8 +218,8 @@ Vector4 Vector4::operator*(const float& scaleFactor) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::operator/(const Vector4& value2) const
 {
@@ -225,8 +236,8 @@ Vector4 Vector4::operator/(const Vector4& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /
-///@param divider : °ª
-///@return °á°ú º¤ÅÍ
+///@param divider : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::operator/(const float& divider) const
 {
@@ -245,8 +256,8 @@ Vector4 Vector4::operator/(const float& divider) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +=
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector4::operator+=(const Vector4& value2)
 {
@@ -257,8 +268,8 @@ void Vector4::operator+=(const Vector4& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -=
-///@param value2 : º¤ÅÍ 
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½ 
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector4::operator-=(const Vector4& value2)
 {
@@ -269,8 +280,8 @@ void Vector4::operator-=(const Vector4& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *=
-///@param value2 : º¤ÅÍ 
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½ 
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector4::operator*=(const Vector4& value2)
 {
@@ -281,8 +292,8 @@ void Vector4::operator*=(const Vector4& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param scaleFactor : °ª
-///@return °á°ú º¤ÅÍ
+///@param scaleFactor : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector4::operator*=(const float& scaleFactor)
 {
@@ -293,8 +304,8 @@ void Vector4::operator*=(const float& scaleFactor)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector4::operator/=(const Vector4& value2)
 {
@@ -305,8 +316,8 @@ void Vector4::operator/=(const Vector4& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param divider : °ª
-///@return °á°ú º¤ÅÍ
+///@param divider : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector4::operator/=(const float& divider)
 {
@@ -316,8 +327,8 @@ void Vector4::operator/=(const float& divider)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¹®ÀÚ¿­·Î º¯È¯
-///@return ¹®ÀÚ¿­
+///@brief ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@return ï¿½ï¿½ï¿½Ú¿ï¿½
 //////////////////////////////////////////////////////////////////////////
 std::wstring Vector4::ToString()
 {
@@ -334,8 +345,8 @@ std::wstring Vector4::ToString()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief D3DXVECTOR4·Î º¯È¯
-///@return D3DX º¤ÅÍ 
+///@brief D3DXVECTOR4ï¿½ï¿½ ï¿½ï¿½È¯
+///@return D3DX ï¿½ï¿½ï¿½ï¿½ 
 //////////////////////////////////////////////////////////////////////////
 D3DXVECTOR4 Vector4::ToDX()
 {
@@ -351,8 +362,8 @@ D3DXVECTOR4 Vector4::ToDX()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Å©±â °è»ê
-///@return °á°ú °ª
+///@brief Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector4::Length()
 {
@@ -364,8 +375,8 @@ float Vector4::Length()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¦°öÀ¸·Î Å©±â °è»ê
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector4::LengthSquared()
 {
@@ -375,7 +386,7 @@ float Vector4::LengthSquared()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¤±ÔÈ­
+///@brief ï¿½ï¿½ï¿½ï¿½È­
 //////////////////////////////////////////////////////////////////////////
 void Vector4::Normalize()
 {
@@ -388,7 +399,7 @@ void Vector4::Normalize()
 	W *= single;
 }
 
-Vector4 Vector4::Add(Vector4 value1, Vector4 value2)
+Vector4 Vector4::Add( const Vector4 & value1, const Vector4 & value2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X + value2.X;
@@ -398,7 +409,7 @@ Vector4 Vector4::Add(Vector4 value1, Vector4 value2)
 
 	return vector4;
 }
-Vector4 Vector4::Divide(Vector4 value1, Vector4 value2)
+Vector4 Vector4::Divide( const Vector4 & value1, const Vector4 & value2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X / value2.X;
@@ -408,7 +419,7 @@ Vector4 Vector4::Divide(Vector4 value1, Vector4 value2)
 
 	return vector4;
 }
-Vector4 Vector4::Divide(Vector4 value1, float divider)
+Vector4 Vector4::Divide( const Vector4 & value1, float divider)
 {
 	float single = 1.0f / divider;
 
@@ -420,7 +431,7 @@ Vector4 Vector4::Divide(Vector4 value1, float divider)
 
 	return vector4;
 }
-Vector4 Vector4::Multiply(Vector4 value1, Vector4 value2)
+Vector4 Vector4::Multiply( const Vector4 & value1, const Vector4 & value2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X * value2.X;
@@ -431,7 +442,7 @@ Vector4 Vector4::Multiply(Vector4 value1, Vector4 value2)
 	return vector4;
 }
 
-Vector4 Vector4::Multiply(Vector4 value1, float scaleFactor)
+Vector4 Vector4::Multiply( const Vector4 & value1, float scaleFactor)
 {
 	Vector4 vector4;
 	vector4.X = value1.X * scaleFactor;
@@ -441,7 +452,7 @@ Vector4 Vector4::Multiply(Vector4 value1, float scaleFactor)
 	return vector4;
 }
 
-Vector4 Vector4::Subtract(Vector4 value1, Vector4 value2)
+Vector4 Vector4::Subtract( const Vector4 & value1, const Vector4 & value2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X - value2.X;
@@ -452,7 +463,7 @@ Vector4 Vector4::Subtract(Vector4 value1, Vector4 value2)
 	return vector4;
 }
 
-Vector4 Vector4::Negative(Vector4 value)
+Vector4 Vector4::Negative( const Vector4 & value)
 {
 	Vector4 vector4;
 	vector4.X = -value.X;
@@ -463,7 +474,7 @@ Vector4 Vector4::Negative(Vector4 value)
 	return vector4;
 }
 
-Vector4 Vector4::Barycentric(Vector4 value1, Vector4 value2, Vector4 value3, float amount1, float amount2)
+Vector4 Vector4::Barycentric( const Vector4 & value1, const Vector4 & value2, const Vector4 & value3, float amount1, float amount2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X + amount1 * (value2.X - value1.X) + amount2 * (value3.X - value1.X);
@@ -477,12 +488,12 @@ Vector4 Vector4::Barycentric(Vector4 value1, Vector4 value2, Vector4 value3, flo
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief °Å¸®°è»ê
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú °ª
+///@brief ï¿½Å¸ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-float Vector4::Distance(Vector4 value1, Vector4 value2)
+float Vector4::Distance( const Vector4 & value1, const Vector4 & value2)
 {
 	float x = value1.X - value2.X;
 	float y = value1.Y - value2.Y;
@@ -497,12 +508,12 @@ float Vector4::Distance(Vector4 value1, Vector4 value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¦°öÀ¸·Î °Å¸®°è»ê
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-float Vector4::DistanceSquared(Vector4 value1, Vector4 value2)
+float Vector4::DistanceSquared( const Vector4 & value1, const Vector4 & value2)
 {
 	float x = value1.X - value2.X;
 	float y = value1.Y - value2.Y;
@@ -515,12 +526,12 @@ float Vector4::DistanceSquared(Vector4 value1, Vector4 value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ³»Àû °è»ê
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-float Vector4::Dot(Vector4 value1, Vector4 value2)
+float Vector4::Dot( const Vector4 & value1, const Vector4 & value2)
 {
 	return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z + value1.W * value2.W;
 }
@@ -528,11 +539,11 @@ float Vector4::Dot(Vector4 value1, Vector4 value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¤±ÔÈ­
-///@param value : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½ï¿½È­
+///@param value : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Normalize(Vector4 value)
+Vector4 Vector4::Normalize( const Vector4 & value)
 {
 	float num = 1.0f / sqrtf(value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W);
 
@@ -548,12 +559,12 @@ Vector4 Vector4::Normalize(Vector4 value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍ Áß ÀÛÀº º¤ÅÍ
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Min(Vector4 value1, Vector4 value2)
+Vector4 Vector4::Min( const Vector4 & value1, const Vector4 & value2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X < value2.X ? value1.X : value2.X;
@@ -567,12 +578,12 @@ Vector4 Vector4::Min(Vector4 value1, Vector4 value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍ Áß Å« º¤ÅÍ
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å« ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Max(Vector4 value1, Vector4 value2)
+Vector4 Vector4::Max( const Vector4 & value1, const Vector4 & value2)
 {
 	Vector4 vector4;
 	vector4.X = value1.X > value2.X ? value1.X : value2.X;
@@ -586,12 +597,12 @@ Vector4 Vector4::Max(Vector4 value1, Vector4 value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÇØ´ç º¤ÅÍ°¡ ÃÖ¼Ò°ªº¸´Ù ÀÛÀ» °æ¿ì ÃÖ¼Ò°ª, ¹Ý´ëÀÇ °æ¿ì ÃÖ´ë°ª
-///@param value1 : º¤ÅÍ
-///@param min : ÃÖ¼Ò°ª º¤ÅÍ
-///@param max : ÃÖ´ë°ª º¤ÅÍ
+///@brief ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ö¼Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö¼Ò°ï¿½, ï¿½Ý´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´ë°ª
+///@param value1 : ï¿½ï¿½ï¿½ï¿½
+///@param min : ï¿½Ö¼Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param max : ï¿½Ö´ë°ª ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Clamp(Vector4 value1, Vector4 min, Vector4 max)
+Vector4 Vector4::Clamp( const Vector4 & value1, const Vector4 & min, const Vector4 & max)
 {
 	float x = value1.X;
 	x = (x > max.X ? max.X : x);
@@ -620,13 +631,13 @@ Vector4 Vector4::Clamp(Vector4 value1, Vector4 min, Vector4 max)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍÀÇ ¼±Çüº¸°£
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@param amount : º¸°£°ª
-///@return °á°úº¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Lerp(Vector4 value1, Vector4 value2, float amount)
+Vector4 Vector4::Lerp( const Vector4 & value1, const Vector4 & value2, float amount)
 {
 	Vector4 vector4;
 	vector4.X = value1.X + (value2.X - value1.X) * amount;
@@ -640,13 +651,13 @@ Vector4 Vector4::Lerp(Vector4 value1, Vector4 value2, float amount)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍ¸¦ ºÎµå·´°Ô º¸°£
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@param amount : º¸°£°ª
-///@return °á°úº¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::SmoothStep(Vector4 value1, Vector4 value2, float amount)
+Vector4 Vector4::SmoothStep( const Vector4 & value1, const Vector4 & value2, float amount)
 {
 	float single;
 	if (amount > 1.0f)
@@ -669,14 +680,14 @@ Vector4 Vector4::SmoothStep(Vector4 value1, Vector4 value2, float amount)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Ä«Æ®¹Ä-·Ò º¸°£
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@param value3 : º¤ÅÍ3
-///@param value4 : º¤ÅÍ4
-///@return °á°ú º¤ÅÍ
+///@brief Ä«Æ®ï¿½ï¿½-ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param value3 : ï¿½ï¿½ï¿½ï¿½3
+///@param value4 : ï¿½ï¿½ï¿½ï¿½4
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::CatmullRom(Vector4 value1, Vector4 value2, Vector4 value3, Vector4 value4, float amount)
+Vector4 Vector4::CatmullRom( const Vector4 & value1, const Vector4 & value2, const Vector4 & value3, const Vector4 & value4, float amount)
 {
 	float single = amount * amount;
 	float single1 = amount * single;
@@ -693,15 +704,15 @@ Vector4 Vector4::CatmullRom(Vector4 value1, Vector4 value2, Vector4 value3, Vect
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¿¡¸£¹ÌÆ® º¸°£
-///@param value1 : º¤ÅÍ1
-///@param tagent1 : º¤ÅÍ1ÀÇ ÅºÁ¨Æ® º¤ÅÍ
-///@param value2 : º¤ÅÍ2
-///@param tagent2 : º¤ÅÍ2 ÅºÁ¨Æ® º¤ÅÍ
-///@param amount : º¸°£°ª
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param tagent1 : ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ Åºï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param tagent2 : ï¿½ï¿½ï¿½ï¿½2 Åºï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Hermite(Vector4 value1, Vector4 tangent1, Vector4 value2, Vector4 tangent2, float amount)
+Vector4 Vector4::Hermite( const Vector4 & value1, const Vector4 & tangent1, const Vector4 & value2, const Vector4 & tangent2, float amount)
 {
 	float single = amount * amount;
 	float single1 = amount * single;
@@ -722,12 +733,12 @@ Vector4 Vector4::Hermite(Vector4 value1, Vector4 tangent1, Vector4 value2, Vecto
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¸ÅÆ®¸¯½º¿¡ ÀÇÇÑ 2Dº¤ÅÍ º¯È¯
-///@param position : º¤ÅÍ
-///@param matrix : ¸ÅÆ®¸¯½º
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 2Dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param position : ï¿½ï¿½ï¿½ï¿½
+///@param matrix : ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Transform(Vector2D position, Matrix matrix)
+Vector4 Vector4::Transform( const Vector2D position, const Matrix & matrix)
 {
 	float num1 = (position.X * matrix.M11 + position.Y * matrix.M21) + matrix.M41;
 	float num2 = (position.X * matrix.M12 + position.Y * matrix.M22) + matrix.M42;
@@ -746,12 +757,12 @@ Vector4 Vector4::Transform(Vector2D position, Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¸ÅÆ®¸¯½º¿¡ ÀÇÇÑ 3Dº¤ÅÍ º¯È¯
-///@param position : º¤ÅÍ
-///@param matrix : ¸ÅÆ®¸¯½º
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 3Dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param position : ï¿½ï¿½ï¿½ï¿½
+///@param matrix : ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Transform(Vector position, Matrix matrix)
+Vector4 Vector4::Transform( const Vector & position, const Matrix & matrix)
 {
 	float num1 = (position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31) + matrix.M41;
 	float num2 = (position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32) + matrix.M42;
@@ -770,12 +781,12 @@ Vector4 Vector4::Transform(Vector position, Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¸ÅÆ®¸¯½º¿¡ ÀÇÇÑ 4Dº¤ÅÍ º¯È¯
-///@param position : º¤ÅÍ
-///@param matrix : ¸ÅÆ®¸¯½º
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 4Dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param position : ï¿½ï¿½ï¿½ï¿½
+///@param matrix : ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Transform(Vector4 vector, Matrix matrix)
+Vector4 Vector4::Transform( const Vector4 & vector, const Matrix & matrix)
 {
 	float num1 = (vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31 + vector.W * matrix.M41);
 	float num2 = (vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32 + vector.W * matrix.M42);
@@ -794,12 +805,12 @@ Vector4 Vector4::Transform(Vector4 vector, Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÄõÅÍ´Ï¿Â¿¡ ÀÇÇÑ 2Dº¤ÅÍ º¯È¯
-///@param value : º¤ÅÍ
-///@param rotation : ÄõÅÍ´Ï¿Â
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½Í´Ï¿Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ 2Dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param value : ï¿½ï¿½ï¿½ï¿½
+///@param rotation : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Transform(Vector2D value, Quaternion rotation)
+Vector4 Vector4::Transform( const Vector2D value, const Quaternion & rotation)
 {
 	float x = rotation.X + rotation.X;
 	float y = rotation.Y + rotation.Y;
@@ -832,12 +843,12 @@ Vector4 Vector4::Transform(Vector2D value, Quaternion rotation)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÄõÅÍ´Ï¿Â¿¡ ÀÇÇÑ 3Dº¤ÅÍ º¯È¯
-///@param value : º¤ÅÍ
-///@param rotation : ÄõÅÍ´Ï¿Â
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½Í´Ï¿Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ 3Dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param value : ï¿½ï¿½ï¿½ï¿½
+///@param rotation : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Transform(Vector value, Quaternion rotation)
+Vector4 Vector4::Transform( const Vector & value, const Quaternion & rotation)
 {
 	float x = rotation.X + rotation.X;
 	float y = rotation.Y + rotation.Y;
@@ -870,12 +881,12 @@ Vector4 Vector4::Transform(Vector value, Quaternion rotation)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÄõÅÍ´Ï¿Â¿¡ ÀÇÇÑ 4Dº¤ÅÍ º¯È¯
-///@param value : º¤ÅÍ
-///@param rotation : ÄõÅÍ´Ï¿Â
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½Í´Ï¿Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ 4Dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param value : ï¿½ï¿½ï¿½ï¿½
+///@param rotation : ï¿½ï¿½ï¿½Í´Ï¿ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector4 Vector4::Transform(Vector4 value, Quaternion rotation)
+Vector4 Vector4::Transform( const Vector4 & value, const Quaternion & rotation)
 {
 	float x = rotation.X + rotation.X;
 	float y = rotation.Y + rotation.Y;

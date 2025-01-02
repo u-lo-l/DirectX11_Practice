@@ -42,11 +42,6 @@ void Terrain::Tick()
 
 void Terrain::Render() const
 {
-	// ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
-	//
-	// DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// VBuffer->Render();
-	// IBuffer->Render();
 	Drawer->DrawIndexed(0, Pass, IndexCount);
 }
 

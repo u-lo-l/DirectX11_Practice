@@ -12,7 +12,7 @@ const Vector2D Vector2D::UnitY = Vector2D(0.0f, 1.0f);
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D::Vector2D(void)
 {
@@ -23,7 +23,7 @@ Vector2D::Vector2D(void)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param value : x = y = value;
 //////////////////////////////////////////////////////////////////////////
 Vector2D::Vector2D(float value)
@@ -34,7 +34,7 @@ Vector2D::Vector2D(float value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param x : X
 ///@param y : Y
 //////////////////////////////////////////////////////////////////////////
@@ -43,14 +43,25 @@ Vector2D::Vector2D(float x, float y)
 	X = x;
 	Y = y;
 }
+
+Vector2D::operator float*()
+{
+	return V;
+}
+
+Vector2D::operator const float*() const
+{
+	return V;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@return °á°ú º¤ÅÍ
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
-Vector2D Vector2D::operator-(void)
+Vector2D Vector2D::operator-()
 {
 	Vector2D vector2;
 	vector2.X = -X;
@@ -63,8 +74,8 @@ Vector2D Vector2D::operator-(void)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ==
-///@param value2 : º¤ÅÍ
-///@return °á°ú
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Vector2D::operator==(const Vector2D& value2) const
 {
@@ -78,8 +89,8 @@ bool Vector2D::operator==(const Vector2D& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief !=
-///@param value2 : º¤ÅÍ
-///@return °á°ú
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Vector2D::operator!=(const Vector2D& value2) const
 {
@@ -93,8 +104,8 @@ bool Vector2D::operator!=(const Vector2D& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::operator+(const Vector2D& value2) const
 {
@@ -109,8 +120,8 @@ Vector2D Vector2D::operator+(const Vector2D& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::operator-(const Vector2D& value2) const
 {
@@ -125,8 +136,8 @@ Vector2D Vector2D::operator-(const Vector2D& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::operator*(const Vector2D& value2) const
 {
@@ -141,8 +152,8 @@ Vector2D Vector2D::operator*(const Vector2D& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *
-///@param scaleFactor : °ª
-///@return °á°ú º¤ÅÍ
+///@param scaleFactor : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::operator*(const float& scaleFactor) const
 {
@@ -157,8 +168,8 @@ Vector2D Vector2D::operator*(const float& scaleFactor) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::operator/(const Vector2D& value2) const
 {
@@ -173,8 +184,8 @@ Vector2D Vector2D::operator/(const Vector2D& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /
-///@param divider : °ª
-///@return °á°ú º¤ÅÍ
+///@param divider : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::operator/(const float& divider) const
 {
@@ -191,8 +202,8 @@ Vector2D Vector2D::operator/(const float& divider) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief +=
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::operator+=(const Vector2D& value2)
 {
@@ -203,8 +214,8 @@ void Vector2D::operator+=(const Vector2D& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief -=
-///@param value2 : º¤ÅÍ 
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½ 
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::operator-=(const Vector2D& value2)
 {
@@ -215,8 +226,8 @@ void Vector2D::operator-=(const Vector2D& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief *=
-///@param value2 : º¤ÅÍ 
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½ 
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::operator*=(const Vector2D& value2)
 {
@@ -227,8 +238,8 @@ void Vector2D::operator*=(const Vector2D& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param scaleFactor : °ª
-///@return °á°ú º¤ÅÍ
+///@param scaleFactor : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::operator*=(const float& scaleFactor)
 {
@@ -239,8 +250,8 @@ void Vector2D::operator*=(const float& scaleFactor)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param value2 : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@param value2 : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::operator/=(const Vector2D& value2)
 {
@@ -251,8 +262,8 @@ void Vector2D::operator/=(const Vector2D& value2)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief /=
-///@param divider : °ª
-///@return °á°ú º¤ÅÍ
+///@param divider : ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::operator/=(const float& divider)
 {
@@ -262,8 +273,8 @@ void Vector2D::operator/=(const float& divider)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¹®ÀÚ¿­·Î º¯È¯
-///@return ¹®ÀÚ¿­
+///@brief ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@return ï¿½ï¿½ï¿½Ú¿ï¿½
 //////////////////////////////////////////////////////////////////////////
 std::wstring Vector2D::ToString()
 {
@@ -276,25 +287,9 @@ std::wstring Vector2D::ToString()
 }
 //////////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////////
-///@brief D3DXVECTOR2·Î º¯È¯
-///@return D3DX º¤ÅÍ 
-//////////////////////////////////////////////////////////////////////////
-D3DXVECTOR2 Vector2D::ToDX()
-{
-	D3DXVECTOR2 vector2;
-	vector2.x = X;
-	vector2.y = Y;
-
-	return vector2;
-}
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-///@brief Å©±â °è»ê
-///@return °á°ú °ª
+///@brief Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector2D::Length()
 {
@@ -306,8 +301,8 @@ float Vector2D::Length()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¦°öÀ¸·Î Å©±â °è»ê
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector2D::LengthSquared()
 {
@@ -317,7 +312,7 @@ float Vector2D::LengthSquared()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¤±ÔÈ­
+///@brief ï¿½ï¿½ï¿½ï¿½È­
 //////////////////////////////////////////////////////////////////////////
 void Vector2D::Normalize()
 {
@@ -397,7 +392,7 @@ Vector2D Vector2D::Negative(Vector2D value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¿µ¿ªÀÇ Áß½É
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Barycentric(Vector2D value1, Vector2D value2, Vector2D value3, float amount1, float amount2)
 {
@@ -411,10 +406,10 @@ Vector2D Vector2D::Barycentric(Vector2D value1, Vector2D value2, Vector2D value3
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief °Å¸®°è»ê
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú °ª
+///@brief ï¿½Å¸ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector2D::Distance(Vector2D value1, Vector2D value2)
 {
@@ -428,10 +423,10 @@ float Vector2D::Distance(Vector2D value1, Vector2D value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¦°öÀ¸·Î °Å¸®°è»ê
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector2D::DistanceSquared(Vector2D value1, Vector2D value2)
 {
@@ -444,10 +439,10 @@ float Vector2D::DistanceSquared(Vector2D value1, Vector2D value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ³»Àû °è»ê
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú °ª
+///@brief ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 float Vector2D::Dot(Vector2D value1, Vector2D value2)
 {
@@ -457,9 +452,9 @@ float Vector2D::Dot(Vector2D value1, Vector2D value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Á¤±ÔÈ­
-///@param value : º¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½ï¿½È­
+///@param value : ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Normalize(Vector2D value)
 {
@@ -476,10 +471,10 @@ Vector2D Vector2D::Normalize(Vector2D value)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¹Ý»ç°ª
-///@param vector : º¤ÅÍ
-///@param normal : ³ë¸Öº¤ÅÍ
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½Ý»ç°ª
+///@param vector : ï¿½ï¿½ï¿½ï¿½
+///@param normal : ï¿½ï¿½Öºï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Reflect(Vector2D vector, Vector2D normal)
 {
@@ -495,10 +490,10 @@ Vector2D Vector2D::Reflect(Vector2D vector, Vector2D normal)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍ Áß ÀÛÀº º¤ÅÍ
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Min(Vector2D value1, Vector2D value2)
 {
@@ -512,10 +507,10 @@ Vector2D Vector2D::Min(Vector2D value1, Vector2D value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍ Áß Å« º¤ÅÍ
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å« ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Max(Vector2D value1, Vector2D value2)
 {
@@ -529,10 +524,10 @@ Vector2D Vector2D::Max(Vector2D value1, Vector2D value2)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÇØ´ç º¤ÅÍ°¡ ÃÖ¼Ò°ªº¸´Ù ÀÛÀ» °æ¿ì ÃÖ¼Ò°ª, ¹Ý´ëÀÇ °æ¿ì ÃÖ´ë°ª
-///@param value1 : º¤ÅÍ
-///@param min : ÃÖ¼Ò°ª º¤ÅÍ
-///@param max : ÃÖ´ë°ª º¤ÅÍ
+///@brief ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ö¼Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö¼Ò°ï¿½, ï¿½Ý´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´ë°ª
+///@param value1 : ï¿½ï¿½ï¿½ï¿½
+///@param min : ï¿½Ö¼Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param max : ï¿½Ö´ë°ª ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Clamp(Vector2D value1, Vector2D min, Vector2D max)
 {
@@ -554,11 +549,11 @@ Vector2D Vector2D::Clamp(Vector2D value1, Vector2D min, Vector2D max)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍÀÇ ¼±Çüº¸°£
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@param amount : º¸°£°ª
-///@return °á°úº¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Lerp(Vector2D value1, Vector2D value2, float amount)
 {
@@ -572,11 +567,11 @@ Vector2D Vector2D::Lerp(Vector2D value1, Vector2D value2, float amount)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief µÎ º¤ÅÍ¸¦ ºÎµå·´°Ô º¸°£
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@param amount : º¸°£°ª
-///@return °á°úº¤ÅÍ
+///@brief ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::SmoothStep(Vector2D value1, Vector2D value2, float amount)
 {
@@ -599,12 +594,12 @@ Vector2D Vector2D::SmoothStep(Vector2D value1, Vector2D value2, float amount)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief Ä«Æ®¹Ä-·Ò º¸°£
-///@param value1 : º¤ÅÍ1
-///@param value2 : º¤ÅÍ2
-///@param value3 : º¤ÅÍ3
-///@param value4 : º¤ÅÍ4
-///@return °á°ú º¤ÅÍ
+///@brief Ä«Æ®ï¿½ï¿½-ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param value3 : ï¿½ï¿½ï¿½ï¿½3
+///@param value4 : ï¿½ï¿½ï¿½ï¿½4
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::CatmullRom(Vector2D value1, Vector2D value2, Vector2D value3, Vector2D value4, float amount)
 {
@@ -621,13 +616,13 @@ Vector2D Vector2D::CatmullRom(Vector2D value1, Vector2D value2, Vector2D value3,
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¿¡¸£¹ÌÆ® º¸°£
-///@param value1 : º¤ÅÍ1
-///@param tagent1 : º¤ÅÍ1ÀÇ ÅºÁ¨Æ® º¤ÅÍ
-///@param value2 : º¤ÅÍ2
-///@param tagent2 : º¤ÅÍ2 ÅºÁ¨Æ® º¤ÅÍ
-///@param amount : º¸°£°ª
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+///@param value1 : ï¿½ï¿½ï¿½ï¿½1
+///@param tagent1 : ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ Åºï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+///@param value2 : ï¿½ï¿½ï¿½ï¿½2
+///@param tagent2 : ï¿½ï¿½ï¿½ï¿½2 Åºï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+///@param amount : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Hermite(Vector2D value1, Vector2D tangent1, Vector2D value2, Vector2D tangent2, float amount)
 {
@@ -648,10 +643,10 @@ Vector2D Vector2D::Hermite(Vector2D value1, Vector2D tangent1, Vector2D value2, 
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¸ÅÆ®¸¯½º¿¡ ÀÇÇÑ º¤ÅÍ º¯È¯
-///@param position : º¤ÅÍ
-///@param matrix : ¸ÅÆ®¸¯½º
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param position : ï¿½ï¿½ï¿½ï¿½
+///@param matrix : ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Transform(Vector2D position, Matrix matrix)
 {
@@ -668,8 +663,8 @@ Vector2D Vector2D::Transform(Vector2D position, Matrix matrix)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ÄõÅÍ´Ï¿Â¿¡ ÀÇÇÑ º¤ÅÍº¯È¯
-///@param value : º¤ÅÍ
+///@brief ï¿½ï¿½ï¿½Í´Ï¿Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Íºï¿½È¯
+///@param value : ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::Transform(Vector2D value, Quaternion rotation)
 {
@@ -696,10 +691,10 @@ Vector2D Vector2D::Transform(Vector2D value, Quaternion rotation)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¸ÅÆ®¸¯½º¿¡ ÀÇÇÑ ³ë¸Öº¤ÅÍ º¯È¯
-///@param normal : ¹ý¼± º¤ÅÍ
-///@param matrix : ¸ÅÆ®¸¯½º
-///@return °á°ú º¤ÅÍ
+///@brief ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Öºï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param normal : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+///@param matrix : ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+///@return ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Vector2D Vector2D::TransformNormal(Vector2D normal, Matrix matrix)
 {

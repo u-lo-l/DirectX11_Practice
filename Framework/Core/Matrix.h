@@ -55,7 +55,6 @@ public:
 	std::wstring ToStringRow2();
 	std::wstring ToStringRow3();
 	std::wstring ToStringRow4();
-	D3DXMATRIX ToDX();
 	float Determinant();
 	bool Decompose(Vector& scale, Quaternion& rotation, Vector& translation);
 	bool DecomposeUniformScale(float& scale, Quaternion& rotation, Vector& translation);

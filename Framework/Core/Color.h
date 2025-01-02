@@ -15,6 +15,9 @@ public:
 	explicit Color(int rgba);
 	explicit Color(const float* values);
 
+	operator float* ();
+	operator const float* () const;
+
 	bool operator ==(const Color& value2) const;
 	bool operator !=(const Color& value2) const;
 
@@ -34,29 +37,28 @@ public:
 
 	int ToRgba() const;
 	int ToBgra() const;
-	void ToBgra(byte& r, byte& g, byte& b, byte& a);
+	void ToBgra(byte& r, byte& g, byte& b, byte& a) const;
 
 	Vector ToVector3() const;
 	Vector4 ToVector4() const;
-	D3DXCOLOR ToDx() const;
 
 	std::wstring ToString() const;
 
 	static Color Add(const Color& Left, const Color& Right);
 	static Color Subtract(const Color& Left, const Color& Right);
 	static Color Modulate(const Color& Left, const Color& Right);
-	static Color Scale(Color value, float scale);
-	static Color Negate(Color value);
+	static Color Scale( const Color & value, float scale);
+	static Color Negate( const Color & value);
 
-	static Color Clamp(Color val, Color min, Color max);
-	static Color Lerp(Color start, Color end, float amount);
-	static Color SmoothStep(Color start, Color end, float amount);
-	static Color Max(Color left, Color right);
-	static Color Min(Color left, Color right);
+	static Color Clamp( const Color & val, const Color & min, const Color & max);
+	static Color Lerp( const Color & start, const Color & end, float amount);
+	static Color SmoothStep( const Color & start, const Color & end, float amount);
+	static Color Max( const Color & left, const Color & right);
+	static Color Min( const Color & left, const Color & right);
 
-	static Color AdjustContrast(Color value, float contrast);
-	static Color AdjustSaturation(Color value, float saturation);
-	static Color Premultiply(Color value);
+	static Color AdjustContrast( const Color & value, float contrast);
+	static Color AdjustSaturation( const Color & value, float saturation);
+	static Color Premultiply( const Color & value);
 
 public:
 	static const Color Aqua;
@@ -123,5 +125,13 @@ public:
 	static const Color YellowGreen;
 
 public:
-	float R, G, B, A;
+	union
+	{
+		struct
+		{
+			float R, G, B, A;
+		};
+
+		float RGBA[4];
+	};
 };

@@ -1,4 +1,4 @@
-#include "Framework.h"
+#include <Framework.h>
 #include "Color.h"
 
 Color::Color()
@@ -6,12 +6,12 @@ Color::Color()
 	A = R = G = B = 0.0f;
 }
 
-Color::Color(float Value)
+Color::Color( float Value )
 {
 	A = R = G = B = Value;
 }
 
-Color::Color(float r, float g, float b, float a)
+Color::Color( float r, float g, float b, float a )
 {
 	R = r;
 	G = g;
@@ -19,7 +19,7 @@ Color::Color(float r, float g, float b, float a)
 	A = a;
 }
 
-Color::Color(const Vector4& Value)
+Color::Color( const Vector4 & Value )
 {
 	R = Value.X;
 	G = Value.Y;
@@ -27,7 +27,7 @@ Color::Color(const Vector4& Value)
 	A = Value.W;
 }
 
-Color::Color(const Vector& Value, float Alpha)
+Color::Color( const Vector & Value, float Alpha )
 {
 	R = Value.X;
 	G = Value.Y;
@@ -35,7 +35,7 @@ Color::Color(const Vector& Value, float Alpha)
 	A = Alpha;
 }
 
-Color::Color(UINT Rgba)
+Color::Color( UINT Rgba )
 {
 	A = ((Rgba >> 24) & 255) / 255.0f;
 	B = ((Rgba >> 16) & 255) / 255.0f;
@@ -43,7 +43,7 @@ Color::Color(UINT Rgba)
 	R = (Rgba & 255) / 255.0f;
 }
 
-Color::Color(int rgba)
+Color::Color( int rgba )
 {
 	A = static_cast<float>(rgba >> 24 & 255) / 255.0f;
 	B = static_cast<float>(rgba >> 16 & 255) / 255.0f;
@@ -51,7 +51,7 @@ Color::Color(int rgba)
 	R = static_cast<float>(rgba & 255) / 255.0f;
 }
 
-Color::Color(const float* values)
+Color::Color( const float * values )
 {
 	R = values[0];
 	G = values[1];
@@ -59,7 +59,17 @@ Color::Color(const float* values)
 	A = values[3];
 }
 
-bool Color::operator==(const Color& value2) const
+Color::operator float *()
+{
+	return RGBA;
+}
+
+Color::operator const float *() const
+{
+	return RGBA;
+}
+
+bool Color::operator==( const Color & value2 ) const
 {
 	if (R == value2.R && G == value2.G && B == value2.B)
 		return A == value2.A;
@@ -67,7 +77,7 @@ bool Color::operator==(const Color& value2) const
 		return false;
 }
 
-bool Color::operator!=(const Color& value2) const
+bool Color::operator!=( const Color & value2 ) const
 {
 	if (R == value2.R && G == value2.G && B == value2.B)
 		return A != value2.A;
@@ -75,7 +85,7 @@ bool Color::operator!=(const Color& value2) const
 		return true;
 }
 
-Color Color::operator+(const Color& value2) const
+Color Color::operator+( const Color & value2 ) const
 {
 	Color color;
 	color.R = R + value2.R;
@@ -86,7 +96,7 @@ Color Color::operator+(const Color& value2) const
 	return color;
 }
 
-Color Color::operator-(const Color& value2) const
+Color Color::operator-( const Color & value2 ) const
 {
 	Color color;
 	color.R = R - value2.R;
@@ -97,7 +107,7 @@ Color Color::operator-(const Color& value2) const
 	return color;
 }
 
-Color Color::operator*(const Color& value2) const
+Color Color::operator*( const Color & value2 ) const
 {
 	Color color;
 	color.R = R * value2.R;
@@ -108,7 +118,7 @@ Color Color::operator*(const Color& value2) const
 	return color;
 }
 
-Color Color::operator*(const float& scaleFactor) const
+Color Color::operator*( const float & scaleFactor ) const
 {
 	Color color;
 	color.R = R * scaleFactor;
@@ -119,7 +129,7 @@ Color Color::operator*(const float& scaleFactor) const
 	return color;
 }
 
-Color Color::operator/(const Color& value2) const
+Color Color::operator/( const Color & value2 ) const
 {
 	Color color;
 	color.R = R / value2.R;
@@ -130,7 +140,7 @@ Color Color::operator/(const Color& value2) const
 	return color;
 }
 
-Color Color::operator/(const float& divider) const
+Color Color::operator/( const float & divider ) const
 {
 	float num = 1.0f / divider;
 
@@ -143,32 +153,32 @@ Color Color::operator/(const float& divider) const
 	return color;
 }
 
-void Color::operator+=(const Color& Value2)
+void Color::operator+=( const Color & Value2 )
 {
 	*this = *this + Value2;
 }
 
-void Color::operator-=(const Color& Value2)
+void Color::operator-=( const Color & Value2 )
 {
 	*this = *this - Value2;
 }
 
-void Color::operator*=(const Color& Value2)
+void Color::operator*=( const Color & Value2 )
 {
 	*this = *this * Value2;
 }
 
-void Color::operator*=(const float& ScaleFactor)
+void Color::operator*=( const float & ScaleFactor )
 {
 	*this = *this * ScaleFactor;
 }
 
-void Color::operator/=(const Color& Value2)
+void Color::operator/=( const Color & Value2 )
 {
 	*this = *this / Value2;
 }
 
-void Color::operator/=(const float& Divider)
+void Color::operator/=( const float & Divider )
 {
 	*this = *this / Divider;
 }
@@ -204,7 +214,7 @@ int Color::ToBgra() const
 	return static_cast<int>(value);
 }
 
-void Color::ToBgra(byte& r, byte& g, byte& b, byte& a)
+void Color::ToBgra( byte & r, byte & g, byte & b, byte & a ) const
 {
 	a = (byte)(A * 255.0f);
 	r = (byte)(R * 255.0f);
@@ -222,11 +232,6 @@ Vector4 Color::ToVector4() const
 	return Vector4(R, G, B, A);
 }
 
-D3DXCOLOR Color::ToDx() const
-{
-	return D3DXCOLOR(R, G, B, A);
-}
-
 std::wstring Color::ToString() const
 {
 	std::wstring temp = L"";
@@ -238,32 +243,32 @@ std::wstring Color::ToString() const
 	return temp;
 }
 
-Color Color::Add(const Color& Left, const Color& Right)
+Color Color::Add( const Color & Left, const Color & Right )
 {
-	return { Left.R + Right.R, Left.G + Right.G, Left.B + Right.B, Left.A + Right.A };
+	return {Left.R + Right.R, Left.G + Right.G, Left.B + Right.B, Left.A + Right.A};
 }
 
-Color Color::Subtract(const Color& Left, const Color& Right)
+Color Color::Subtract( const Color & Left, const Color & Right )
 {
-	return { Left.R - Right.R, Left.G - Right.G, Left.B - Right.B, Left.A - Right.A };
+	return {Left.R - Right.R, Left.G - Right.G, Left.B - Right.B, Left.A - Right.A};
 }
 
-Color Color::Modulate(const Color& Left, const Color& Right)
+Color Color::Modulate( const Color & Left, const Color & Right )
 {
 	return Color(Left.R * Right.R, Left.G * Right.G, Left.B * Right.B, Left.A * Right.A);
 }
 
-Color Color::Scale(Color value, float scale)
+Color Color::Scale( const Color & value, float scale )
 {
 	return Color(value.R * scale, value.G * scale, value.B * scale, value.A * scale);
 }
 
-Color Color::Negate(Color value)
+Color Color::Negate( const Color & value )
 {
 	return Color(1.0f - value.R, 1.0f - value.G, 1.0f - value.B, 1.0f - value.A);
 }
 
-Color Color::Clamp(Color val, Color min, Color max)
+Color Color::Clamp( const Color & val, const Color & min, const Color & max )
 {
 	float alpha = val.A;
 	alpha = (alpha > max.A) ? max.A : alpha;
@@ -281,10 +286,10 @@ Color Color::Clamp(Color val, Color min, Color max)
 	blue = (blue > max.B) ? max.B : blue;
 	blue = (blue < min.B) ? min.B : blue;
 
-	return Color(red, green, blue, alpha);
+	return {red, green, blue, alpha};
 }
 
-Color Color::Lerp(Color start, Color end, float amount)
+Color Color::Lerp( const Color & start, const Color & end, float amount )
 {
 	Color color;
 	color.R = Math::Lerp(start.R, end.R, amount);
@@ -295,14 +300,14 @@ Color Color::Lerp(Color start, Color end, float amount)
 	return color;
 }
 
-Color Color::SmoothStep(Color start, Color end, float amount)
+Color Color::SmoothStep( const Color & start, const Color & end, float amount )
 {
 	amount = Math::SmoothStep(amount);
 
 	return Lerp(start, end, amount);
 }
 
-Color Color::Max(Color left, Color right)
+Color Color::Max( const Color & left, const Color & right )
 {
 	Color color;
 	color.A = (left.A > right.A) ? left.A : right.A;
@@ -313,7 +318,7 @@ Color Color::Max(Color left, Color right)
 	return color;
 }
 
-Color Color::Min(Color left, Color right)
+Color Color::Min( const Color & left, const Color & right )
 {
 	Color color;
 	color.A = (left.A < right.A) ? left.A : right.A;
@@ -324,10 +329,9 @@ Color Color::Min(Color left, Color right)
 	return color;
 }
 
-Color Color::AdjustContrast(Color value, float contrast)
+Color Color::AdjustContrast( const Color & value, float contrast )
 {
-	return Color
-	(
+	return Color(
 		0.5f + contrast * (value.R - 0.5f),
 		0.5f + contrast * (value.G - 0.5f),
 		0.5f + contrast * (value.B - 0.5f),
@@ -335,12 +339,11 @@ Color Color::AdjustContrast(Color value, float contrast)
 	);
 }
 
-Color Color::AdjustSaturation(Color value, float saturation)
+Color Color::AdjustSaturation( const Color & value, float saturation )
 {
 	float grey = value.R * 0.2125f + value.G * 0.7154f + value.B * 0.0721f;
 
-	return Color
-	(
+	return Color(
 		grey + saturation * (value.R - grey),
 		grey + saturation * (value.G - grey),
 		grey + saturation * (value.B - grey),
@@ -348,7 +351,7 @@ Color Color::AdjustSaturation(Color value, float saturation)
 	);
 }
 
-Color Color::Premultiply(Color value)
+Color Color::Premultiply( const Color & value )
 {
 	Color color;
 	color.A = value.A;

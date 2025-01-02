@@ -9,7 +9,7 @@ const Point Point::Zero = Point(0, 0);
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 Point::Point(void)
 {
@@ -20,7 +20,7 @@ Point::Point(void)
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief »ý¼ºÀÚ
+///@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///@param x : X
 ///@param y : Y
 //////////////////////////////////////////////////////////////////////////
@@ -29,13 +29,24 @@ Point::Point(int x, int y)
 	X = x;
 	Y = y;
 }
+
+Point::operator float* ()
+{
+	return reinterpret_cast<float *>(P);
+}
+
+Point::operator const float* () const
+{
+	return reinterpret_cast<const float *>(P);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ==
-///@param value2 : Æ÷ÀÎÆ®
-///@return °á°ú
+///@param value2 : ï¿½ï¿½ï¿½ï¿½Æ®
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Point::operator==(const Point& value2) const
 {
@@ -49,8 +60,8 @@ bool Point::operator==(const Point& value2) const
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief !=
-///@param value2 : Æ÷ÀÎÆ®
-///@return °á°ú
+///@param value2 : ï¿½ï¿½ï¿½ï¿½Æ®
+///@return ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 bool Point::operator!=(const Point& value2) const
 {
@@ -58,12 +69,6 @@ bool Point::operator!=(const Point& value2) const
 		return Y != value2.Y;
 	else
 		return true;
-}
-
-
-D3DXVECTOR2 Point::ToDX()
-{
-	return D3DXVECTOR2((float)X, (float)Y);
 }
 
 Vector2D Point::ToVector2()
@@ -74,8 +79,8 @@ Vector2D Point::ToVector2()
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief ¹®ÀÚ¿­·Î º¯È¯
-///@param ¹®ÀÚ¿­
+///@brief ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
+///@param ï¿½ï¿½ï¿½Ú¿ï¿½
 //////////////////////////////////////////////////////////////////////////
 std::wstring Point::ToString()
 {

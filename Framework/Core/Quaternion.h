@@ -14,6 +14,9 @@ public:
 	Quaternion(Vector vectorPart, float scalarPart);
 
 	Quaternion operator -(void);
+	
+	operator float* ();
+	operator const float* () const;
 
 	bool operator ==(const Quaternion& quaternion2) const;
 	bool operator !=(const Quaternion& quaternion2) const;
@@ -45,42 +48,49 @@ public:
 
 
 	std::wstring ToString();
-	D3DXQUATERNION ToDX();
 
 	float Length();
 	float LengthSquared();
 
 	void Normalize();
-	static Quaternion Normalize(Quaternion quaternion);
+	static Quaternion Normalize( const Quaternion & quaternion);
 
 	void Conjugate();
-	static Quaternion Conjugate(Quaternion value);
-	static Quaternion Inverse(Quaternion quaternion);
+	static Quaternion Conjugate( const Quaternion & value);
+	static Quaternion Inverse( const Quaternion & quaternion);
 
-	static Quaternion Add(Quaternion quaternion1, Quaternion quaternion2);
-	static Quaternion Divide(Quaternion quaternion1, Quaternion quaternion2);
-	static Quaternion Multiply(Quaternion quaternion1, Quaternion quaternion2);
-	static Quaternion Multiply(Quaternion quaternion1, float scaleFactor);
-	static Quaternion Subtract(Quaternion quaternion1, Quaternion quaternion2);
+	static Quaternion Add( const Quaternion & quaternion1, const Quaternion & quaternion2);
+	static Quaternion Divide( const Quaternion & quaternion1, const Quaternion & quaternion2);
+	static Quaternion Multiply( const Quaternion & quaternion1, const Quaternion & quaternion2);
+	static Quaternion Multiply( const Quaternion & quaternion1, float scaleFactor);
+	static Quaternion Subtract( const Quaternion & quaternion1, const Quaternion & quaternion2);
 
-	static Quaternion Negative(Quaternion quaternion);
+	static Quaternion Negative( const Quaternion & quaternion);
 
-	static Quaternion CreateFromAxisAngle(Vector axis, float angle);
+	static Quaternion CreateFromAxisAngle( const Vector & axis, float angle);
 	static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll);
-	static Quaternion CreateFromRotationMatrix(Matrix matrix);
+	static Quaternion CreateFromRotationMatrix( const Matrix & matrix);
 
-	static float Dot(Quaternion quaternion1, Quaternion quaternion2);
+	static float Dot( const Quaternion & quaternion1, const Quaternion & quaternion2);
 
-	static Quaternion Slerp(Quaternion quaternion1, Quaternion quaternion2, float amount);
-	static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount);
+	static Quaternion Slerp( const Quaternion & quaternion1, const Quaternion & quaternion2, float amount);
+	static Quaternion Lerp( const Quaternion & quaternion1, const Quaternion & quaternion2, float amount);
 
-	static Quaternion Concatenate(Quaternion quaternion1, Quaternion quaternion2);
+	static Quaternion Concatenate( const Quaternion & quaternion1, const Quaternion & quaternion2);
 
 public:
 	const static Quaternion Identity;///< 0.0f, 0.0f, 0.0f, 1.0f
 
-	float X;///< X
-	float Y;///< Y
-	float Z;///< Z
-	float W;///< W
+	union
+	{
+		struct
+		{
+			float X;///< X
+			float Y;///< Y
+			float Z;///< Z
+			float W;///< W
+		};
+
+		float Q[4];
+	};
 };

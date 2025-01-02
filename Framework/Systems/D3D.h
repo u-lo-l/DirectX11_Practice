@@ -67,7 +67,7 @@ private:
 	/// </remarks>
 	void CreateRTV();
 	void CreateDSV();
-	void BindRenderTargets() const;
+	void SetRenderTargets() const;
 public:
 	ID3D11Device* GetDevice() const { return Device; }
 	ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; }
@@ -86,7 +86,10 @@ private:
 	IDXGISwapChain * SwapChain;
 	// GPU 명령 즉시 실행 컨텍스트
 	ID3D11DeviceContext * DeviceContext;
+	
 	ID3D11RenderTargetView * RenderTargetView;
+
 	ID3D11DepthStencilView * DepthStencilView;
+	ID3D11Texture2D * DSVTexture;
 };
 

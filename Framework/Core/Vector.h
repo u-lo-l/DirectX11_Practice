@@ -15,6 +15,9 @@ public:
 
 	Vector operator -(void);
 
+	operator float* ();
+	operator const float* () const;
+
 	bool operator ==(const Vector& value2) const;
 	bool operator !=(const Vector& value2) const;
 
@@ -47,7 +50,6 @@ public:
 
 
 	std::wstring ToString() const;
-	D3DXVECTOR3 ToDX() const;
 
 	float Length() const;
 	float LengthSquared() const;
@@ -103,7 +105,15 @@ public:
 	const static Vector Forward;///< 0.0f, 0.0f, -1.0f
 	const static Vector Backward;///< 0.0f, 0.0f, 1.0f
 
-	float X;///< X
-	float Y;///< Y
-	float Z;///< Z
+	union
+	{
+		struct
+		{
+			float X;///< X
+			float Y;///< Y
+			float Z;///< Z
+		};
+
+		float V[3];
+	};
 };

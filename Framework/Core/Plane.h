@@ -18,9 +18,9 @@ class Plane
 public:
 	Plane(void);
 	Plane(float a, float b, float c, float d);
-	Plane(Vector& normal, float d);
-	Plane(Vector4& value);
-	Plane(Vector& point1, Vector& point2, Vector& point3);
+	Plane( const Vector& normal, float d);
+	Plane( const Vector4& value);
+	Plane( const Vector& point1, const Vector& point2, const Vector& point3);
 
 	bool operator ==(const Plane& value) const;
 	bool operator !=(const Plane& value) const;
@@ -28,14 +28,14 @@ public:
 	std::wstring ToString();
 	D3DXPLANE ToD3DXPLANE();
 
-	float Dot(Vector4& value);
-	float DotCoordinate(Vector& value);
-	float DotNormal(Vector& value);
+	float Dot( const Vector4& value) const;
+	float DotCoordinate( const Vector& value) const;
+	float DotNormal( const Vector& value) const;
 
 	void Normalize();
-	static Plane Normalize(Plane& value);
-	static Plane Transform(Plane& plane, Matrix& matrix);
-	static Plane Transform(Plane& plane, Quaternion& rotation);
+	static Plane Normalize( const Plane& value);
+	static Plane Transform( const Plane& plane, const Matrix& matrix);
+	static Plane Transform( const Plane& plane, const Quaternion& rotation);
 
 public:
 	Vector Normal;///< 노멀 벡터

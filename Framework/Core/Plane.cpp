@@ -37,7 +37,7 @@ Plane::Plane(float a, float b, float c, float d)
 ///@param normal : 노멀 벡터
 ///@param d : 거리값
 //////////////////////////////////////////////////////////////////////////
-Plane::Plane(Vector& normal, float d)
+Plane::Plane( const Vector& normal, float d)
 {
 	Normal = normal;
 
@@ -50,7 +50,7 @@ Plane::Plane(Vector& normal, float d)
 ///@brief 생성자
 ///@param value : 4D 벡터(XYZ, W=거리)
 //////////////////////////////////////////////////////////////////////////
-Plane::Plane(Vector4& value)
+Plane::Plane( const Vector4& value)
 {
 	Normal.X = value.X;
 	Normal.Y = value.Y;
@@ -67,7 +67,7 @@ Plane::Plane(Vector4& value)
 ///@param point2 : 위치 벡터2
 ///@param point3 : 위치 벡터3
 //////////////////////////////////////////////////////////////////////////
-Plane::Plane(Vector& point1, Vector& point2, Vector& point3)
+Plane::Plane( const Vector& point1, const Vector& point2, const Vector& point3)
 {
 	float x = point2.X - point1.X;
 	float y = point2.Y - point1.Y;
@@ -171,7 +171,7 @@ void Plane::Normalize()
 ///@param value : 평면
 ///@return 결과 평면
 //////////////////////////////////////////////////////////////////////////
-Plane Plane::Normalize(Plane& value)
+Plane Plane::Normalize( const Plane& value)
 {
 	Plane normal;
 	float x = value.Normal.X * value.Normal.X + value.Normal.Y * value.Normal.Y + value.Normal.Z * value.Normal.Z;
@@ -201,7 +201,7 @@ Plane Plane::Normalize(Plane& value)
 ///@param matrix : 매트릭스
 ///@return 결과 평면
 //////////////////////////////////////////////////////////////////////////
-Plane Plane::Transform(Plane& plane, Matrix& matrix)
+Plane Plane::Transform( const Plane& plane, const Matrix& matrix)
 {
 	Matrix matrix1 = Matrix::Invert(matrix);
 
@@ -227,7 +227,7 @@ Plane Plane::Transform(Plane& plane, Matrix& matrix)
 ///@param rotation : 쿼터니온
 ///@return 결과 평면
 //////////////////////////////////////////////////////////////////////////
-Plane Plane::Transform(Plane& plane, Quaternion& rotation)
+Plane Plane::Transform( const Plane& plane, const Quaternion& rotation)
 {
 	float x = rotation.X + rotation.X;
 	float y = rotation.Y + rotation.Y;
@@ -275,7 +275,7 @@ Plane Plane::Transform(Plane& plane, Quaternion& rotation)
 ///@param value : 벡터
 ///@return 결과 값
 //////////////////////////////////////////////////////////////////////////
-float Plane::Dot(Vector4& value)
+float Plane::Dot( const Vector4& value) const
 {
 	return Normal.X * value.X + Normal.Y * value.Y + Normal.Z * value.Z + D * value.W;
 }
@@ -287,7 +287,7 @@ float Plane::Dot(Vector4& value)
 ///@param value : 벡터
 ///@return 결과 값
 //////////////////////////////////////////////////////////////////////////
-float Plane::DotCoordinate(Vector& value)
+float Plane::DotCoordinate( const Vector& value) const
 {
 	return Normal.X * value.X + Normal.Y * value.Y + Normal.Z * value.Z + D;
 }
@@ -299,7 +299,7 @@ float Plane::DotCoordinate(Vector& value)
 ///@param value : 벡터
 ///@return 결과 값
 //////////////////////////////////////////////////////////////////////////
-float Plane::DotNormal(Vector& value)
+float Plane::DotNormal( const Vector& value) const
 {
 	return Normal.X * value.X + Normal.Y * value.Y + Normal.Z * value.Z;
 }

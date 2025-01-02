@@ -34,7 +34,7 @@ void D3D::SetDesc(const D3DDesc& InDesc)
 
 void D3D::ClearRenderTargetView( const Color & InColor) const
 {
-	DeviceContext->ClearRenderTargetView(RenderTargetView, InColor.ToDx());
+	DeviceContext->ClearRenderTargetView(RenderTargetView, InColor);
 }
 
 void D3D::ClearDepthStencilView() const
@@ -61,7 +61,7 @@ void D3D::ResizeScreen(float InWidth, float InHeight)
 
 	CreateRTV();
 	CreateDSV();
-	BindRenderTargets();
+	SetRenderTargets();
 }
 
 D3D::D3D()
@@ -69,11 +69,12 @@ D3D::D3D()
 	CreateDeviceAndContext();
 	CreateRTV();
 	CreateDSV();
-	BindRenderTargets();
+	SetRenderTargets();
 }
 
 D3D::~D3D()
 {
+	SAFE_RELEASE(DSVTexture);
 	SAFE_RELEASE(RenderTargetView);
 	SAFE_RELEASE(DepthStencilView);
 	SAFE_RELEASE(DeviceContext);
@@ -194,32 +195,31 @@ void D3D::CreateRTV()
 
 void D3D::CreateDSV()
 {
-	ID3D11Texture2D * DepthStencilBuffer;
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDecs;
 	ZeroMemory(&DepthStencilBufferDecs, sizeof(DepthStencilBufferDecs));
 	DepthStencilBufferDecs.Width = D3D::D3dDesc.Width;
 	DepthStencilBufferDecs.Height = D3D::D3dDesc.Height;
-	DepthStencilBufferDecs.MipLevels = 0;
+	DepthStencilBufferDecs.MipLevels = 1;
 	DepthStencilBufferDecs.ArraySize = 1;
-	DepthStencilBufferDecs.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// DepthStencilBufferDecs.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DepthStencilBufferDecs.Format = DXGI_FORMAT_D32_FLOAT;
 	DepthStencilBufferDecs.SampleDesc.Count = 1;
 	DepthStencilBufferDecs.SampleDesc.Quality = 0;
 	DepthStencilBufferDecs.Usage = D3D11_USAGE_DEFAULT;
 	DepthStencilBufferDecs.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	DepthStencilBufferDecs.CPUAccessFlags = 0;
 	DepthStencilBufferDecs.MiscFlags = 0;
-	CHECK(Device->CreateTexture2D(&DepthStencilBufferDecs, nullptr, &DepthStencilBuffer)>= 0);
+	CHECK(Device->CreateTexture2D(&DepthStencilBufferDecs, nullptr, &DSVTexture)>= 0);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStencilViewDesc;
 	ZeroMemory(&DepthStencilViewDesc, sizeof(DepthStencilViewDesc));
 	DepthStencilViewDesc.Format = DepthStencilBufferDecs.Format;
 	DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	DepthStencilViewDesc.Texture2D.MipSlice = 0;
-	CHECK(Device->CreateDepthStencilView(DepthStencilBuffer, &DepthStencilViewDesc, &DepthStencilView) >= 0);
-	SAFE_RELEASE(DepthStencilBuffer);
+	CHECK(Device->CreateDepthStencilView(DSVTexture, &DepthStencilViewDesc, &DepthStencilView) >= 0);
 }
 
-void D3D::BindRenderTargets() const
+void D3D::SetRenderTargets() const
 {
 	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 }
