@@ -80,6 +80,16 @@ Vector::operator const float*() const
 	return V;
 }
 
+Vector::operator D3DXVECTOR3*()
+{
+	return reinterpret_cast<D3DXVECTOR3 *>(V);
+}
+
+Vector::operator const D3DXVECTOR3*() const
+{
+	return reinterpret_cast<const D3DXVECTOR3 *>(V);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 

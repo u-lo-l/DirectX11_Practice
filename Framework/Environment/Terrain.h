@@ -4,7 +4,6 @@ class Terrain
 {
 public:
 	using TerrainVertexType = VertexNormal;
-public:
 	Terrain(const wstring & InShaderFileName, const wstring& InHeightMapFileName);
 	~Terrain();
 
@@ -15,6 +14,7 @@ public:
 	__forceinline TerrainVertexType* GetVertice() const { return Vertices; }
 	__forceinline UINT GetWidth() const { return Width; }
 	__forceinline UINT GetHeight() const { return Height; }
+	void GetPositionY(Vector& InPosition) const;
 	
 private:
 	void CreateVertexData();
@@ -22,7 +22,7 @@ private:
 	void CreateNormalData() const;
 	void CreateBuffer();
 private:
-	int Pass = 1;
+	int Pass = 0;
 	Shader * Drawer = nullptr;
 	Texture* HeightMap;
 

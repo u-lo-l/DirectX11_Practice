@@ -17,6 +17,9 @@ public:
 
 	operator float* ();
 	operator const float* () const;
+	operator D3DXVECTOR3* ();
+	operator const D3DXVECTOR3* () const;
+	
 
 	bool operator ==(const Vector& value2) const;
 	bool operator !=(const Vector& value2) const;

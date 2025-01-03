@@ -51,7 +51,7 @@ void VertexBuffer::BindToGPU() const
 {
 	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
 	constexpr UINT Offset = 0;
-	DeviceContext->IASetVertexBuffers(0, 1, &Buffer, &Stride, &Offset);
+	DeviceContext->IASetVertexBuffers(Slot, 1, &Buffer, &Stride, &Offset);
 }
 
 IndexBuffer::IndexBuffer(UINT * InData,	UINT InCount)

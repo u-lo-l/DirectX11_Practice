@@ -25,7 +25,6 @@ public:
 	~IndexBuffer();
 
 	UINT GetCount() const { return Count; }
-
 	void BindToGPU() const;
 private:
 	ID3D11Buffer * Buffer;

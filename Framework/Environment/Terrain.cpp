@@ -48,6 +48,51 @@ void Terrain::Render() const
 	Drawer->DrawIndexed(0, Pass, IndexCount);
 }
 
+void Terrain::GetPositionY(Vector & InPosition ) const
+{
+	InPosition.Y = Math::FloatMinValue; 
+	const UINT X = InPosition.X;
+	const UINT Z = InPosition.Z;
+	if (X < 0 || Z < 0 || X >= Width || Z >= Height)
+		return;
+	
+	UINT Index[4];
+	Index[0] = Width * Z + X;
+	Index[1] = Width * (Z + 1) + X;
+	Index[2] = Width * Z + X + 1;
+	Index[3] = Width * (Z + 1) + X + 1;
+
+	Vector V[4];
+	for (UINT i = 0; i < 4; i++)
+		V[i] = Vertices[Index[i]].Position;
+	Vector Start = {InPosition.X, 55 + 10.f, InPosition.Z};
+	Vector Direction = {0, -1, 0};
+	
+	//
+	// float SlopX = InPosition.X - V[0].X; 
+	// float SlopZ = InPosition.Z - V[0].Z;
+	// Vector Result;
+	// if (SlopX + SlopZ <= 1.f)
+	// 	Result = V[0] + (V[2] - V[0]) * SlopX + (V[1] - V[0]) * SlopZ;
+	// else
+	// {
+	// 	SlopX = 1 - SlopX;
+	// 	SlopZ = 1 - SlopZ;
+	// 	Result = V[3] + (V[1] - V[3]) * SlopX + (V[2] - V[3]) * SlopZ;
+	// }
+	//
+	// return Result.Y;
+
+	float SlopX, SlopZ, Distance;
+	Vector Result(-1, Math::FloatMinValue, -1);
+	if (D3DXIntersectTri(V[0], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
+		Result = V[0] + (V[1] - V[0]) * SlopX + (V[2] - V[0]) * SlopZ;
+	if (D3DXIntersectTri(V[3], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
+		Result = V[3] + (V[1] - V[3]) * SlopX + (V[2] - V[3]) * SlopZ;
+	InPosition.Y = Result.Y;
+	Gui::Get()->RenderText(5, 60, 1, 0, 0, String::ToString(Result.ToString()));	
+}
+
 void Terrain::CreateVertexData()
 {
 	vector<Color> Pixels;

@@ -16,12 +16,17 @@ namespace Sdt
 		void Render() override;
 	private:
 		Terrain * Landscape = nullptr;
+		Matrix WorldMatrix;
+		Vector Position = Vector::Zero;
 
 	// for drawing normal vectors
 		Shader * Drawer = nullptr;
-		Matrix WorldMatrix;
 		VertexBuffer * VBuffer = nullptr;
-		IndexBuffer * IBuffer = nullptr;
-		vector<VertexColor> Vertice;
+		vector<VertexType> Vertice;
+
+	// for drawing Y
+		Shader * Drawer2 = nullptr;
+		VertexBuffer * VBuffer2 = nullptr;
+		vector<VertexType> Vertice2;
 	};
 }
