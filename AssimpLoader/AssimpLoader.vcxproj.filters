@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Pch.cpp" />
+    <ClCompile Include="Execute\027_ModelMaterial\Convert.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Pch.h" />
+    <ClInclude Include="Main.h" />
+    <ClInclude Include="Execute\027_ModelMaterial\Convert.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Execute">
+      <UniqueIdentifier>{c35a6040-8b75-4c80-a295-b824cb825f05}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

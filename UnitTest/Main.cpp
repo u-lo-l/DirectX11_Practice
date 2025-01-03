@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/024_Terrain/TerrainDemo.h"
+// #include "Execute/027_ModelMaterial/Converter.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::TerrainDemo);
+	// PUSH_MAIN(Sdt::TerrainDemo);
 }
 
 void Main::Destroy()

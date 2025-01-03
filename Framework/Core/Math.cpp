@@ -1,4 +1,4 @@
-#include "Framework.h"
+﻿#include "Framework.h"
 #include "Math.h"
 
 const float Math::E = 2.71828175f;

@@ -1,4 +1,4 @@
-#include "Framework.h"
+﻿#include "Framework.h"
 #include "Gui.h"
 
 Gui * Gui::Instance = nullptr;

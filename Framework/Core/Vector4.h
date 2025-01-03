@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <immintrin.h>
 class Vector2D;
 class Vector;

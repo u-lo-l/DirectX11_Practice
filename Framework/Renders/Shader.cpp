@@ -1,4 +1,4 @@
-#include "Framework.h"
+﻿#include "Framework.h"
 #include "Shader.h"
 
 Shader::Shader(const wstring& File)

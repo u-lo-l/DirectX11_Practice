@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /// <summary>
 /// Effect : Dx Effect는 HLSL로 쓰인 파이프라인 State의 집합이다.(?)

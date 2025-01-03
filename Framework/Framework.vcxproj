@@ -159,8 +159,7 @@
       <AdditionalLibraryDirectories>../../_Libraries</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>copy /Y "$(SolutionDir)Debug\$(ProjectName).lib" "$(SolutionDir)UnitTest\"
-copy /Y "$(SolutionDir)Debug\$(ProjectName).pdb" "$(SolutionDir)UnitTest\"</Command>
+      <Command>copy /Y "$(SolutionDir)Debug\$(ProjectName).lib" "$(SolutionDir)UnitTest\" &amp;&amp; copy /Y "$(SolutionDir)Debug\$(ProjectName).pdb" "$(SolutionDir)UnitTest\" &amp;&amp; copy /Y "$(SolutionDir)Debug\$(ProjectName).lib" "$(SolutionDir)AssimpLoader\" &amp;&amp; copy /Y "$(SolutionDir)Debug\$(ProjectName).pdb" "$(SolutionDir)AssimpLoader\" </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

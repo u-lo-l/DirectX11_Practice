@@ -1,4 +1,4 @@
-// ReSharper disable CppNonExplicitConversionOperator
+﻿// ReSharper disable CppNonExplicitConversionOperator
 #pragma once
 class Vector;
 class Quaternion;

@@ -51,8 +51,8 @@ void Terrain::Render() const
 void Terrain::GetPositionY(Vector & InPosition ) const
 {
 	InPosition.Y = Math::FloatMinValue; 
-	const UINT X = InPosition.X;
-	const UINT Z = InPosition.Z;
+	const UINT X = static_cast<UINT>(InPosition.X);
+	const UINT Z = static_cast<UINT>(InPosition.Z);
 	if (X < 0 || Z < 0 || X >= Width || Z >= Height)
 		return;
 	
