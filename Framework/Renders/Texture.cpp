@@ -4,7 +4,7 @@
 Texture::Texture( const wstring & FileName, D3DX11_IMAGE_INFO * InLoadInfo )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
-	if ( Path::bIsRelativePath(FileName) == true)
+	if ( Path::IsRelativePath(FileName) == true)
 		this->FileName = L"../../_Textures/" + FileName;
 	LoadMetadata(InLoadInfo);
 	LoadTexture();

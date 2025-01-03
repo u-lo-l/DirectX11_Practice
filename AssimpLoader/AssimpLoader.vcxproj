@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Execute\027_AssimpLoader\Convert.cpp" />
+    <ClCompile Include="Execute\027_AssimpLoader\Converter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -27,6 +28,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Execute\027_AssimpLoader\Convert.h" />
+    <ClInclude Include="Execute\027_AssimpLoader\Converter.h" />
+    <ClInclude Include="Execute\027_AssimpLoader\Types.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
@@ -90,7 +93,7 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH)</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DH)</ExternalIncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DL)</LibraryPath>
-    <IntDir>$(SolutionDir)Debug_$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)\Debug\Debug_$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

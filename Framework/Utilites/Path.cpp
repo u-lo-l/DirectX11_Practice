@@ -7,24 +7,70 @@
 
 #pragma comment(lib, "shlwapi.lib")
 
-bool Path::bIsFileExist( const string & InPath)
+void Path::CreateFolder( const string & InFolderName )
 {
-	return bIsFileExist(String::ToWString(InPath));
+	const bool bDirectoryExists = IsDirectoryExist(InFolderName);
+	if (bDirectoryExists == false)
+		CreateDirectoryA(InFolderName.c_str(), nullptr);
 }
 
-bool Path::bIsFileExist(const wstring & InPath)
+void Path::CreateFolder( const wstring & InFolderName )
+{
+	const bool bDirectoryExists = IsDirectoryExist(InFolderName);
+	if (bDirectoryExists == false)
+		CreateDirectoryW(InFolderName.c_str(), nullptr);
+}
+
+void Path::CreateFolders( string InFolderName )
+{
+	String::Replace(&InFolderName, "\\", "/");
+
+	vector<string> folders;
+	String::SplitString(&folders, InFolderName, "/");
+
+	string temp = "";
+	for (const string & folder : folders)
+	{
+		temp += folder + "/";
+
+		CreateFolder(temp);
+	}
+}
+
+void Path::CreateFolders( wstring InFolderName )
+{
+	String::Replace(&InFolderName, L"\\", L"/");
+
+	vector<wstring> folders;
+	String::SplitString(&folders, InFolderName, L"/");
+
+	wstring temp = L"";
+	for (const wstring & folder : folders)
+	{
+		temp += folder + L"/";
+
+		CreateFolder(temp);
+	}
+}
+
+bool Path::IsFileExist( const string & InPath)
+{
+	return IsFileExist(String::ToWString(InPath));
+}
+
+bool Path::IsFileExist(const wstring & InPath)
 {
 	DWORD fileValue = GetFileAttributes(InPath.c_str());
 
 	return fileValue < 0xFFFFFFFF;
 }
 
-bool Path::bIsDirectoryExist(const string & InPath)
+bool Path::IsDirectoryExist(const string & InPath)
 {
-	return bIsDirectoryExist(String::ToWString(InPath));
+	return IsDirectoryExist(String::ToWString(InPath));
 }
 
-bool Path::bIsDirectoryExist(const wstring & InPath)
+bool Path::IsDirectoryExist(const wstring & InPath)
 {
 	DWORD attribute = GetFileAttributes(InPath.c_str());
 
@@ -126,12 +172,12 @@ wstring Path::GetFileNameWithoutExtension(wstring InPath)
 	return fileName.substr(0, index);
 }
 
-bool Path::bIsRelativePath(const string & InPath)
+bool Path::IsRelativePath(const string & InPath)
 {
-	return bIsRelativePath(String::ToWString(InPath));
+	return IsRelativePath(String::ToWString(InPath));
 }
 
-bool Path::bIsRelativePath(const wstring & InPath)
+bool Path::IsRelativePath(const wstring & InPath)
 {
 	BOOL b = PathIsRelative(InPath.c_str());
 
