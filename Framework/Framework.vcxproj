@@ -46,6 +46,7 @@
     <ClCompile Include="Systems\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Utilites\BinaryFile.cpp" />
     <ClCompile Include="Utilites\Path.cpp" />
     <ClCompile Include="Utilites\String.cpp" />
     <ClCompile Include="Viewer\Camera.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Systems\Mouse.h" />
     <ClInclude Include="Systems\Timer.h" />
     <ClInclude Include="Systems\Window.h" />
+    <ClInclude Include="Utilites\BinaryFile.h" />
     <ClInclude Include="Utilites\Path.h" />
     <ClInclude Include="Utilites\String.h" />
     <ClInclude Include="Viewer\Camera.h" />

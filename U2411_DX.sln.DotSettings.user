@@ -1,6 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ADubekif_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FJanalof_003FDubekif_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ALakehef_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FNazelac_003FLakehef_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AMonahad_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FPogojer_003FMonahad_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=DSV/@EntryIndexedValue">DSV</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=GPU/@EntryIndexedValue">GPU</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=RS/@EntryIndexedValue">RS</s:String>
@@ -8,6 +9,9 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=SRV/@EntryIndexedValue">SRV</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=UAV/@EntryIndexedValue">UAV</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=UV/@EntryIndexedValue">UV</s:String>
+	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=0688b656_002D22de_002D41dd_002Daab9_002D301ceb139698_0023UnitTest/@EntryIndexedValue">True</s:Boolean>
+	
+	
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Decs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Descs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=fxgroup/@EntryIndexedValue">True</s:Boolean>

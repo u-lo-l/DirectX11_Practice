@@ -53,6 +53,7 @@ using namespace std;
 #include "Renders/Buffers.h"
 #include "Utilites/Path.h"
 #include "Utilites/String.h"
+#include "Utilites/BinaryFile.h"
 #include "Environment/Terrain.h"
 
 /* SDT_Math*/

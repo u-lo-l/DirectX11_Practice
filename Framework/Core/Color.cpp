@@ -232,7 +232,7 @@ Vector4 Color::ToVector4() const
 	return Vector4(R, G, B, A);
 }
 
-std::wstring Color::ToString() const
+std::wstring Color::ToWString() const
 {
 	std::wstring temp = L"";
 	temp += L" R:" + std::to_wstring(R);
@@ -241,6 +241,17 @@ std::wstring Color::ToString() const
 	temp += L",A:" + std::to_wstring(A);
 
 	return temp;
+}
+
+std::string Color::ToString() const
+{
+	std::string Temp = "";
+	Temp += " R:" + std::to_string(R);
+	Temp += ",G:" + std::to_string(G);
+	Temp += ",B:" + std::to_string(B);
+	Temp += ",A:" + std::to_string(A);
+
+	return Temp;
 }
 
 Color Color::Add( const Color & Left, const Color & Right )

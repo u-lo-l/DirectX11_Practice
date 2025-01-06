@@ -42,7 +42,8 @@ public:
 	Vector ToVector3() const;
 	Vector4 ToVector4() const;
 
-	std::wstring ToString() const;
+	std::wstring ToWString() const;
+	std::string ToString() const;
 
 	static Color Add(const Color& Left, const Color& Right);
 	static Color Subtract(const Color& Left, const Color& Right);

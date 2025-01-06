@@ -3,11 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/027_AssimpLoader/Convert.h"
+#include "Execute/027_AssimpLoader/ExportFile.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::Convert);
+	PUSH_MAIN(Sdt::ExportFile);
 }
 
 void Main::Destroy()
