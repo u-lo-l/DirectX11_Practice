@@ -74,9 +74,9 @@ namespace Sdt
 			Material->Get(AI_MATKEY_COLOR_EMISSIVE, color);
 			Materials[i]->Emissive = Color(color.r, color.g, color.b, color.a);
 
-			Materials[i]->SetTextureFiles(Material, aiTextureType_DIFFUSE);
-			Materials[i]->SetTextureFiles(Material, aiTextureType_SPECULAR);
-			Materials[i]->SetTextureFiles(Material, aiTextureType_NORMALS);
+			Materials[i]->SetTextureFilesFromAiMaterialByTextureType(Material, aiTextureType_DIFFUSE);
+			Materials[i]->SetTextureFilesFromAiMaterialByTextureType(Material, aiTextureType_SPECULAR);
+			Materials[i]->SetTextureFilesFromAiMaterialByTextureType(Material, aiTextureType_NORMALS);
 		}
 	}
 
