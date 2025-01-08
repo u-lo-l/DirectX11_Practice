@@ -14,7 +14,9 @@ public:
 	Vector4();
 	Vector4(float x, float y, float z, float w);
 	Vector4(Vector2D value, float z, float w);
-	Vector4(Vector value, float w);
+	Vector4( const Vector & value, float w);
+	Vector4(const Vector4& other);
+	Vector4& operator=(const Vector4& other);
 	explicit Vector4(float value);
 
 	operator float*();
@@ -70,7 +72,6 @@ public:
 
 	static Vector4 Negative( const Vector4 & value );
 
-
 	static Vector4 Barycentric( const Vector4 & value1, const Vector4 & value2, const Vector4 & value3, float amount1, float amount2 );
 
 	static float Distance( const Vector4 & value1, const Vector4 & value2 );
@@ -90,7 +91,7 @@ public:
 
 	static Vector4 Transform( Vector2D position, const Matrix & matrix );
 	static Vector4 Transform( const Vector & position, const Matrix & matrix );
-	static Vector4 Transform( const Vector4 & position, const Matrix & matrix );
+	static Vector4 Transform( const Vector4 & vector, const Matrix & matrix );
 
 	static Vector4 Transform( Vector2D value, const Quaternion & rotation );
 	static Vector4 Transform( const Vector & value, const Quaternion & rotation );

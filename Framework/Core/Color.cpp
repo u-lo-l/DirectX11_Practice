@@ -2,37 +2,39 @@
 #include "Color.h"
 
 Color::Color()
+	:R(0), G(0), B(0), A(0)
 {
-	A = R = G = B = 0.0f;
 }
 
 Color::Color( float Value )
+	: R( Value ), G( Value ), B( Value ), A( Value )
 {
-	A = R = G = B = Value;
 }
 
 Color::Color( float r, float g, float b, float a )
+	: R( r ), G( g ), B( b ), A( a )
 {
-	R = r;
-	G = g;
-	B = b;
-	A = a;
 }
 
-Color::Color( const Vector4 & Value )
+Color::Color( const Color & Value )
+	: R( Value.R ), G( Value.G ), B( Value.B ), A( Value.A )
 {
-	R = Value.X;
-	G = Value.Y;
-	B = Value.Z;
-	A = Value.W;
+}
+
+Color & Color::operator=( const Color & Value )
+{
+	if ( this == &Value )
+		return *this;
+	R = Value.R;
+	G = Value.G;
+	B = Value.B;
+	A = Value.A;
+	return *this;
 }
 
 Color::Color( const Vector & Value, float Alpha )
+	: R(Value.X), G(Value.Y), B(Value.Z), A(Alpha) 
 {
-	R = Value.X;
-	G = Value.Y;
-	B = Value.Z;
-	A = Alpha;
 }
 
 Color::Color( UINT Rgba )
@@ -52,11 +54,8 @@ Color::Color( int rgba )
 }
 
 Color::Color( const float * values )
+	: R(values[0]), G(values[1]), B(values[2]), A(values[3])
 {
-	R = values[0];
-	G = values[1];
-	B = values[2];
-	A = values[3];
 }
 
 Color::operator float *()
@@ -216,10 +215,10 @@ int Color::ToBgra() const
 
 void Color::ToBgra( byte & r, byte & g, byte & b, byte & a ) const
 {
-	a = (byte)(A * 255.0f);
-	r = (byte)(R * 255.0f);
-	g = (byte)(G * 255.0f);
-	b = (byte)(B * 255.0f);
+	a = static_cast<byte>(A * 255.0f);
+	r = static_cast<byte>(R * 255.0f);
+	g = static_cast<byte>(G * 255.0f);
+	b = static_cast<byte>(B * 255.0f);
 }
 
 Vector Color::ToVector3() const
@@ -266,17 +265,17 @@ Color Color::Subtract( const Color & Left, const Color & Right )
 
 Color Color::Modulate( const Color & Left, const Color & Right )
 {
-	return Color(Left.R * Right.R, Left.G * Right.G, Left.B * Right.B, Left.A * Right.A);
+	return {Left.R * Right.R, Left.G * Right.G, Left.B * Right.B, Left.A * Right.A};
 }
 
 Color Color::Scale( const Color & value, float scale )
 {
-	return Color(value.R * scale, value.G * scale, value.B * scale, value.A * scale);
+	return {value.R * scale, value.G * scale, value.B * scale, value.A * scale};
 }
 
 Color Color::Negate( const Color & value )
 {
-	return Color(1.0f - value.R, 1.0f - value.G, 1.0f - value.B, 1.0f - value.A);
+	return {1.0f - value.R, 1.0f - value.G, 1.0f - value.B, 1.0f - value.A};
 }
 
 Color Color::Clamp( const Color & val, const Color & min, const Color & max )
@@ -342,24 +341,24 @@ Color Color::Min( const Color & left, const Color & right )
 
 Color Color::AdjustContrast( const Color & value, float contrast )
 {
-	return Color(
+	return {
 		0.5f + contrast * (value.R - 0.5f),
 		0.5f + contrast * (value.G - 0.5f),
 		0.5f + contrast * (value.B - 0.5f),
 		value.A
-	);
+	};
 }
 
 Color Color::AdjustSaturation( const Color & value, float saturation )
 {
 	float grey = value.R * 0.2125f + value.G * 0.7154f + value.B * 0.0721f;
 
-	return Color(
+	return {
 		grey + saturation * (value.R - grey),
 		grey + saturation * (value.G - grey),
 		grey + saturation * (value.B - grey),
 		value.A
-	);
+	};
 }
 
 Color Color::Premultiply( const Color & value )

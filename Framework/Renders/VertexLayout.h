@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Framework.h"
-
-#include "../Core/Vector2D.h"
+#include "Core/Vector4.h"
+#include "Core/Vector2D.h"
 
 //---------------------------------------------------------------------------//
 struct Vertex
@@ -66,3 +66,15 @@ struct VertexNormal
 	Vector Position;
 	Vector Normal;
 };
+//---------------------------------------------------------------------------//
+typedef struct VertexTextureColorNormalTangentBlend
+{
+	Vector Position;
+	Vector2D UV;
+	Color Color;
+	Vector Normal;
+	Vector Tangent;
+	
+	Vector4 Indices;
+	Vector4 Blend;
+} ModelVertex;

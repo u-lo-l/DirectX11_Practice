@@ -38,10 +38,11 @@ namespace Sdt
 	{
 		return String::Format("%0.6f,%0.6f,%0.6f,%0.6f", InColor.R, InColor.G, InColor.B, InColor.A);
 	}
-
+	
+#pragma region ExtractMaterial
 	void Converter::ExportMaterial( const wstring & InSaveFileName, bool InbOverwrite )
 	{
-		const wstring SaveFileName = L"../../_Materials/" + InSaveFileName + L".material";
+		const wstring SaveFileName = L"../../_Models/" + InSaveFileName + L".material";
 		
 		ReadMaterial();
 		WriteMaterial(SaveFileName, InbOverwrite);
@@ -49,36 +50,33 @@ namespace Sdt
 
 	void Converter::ReadMaterial()
 	{
-		// printf("mNumMaterials = %d\n", Scene->mNumMaterials);
+		Materials.resize(Scene->mNumMaterials, nullptr);
 		for (UINT i = 0; i < Scene->mNumMaterials; i++)
 		{
 			const aiMaterial* Material = Scene->mMaterials[i];
-			MaterialData * MatData = nullptr;
-			MatData = new MaterialData();
+			Materials[i] = new MaterialData();
 
-			MatData->Name = Material->GetName().C_Str();
-			MatData->ShaderName = "";
+			Materials[i]->Name = Material->GetName().C_Str();
+			Materials[i]->ShaderName = "MyTestShader";
 		
 			aiColor4D color;
 			Material->Get(AI_MATKEY_COLOR_AMBIENT, color);
-			MatData->Ambient = Color(color.r, color.g, color.b, color.a);
+			Materials[i]->Ambient = Color(color.r, color.g, color.b, color.a);
 		
 			Material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-			MatData->Diffuse = Color(color.r, color.g, color.b, color.a);
+			Materials[i]->Diffuse = Color(color.r, color.g, color.b, color.a);
 		
 			float shininess = 0.0f;
 			Material->Get(AI_MATKEY_SHININESS, shininess);
 			Material->Get(AI_MATKEY_COLOR_SPECULAR, color);
-			MatData->Specular = Color(color.r, color.g, color.b, color.a);
+			Materials[i]->Specular = Color(color.r, color.g, color.b, color.a);
 		
 			Material->Get(AI_MATKEY_COLOR_EMISSIVE, color);
-			MatData->Emissive = Color(color.r, color.g, color.b, color.a);
+			Materials[i]->Emissive = Color(color.r, color.g, color.b, color.a);
 
-			MatData->SetTextureFiles(Material, aiTextureType_DIFFUSE);
-			MatData->SetTextureFiles(Material, aiTextureType_SPECULAR);
-			MatData->SetTextureFiles(Material, aiTextureType_NORMALS);
-			
-			Materials.push_back(MatData);
+			Materials[i]->SetTextureFiles(Material, aiTextureType_DIFFUSE);
+			Materials[i]->SetTextureFiles(Material, aiTextureType_SPECULAR);
+			Materials[i]->SetTextureFiles(Material, aiTextureType_NORMALS);
 		}
 	}
 
@@ -109,7 +107,6 @@ namespace Sdt
 			Color["Emissive"] = ColorToJson(Data->Emissive);
 
 			Json::Value Textures;
-
 			for (const string & Name : Data->DiffuseFiles)
 				Textures["Diffuse"].append(SaveTexture(FolderName, Name));
 			for (const string & Name : Data->SpecularFiles)
@@ -117,10 +114,11 @@ namespace Sdt
 			for (const string & Name : Data->NormalFiles)
 				Textures["Normal"].append(SaveTexture(FolderName, Name));
 		
-			
 			Root[Data->Name.c_str()].append(ShaderName);
 			Root[Data->Name.c_str()].append(Color);
 			Root[Data->Name.c_str()].append(Textures);
+
+			SAFE_DELETE(Data);
 		}
 		
 		Json::StyledWriter JsonWriter;
@@ -131,20 +129,6 @@ namespace Sdt
 		Ofstream << TempStr;
 		Ofstream.close();
 	}
-#pragma region ExtractMesh
-	void Converter::ExportMesh( const wstring & InSaveFileName )
-	{
-		wstring FullFileName = L"../../_Models/" + InSaveFileName + L".mesh";
-		ReadBoneData(Scene->mRootNode, -1, -1);
-	}
-
-	void Converter::ReadBoneData( const aiNode * InRootNode, int InIndex, int InParent )
-	{
-		
-	}
-
-
-#pragma endregion
 
 	string Converter::SaveTexture(const string & InSaveFolder, const string & InFileName) const
 	{
@@ -159,12 +143,15 @@ namespace Sdt
 		{
 			if (Texture->mHeight == 0) // jpeg나 png처럼 압축된 형식의 image
 			{
-				const BinaryWriter * BinWriter = new BinaryWriter(String::ToWString(InSaveFolder + filename));
-				BinWriter->Write(Texture->pcData, Texture->mWidth);
+				// const BinaryWriter * BinWriter = new BinaryWriter(String::ToWString(InSaveFolder + filename));
+				BinaryWriter * const BinWriter = new BinaryWriter();
+				BinWriter->Open(String::ToWString(InSaveFolder + filename));
+				BinWriter->WriteByte(Texture->pcData, Texture->mWidth);
 				delete BinWriter;
 				
 				return filename;
 			}
+			// 파일정보가 아니라 Texture정보가 들어가 있는 경우.
 			D3D11_TEXTURE2D_DESC TextureDesc;
 			ZeroMemory(&TextureDesc, sizeof(TextureDesc));
 			TextureDesc.Width = Texture->mWidth;
@@ -207,5 +194,137 @@ namespace Sdt
 			return Path::GetFileName(Path);
 		}
 	}
+#pragma endregion
 
+#pragma region ExtractMesh
+	
+	void Converter::ExportMesh( const wstring & InSaveFileName )
+	{
+		wstring FullFileName = L"../../_Models/" + InSaveFileName + L".mesh";
+		ReadBoneData(Scene->mRootNode, -1, -1);
+		ReadMeshData();
+		WriteMesh(FullFileName);
+	}
+
+	void Converter::ReadBoneData( const aiNode * InNode, int InIndex, int InParent )
+	{
+		BoneData * Bone = new BoneData();
+		Bone->Index = InIndex;
+		Bone->Parent = InParent;
+		Bone->Name = InNode->mName.C_Str();
+		Bone->Transform = Matrix::Identity;
+		Bones.push_back(Bone);
+
+		const UINT MeshCount = InNode->mNumMeshes;
+		Bone->MeshIndices.reserve(MeshCount);
+		for (UINT i	= 0 ; i < MeshCount ; i++)
+		{
+			Bone->MeshIndices.push_back(InNode->mMeshes[i]);
+		}
+
+		const UINT ChildBoneCount = InNode->mNumChildren;
+		for (UINT i = 0; i < ChildBoneCount ; i++)
+		{
+			ReadBoneData(InNode->mChildren[i], Bones.size(), InIndex);
+		}
+	}
+
+	void Converter::ReadMeshData()
+	{
+		const UINT MeshCount = Scene->mNumMeshes;
+		Meshes.resize(MeshCount);
+		for (UINT i = 0; i < MeshCount; i++)
+		{
+			Meshes[i] = new MeshData();
+			const aiMesh * const AiMesh = Scene->mMeshes[i];
+
+			// Read Material Data
+			const UINT MatIndex = AiMesh->mMaterialIndex;
+			Meshes[i]->MaterialName = Scene->mMaterials[MatIndex]->GetName().C_Str();
+
+			// Read Vertices Data
+			const UINT VerticesCount = AiMesh->mNumVertices;
+			Meshes[i]->Vertices.reserve(VerticesCount);
+			for (UINT v = 0; v < VerticesCount; v++)
+			{
+				Meshes[i]->Vertices.emplace_back(ThisClass::ReadSingleVertexDataFromAiMesh(AiMesh, v));
+			}
+
+			// Read Indices Data
+			const UINT FacesCount = AiMesh->mNumFaces;
+			for (UINT f = 0; f < FacesCount; f++)
+			{
+				const aiFace & Face = AiMesh->mFaces[f];
+				const UINT IndicesCount = Face.mNumIndices;
+				for (UINT k = 0; k < IndicesCount; k++)
+				{
+					Meshes[i]->Indices.push_back(Face.mIndices[k]);
+				}
+			}
+		}
+	}
+
+	MeshData::VertexType Converter::ReadSingleVertexDataFromAiMesh( const aiMesh * Mesh, UINT VertexIndex )
+	{
+		MeshData::VertexType Vertex;
+		memcpy_s(&Vertex.Position, sizeof(Vector), Mesh->mVertices + VertexIndex, sizeof(Vector));
+				
+		if (Mesh->HasTextureCoords(0) == true)
+		{
+			memcpy_s(&Vertex.UV, sizeof(Vector2D), Mesh->mTextureCoords[0] + VertexIndex, sizeof(Vector2D));
+		}
+		if (Mesh->HasVertexColors(0) == true)
+		{
+			memcpy_s(&Vertex.Color, sizeof(Color), Mesh->mColors[0] + VertexIndex, sizeof(Color));
+		}
+		if (Mesh->HasNormals() == true)
+		{
+			memcpy_s(&Vertex.Normal, sizeof(Vector), Mesh->mNormals + VertexIndex, sizeof(Vector));
+		}
+		if (Mesh->HasTangentsAndBitangents() == true)
+		{
+			memcpy_s(&Vertex.Tangent, sizeof(Vector), Mesh->mTangents + VertexIndex, sizeof(Vector));
+		}
+		return Vertex;
+	}
+
+	void Converter::WriteMesh( const wstring & InSaveFileName ) const
+	{
+		Path::CreateFolders(Path::GetDirectoryName(InSaveFileName));
+		BinaryWriter * BinWriter = new BinaryWriter();
+		BinWriter->Open(InSaveFileName);
+
+		for (const BoneData * BoneData : Bones)
+		{
+			BinWriter->WriteUint(BoneData->Index);
+			BinWriter->WriteString(BoneData->Name);
+			BinWriter->WriteInt(BoneData->Parent);
+			BinWriter->WriteMatrix(BoneData->Transform);
+
+			const UINT MeshIndexCount = BoneData->MeshIndices.size();
+			BinWriter->WriteUint(MeshIndexCount);
+			if (MeshIndexCount > 0)
+				BinWriter->WriteByte(&(BoneData->MeshIndices[0]), MeshIndexCount * sizeof(UINT));
+			SAFE_DELETE(BoneData);
+		}
+		for (const MeshData * MeshData : Meshes)
+		{
+			BinWriter->WriteString(MeshData->Name);
+			BinWriter->WriteString(MeshData->MaterialName);
+
+			const UINT VerticesCount = MeshData->Vertices.size();
+			BinWriter->WriteUint(VerticesCount);
+			if (VerticesCount > 0)
+				BinWriter->WriteByte(&(MeshData->Vertices[0]), VerticesCount * sizeof(MeshData::VertexType));
+
+			const UINT IndicesCount = MeshData->Indices.size();
+			BinWriter->WriteUint(IndicesCount);
+			if (IndicesCount > 0)
+				BinWriter->WriteByte(&(MeshData->Indices[0]), IndicesCount * sizeof(UINT));	
+			SAFE_DELETE(MeshData);
+		}
+		BinWriter->Close();
+		SAFE_DELETE(BinWriter);
+	}
+#pragma endregion
 }

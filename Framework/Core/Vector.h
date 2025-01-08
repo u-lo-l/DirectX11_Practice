@@ -10,9 +10,11 @@ class Vector
 {
 public:
 	Vector(void);
-	Vector(float value);
+	explicit Vector(float value);
 	Vector(float x, float y, float z);
-
+	Vector(const Vector& v);
+	Vector& operator=(const Vector& v);
+	
 	Vector operator -(void);
 
 	operator float* ();

@@ -10,12 +10,16 @@ public:
 	explicit Color(float Value);
 	Color(float r, float g, float b, float a);
 	explicit Color(const Vector4& Value);
+	Color(const Color& Value);
+	Color& operator=(const Color& Value);
 	Color(const Vector& Value, float Alpha);
 	explicit Color(UINT Rgba);
 	explicit Color(int rgba);
 	explicit Color(const float* values);
 
+	// ReSharper disable once CppNonExplicitConversionOperator
 	operator float* ();
+	// ReSharper disable once CppNonExplicitConversionOperator
 	operator const float* () const;
 
 	bool operator ==(const Color& value2) const;

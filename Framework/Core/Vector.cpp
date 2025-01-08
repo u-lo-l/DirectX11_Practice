@@ -22,10 +22,8 @@ const Vector Vector::Backward = Vector(0.0f, 0.0f, -1.0f);
 ///@brief 생성자
 //////////////////////////////////////////////////////////////////////////
 Vector::Vector(void)
+	: X(0.0f), Y(0.0f), Z(0.0f)
 {
-	X = 0.0f;
-	Y = 0.0f;
-	Z = 0.0f;
 }
 //////////////////////////////////////////////////////////////////////////
 
@@ -35,8 +33,8 @@ Vector::Vector(void)
 ///@param X = Y = Z = value
 //////////////////////////////////////////////////////////////////////////
 Vector::Vector(float value)
+	: X(value), Y(value), Z(value)
 {
-	X = Y = Z = value;
 }
 //////////////////////////////////////////////////////////////////////////
 
@@ -48,11 +46,25 @@ Vector::Vector(float value)
 ///@param z : Z
 //////////////////////////////////////////////////////////////////////////
 Vector::Vector(float x, float y, float z)
+	: X(x), Y(y), Z(z)
 {
-	X = x;
-	Y = y;
-	Z = z;
 }
+
+Vector::Vector( const Vector & v )
+	: X(v.X), Y(v.Y), Z(v.Z)
+{
+}
+
+Vector& Vector::operator=( const Vector & v )
+{
+	if (this == &v)
+		return *this;
+	X = v.X;
+	Y = v.Y;
+	Z = v.Z;
+	return *this;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 

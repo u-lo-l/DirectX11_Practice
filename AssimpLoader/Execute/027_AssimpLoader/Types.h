@@ -19,20 +19,16 @@ struct MaterialData
 	void SetTextureFiles(const aiMaterial * const Material, aiTextureType InTextureType)
 	{
 		vector<string> * TargetList = nullptr;
-		string TextureTypeStr;
 		switch (InTextureType)
 		{
 			case aiTextureType_DIFFUSE:
 				TargetList = &DiffuseFiles;
-				TextureTypeStr = "Diffuse"; 
 				break;
 			case aiTextureType_SPECULAR:
 				TargetList = &SpecularFiles;
-				TextureTypeStr = "Specular"; 
 				break;
 			case aiTextureType_NORMALS:
 				TargetList = &NormalFiles;
-				TextureTypeStr = "Normal"; 
 				break;
 			default:
 				break;
@@ -46,11 +42,32 @@ struct MaterialData
 		const UINT TextureCount = Material->GetTextureCount(InTextureType);
 		TargetList->reserve(TextureCount);
 
-		printf("[%s]. Texture Count : %d\n", TextureTypeStr.c_str(), TextureCount);
 		for (UINT TextureIndex = 0; TextureIndex < TextureCount; TextureIndex++)
 		{
 			Material->GetTexture(InTextureType, TextureIndex, &TextureFile);
 			TargetList->emplace_back(TextureFile.C_Str());
 		}
 	}
+};
+
+struct BoneData
+{
+	UINT Index;
+	string Name;
+	int Parent;
+	Matrix Transform;
+
+	vector<UINT> MeshIndices;
+};
+
+struct MeshData
+{
+	using VertexType = ModelVertex;
+	
+	string Name;
+
+	string MaterialName;
+
+	vector<VertexType> Vertices;
+	vector<UINT> Indices;
 };

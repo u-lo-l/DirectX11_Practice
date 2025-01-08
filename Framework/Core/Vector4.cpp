@@ -17,12 +17,9 @@ const Vector4 Vector4::UnitW = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 //////////////////////////////////////////////////////////////////////////
 ///@brief ������
 //////////////////////////////////////////////////////////////////////////
-Vector4::Vector4(void)
+Vector4::Vector4()
+	: X(0.0f), Y(0.0f), Z(0.0f), W(0.0f)
 {
-	X = 0.0f;
-	Y = 0.0f;
-	Z = 0.0f;
-	W = 0.0f;
 }
 //////////////////////////////////////////////////////////////////////////
 
@@ -35,27 +32,21 @@ Vector4::Vector4(void)
 ///@param w : W
 //////////////////////////////////////////////////////////////////////////
 Vector4::Vector4(float x, float y, float z, float w)
+	: X(x), Y(y), Z(z), W(w)
 {
-	X = x;
-	Y = y;
-	Z = z;
-	W = w;
 }
 //////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief ������
-///@param value : x, y
+///@param Value : x, y
 ///@param z : Z
 ///@param w : W
 //////////////////////////////////////////////////////////////////////////
-Vector4::Vector4(Vector2D value, float z, float w)
+Vector4::Vector4(Vector2D Value, float z, float w)
+	: X(Value.X), Y(Value.Y), Z(z), W(w)
 {
-	X = value.X;
-	Y = value.Y;
-	Z = z;
-	W = w;
 }
 //////////////////////////////////////////////////////////////////////////
 
@@ -65,13 +56,27 @@ Vector4::Vector4(Vector2D value, float z, float w)
 ///@param value : x, y, z
 ///@param w : W
 //////////////////////////////////////////////////////////////////////////
-Vector4::Vector4(Vector value, float w)
+Vector4::Vector4( const Vector & value, float w)
+	: X(value.X), Y(value.Y), Z(value.Z), W(w)
 {
-	X = value.X;
-	Y = value.Y;
-	Z = value.Z;
-	W = w;
 }
+
+Vector4::Vector4( const Vector4 & other )
+	: X(other.X), Y(other.Y), Z(other.Z), W(other.W)
+{
+}
+
+Vector4 & Vector4::operator=( const Vector4 & other )
+{
+	if (this == &other)
+		return *this;
+	X = other.X;
+	Y = other.Y;
+	Z = other.Z;
+	W = other.W;
+	return *this;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -474,6 +479,10 @@ Vector4 Vector4::Negative( const Vector4 & value)
 	return vector4;
 }
 
+//////////////////////////////////////////////////////////////////////////
+///@brief 삼각형 무게중심 구하는 함수
+///@return 무게중심
+//////////////////////////////////////////////////////////////////////////
 Vector4 Vector4::Barycentric( const Vector4 & value1, const Vector4 & value2, const Vector4 & value3, float amount1, float amount2)
 {
 	Vector4 vector4;

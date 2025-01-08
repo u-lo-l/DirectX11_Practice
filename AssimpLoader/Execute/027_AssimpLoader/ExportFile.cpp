@@ -7,10 +7,10 @@ namespace Sdt
 
 	void ExportFile::Initialize()
 	{
-		this->Mousey();
+		// this->Mousey();
 		// this->Shannon();
 		// this->Airplane();
-		//this->Cube();
+		this->Cube();
 	}
 
 	void ExportFile::Airplane()
@@ -18,6 +18,7 @@ namespace Sdt
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Airplane/Airplane.fbx");
 		converter->ExportMaterial(L"Airplane/Airplane");
+		converter->ExportMesh(L"Airplane/Airplane");
 		SAFE_DELETE(converter);
 	}
 
