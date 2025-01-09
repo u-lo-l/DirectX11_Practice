@@ -1,0 +1,18 @@
+{
+   "Ch14_Body" : [
+      {
+         "ShaderName" : "MyTestShader"
+      },
+      {
+         "Ambient" : "0.000000,0.000000,0.000000,1.000000",
+         "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
+         "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+         "Specular" : "0.500000,0.500000,0.500000,1.000000"
+      },
+      {
+         "Diffuse" : [ "Ch14_1001_Diffuse.png" ],
+         "Normal" : [ "Ch14_1001_Normal.png" ],
+         "Specular" : [ "Ch14_1001_Specular.png" ]
+      }
+   ]
+}
