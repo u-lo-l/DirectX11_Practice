@@ -17,14 +17,17 @@ void ModelMesh::Tick() const
 {
 	Shader * const Drawer = MaterialData->GetShader();
 	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
-	CHECK(Drawer->AsMatrix("View")->SetMatrix(Context::Get()->GetViewMatrix()) >= 0);
-	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(Context::Get()->GetProjectionMatrix()) >= 0);
+
+	// 이 두 줄이 빠지는 이유 : View, Projection은 ConstantBuffer로 넘어갔다. 이제 Context.Tick()에서 관리한다.
+	// CHECK(Drawer->AsMatrix("View")->SetMatrix(Context::Get()->GetViewMatrix()) >= 0);
+	// CHECK(Drawer->AsMatrix("Projection")->SetMatrix(Context::Get()->GetProjectionMatrix()) >= 0);
 }
 
 void ModelMesh::Render() const
 {
 	Shader * const Drawer = MaterialData->GetShader();
 
+	Context::Get()->BindCBufferToGPU(Drawer);
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();

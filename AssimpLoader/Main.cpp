@@ -49,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	desc.Handle = nullptr;
 	desc.Width = 1280;
 	desc.Height = 720;
-	desc.Background = Color(0.3f, 0.3f, 0.3f, 1.0f);
+	desc.Background = Color(0.1f, 0.1f, 0.1f, 1.0f);
 
 	D3D::SetDesc(desc);
 

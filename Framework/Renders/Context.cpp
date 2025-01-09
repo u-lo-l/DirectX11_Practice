@@ -24,11 +24,22 @@ Context * Context::Get()
 	return Instance;
 }
 
-void Context::Tick() const
+void Context::Tick()
 {
 	MainCamera->Tick();
+
+	this->Desc.View = GetViewMatrix();
+	this->Desc.ViewInv = Matrix::Invert(GetViewMatrix());
+	this->Desc.ViewProjection = this->Desc.View * this->Desc.Projection;
+
+	ImGui::SliderFloat3("LightDirection", Desc.LightDirection, -1, +1);
 }
 
+/**
+ *	@brief :
+ *	1. GUI를 활용해서, FPS, Camera transform 정보등을 표시한다.
+ *	2. Constant Buffer를 GPU에 Bind한다.
+ */
 void Context::Render() const
 {
 	string Str = string("FrameRate : ") + to_string(static_cast<int>(ImGui::GetIO().Framerate));
@@ -43,10 +54,18 @@ void Context::Render() const
 	Gui::Get()->RenderText(5, 35, 1, 1, 1, Str);
 }
 
+void Context::BindCBufferToGPU( const Shader * InDrawer ) const
+{
+	if (InDrawer == nullptr)
+		return ;
+	
+	CBuffer->BindToGPU(InDrawer);
+}
+
 void Context::ResizeScreen()
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
+	this->Desc.Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
 
 	this->Viewport->TopLeftX = 0;
 	this->Viewport->TopLeftY = 0;
@@ -59,11 +78,10 @@ void Context::ResizeScreen()
 }
 
 Context::Context()
+ : MainCamera(new Camera())
 {
-	MainCamera = new Camera();
-	
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
+	this->Desc.Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
 	MainCamera->SetPosition(0, 0, -5);
 
 	this->Viewport = new D3D11_VIEWPORT();
@@ -74,6 +92,8 @@ Context::Context()
 	this->Viewport->MinDepth = 0;
 	this->Viewport->MaxDepth = 1;
 
+	CBuffer = new ConstantBuffer(&this->Desc, sizeof(ThisClass::Desc));
+	
 	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 }
 

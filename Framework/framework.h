@@ -10,27 +10,36 @@
 #include <chrono> // for timer, steady_clock
 using namespace std;
 
-/* DirectX */
-#include <d3dcommon.h>
-#include <d3d11.h>
-#include <D3DX11tex.h>
-#include <d3dx10math.h>
-#include <d3dcompiler.h>
+#pragma region DirectX
+	#include <d3dcommon.h>
+	#include <d3d11.h>
+	#include <D3DX11tex.h>
+	#include <d3dx10math.h>
+	#include <d3dcompiler.h>
 
-// #include <d3dx11effect.h>
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3dx10.lib")
-#pragma comment(lib, "d3dx11.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "D3DCompiler.lib")
+	// #include <d3dx11effect.h>
+	#pragma comment(lib, "dxgi.lib")
+	#pragma comment(lib, "d3dx10.lib")
+	#pragma comment(lib, "d3dx11.lib")
+	#pragma comment(lib, "d3d11.lib")
+	#pragma comment(lib, "D3DCompiler.lib")
+#pragma endregion
 
-/* Effect */
-#include "effect/d3dx11effect.h"
-#pragma comment(lib, "Effect/Effects11d.lib")
 
-/* DirectX Tex*/
-#include "DirectXTex/DirectXTex.h"
-#pragma comment(lib, "DirectXTex/DirectXTex.lib")
+#pragma region Effect
+	#include "effect/d3dx11effect.h"
+	#pragma comment(lib, "Effect/Effects11d.lib")
+#pragma endregion
+
+#pragma region DirectXTex
+	#include "DirectXTex/DirectXTex.h"
+	#pragma comment(lib, "DirectXTex/DirectXTex.lib")
+#pragma endregion
+
+#pragma region Json
+	#include "JsonCpp/json.h"
+	#pragma comment(lib, "JsonCpp/jsoncpp_static.lib")
+#pragma endregion
 
 /* ImGui */
 #include <imgui/imgui.h>
@@ -40,23 +49,30 @@ using namespace std;
 
 /* My Own */
 #include "Definitions.h"
+
 #include "Systems/D3D.h"
 #include "Systems/Gui.h"
 #include "Systems/Timer.h"
 #include "Systems/Keyboard.h"
 #include "Systems/Mouse.h"
+
 #include "Viewer/Camera.h"
+
 #include "Renders/Shader.h"
 #include "Renders/VertexLayout.h"
 #include "Renders/Texture.h"
+#include "Renders/Material.h"
 #include "Renders/Context.h"
 #include "Renders/Buffers.h"
+
 #include "Utilites/Path.h"
 #include "Utilites/String.h"
 #include "Utilites/BinaryFile.h"
+
 #include "Model/Model.h"
 #include "Model/ModelBone.h"
 #include "Model/ModelMesh.h"
+
 #include "Environment/Terrain.h"
 
 /* SDT_Math*/

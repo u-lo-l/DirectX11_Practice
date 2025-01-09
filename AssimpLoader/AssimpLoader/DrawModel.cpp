@@ -13,20 +13,18 @@ namespace Sdt
 	void DrawModel::Initialize()
 	{
 		Camera * MainCamera = Context::Get()->GetCamera();
-		MainCamera->SetPosition(150, 100, -300);
-		MainCamera->SetRotation(0, 0, 0);
+		MainCamera->SetPosition(0, 200, -300);
+		MainCamera->SetRotation(0.1f, 0, 0);
 		
-		Model * Temp = nullptr;
+		vector<wstring> ModelNames = {L"Shannon/Shannon", L"Mousey/Mousey", L"Cube/Cube", L"Airplane/Airplane"};
 
-		Temp = new Model();
-		Temp->ReadMaterial(L"Shannon/Shannon");
-		Temp->ReadMesh(L"Shannon/Shannon");
-		Models.push_back(Temp);
-
-		Temp = new Model();
-		Temp->ReadMaterial(L"Cube/Cube");
-		Temp->ReadMesh(L"Cube/Cube");
-		Models.push_back(Temp);
+		for (const wstring & ModelName : ModelNames)
+		{
+			Model *Temp = new Model();
+			Temp->ReadMaterial(ModelName);
+			Temp->ReadMesh(ModelName);
+			Models.push_back(Temp);
+		}
 	}
 
 	void DrawModel::Destroy()

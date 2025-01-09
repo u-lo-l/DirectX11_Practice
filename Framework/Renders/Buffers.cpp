@@ -81,3 +81,40 @@ void IndexBuffer::BindToGPU() const
 }
 
 /*=============================================================================*/
+
+ConstantBuffer::ConstantBuffer(void * InData, UINT InDataSize)
+	: Data(InData), DataSize(InDataSize)
+{
+	D3D11_BUFFER_DESC BufferDesc;
+	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+	BufferDesc.ByteWidth = DataSize;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	CHECK(D3D::Get()->GetDevice()->CreateBuffer(&BufferDesc, nullptr, &this->Buffer) >= 0);
+}
+
+ConstantBuffer::~ConstantBuffer()
+{
+	SAFE_RELEASE(this->Buffer);
+}
+
+void ConstantBuffer::BindToGPU(const Shader * InShader) const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	// D3D11_MAPPED_SUBRESOURCE : DX에서 버퍼에 접근하기 위한 매핑정보를 저장하는 구조체
+	D3D11_MAPPED_SUBRESOURCE Subresource;
+	// Map : GPU에 있는 리소스를 CPU가 수정할 수 있도록 매핑함. 따라서 BufferDesc.Usage = D3D11_USAGE_DYNAMIC로 설정함.
+	CHECK(DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource) >= 0);
+	// memcpy : CPU레벨로 데이터를 복사
+	memcpy(Subresource.pData, Data, DataSize);
+	// Unmap : Unmap 해줘야 GPU에서 다시 리소스를 사용할 수 있다.
+	DeviceContext->Unmap(Buffer, 0);
+
+	if (InShader == nullptr)
+		return ;
+	CHECK(InShader->AsConstantBuffer("CB_Context")->SetConstantBuffer(Buffer) >= 0);
+}
+

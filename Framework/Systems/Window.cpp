@@ -169,7 +169,11 @@ void Window::MainRender()
 	//말은 클리어지만 배경 색 칠하는거다.
 	D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
 	D3D::Get()->ClearDepthStencilView();
+	
 	Context::Get()->Render();
+
+	// 이게 같은 Shader를 사용할 때 Shader에 대해서
+	// Context::Get()->BindCBufferToGPU();
 	Main->Render();
 	Gui::Get()->Render();
 	D3D::Get()->Present();
