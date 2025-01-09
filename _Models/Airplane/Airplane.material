@@ -1,7 +1,7 @@
 {
    "DefaultMaterial" : [
       {
-         "ShaderName" : "MyTestShader"
+         "ShaderName" : "19_ModelVertex.fx"
       },
       {
          "Ambient" : "0.000000,0.000000,0.000000,0.000000",
@@ -13,7 +13,7 @@
    ],
    "texture" : [
       {
-         "ShaderName" : "MyTestShader"
+         "ShaderName" : "19_ModelVertex.fx"
       },
       {
          "Ambient" : "0.000000,0.000000,0.000000,1.000000",
@@ -22,8 +22,8 @@
          "Specular" : "1.000000,1.000000,1.000000,1.000000"
       },
       {
-         "Diffuse" : [ "texture.png" ],
-         "Specular" : [ "texture_ref.png" ]
+         "DiffuseMap" : [ "texture.png" ],
+         "SpecularMap" : [ "texture_ref.png" ]
       }
    ]
 }

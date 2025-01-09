@@ -1,0 +1,54 @@
+﻿#pragma once
+
+/**
+ *  Material이 Shader를 갖는다.
+ */
+class Material
+{
+private:
+	using ThisClass = Material;
+	enum class TextureMapType : uint8_t  // NOLINT(performance-enum-size)
+	{
+		Diffuse = 0, Specular, Normal, Max
+	};
+	static constexpr UINT MaxTextureCount = static_cast<UINT>(TextureMapType::Max);
+	
+public:
+	Material();
+	explicit Material(Shader * InDrawer);
+	explicit Material(const wstring & InShaderFileName);
+	~Material();
+
+	void Render();
+
+	void SetShader(const wstring & InShaderFileName);
+	void SetShader(Shader * InShader);
+	Shader * GetShader() const;
+	__forceinline void SetAmbient(const Color & InAmbient) { ColorData.Ambient = InAmbient; }
+	__forceinline void SetDiffuse(const Color & InDiffuse) { ColorData.Diffuse = InDiffuse; }
+	__forceinline void SetSpecular(const Color & InSpecular) { ColorData.Specular = InSpecular; }
+	__forceinline void SetEmissive(const Color & InEmissive) {	ColorData.Emissive = InEmissive; }
+	void SetDiffuseMap(const string & InFilePath);
+	void SetDiffuseMap(const wstring & InWFilePath);
+	void SetSpecularMap(const string & InFilePath);
+	void SetSpecularMap(const wstring & InWFilePath);
+	void SetNormalMap(const string & InFilePath);
+	void SetNormalMap(const wstring & InWFilePath);
+
+private:
+	struct Colors
+	{
+		Color Ambient {0, 0, 0, 1};
+		Color Diffuse {1, 1, 1, 1};
+		Color Specular {0, 0, 0, 1};
+		Color Emissive {0, 0, 0, 1};
+	};
+	
+private:
+	Shader * Drawer;
+	Colors ColorData;
+	Texture * Textures[ThisClass::MaxTextureCount];
+
+	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount];
+};
+

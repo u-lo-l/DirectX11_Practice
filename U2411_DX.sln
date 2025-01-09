@@ -15,6 +15,26 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssimpLoader", "AssimpLoade
 		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C} = {F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{475B8564-0ABE-4F80-B811-5B482B8EBF10}"
+	ProjectSection(SolutionItems) = preProject
+		_Shaders\04_Line.fx = _Shaders\04_Line.fx
+		_Shaders\04_Line2.fx = _Shaders\04_Line2.fx
+		_Shaders\04_Line_Circle.fx = _Shaders\04_Line_Circle.fx
+		_Shaders\05_Triangle_List.fx = _Shaders\05_Triangle_List.fx
+		_Shaders\06_Rectangle.fx = _Shaders\06_Rectangle.fx
+		_Shaders\09_World.fx = _Shaders\09_World.fx
+		_Shaders\09_World2.fx = _Shaders\09_World2.fx
+		_Shaders\11_Grid.fx = _Shaders\11_Grid.fx
+		_Shaders\12_Texture.fx = _Shaders\12_Texture.fx
+		_Shaders\13_Texture02.fx = _Shaders\13_Texture02.fx
+		_Shaders\14_TextureAddress.fx = _Shaders\14_TextureAddress.fx
+		_Shaders\15_ColorBlending.fx = _Shaders\15_ColorBlending.fx
+		_Shaders\16_TextureLayering.fx = _Shaders\16_TextureLayering.fx
+		_Shaders\17_TerrainNormal.fx = _Shaders\17_TerrainNormal.fx
+		_Shaders\18_TerrainNormalVector.fx = _Shaders\18_TerrainNormalVector.fx
+		_Shaders\19_ModelVertex.fx = _Shaders\19_ModelVertex.fx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

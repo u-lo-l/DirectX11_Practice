@@ -1,6 +1,5 @@
 ﻿#include "Pch.h"
 #include "Converter.h"
-#include <string>
 #include <fstream>
 
 namespace Sdt
@@ -83,7 +82,7 @@ namespace Sdt
 			Materials[i] = new MaterialData();
 
 			Materials[i]->Name = Material->GetName().C_Str();
-			Materials[i]->ShaderName = "MyTestShader";
+			Materials[i]->ShaderName = "19_ModelVertex.fx";
 		
 			aiColor4D color;
 			Material->Get(AI_MATKEY_COLOR_AMBIENT, color);
@@ -134,11 +133,11 @@ namespace Sdt
 
 			Json::Value Textures;
 			for (const string & Name : Data->DiffuseFiles)
-				Textures["Diffuse"].append(SaveTextureAsFile(FolderName, Name));
+				Textures["DiffuseMap"].append(SaveTextureAsFile(FolderName, Name));
 			for (const string & Name : Data->SpecularFiles)
-				Textures["Specular"].append(SaveTextureAsFile(FolderName, Name));
+				Textures["SpecularMap"].append(SaveTextureAsFile(FolderName, Name));
 			for (const string & Name : Data->NormalFiles)
-				Textures["Normal"].append(SaveTextureAsFile(FolderName, Name));
+				Textures["NormalMap"].append(SaveTextureAsFile(FolderName, Name));
 		
 			Root[Data->Name.c_str()].append(ShaderName);
 			Root[Data->Name.c_str()].append(Color);

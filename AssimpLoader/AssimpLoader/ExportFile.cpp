@@ -7,9 +7,9 @@ namespace Sdt
 
 	void ExportFile::Initialize()
 	{
-		// this->Mousey();
-		// this->Shannon();
-		// this->Airplane();
+		this->Mousey();
+		this->Shannon();
+		this->Airplane();
 		this->Cube();
 	}
 
@@ -25,9 +25,9 @@ namespace Sdt
 	void ExportFile::Cube()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"cubb/cubb.fbx");
-		converter->ExportMaterial(L"cubb/cubb");
-		converter->ExportMesh(L"cubb/cubb");
+		converter->ReadFile(L"Cube/Cube.fbx");
+		converter->ExportMaterial(L"Cube/Cube");
+		converter->ExportMesh(L"Cube/Cube");
 		SAFE_DELETE(converter);
 	}
 

@@ -10,7 +10,11 @@ private:
 	using VertexType = ModelVertex;
 	friend class Model;
 	
-	static void ReadFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutMeshes );
+	static void ReadFile(
+		const BinaryReader * InReader,
+		vector<ThisClassPtr> & OutMeshes,
+		const map<string, Material*> & InMaterialTable
+	);
 	
 	ModelMesh();
 	~ModelMesh();
@@ -18,9 +22,10 @@ private:
 	void Tick() const;
 	void Render() const;
 
-	void BindData(Shader * InRenderer);
+	void BindData();
 	string Name = "";
-	string MaterialName = "";
+	
+	Material * MaterialData = nullptr;
 	
 	int BoneIndex = 0;;
 	class ModelBone * Bone = nullptr;
@@ -30,8 +35,9 @@ private:
 	
 	UINT IndicesCount = 0;
 	UINT* Indices = nullptr;
-	Shader * Renderer = nullptr;
+	
 	Matrix WorldMatrix = Matrix::Identity;
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
+
 };

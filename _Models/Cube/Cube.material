@@ -1,7 +1,7 @@
 {
    "DefaultMaterial" : [
       {
-         "ShaderName" : "MyTestShader"
+         "ShaderName" : "19_ModelVertex.fx"
       },
       {
          "Ambient" : "0.000000,0.000000,0.000000,0.000000",
@@ -13,7 +13,7 @@
    ],
    "WorldGridMaterial" : [
       {
-         "ShaderName" : "MyTestShader"
+         "ShaderName" : "19_ModelVertex.fx"
       },
       {
          "Ambient" : "0.000000,0.000000,0.000000,1.000000",

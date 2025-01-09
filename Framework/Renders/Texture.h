@@ -4,11 +4,12 @@ class Texture
 {
 public:
 public:
-	explicit Texture(const wstring& FileName, D3DX11_IMAGE_INFO * InLoadInfo = nullptr);
+	explicit Texture(const wstring& FileName, D3DX11_IMAGE_INFO * InLoadInfo = nullptr, bool bDefaultPath = false);
 	~Texture();
 public:
 	__forceinline UINT GetWidth() const { return TexMeta.width; }
 	__forceinline UINT GetHeight() const { return TexMeta.height; }
+	__forceinline ID3D11ShaderResourceView * GetSRV() const { return SRV; }
 private:
 	void LoadMetadata(D3DX11_IMAGE_INFO * InLoadInfo = nullptr);
 	void LoadTexture();

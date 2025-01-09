@@ -4,17 +4,29 @@
 
 namespace Sdt
 {
+	DrawModel::~DrawModel()
+	{
+		for (const Model * Model : Models)
+			SAFE_DELETE(Model);
+	}
 
 	void DrawModel::Initialize()
 	{
 		Camera * MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition(150, 100, -300);
 		MainCamera->SetRotation(0, 0, 0);
-		Drawer = new Shader(L"19_ModelVertex.fx");
 		
-		Cube = new Model();
-		Cube->ReadMesh(L"cubb/cubb");
-		Cube->BindData(Drawer);
+		Model * Temp = nullptr;
+
+		Temp = new Model();
+		Temp->ReadMaterial(L"Shannon/Shannon");
+		Temp->ReadMesh(L"Shannon/Shannon");
+		Models.push_back(Temp);
+
+		Temp = new Model();
+		Temp->ReadMaterial(L"Cube/Cube");
+		Temp->ReadMesh(L"Cube/Cube");
+		Models.push_back(Temp);
 	}
 
 	void DrawModel::Destroy()
@@ -23,11 +35,13 @@ namespace Sdt
 
 	void DrawModel::Tick()
 	{
-		Cube->Tick();
+		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
+
+		Models[ModelIndex]->Tick();
 	}
 
 	void DrawModel::Render()
 	{
-		Cube->Render();
+		Models[ModelIndex]->Render();
 	}
 }

@@ -15,29 +15,39 @@ ModelMesh::~ModelMesh()
 
 void ModelMesh::Tick() const
 {
-	CHECK(Renderer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
-	CHECK(Renderer->AsMatrix("View")->SetMatrix(Context::Get()->GetViewMatrix()) >= 0);
-	CHECK(Renderer->AsMatrix("Projection")->SetMatrix(Context::Get()->GetProjectionMatrix()) >= 0);
+	Shader * const Drawer = MaterialData->GetShader();
+	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
+	CHECK(Drawer->AsMatrix("View")->SetMatrix(Context::Get()->GetViewMatrix()) >= 0);
+	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(Context::Get()->GetProjectionMatrix()) >= 0);
 }
 
 void ModelMesh::Render() const
 {
+	Shader * const Drawer = MaterialData->GetShader();
+
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
-
+	MaterialData->Render();
+	
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	Renderer->DrawIndexed(0, 1, IndicesCount);
+	Drawer->DrawIndexed(0, 0, IndicesCount);
 }
 
-void ModelMesh::ReadFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutMeshes )
+void ModelMesh::ReadFile(
+	const BinaryReader * InReader,
+	vector<ThisClassPtr> & OutMeshes,
+	const map<string, Material*> & InMaterialTable )
 {
 	UINT MeshCount = InReader->ReadUint();
 	OutMeshes.resize( MeshCount );
 	for (UINT i = 0; i < MeshCount; i++)
 	{
 		OutMeshes[i] = new ThisClass();
+
 		OutMeshes[i]->Name = InReader->ReadString();
-		OutMeshes[i]->MaterialName = InReader->ReadString();
+		
+		const string MaterialName = InReader->ReadString();
+		OutMeshes[i]->MaterialData = InMaterialTable.at(MaterialName);
 
 		OutMeshes[i]->VerticesCount = InReader->ReadUint();
 		OutMeshes[i]->Vertices = new VertexType[OutMeshes[i]->VerticesCount];
@@ -57,9 +67,8 @@ void ModelMesh::ReadFile( const BinaryReader * InReader, vector<ThisClassPtr> & 
 	}
 }
 
-void ModelMesh::BindData(Shader * InRenderer)
+void ModelMesh::BindData()
 {
-	Renderer = InRenderer;
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
 }

@@ -37,6 +37,7 @@
     <ClCompile Include="Model\ModelMesh.cpp" />
     <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Renders\Context.cpp" />
+    <ClCompile Include="Renders\Material.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
     <ClCompile Include="Renders\Texture.cpp" />
     <ClCompile Include="Systems\D3D.cpp">
@@ -72,6 +73,7 @@
     <ClInclude Include="Model\ModelMesh.h" />
     <ClInclude Include="Renders\Buffers.h" />
     <ClInclude Include="Renders\Context.h" />
+    <ClInclude Include="Renders\Material.h" />
     <ClInclude Include="Renders\Shader.h" />
     <ClInclude Include="Renders\Texture.h" />
     <ClInclude Include="Renders\VertexLayout.h" />

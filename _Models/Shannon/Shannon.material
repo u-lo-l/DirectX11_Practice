@@ -1,7 +1,7 @@
 {
    "Ch38_body" : [
       {
-         "ShaderName" : "MyTestShader"
+         "ShaderName" : "19_ModelVertex.fx"
       },
       {
          "Ambient" : "0.000000,0.000000,0.000000,1.000000",
@@ -10,14 +10,14 @@
          "Specular" : "0.500000,0.500000,0.500000,1.000000"
       },
       {
-         "Diffuse" : [ "Ch38_1001_Diffuse.png" ],
-         "Normal" : [ "Ch38_1001_Normal.png" ],
-         "Specular" : [ "Ch38_1001_Specular.png" ]
+         "DiffuseMap" : [ "Ch38_1001_Diffuse.png" ],
+         "NormalMap" : [ "Ch38_1001_Normal.png" ],
+         "SpecularMap" : [ "Ch38_1001_Specular.png" ]
       }
    ],
    "Ch38_hair" : [
       {
-         "ShaderName" : "MyTestShader"
+         "ShaderName" : "19_ModelVertex.fx"
       },
       {
          "Ambient" : "0.000000,0.000000,0.000000,1.000000",
@@ -26,7 +26,7 @@
          "Specular" : "0.000000,0.000000,0.000000,1.000000"
       },
       {
-         "Diffuse" : [ "Ch38_1002_Diffuse.png" ]
+         "DiffuseMap" : [ "Ch38_1002_Diffuse.png" ]
       }
    ]
 }
