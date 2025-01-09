@@ -68,6 +68,11 @@
     <ClCompile Include="Environment\Terrain.cpp">
       <Filter>Environment</Filter>
     </ClCompile>
+    <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="Model\ModelBone.cpp" />
+    <ClCompile Include="Model\ModelMesh.cpp" />
+    <ClCompile Include="Renders\Buffers.cpp" />
+    <ClCompile Include="Utilites\BinaryFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
@@ -144,6 +149,11 @@
     <ClInclude Include="Environment\Terrain.h">
       <Filter>Environment</Filter>
     </ClInclude>
+    <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="Model\ModelBone.h" />
+    <ClInclude Include="Model\ModelMesh.h" />
+    <ClInclude Include="Renders\Buffers.h" />
+    <ClInclude Include="Utilites\BinaryFile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Systems">

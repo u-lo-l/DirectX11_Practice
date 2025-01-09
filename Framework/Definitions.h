@@ -29,3 +29,13 @@
 		(x) = nullptr;\
 	}\
 }
+
+#define SHADER_PATH "../_Shaders/"
+#define MODEL_PATH "../Modes/"
+#define TEXTURE_PATH "../Textures/"
+#define ASSET_PATH "../_Assets/"
+
+#define W_SHADER_PATH L"../_Shaders/"
+#define W_MODEL_PATH L"../Modes/"
+#define W_TEXTURE_PATH L"../Textures/"
+#define W_ASSET_PATH L"../_Assets/"

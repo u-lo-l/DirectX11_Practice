@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssimpLoader\Converter.cpp" />
+    <ClCompile Include="AssimpLoader\DrawModel.cpp" />
+    <ClCompile Include="AssimpLoader\ExportFile.cpp" />
     <ClCompile Include="AssimpLoader\Types.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -26,6 +29,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssimpLoader\Converter.h" />
+    <ClInclude Include="AssimpLoader\DrawModel.h" />
+    <ClInclude Include="AssimpLoader\ExportFile.h" />
+    <ClInclude Include="AssimpLoader\Types.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
@@ -97,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>./;../../_Libraries;../Framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../_Libraries;../Framework;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
@@ -105,7 +112,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../_Libraries</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../_Libraries</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

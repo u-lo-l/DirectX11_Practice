@@ -4,10 +4,12 @@
 #include "Systems/Window.h"
 
 #include "AssimpLoader/ExportFile.h"
+#include "AssimpLoader/DrawModel.h"
 
 void Main::Initialize()
 {
 	PUSH_MAIN(Sdt::ExportFile);
+	PUSH_MAIN(Sdt::DrawModel);
 }
 
 void Main::Destroy()

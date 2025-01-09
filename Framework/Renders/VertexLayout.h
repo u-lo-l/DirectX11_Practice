@@ -74,7 +74,6 @@ typedef struct VertexTextureColorNormalTangentBlend
 	Color Color;
 	Vector Normal;
 	Vector Tangent;
-	
 	Vector4 Indices;
-	Vector4 Blend;
+	Vector4 Weights;
 } ModelVertex;

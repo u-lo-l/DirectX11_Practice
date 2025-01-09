@@ -54,6 +54,9 @@ using namespace std;
 #include "Utilites/Path.h"
 #include "Utilites/String.h"
 #include "Utilites/BinaryFile.h"
+#include "Model/Model.h"
+#include "Model/ModelBone.h"
+#include "Model/ModelMesh.h"
 #include "Environment/Terrain.h"
 
 /* SDT_Math*/

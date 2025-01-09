@@ -78,3 +78,99 @@ void BinaryWriter::WriteByte( const void * InData, UINT InDataSize ) const
 	const bool Result = WriteFile(FileHandle, InData, InDataSize, &BytesWritten, nullptr);
 	ASSERT((Result == true) && (BytesWritten == InDataSize), "[BinaryWriter] Failed to write to file");
 }
+
+/*-----------------------------------------------------------------------------*/
+
+BinaryReader::BinaryReader()
+: FileHandle(nullptr)
+{
+}
+
+BinaryReader::~BinaryReader()
+{
+	Close();
+}
+
+bool BinaryReader::Open( const wstring & InFilePath )
+{
+	ASSERT(InFilePath.empty() == false, "[BinaryRead] Wrong File Path");
+
+	FileHandle = CreateFile(
+		InFilePath.c_str(),
+		GENERIC_READ,
+		FILE_SHARE_READ,
+		nullptr,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr
+	);
+	
+	return (FileHandle != INVALID_HANDLE_VALUE);
+	ASSERT(FileHandle != INVALID_HANDLE_VALUE, "[BinaryRead] Failed to create file");
+}
+
+void BinaryReader::Close()
+{
+	if (FileHandle == nullptr)
+		return;
+	CloseHandle(FileHandle);
+	FileHandle = nullptr;
+}
+
+UINT BinaryReader::ReadUint() const
+{
+	UINT UintBuffer;
+	DWORD ByteRead = 0;
+	
+	const bool Result = ReadFile(FileHandle, &UintBuffer, sizeof(UINT), &ByteRead, nullptr);
+	ASSERT((Result == true) && (ByteRead == sizeof(UINT)), "[BinaryReader] Failed to read UINT from file");
+	
+	return UintBuffer;
+}
+
+INT BinaryReader::ReadInt() const
+{
+	INT IntBuffer;
+	DWORD ByteRead = 0;
+	
+	const bool Result = ReadFile(FileHandle, &IntBuffer, sizeof(INT), &ByteRead, nullptr);
+	ASSERT((Result == true) && (ByteRead == sizeof(INT)), "[BinaryReader] Failed to read INT from file");
+	
+	return IntBuffer;
+}
+
+string BinaryReader::ReadString() const
+{
+	const UINT StringLength = ReadUint();
+	char * StrBuffer = new char[StringLength + 1];
+	DWORD ByteRead = 0;
+	
+	const bool Result = ReadFile(FileHandle, StrBuffer, StringLength, &ByteRead, nullptr);
+	ASSERT((Result == true) && (ByteRead == StringLength), "[BinaryReader] Failed to read string from file");
+
+	StrBuffer[StringLength] = '\0';
+	string ReturnStr(StrBuffer);
+	SAFE_DELETE(StrBuffer);
+	
+	return ReturnStr;
+}
+
+Matrix BinaryReader::ReadMatrix() const
+{
+	DWORD ByteRead = 0;
+	Matrix MatrixBuffer;
+	
+	const bool Result = ReadFile(FileHandle, &MatrixBuffer, sizeof(Matrix), &ByteRead, nullptr);
+	ASSERT((Result == true) && (ByteRead == sizeof(Matrix)), "[BinaryReader] Failed to read Matrix from file");
+
+	return MatrixBuffer;
+}
+
+void BinaryReader::ReadByte( void ** OutData, UINT InDataSize ) const
+{
+	if (InDataSize == 0)
+		return ;
+	DWORD BytesRead = 0;
+	const bool Result = ReadFile(FileHandle, *OutData, InDataSize, &BytesRead, nullptr);
+	ASSERT((Result == true) && (BytesRead == InDataSize), "[BinaryWriter] Failed to read bytes from file");
+}

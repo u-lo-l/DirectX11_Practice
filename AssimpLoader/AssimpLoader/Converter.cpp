@@ -20,7 +20,7 @@ namespace Sdt
 	void Converter::ReadFile( const wstring & InFileName )
 	{
 		// string FileName = String::ToString(InFileName);
-		FilePath = L"../../_Assets/" + InFileName;
+		FilePath = W_ASSET_PATH + InFileName;
 
 		Scene = Loader->ReadFile(
 			String::ToString(FilePath).c_str(),
@@ -31,6 +31,32 @@ namespace Sdt
 			| aiProcess_CalcTangentSpace
 			| aiProcess_GenBoundingBoxes
 		);
+		// aiString key;
+		// double unitScale = 1.0f;
+		// double originalScale = 1.0f;
+		// int scaleAccumulateMode = 0;
+		// if (Scene->mMetaData->Get<double>("UnitScaleFactor", unitScale)) {
+		// 	printf("Unit Scale Factor: %f\n", unitScale);
+		// } else {
+		// 	printf("Unit Scale Factor not found. Assuming 1.0 (meters).\n");
+		// }
+		//
+		// if (Scene->mMetaData->Get<double>("OriginalUnitScaleFactor", originalScale)) {
+		// 	printf("Origin Scale Factor: %f\n", originalScale);
+		// } else {
+		// 	printf("Origin Scale Factor not found. Assuming 1.0 (meters).\n");
+		// }
+		// if (Scene->mMetaData->Get("ScaleAccumulationMode", scaleAccumulateMode)) {
+		// 	printf("Scale Accumulate Mode : %d\n", scaleAccumulateMode);
+		// } else {
+		// 	printf("Scale Accumulate Mode not found. Assuming 0.0 (meters).\n");
+		// }
+		// float scalingOffset;
+		// if (Scene->mMetaData->Get("ScaleAccumulationMode", scalingOffset)) {
+		// 	printf("Scale Accumulate Mode : %d\n", scalingOffset);
+		// } else {
+		// 	printf("Scale Accumulate Mode not found. Assuming 0.0 (meters).\n");
+		// }
 		ASSERT(Scene != nullptr, Loader->GetErrorString());
 	}
 
@@ -42,7 +68,7 @@ namespace Sdt
 #pragma region ExtractMaterial
 	void Converter::ExportMaterial( const wstring & InSaveFileName, bool InbOverwrite )
 	{
-		const wstring SaveFileName = L"../../_Models/" + InSaveFileName + L".material";
+		const wstring SaveFileName = W_MODEL_PATH + InSaveFileName + L".material";
 		
 		ReadMaterial();
 		WriteMaterial(SaveFileName, InbOverwrite);
@@ -108,11 +134,11 @@ namespace Sdt
 
 			Json::Value Textures;
 			for (const string & Name : Data->DiffuseFiles)
-				Textures["Diffuse"].append(SaveTexture(FolderName, Name));
+				Textures["Diffuse"].append(SaveTextureAsFile(FolderName, Name));
 			for (const string & Name : Data->SpecularFiles)
-				Textures["Specular"].append(SaveTexture(FolderName, Name));
+				Textures["Specular"].append(SaveTextureAsFile(FolderName, Name));
 			for (const string & Name : Data->NormalFiles)
-				Textures["Normal"].append(SaveTexture(FolderName, Name));
+				Textures["Normal"].append(SaveTextureAsFile(FolderName, Name));
 		
 			Root[Data->Name.c_str()].append(ShaderName);
 			Root[Data->Name.c_str()].append(Color);
@@ -130,7 +156,7 @@ namespace Sdt
 		Ofstream.close();
 	}
 
-	string Converter::SaveTexture(const string & InSaveFolder, const string & InFileName) const
+	string Converter::SaveTextureAsFile(const string & InSaveFolder, const string & InFileName) const
 	{
 		printf("InSaveFolder = %s\n", InSaveFolder.c_str());
 		printf("InFileName = %s\n", InFileName.c_str());
@@ -200,12 +226,12 @@ namespace Sdt
 	
 	void Converter::ExportMesh( const wstring & InSaveFileName )
 	{
-		wstring FullFileName = L"../../_Models/" + InSaveFileName + L".mesh";
+		wstring FullFileName = W_MODEL_PATH + InSaveFileName + L".mesh";
 		ReadBoneData(Scene->mRootNode, -1, -1);
 		ReadMeshData();
 		WriteMesh(FullFileName);
 	}
-
+	
 	void Converter::ReadBoneData( const aiNode * InNode, int InIndex, int InParent )
 	{
 		BoneData * Bone = new BoneData();
@@ -268,7 +294,7 @@ namespace Sdt
 	{
 		MeshData::VertexType Vertex;
 		memcpy_s(&Vertex.Position, sizeof(Vector), Mesh->mVertices + VertexIndex, sizeof(Vector));
-				
+
 		if (Mesh->HasTextureCoords(0) == true)
 		{
 			memcpy_s(&Vertex.UV, sizeof(Vector2D), Mesh->mTextureCoords[0] + VertexIndex, sizeof(Vector2D));
@@ -294,6 +320,7 @@ namespace Sdt
 		BinaryWriter * BinWriter = new BinaryWriter();
 		BinWriter->Open(InSaveFileName);
 
+		BinWriter->WriteUint(Bones.size());
 		for (const BoneData * BoneData : Bones)
 		{
 			BinWriter->WriteUint(BoneData->Index);
@@ -307,6 +334,8 @@ namespace Sdt
 				BinWriter->WriteByte(&(BoneData->MeshIndices[0]), MeshIndexCount * sizeof(UINT));
 			SAFE_DELETE(BoneData);
 		}
+
+		BinWriter->WriteUint(Meshes.size());
 		for (const MeshData * MeshData : Meshes)
 		{
 			BinWriter->WriteString(MeshData->Name);
@@ -323,6 +352,7 @@ namespace Sdt
 				BinWriter->WriteByte(&(MeshData->Indices[0]), IndicesCount * sizeof(UINT));	
 			SAFE_DELETE(MeshData);
 		}
+		
 		BinWriter->Close();
 		SAFE_DELETE(BinWriter);
 	}

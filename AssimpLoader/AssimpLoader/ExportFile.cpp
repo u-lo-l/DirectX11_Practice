@@ -25,9 +25,9 @@ namespace Sdt
 	void ExportFile::Cube()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Cube/Cube.fbx");
-		converter->ExportMaterial(L"Cube/Cube");
-		converter->ExportMesh(L"Cube/Cube");
+		converter->ReadFile(L"cubb/cubb.fbx");
+		converter->ExportMaterial(L"cubb/cubb");
+		converter->ExportMesh(L"cubb/cubb");
 		SAFE_DELETE(converter);
 	}
 
@@ -36,6 +36,7 @@ namespace Sdt
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Shannon/Shannon.fbx");
 		converter->ExportMaterial(L"Shannon/Shannon");
+		converter->ExportMesh(L"Shannon/Shannon");
 		SAFE_DELETE(converter);
 	}
 	
@@ -44,6 +45,7 @@ namespace Sdt
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Mousey/Mousey.fbx");
 		converter->ExportMaterial(L"Mousey/Mousey");
+		converter->ExportMesh(L"Mousey/Mousey");
 		SAFE_DELETE(converter);
 	}
 }

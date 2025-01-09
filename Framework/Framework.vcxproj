@@ -32,6 +32,9 @@
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="Model\ModelBone.cpp" />
+    <ClCompile Include="Model\ModelMesh.cpp" />
     <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
@@ -64,6 +67,9 @@
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Environment\Terrain.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="Model\ModelBone.h" />
+    <ClInclude Include="Model\ModelMesh.h" />
     <ClInclude Include="Renders\Buffers.h" />
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\Shader.h" />
@@ -150,7 +156,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../_Libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../_Libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -158,7 +164,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>../../_Libraries</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../_Libraries</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>copy /Y "$(SolutionDir)Debug\$(ProjectName).lib" "$(SolutionDir)UnitTest\" &amp;&amp; copy /Y "$(SolutionDir)Debug\$(ProjectName).pdb" "$(SolutionDir)UnitTest\" &amp;&amp; copy /Y "$(SolutionDir)Debug\$(ProjectName).lib" "$(SolutionDir)AssimpLoader\" &amp;&amp; copy /Y "$(SolutionDir)Debug\$(ProjectName).pdb" "$(SolutionDir)AssimpLoader\" </Command>
