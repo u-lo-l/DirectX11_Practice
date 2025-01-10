@@ -45,6 +45,15 @@ void Camera::Tick()
 	{
 		Position -= Up * MoveSpeed * DeltaTime;
 	}
+	if (Keyboard::Get()->IsPressed(VK_LSHIFT) == true)
+	{
+		MoveSpeed = Math::Clamp(MoveSpeed + 0.1f, DefaultMoveSpeed, MaxMoveSpeed);
+	}
+	else
+	{
+		MoveSpeed = DefaultMoveSpeed;
+	}
+	
 	SetViewMat();
 
 	const Vector Delta = Sdt::Mouse::Get()->GetMoveDelta();

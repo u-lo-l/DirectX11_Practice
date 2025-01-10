@@ -30,6 +30,8 @@ private :
 private :
 	Matrix ViewMat;
 	Matrix RotationMat;
+	float DefaultMoveSpeed = 20.f;
+	float MaxMoveSpeed = 10000.f;
 	float MoveSpeed = 20.f;
 	float RotationSpeed = 3.f;
 
