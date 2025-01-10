@@ -64,6 +64,7 @@ using namespace std;
 #include "Renders/Material.h"
 #include "Renders/Context.h"
 #include "Renders/Buffers.h"
+#include "Renders/ConstantDataBinder.h"
 
 #include "Utilites/Path.h"
 #include "Utilites/String.h"

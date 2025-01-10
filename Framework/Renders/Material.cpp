@@ -1,20 +1,24 @@
 ﻿// ReSharper disable All
 #include "framework.h"
 #include "Material.h"
+#include "Buffers.h"
 
 Material::Material()
- : Drawer(nullptr), Textures{nullptr, }, SRVs{nullptr,}
+ : Drawer(nullptr), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
+	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
 
 Material::Material(Shader * InDrawer )
- : Drawer(InDrawer), Textures{nullptr,}, SRVs{nullptr,}
+ : Drawer(InDrawer), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
+	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
 
 Material::Material( const wstring & InShaderFileName )
- : Drawer(new Shader(InShaderFileName)), Textures{nullptr,}, SRVs{nullptr,}
+ : Drawer(new Shader(InShaderFileName)), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
+	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
 
 Material::~Material()
@@ -28,18 +32,30 @@ Material::~Material()
 
 void Material::Render()
 {
-	Drawer->AsSRV("MaterialMaps")->SetResourceArray((ID3D11ShaderResourceView **)&SRVs, 0, ThisClass::MaxTextureCount);
+	if (Drawer == nullptr)
+	{
+		return ;
+	}
+
+	if (ECB_Color != nullptr)
+		ECB_Color->SetConstantBuffer(*CBuffer);
+	if (ESRV_TextureMap != nullptr)
+		ESRV_TextureMap->SetResourceArray((ID3D11ShaderResourceView **)&SRVs, 0, ThisClass::MaxTextureCount);
 }
 
 void Material::SetShader( const wstring & InShaderFileName )
 {
 	assert(InShaderFileName.length() > 0);
 	Drawer = new Shader(InShaderFileName);
+	ECB_Color = Drawer->AsConstantBuffer("CB_Material");
+	ESRV_TextureMap = Drawer->AsSRV("MaterialMaps");
 }
 
 void Material::SetShader( Shader * InShader )
 {
 	Drawer = InShader;
+	ECB_Color = Drawer->AsConstantBuffer("CB_Material");
+	ESRV_TextureMap = Drawer->AsSRV("MaterialMaps");
 }
 
 Shader * Material::GetShader() const

@@ -28,11 +28,11 @@ void Context::Tick()
 {
 	MainCamera->Tick();
 
-	this->Desc.View = GetViewMatrix();
-	this->Desc.ViewInv = Matrix::Invert(GetViewMatrix());
-	this->Desc.ViewProjection = this->Desc.View * this->Desc.Projection;
+	View = GetViewMatrix();
+	// ViewInv = Matrix::Invert(GetViewMatrix());
+	// this->Desc.ViewProjection = this->Desc.View * this->Desc.Projection;
 
-	ImGui::SliderFloat3("LightDirection", Desc.LightDirection, -1, +1);
+	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 
 /**
@@ -54,18 +54,10 @@ void Context::Render() const
 	Gui::Get()->RenderText(5, 35, 1, 1, 1, Str);
 }
 
-void Context::BindCBufferToGPU( const Shader * InDrawer ) const
-{
-	if (InDrawer == nullptr)
-		return ;
-	
-	CBuffer->BindToGPU(InDrawer);
-}
-
 void Context::ResizeScreen()
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	this->Desc.Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
+	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
 
 	this->Viewport->TopLeftX = 0;
 	this->Viewport->TopLeftY = 0;
@@ -81,7 +73,7 @@ Context::Context()
  : MainCamera(new Camera())
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	this->Desc.Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
+	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
 	MainCamera->SetPosition(0, 0, -5);
 
 	this->Viewport = new D3D11_VIEWPORT();
@@ -92,8 +84,6 @@ Context::Context()
 	this->Viewport->MinDepth = 0;
 	this->Viewport->MaxDepth = 1;
 
-	CBuffer = new ConstantBuffer(&this->Desc, sizeof(ThisClass::Desc));
-	
 	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 }
 

@@ -2,7 +2,6 @@ cbuffer CB_World
 {
 	matrix World;
 }
-
 /**
  * Constant Buffer
  */

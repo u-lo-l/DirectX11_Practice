@@ -37,7 +37,8 @@ private:
 	UINT* Indices = nullptr;
 	
 	Matrix WorldMatrix = Matrix::Identity;
+	
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-
+	ConstantDataBinder * CBBinder = nullptr;
 };

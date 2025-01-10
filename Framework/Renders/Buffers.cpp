@@ -82,8 +82,8 @@ void IndexBuffer::BindToGPU() const
 
 /*=============================================================================*/
 
-ConstantBuffer::ConstantBuffer(void * InData, UINT InDataSize)
-	: Data(InData), DataSize(InDataSize)
+ConstantBuffer::ConstantBuffer(void * InData, const string & InDataName, UINT InDataSize)
+	: Data(InData), DataSize(InDataSize), DataName(InDataName)
 {
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
@@ -100,7 +100,7 @@ ConstantBuffer::~ConstantBuffer()
 	SAFE_RELEASE(this->Buffer);
 }
 
-void ConstantBuffer::BindToGPU(const Shader * InShader) const
+void ConstantBuffer::BindToGPU() const
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
@@ -113,8 +113,5 @@ void ConstantBuffer::BindToGPU(const Shader * InShader) const
 	// Unmap : Unmap 해줘야 GPU에서 다시 리소스를 사용할 수 있다.
 	DeviceContext->Unmap(Buffer, 0);
 
-	if (InShader == nullptr)
-		return ;
-	CHECK(InShader->AsConstantBuffer("CB_Context")->SetConstantBuffer(Buffer) >= 0);
+	// CHECK(ECB->SetConstantBuffer(Buffer) >= 0);
 }
-

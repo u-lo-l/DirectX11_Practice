@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "Texture.h"
 
-Texture::Texture( const wstring & FileName, D3DX11_IMAGE_INFO * InLoadInfo, bool bDefaultPath )
+Texture::Texture( const wstring & FileName, const D3DX11_IMAGE_INFO * InLoadInfo, bool bDefaultPath )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
 	wstring FullPath = FileName;

@@ -41,18 +41,21 @@ private:
 class ConstantBuffer
 {
 public:
-	ConstantBuffer(void * InData, UINT InDataSize);
+	ConstantBuffer(void * InData = nullptr, const string & InDataName = "", UINT InDataSize = 0);
 	~ConstantBuffer();
 
+//
 	operator ID3D11Buffer *() { return Buffer; }
 	operator ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() { return Buffer; }
 	
-	void BindToGPU(const Shader * InShader = nullptr) const;
+	void BindToGPU() const;
 private:
-	ID3D11Buffer * Buffer;
+	ID3D11Buffer * Buffer = nullptr;
+	// ID3DX11EffectConstantBuffer * ECB = nullptr;
 	
-	void * Data;
-	UINT DataSize;
+	void * Data = nullptr;
+	UINT DataSize = 0;
+	string DataName = "";
 };

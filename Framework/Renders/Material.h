@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-/**
- *  Material이 Shader를 갖는다.
- */
+class ConstantBuffer;
+
 class Material
 {
 private:
@@ -46,9 +45,14 @@ private:
 	
 private:
 	Shader * Drawer;
-	Colors ColorData;
-	Texture * Textures[ThisClass::MaxTextureCount];
 
+	Colors ColorData;
+
+	ConstantBuffer * CBuffer = nullptr;
+	IECB_t * ECB_Color = nullptr; // sCBuffer : in course
+	
+	Texture * Textures[ThisClass::MaxTextureCount];
 	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount];
+	IESRV_t * ESRV_TextureMap = nullptr; // sSRVs : in course
 };
 

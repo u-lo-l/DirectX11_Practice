@@ -4,7 +4,7 @@ class Texture
 {
 public:
 public:
-	explicit Texture(const wstring& FileName, D3DX11_IMAGE_INFO * InLoadInfo = nullptr, bool bDefaultPath = false);
+	explicit Texture(const wstring& FileName, const D3DX11_IMAGE_INFO * InLoadInfo = nullptr, bool bDefaultPath = false);
 	~Texture();
 public:
 	__forceinline UINT GetWidth() const { return TexMeta.width; }
