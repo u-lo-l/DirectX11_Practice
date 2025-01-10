@@ -11,7 +11,7 @@ public:
 	__forceinline UINT GetHeight() const { return TexMeta.height; }
 	__forceinline ID3D11ShaderResourceView * GetSRV() const { return SRV; }
 private:
-	void LoadMetadata(D3DX11_IMAGE_INFO * InLoadInfo = nullptr);
+	void LoadMetadata( const D3DX11_IMAGE_INFO * InLoadInfo = nullptr);
 	void LoadTexture();
 public:
 	D3D11_TEXTURE2D_DESC ReadPixels(vector<Color>& OutPixels);

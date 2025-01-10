@@ -33,8 +33,7 @@ void Model::Render() const
 
 void Model::ReadMaterial( const wstring & InFileName)
 {
-	const wstring FullPath = W_MODEL_PATH + InFileName + L".material";
-	const wstring TextureDir = Path::GetDirectoryName( FullPath );
+	const wstring FullPath = W_MATERIAL_PATH + InFileName + L".material";
 	
 #pragma region ifstream
 	ifstream Stream;
@@ -85,15 +84,15 @@ void Model::ReadMaterial( const wstring & InFileName)
 				}
 				else if (ValueName.compare("DiffuseMap") == 0 && Value[ValueName].size() > 0 && Value[ValueName][0].asString().size() > 0)
 				{
-					MatData->SetDiffuseMap(TextureDir + String::ToWString(Value[ValueName][0].asString()));
+					MatData->SetDiffuseMap(String::ToWString(Value[ValueName][0].asString()));
 				}
 				else if (ValueName.compare("SpecularMap") == 0 && Value[ValueName].size() > 0 &&Value[ValueName][0].asString().size() > 0)
 				{
-					MatData->SetSpecularMap(TextureDir + String::ToWString(Value[ValueName][0].asString()));
+					MatData->SetSpecularMap(String::ToWString(Value[ValueName][0].asString()));
 				}
 				else if (ValueName.compare("NormalMap") == 0 && Value[ValueName].size() > 0 && Value[ValueName][0].asString().size() > 0)
 				{
-					MatData->SetNormalMap(TextureDir + String::ToWString(Value[ValueName][0].asString()));
+					MatData->SetNormalMap(String::ToWString(Value[ValueName][0].asString()));
 				}
 			}
 		}

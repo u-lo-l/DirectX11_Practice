@@ -22,7 +22,7 @@ namespace Sdt
 	public:
 		void ExportMaterial(const wstring& InSaveFileName, bool InbOverwrite = true);
 	private:
-		void ReadMaterial();
+		void ReadMaterial(const string & InShaderName);
 		void WriteMaterial(const wstring& InSaveFileName, bool InbOverwrite) const;
 		/**
 		 * @brief FBX model의 texture정보 종류 <br/>

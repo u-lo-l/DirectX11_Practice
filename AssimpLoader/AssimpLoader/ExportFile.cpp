@@ -17,7 +17,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Airplane/Airplane.fbx");
-		converter->ExportMaterial(L"Airplane/Airplane");
+		converter->ExportMaterial(L"Airplane/Airplane", true);
 		converter->ExportMesh(L"Airplane/Airplane");
 		SAFE_DELETE(converter);
 	}
@@ -26,7 +26,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Cube/Cube.fbx");
-		converter->ExportMaterial(L"Cube/Cube");
+		converter->ExportMaterial(L"Cube/Cube", true);
 		converter->ExportMesh(L"Cube/Cube");
 		SAFE_DELETE(converter);
 	}
@@ -35,7 +35,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Shannon/Shannon.fbx");
-		converter->ExportMaterial(L"Shannon/Shannon");
+		converter->ExportMaterial(L"Shannon/Shannon", true);
 		converter->ExportMesh(L"Shannon/Shannon");
 		SAFE_DELETE(converter);
 	}
@@ -44,7 +44,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Mousey/Mousey.fbx");
-		converter->ExportMaterial(L"Mousey/Mousey");
+		converter->ExportMaterial(L"Mousey/Mousey", true);
 		converter->ExportMesh(L"Mousey/Mousey");
 		SAFE_DELETE(converter);
 	}

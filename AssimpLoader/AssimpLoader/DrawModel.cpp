@@ -16,13 +16,13 @@ namespace Sdt
 		MainCamera->SetPosition(0, 200, -300);
 		MainCamera->SetRotation(0.1f, 0, 0);
 		
-		vector<wstring> ModelNames = {L"Shannon/Shannon", L"Mousey/Mousey", L"Cube/Cube", L"Airplane/Airplane"};
+		vector<wstring> ModelNames = {L"Shannon", L"Mousey", L"Cube", L"Airplane"};
 
 		for (const wstring & ModelName : ModelNames)
 		{
 			Model *Temp = new Model();
-			Temp->ReadMaterial(ModelName);
-			Temp->ReadMesh(ModelName);
+			Temp->ReadMaterial(ModelName);;
+			Temp->ReadMesh(ModelName+L"/"+ModelName);;
 			Models.push_back(Temp);
 		}
 	}

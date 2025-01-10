@@ -20,8 +20,6 @@ struct VertexInput
 struct VertexOutput
 {
     float4 Position : SV_POSITION;
-    float2 Uv : Uv;
-	float3 Normal : Normal;
 };
 
 VertexOutput VS(VertexInput input)
@@ -31,21 +29,13 @@ VertexOutput VS(VertexInput input)
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
-	output.Normal = mul(input.Normal, (float3x3)World);
-
-    output.Uv = input.Uv;
-
     return output;
 }
 
 SamplerState Samp;
 float4 PS(VertexOutput input) : SV_Target
 {
-	float3 normal = normalize(input.Normal);
-	float Light = dot(-LightDirection, normal);
-	float3 Color = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(Samp, input.Uv).rgb;
-    Color *= Light;
-	return float4(Color, 1.0f);
+	return float4(1.f, 1.f, 1.f, 1.f);
 }
 
 RasterizerState FillMode_WireFrame

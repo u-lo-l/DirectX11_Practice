@@ -19,7 +19,7 @@ Texture::~Texture()
 	SAFE_RELEASE(this->SRV);
 }
 
-void Texture::LoadMetadata(D3DX11_IMAGE_INFO * InLoadInfo)
+void Texture::LoadMetadata( const D3DX11_IMAGE_INFO * InLoadInfo)
 {
 	const wstring Extension = Path::GetExtension(this->FileName);
 	if (Extension == L"tga")
@@ -39,12 +39,8 @@ void Texture::LoadMetadata(D3DX11_IMAGE_INFO * InLoadInfo)
 		CHECK(GetMetadataFromWICFile(FileName.c_str(), DirectX::WIC_FLAGS_NONE, TexMeta) >= 0);
 	}
 
-	UINT Width = TexMeta.width;
-	UINT Height = TexMeta.height;
 	if (InLoadInfo != nullptr)
 	{
-		Width = InLoadInfo->Width;
-		Height = InLoadInfo->Height;
 		TexMeta.width = InLoadInfo->Width;
 		TexMeta.height = InLoadInfo->Height;
 	}

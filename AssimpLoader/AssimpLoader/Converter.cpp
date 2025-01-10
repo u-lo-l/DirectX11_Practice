@@ -30,32 +30,7 @@ namespace Sdt
 			| aiProcess_CalcTangentSpace
 			| aiProcess_GenBoundingBoxes
 		);
-		// aiString key;
-		// double unitScale = 1.0f;
-		// double originalScale = 1.0f;
-		// int scaleAccumulateMode = 0;
-		// if (Scene->mMetaData->Get<double>("UnitScaleFactor", unitScale)) {
-		// 	printf("Unit Scale Factor: %f\n", unitScale);
-		// } else {
-		// 	printf("Unit Scale Factor not found. Assuming 1.0 (meters).\n");
-		// }
-		//
-		// if (Scene->mMetaData->Get<double>("OriginalUnitScaleFactor", originalScale)) {
-		// 	printf("Origin Scale Factor: %f\n", originalScale);
-		// } else {
-		// 	printf("Origin Scale Factor not found. Assuming 1.0 (meters).\n");
-		// }
-		// if (Scene->mMetaData->Get("ScaleAccumulationMode", scaleAccumulateMode)) {
-		// 	printf("Scale Accumulate Mode : %d\n", scaleAccumulateMode);
-		// } else {
-		// 	printf("Scale Accumulate Mode not found. Assuming 0.0 (meters).\n");
-		// }
-		// float scalingOffset;
-		// if (Scene->mMetaData->Get("ScaleAccumulationMode", scalingOffset)) {
-		// 	printf("Scale Accumulate Mode : %d\n", scalingOffset);
-		// } else {
-		// 	printf("Scale Accumulate Mode not found. Assuming 0.0 (meters).\n");
-		// }
+
 		ASSERT(Scene != nullptr, Loader->GetErrorString());
 	}
 
@@ -69,11 +44,11 @@ namespace Sdt
 	{
 		const wstring SaveFileName = W_MODEL_PATH + InSaveFileName + L".material";
 		
-		ReadMaterial();
+		ReadMaterial("20_ModelVertex2.fx");
 		WriteMaterial(SaveFileName, InbOverwrite);
 	}
 
-	void Converter::ReadMaterial()
+	void Converter::ReadMaterial(const string & InShaderName)
 	{
 		Materials.resize(Scene->mNumMaterials, nullptr);
 		for (UINT i = 0; i < Scene->mNumMaterials; i++)
@@ -82,7 +57,7 @@ namespace Sdt
 			Materials[i] = new MaterialData();
 
 			Materials[i]->Name = Material->GetName().C_Str();
-			Materials[i]->ShaderName = "19_ModelVertex.fx";
+			Materials[i]->ShaderName = InShaderName;
 		
 			aiColor4D color;
 			Material->Get(AI_MATKEY_COLOR_AMBIENT, color);
@@ -145,12 +120,14 @@ namespace Sdt
 
 			SAFE_DELETE(Data);
 		}
+
+		wstring SaveMaterialFileName = W_MATERIAL_PATH + Path::GetFileName(InSaveFileName);
 		
 		Json::StyledWriter JsonWriter;
 		string TempStr = JsonWriter.write(Root);
 		
 		ofstream Ofstream;
-		Ofstream.open(InSaveFileName);
+		Ofstream.open(SaveMaterialFileName);
 		Ofstream << TempStr;
 		Ofstream.close();
 	}
@@ -161,8 +138,8 @@ namespace Sdt
 		printf("InFileName = %s\n", InFileName.c_str());
 		ASSERT(InSaveFolder.empty() == false, "InSaveFolder is not valid");
 		ASSERT(InFileName.empty() == false, "InFileName is not valid");
-		
-		string filename = Path::GetFileName(InFileName);
+
+		const string Filename = Path::GetFileName(InFileName);
 		const aiTexture * Texture = Scene->GetEmbeddedTexture(InFileName.c_str());
 		if (Texture != nullptr)
 		{
@@ -170,11 +147,11 @@ namespace Sdt
 			{
 				// const BinaryWriter * BinWriter = new BinaryWriter(String::ToWString(InSaveFolder + filename));
 				BinaryWriter * const BinWriter = new BinaryWriter();
-				BinWriter->Open(String::ToWString(InSaveFolder + filename));
+				BinWriter->Open(String::ToWString(InSaveFolder + Filename));
 				BinWriter->WriteByte(Texture->pcData, Texture->mWidth);
 				delete BinWriter;
 				
-				return filename;
+				return InSaveFolder + Filename;
 			}
 			// 파일정보가 아니라 Texture정보가 들어가 있는 경우.
 			D3D11_TEXTURE2D_DESC TextureDesc;
@@ -200,10 +177,10 @@ namespace Sdt
 			CHECK(D3DX11SaveTextureToFileA(D3D::Get()->GetDeviceContext(),
 											SavingTexture,
 											D3DX11_IFF_PNG,
-											(InSaveFolder + filename).c_str()
+											(InSaveFolder + Filename).c_str()
 											) >= 0);
 			
-			return filename;
+			return InSaveFolder + Filename;
 		}
 		else // FBX 내 임베디드 텍스처가 없는 경우, FBX 파일과 동일한 디렉토리에서 텍스처 파일을 찾음.
 		{
@@ -216,7 +193,7 @@ namespace Sdt
 
 			const string Path = InSaveFolder + "/" + InFileName;
 			CopyFileA(OriginPath.c_str(), Path.c_str(), false);
-			return Path::GetFileName(Path);
+			return InSaveFolder + Path::GetFileName(Path);
 		}
 	}
 #pragma endregion
