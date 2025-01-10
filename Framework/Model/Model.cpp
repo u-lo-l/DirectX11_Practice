@@ -114,15 +114,20 @@ void Model::ReadMesh( const wstring & InFileName)
 	ModelBone::ReadFile(BinReader, this->Bones);
 	ModelMesh::ReadFile(BinReader, this->Meshes, this->MaterialsTable);
 
-	for (ModelMesh* mesh : Meshes)
-		mesh->BindData();
-	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 	
-	// for (ModelMesh* mesh : Meshes)
-	// 	mesh->CreateBuffers();
-
+	int count = 0;
+	for (ModelBone * Bone : this->Bones)
+	{
+		this->BoneTransforms[count++] = Bone->Transform;
+		for (BoneIndexType number : Bone->MeshIndices)
+		{
+			Meshes[number]->BoneIndex = Bone->Index;
+			Meshes[number]->Bone = Bone;
+			Meshes[number]->Transforms = BoneTransforms;
+		}
+	}
 
 }
 

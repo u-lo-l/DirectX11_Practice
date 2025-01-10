@@ -13,11 +13,15 @@ ModelMesh::~ModelMesh()
 	SAFE_DELETE(IBuffer);
 }
 
-void ModelMesh::Tick() const
+void ModelMesh::Tick()
 {
 	Shader * const Drawer = MaterialData->GetShader();
+
 	if (CBBinder != nullptr)
 		CBBinder->Tick();
+
+	BoneData.BoneIndex = BoneIndex;
+	memcpy(BoneData.Transforms, Transforms, sizeof(Matrix) * MaxModelTransforms);
 	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
 	
 	// 이 두 줄이 빠지는 이유 : View, Projection은 ConstantBuffer로 넘어갔다. 이제 Context.Tick()에서 관리한다.
@@ -30,6 +34,9 @@ void ModelMesh::Render() const
 	Shader * const Drawer = MaterialData->GetShader();
 
 	CBBinder->BindToGPU();
+	BoneMatrixCBuffer->BindToGPU();
+	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);
+	
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();
@@ -79,6 +86,7 @@ void ModelMesh::CreateBuffers()
 {
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
-
 	CBBinder = new ConstantDataBinder(MaterialData->GetShader());
+	BoneMatrixCBuffer = new ConstantBuffer(&BoneData, "ModelMesh.Bone.Matrix", sizeof(BoneDesc));
+	ECB_BoneMatrixBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 }
