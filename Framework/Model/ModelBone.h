@@ -14,8 +14,10 @@ class ModelBone
 	
 	int Index = -1;
 	string Name = "";
+	
 	int ParentIndex = -1;
 	ThisClassPtr Parent = nullptr;
+
 	Matrix Transform;
 	vector<UINT> MeshIndices;
 	
