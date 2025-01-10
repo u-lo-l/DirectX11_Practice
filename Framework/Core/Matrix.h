@@ -1,5 +1,6 @@
 ﻿// ReSharper disable CppNonExplicitConversionOperator
 #pragma once
+#include <assimp/matrix4x4.h>
 class Vector;
 class Quaternion;
 class Plane;
@@ -14,6 +15,9 @@ public:
 		   float m21, float m22, float m23, float m24,
 		   float m31, float m32, float m33, float m34,
 		   float m41, float m42, float m43, float m44);
+#ifdef AI_MATRIX4X4_H_INC
+	Matrix(const aiMatrix4x4& InAiMat4X4);
+#endif
 	// Getter, Setter
 	Vector Up();			void Up(Vector value);
 	Vector Down();			void Down(Vector value);

@@ -10,7 +10,7 @@ const Matrix Matrix::Identity = Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 //////////////////////////////////////////////////////////////////////////
 ///@brief ������
 //////////////////////////////////////////////////////////////////////////
-Matrix::Matrix(void)
+Matrix::Matrix()
 {
 	M11 = 0.0f; M12 = 0.0f; M13 = 0.0f; M14 = 0.0f;
 	M21 = 0.0f; M22 = 0.0f; M23 = 0.0f; M24 = 0.0f;
@@ -46,6 +46,13 @@ Matrix::Matrix(float m11, float m12, float m13, float m14, float m21, float m22,
 	M31 = m31; M32 = m32; M33 = m33; M34 = m34;
 	M41 = m41; M42 = m42; M43 = m43; M44 = m44;
 }
+
+#ifdef AI_MATRIX4X4_H_INC
+Matrix::Matrix( const aiMatrix4x4 & InAiMat4X4 )
+{
+	memcpy(this->M, &InAiMat4X4, sizeof(aiMatrix4x4));
+}
+#endif
 //////////////////////////////////////////////////////////////////////////
 
 
