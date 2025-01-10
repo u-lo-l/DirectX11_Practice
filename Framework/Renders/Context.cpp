@@ -57,7 +57,7 @@ void Context::Render() const
 void Context::ResizeScreen()
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
+	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 10000.f);
 
 	this->Viewport->TopLeftX = 0;
 	this->Viewport->TopLeftY = 0;
@@ -73,7 +73,7 @@ Context::Context()
  : MainCamera(new Camera())
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
+	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 10000.f);
 	MainCamera->SetPosition(0, 0, -5);
 
 	this->Viewport = new D3D11_VIEWPORT();
