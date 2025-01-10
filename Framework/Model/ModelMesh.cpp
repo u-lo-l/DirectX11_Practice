@@ -70,6 +70,9 @@ void ModelMesh::ReadFile(
 			InReader->ReadByte(&Ptr, sizeof(UINT) * OutMeshes[i]->IndicesCount);
 		}
 	}
+
+	for (const ThisClassPtr Mesh : OutMeshes)
+		Mesh->CreateBuffers();
 }
 
 void ModelMesh::CreateBuffers()

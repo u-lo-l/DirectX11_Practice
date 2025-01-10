@@ -119,6 +119,11 @@ void Model::ReadMesh( const wstring & InFileName)
 	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
+	
+	// for (ModelMesh* mesh : Meshes)
+	// 	mesh->CreateBuffers();
+
+
 }
 
 Color Model::JsonStringToColor( const Json::String & InJson )
