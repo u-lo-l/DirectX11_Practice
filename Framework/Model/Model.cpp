@@ -121,7 +121,7 @@ void Model::ReadMesh( const wstring & InFileName)
 	for (ModelBone * Bone : this->Bones)
 	{
 		this->BoneTransforms[count++] = Bone->Transform;
-		for (BoneIndexType number : Bone->MeshIndices)
+		for (UINT number : Bone->MeshIndices)
 		{
 			Meshes[number]->BoneIndex = Bone->Index;
 			Meshes[number]->Bone = Bone;
