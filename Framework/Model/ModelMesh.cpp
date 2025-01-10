@@ -72,7 +72,7 @@ void ModelMesh::ReadFile(
 	}
 }
 
-void ModelMesh::BindData()
+void ModelMesh::CreateBuffers()
 {
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
