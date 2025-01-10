@@ -1,6 +1,13 @@
 #include "00_Context.fx"
 #include "00_Material.fx"
 
+#define MaxModelTransforms 256
+cbuffer CB_ModelBones
+{
+    matrix BoneTransforms[MaxModelTransforms];
+    uint BoneIndex;
+}
+
 struct VertexInput
 {
     float4 Position : Position;
@@ -22,6 +29,9 @@ struct VertexOutput
 VertexOutput VS(VertexInput input)
 {
     VertexOutput output;
+
+    World = mul(BoneTransforms[BoneIndex], World);
+
     output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
