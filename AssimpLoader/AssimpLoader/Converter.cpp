@@ -214,7 +214,17 @@ namespace Sdt
 		Bone->Index = InIndex;
 		Bone->Parent = InParent;
 		Bone->Name = InNode->mName.C_Str();
-		Bone->Transform = Matrix::Identity;
+		
+		Bone->Transform = InNode->mTransformation;
+		Bone->Transform.Transpose();
+
+		Matrix ParentMatrix = Matrix::Identity;
+		if (InParent >= 0)
+		{
+			// 이미 Transpose된 부모 bone의 local-coord Transform.
+			ParentMatrix = Bones[InParent]->Transform;
+		}
+		Bone->Transform = Bone->Transform * ParentMatrix;
 		Bones.push_back(Bone);
 
 		const UINT MeshCount = InNode->mNumMeshes;
