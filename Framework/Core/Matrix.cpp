@@ -1414,6 +1414,17 @@ Matrix Matrix::Transpose( const Matrix & matrix )
 
 	return matrix1;
 }
+
+void Matrix::Transpose()
+{
+	std::swap( M12, M21 );
+	std::swap( M13, M31 );
+	std::swap( M14, M41 );
+	std::swap( M23, M32 );
+	std::swap( M24, M42 );
+	std::swap( M34, M43 );
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 

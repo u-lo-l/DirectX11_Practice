@@ -85,6 +85,7 @@ public:
 	static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
 	static Matrix Transform(const Matrix & value, const Quaternion & rotation);
 	static Matrix Transpose(const Matrix & matrix);
+	void Transpose();
 	static Matrix Invert(const Matrix & matrix);
 	static Matrix Lerp(const Matrix & matrix1, const Matrix & matrix2, float amount);
 private:
