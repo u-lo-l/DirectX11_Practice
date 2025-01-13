@@ -94,55 +94,35 @@ void Model::ReadMaterial( const wstring & InFileName)
 	for (const Json::String & Name : Members)
 	{
 		Material * MatData = new Material();
+		Json::Value Value = Root[Name];
 
-		Json::Value::ArrayIndex Index = Root[Name].size();
-		for (UINT i = 0; i < Index; i++)
+		if (Value["ShaderName"].asString().size() > 0)
+			MatData->SetShader(String::ToWString(Value["ShaderName"].asString()));
+
+		MatData->SetAmbient(JsonStringToColor(Value["Ambient"].asString()));
+		MatData->SetDiffuse(JsonStringToColor(Value["Diffuse"].asString()));
+		MatData->SetSpecular(JsonStringToColor(Value["Specular"].asString()));
+		MatData->SetEmissive(JsonStringToColor(Value["Emissive"].asString()));
+
+		UINT count = Value["DiffuseMap"].size();
+		for (UINT i = 0; i < count; i++)
 		{
-			Json::Value Value = Root[Name][i];
-			Json::Value::Members ValueMembers = Value.getMemberNames();
-			for (const Json::String & ValueName : ValueMembers)
-			{
-				if (ValueName.compare("ShaderName") == 0)
-				{
-					if (Value[ValueName].asString().size() > 0)
-					{
-						const wstring ShaderName = String::ToWString(Value[ValueName].asString());
-						MatData->SetShader(ShaderName);
-					}
-				}
-				else if (ValueName == "Ambient")
-				{
-					Json::String str = Value[ValueName].asString();
-					Color AmbientColor = JsonStringToColor(str);
-					MatData->SetAmbient(AmbientColor);
-				}
-				else if (ValueName == "Diffuse")
-				{
-					Json::String str = Value[ValueName].asString();
-					Color DiffuseColor = JsonStringToColor(str);
-					MatData->SetDiffuse(DiffuseColor);
-				}
-				else if (ValueName.compare("Specular") == 0)
-				{
-					MatData->SetSpecular(JsonStringToColor(Value[ValueName].asString()));
-				}
-				else if (ValueName.compare("Emissive") == 0)
-				{
-					MatData->SetEmissive(JsonStringToColor(Value[ValueName].asString()));
-				}
-				else if (ValueName.compare("DiffuseMap") == 0 && Value[ValueName].size() > 0 && Value[ValueName][0].asString().size() > 0)
-				{
-					MatData->SetDiffuseMap(String::ToWString(Value[ValueName][0].asString()));
-				}
-				else if (ValueName.compare("SpecularMap") == 0 && Value[ValueName].size() > 0 &&Value[ValueName][0].asString().size() > 0)
-				{
-					MatData->SetSpecularMap(String::ToWString(Value[ValueName][0].asString()));
-				}
-				else if (ValueName.compare("NormalMap") == 0 && Value[ValueName].size() > 0 && Value[ValueName][0].asString().size() > 0)
-				{
-					MatData->SetNormalMap(String::ToWString(Value[ValueName][0].asString()));
-				}
-			}
+			if (Value["DiffuseMap"][i].asString().size() > 0)
+				MatData->SetDiffuseMap(String::ToWString(Value["DiffuseMap"][i].asString()));
+		}
+
+		count = Value["SpecularMap"].size();
+		for (UINT i = 0; i < count; i++)
+		{
+			if (Value["SpecularMap"][i].asString().size() > 0)
+				MatData->SetSpecularMap(String::ToWString(Value["SpecularMap"][i].asString()));
+		}
+
+		count = Value["NormalMap"].size();
+		for (UINT i = 0; i < count; i++)
+		{
+			if (Value["NormalMap"][i].asString().size() > 0)
+				MatData->SetNormalMap(String::ToWString(Value["NormalMap"][i].asString()));
 		}
 
 		MaterialsTable[Name] = MatData;

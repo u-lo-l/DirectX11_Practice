@@ -97,27 +97,22 @@ namespace Sdt
 
 		for (const MaterialData* Data : Materials)
 		{
-			Json::Value ShaderName;
-			ShaderName["ShaderName"] = Data->ShaderName;
+			Json::Value Value;
+			Value["ShaderName"] = Data->ShaderName;
 
-			Json::Value Color;
-			Color["Ambient"] = ColorToJson(Data->Ambient);
-			Color["Diffuse"] = ColorToJson(Data->Diffuse);
-			Color["Specular"] = ColorToJson(Data->Specular);
-			Color["Emissive"] = ColorToJson(Data->Emissive);
+			Value["Ambient"] = ColorToJson(Data->Ambient);
+			Value["Diffuse"] = ColorToJson(Data->Diffuse);
+			Value["Specular"] = ColorToJson(Data->Specular);
+			Value["Emissive"] = ColorToJson(Data->Emissive);
 
-			Json::Value Textures;
 			for (const string & Name : Data->DiffuseFiles)
-				Textures["DiffuseMap"].append(SaveTextureAsFile(FolderName, Name));
+				Value["DiffuseMap"].append(SaveTextureAsFile(FolderName, Name));
 			for (const string & Name : Data->SpecularFiles)
-				Textures["SpecularMap"].append(SaveTextureAsFile(FolderName, Name));
+				Value["SpecularMap"].append(SaveTextureAsFile(FolderName, Name));
 			for (const string & Name : Data->NormalFiles)
-				Textures["NormalMap"].append(SaveTextureAsFile(FolderName, Name));
-		
-			Root[Data->Name.c_str()].append(ShaderName);
-			Root[Data->Name.c_str()].append(Color);
-			Root[Data->Name.c_str()].append(Textures);
+				Value["NormalMap"].append(SaveTextureAsFile(FolderName, Name));
 
+			Root[Data->Name.c_str()] = Value;
 			SAFE_DELETE(Data);
 		}
 

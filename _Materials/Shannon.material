@@ -1,32 +1,20 @@
 {
-   "Ch38_body" : [
-      {
-         "ShaderName" : "20_ModelVertex2.fx"
-      },
-      {
-         "Ambient" : "0.000000,0.000000,0.000000,1.000000",
-         "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
-         "Emissive" : "0.000000,0.000000,0.000000,1.000000",
-         "Specular" : "0.500000,0.500000,0.500000,1.000000"
-      },
-      {
-         "DiffuseMap" : [ "../_Models/Shannon/Ch38_1001_Diffuse.png" ],
-         "NormalMap" : [ "../_Models/Shannon/Ch38_1001_Normal.png" ],
-         "SpecularMap" : [ "../_Models/Shannon/Ch38_1001_Specular.png" ]
-      }
-   ],
-   "Ch38_hair" : [
-      {
-         "ShaderName" : "20_ModelVertex2.fx"
-      },
-      {
-         "Ambient" : "0.000000,0.000000,0.000000,1.000000",
-         "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
-         "Emissive" : "0.000000,0.000000,0.000000,1.000000",
-         "Specular" : "0.000000,0.000000,0.000000,1.000000"
-      },
-      {
-         "DiffuseMap" : [ "../_Models/Shannon/Ch38_1002_Diffuse.png" ]
-      }
-   ]
+   "Ch38_body" : {
+      "Ambient" : "0.000000,0.000000,0.000000,1.000000",
+      "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
+      "DiffuseMap" : [ "../_Models/Shannon/Ch38_1001_Diffuse.png" ],
+      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "NormalMap" : [ "../_Models/Shannon/Ch38_1001_Normal.png" ],
+      "ShaderName" : "20_ModelVertex2.fx",
+      "Specular" : "0.500000,0.500000,0.500000,1.000000",
+      "SpecularMap" : [ "../_Models/Shannon/Ch38_1001_Specular.png" ]
+   },
+   "Ch38_hair" : {
+      "Ambient" : "0.000000,0.000000,0.000000,1.000000",
+      "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
+      "DiffuseMap" : [ "../_Models/Shannon/Ch38_1002_Diffuse.png" ],
+      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "ShaderName" : "20_ModelVertex2.fx",
+      "Specular" : "0.000000,0.000000,0.000000,1.000000"
+   }
 }
