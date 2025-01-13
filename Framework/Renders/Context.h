@@ -6,7 +6,6 @@ class Context
 private:
 	using ThisClass = Context;
 
-	Matrix View;
 	Matrix Projection;
 	Vector LightDirection = {1, 1, 1};
 	
@@ -27,8 +26,8 @@ private:
 	~Context();
 	
 public:
-	Matrix& GetViewMatrix() { return MainCamera->GetViewMatrix(); }
-	Matrix& GetProjectionMatrix() { return Projection; }
+	const Matrix & GetViewMatrix() const { return MainCamera->GetViewMatrix(); }
+	const Matrix & GetProjectionMatrix() const { return Projection; }
 private:
 	Camera * MainCamera;
 	D3D11_VIEWPORT * Viewport;

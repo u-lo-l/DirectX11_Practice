@@ -5,12 +5,12 @@ class Vector;
 class Quaternion;
 class Plane;
 //////////////////////////////////////////////////////////////////////////
-///@brief 행렬
+///@brief 행렬 ( 왼손좌표게를 위한 행우선 )
 //////////////////////////////////////////////////////////////////////////
 class Matrix
 {
 public:
-	Matrix(void);
+	Matrix();
 	Matrix(float m11, float m12, float m13, float m14,
 		   float m21, float m22, float m23, float m24,
 		   float m31, float m32, float m33, float m34,
@@ -27,7 +27,9 @@ public:
 	Vector Forward() const;			void Forward( const Vector & value);
 	Vector Backward() const;		void Backward( const Vector & value);
 	Vector Translate() const;		void Translate( const Vector & value);
-	Matrix operator -();
+	Matrix operator -() const;
+	void Transpose();
+	void Invert();
 	bool operator ==(const Matrix& matrix2) const;
 	bool operator !=(const Matrix& matrix2) const;
 	Matrix operator +(const Matrix& matrix2) const;
@@ -72,11 +74,13 @@ public:
 	static Matrix CreateRotationX(float radians);
 	static Matrix CreateRotationY(float radians);
 	static Matrix CreateRotationZ(float radians);
+	static void CreateFromEulerAngle( Matrix & OutMat, const Vector & EulerInRad );
 	static Matrix CreateFromAxisAngle(Vector axis, float angle);
 	static Matrix CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreateLookAt(Vector cameraPosition, Vector cameraTarget, Vector cameraUpVector);
+	static void CreateLookAt(Matrix & outMatrix, const Vector & cameraPosition, const Vector & cameraTarget, const Vector & cameraUpVector);
 	static Matrix CreateWorld(Vector position, Vector forward, Vector up);
 	static Matrix CreateFromQuaternion(Quaternion quaternion);
 	static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll);
@@ -84,9 +88,8 @@ public:
 	static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
 	static Matrix Transform(const Matrix & value, const Quaternion & rotation);
 	static Matrix Transpose(const Matrix & matrix);
-	void Transpose();
+	
 	static Matrix Invert(const Matrix & matrix);
-	void Invert();
 	static Matrix Lerp(const Matrix & matrix1, const Matrix & matrix2, float amount);
 private:
 	struct CanonicalBasis

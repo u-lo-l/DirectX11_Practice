@@ -12,10 +12,9 @@ namespace Sdt
 	void DrawModel::Initialize()
 	{
 		Camera * MainCamera = Context::Get()->GetCamera();
-		MainCamera->SetPosition(0, 200, -300);
-		MainCamera->SetRotation(0.1f, 0, 0);
-		
-		vector<wstring> ModelNames = {L"Mousey"};
+		MainCamera->SetPosition(0, 0, -10);
+
+		const vector<wstring> ModelNames = {L"Mousey"};
 
 		for (const wstring & ModelName : ModelNames)
 		{

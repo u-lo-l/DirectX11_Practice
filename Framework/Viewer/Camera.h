@@ -10,7 +10,7 @@ public:
 
 public:
 	const Vector& GetPosition() const;
-	Matrix& GetViewMatrix();
+	const Matrix & GetViewMatrix() const;
 	void SetPosition(float X, float Y, float Z);
 	void SetPosition(const Vector & Vec);
 

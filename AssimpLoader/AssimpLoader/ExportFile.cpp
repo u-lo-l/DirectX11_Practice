@@ -26,7 +26,7 @@ namespace Sdt
 		Json::Value Transform;
 		Transform["Position"] = "0,0,0";
 		Transform["Rotation"] = "0,0,0";
-		Transform["Scale"] = "1,1,1";
+		Transform["Scale"] = "0.01,0.01,0.01";
 
 		Root["File"] = File;
 		Root["Transform"] = Transform;

@@ -28,12 +28,10 @@ Matrix::Matrix( const aiMatrix4x4 & InAiMat4X4 )
 }
 #endif
 
+// y-기저
 Vector Matrix::Up() const
 {
-	Vector vector;
-	vector.X = M21; vector.Y = M22; vector.Z = M23;
-
-	return vector;
+	return {M21, M22, M23};
 }
 
 void Matrix::Up( const Vector & value)
@@ -43,10 +41,7 @@ void Matrix::Up( const Vector & value)
 
 Vector Matrix::Down() const
 {
-	Vector vector;
-	vector.X = -M21; vector.Y = -M22; vector.Z = -M23;
-
-	return vector;
+	return {-M21, -M22, -M23};
 }
 
 void Matrix::Down( const Vector & value)
@@ -54,12 +49,10 @@ void Matrix::Down( const Vector & value)
 	M21 = -value.X; M22 = -value.Y; M23 = -value.Z;
 }
 
+// x-기저
 Vector Matrix::Right() const
 {
-	Vector vector;
-	vector.X = M11; vector.Y = M12; vector.Z = M13;
-
-	return vector;
+	return {M11, M12, M13};
 }
 
 void Matrix::Right( const Vector & value)
@@ -69,10 +62,7 @@ void Matrix::Right( const Vector & value)
 
 Vector Matrix::Left() const
 {
-	Vector vector;
-	vector.X = -M11; vector.Y = -M12; vector.Z = -M13;
-
-	return vector;
+	return {-M11, -M12, -M13};
 }
 
 void Matrix::Left( const Vector & value)
@@ -80,12 +70,10 @@ void Matrix::Left( const Vector & value)
 	M11 = -value.X; M12 = -value.Y; M13 = -value.Z;
 }
 
+// z-기저의 반대방향.
 Vector Matrix::Forward() const
 {
-	Vector vector;
-	vector.X = -M31; vector.Y = -M32; vector.Z = -M33;
-
-	return vector;
+	return {-M31, -M32, -M33};
 }
 
 void Matrix::Forward( const Vector & value)
@@ -95,10 +83,7 @@ void Matrix::Forward( const Vector & value)
 
 Vector Matrix::Backward() const
 {
-	Vector vector;
-	vector.X = M31; vector.Y = M32; vector.Z = M33;
-
-	return vector;
+	return {M31, M32, M33};
 }
 
 void Matrix::Backward( const Vector & value)
@@ -108,10 +93,7 @@ void Matrix::Backward( const Vector & value)
 
 Vector Matrix::Translate() const
 {
-	Vector vector;
-	vector.X = M41; vector.Y = M42; vector.Z = M43;
-
-	return vector;
+	return {M41, M42, M43};
 }
 
 void Matrix::Translate( const Vector & value)
@@ -119,7 +101,7 @@ void Matrix::Translate( const Vector & value)
 	M41 = value.X; M42 = value.Y; M43 = value.Z;
 }
 
-Matrix Matrix::operator-()
+Matrix Matrix::operator-() const
 {
 	Matrix matrix;
 	matrix.M11 = -M11; matrix.M12 = -M12; matrix.M13 = -M13; matrix.M14 = -M14;
@@ -271,14 +253,12 @@ Matrix::operator float*()
 
 std::wstring Matrix::ToWString()
 {
-	std::wstring temp = L"";
+	std::wstring Temp = ToStringRow1();
+	Temp += ToStringRow2();
+	Temp += ToStringRow3();
+	Temp += ToStringRow4();
 
-	temp += ToStringRow1();
-	temp += ToStringRow2();
-	temp += ToStringRow3();
-	temp += ToStringRow4();
-
-	return temp;
+	return Temp;
 }
 
 std::wstring Matrix::ToStringRow1()
@@ -362,7 +342,6 @@ bool Matrix::Decompose(Vector& scale, Quaternion& rotation, Vector& translation)
 
 		return false;
 	}
-
 
 	Matrix rotationmatrix;
 
@@ -598,7 +577,7 @@ Matrix Matrix::CreateBillboard(Vector objectPosition, Vector cameraPosition, Vec
 	}
 	else
 	{
-		zAxis = (cameraForwardVector != NULL ? (*cameraForwardVector) : Vector::Forward);
+		zAxis = (cameraForwardVector != nullptr ? (*cameraForwardVector) : Vector::Forward);
 	}
 
 
@@ -721,6 +700,38 @@ Matrix Matrix::CreateRotationZ(float radians)
 	matrix.M31 = 0.0f;  matrix.M32 = 0.0f; matrix.M33 = 1.0f; matrix.M34 = 0.0f;
 	matrix.M41 = 0.0f;  matrix.M42 = 0.0f; matrix.M43 = 0.0f; matrix.M44 = 1.0f;
 	return matrix;
+}
+
+void Matrix::CreateFromEulerAngle( Matrix & OutMat, const Vector & EulerInRad )
+{
+	float cosRoll = (float)cos(EulerInRad.X);
+	float sinRoll = (float)sin(EulerInRad.X);
+	float cosPitch = (float)cos(EulerInRad.Y);
+	float sinPitch = (float)sin(EulerInRad.Y);
+	float cosYaw = (float)cos(EulerInRad.Z);
+	float sinYaw = (float)sin(EulerInRad.Z);
+
+
+	// X (Roll), Y (Pitch), Z (Yaw) 회전 행렬을 한 번에 계산
+	OutMat.M11 = cosPitch * cosYaw;
+	OutMat.M12 = cosPitch * sinYaw;
+	OutMat.M13 = -sinPitch;
+	OutMat.M14 = 0.0f;
+
+	OutMat.M21 = sinRoll * sinPitch * cosYaw - cosRoll * sinYaw;
+	OutMat.M22 = sinRoll * sinPitch * sinYaw + cosRoll * cosYaw;
+	OutMat.M23 = sinRoll * cosPitch;
+	OutMat.M24 = 0.0f;
+
+	OutMat.M31 = cosRoll * sinPitch * cosYaw + sinRoll * sinYaw;
+	OutMat.M32 = cosRoll * sinPitch * sinYaw - sinRoll * cosYaw;
+	OutMat.M33 = cosRoll * cosPitch;
+	OutMat.M34 = 0.0f;
+
+	OutMat.M41 = 0.0f;
+	OutMat.M42 = 0.0f;
+	OutMat.M43 = 0.0f;
+	OutMat.M44 = 1.0f;
 }
 
 Matrix Matrix::CreateFromAxisAngle(Vector axis, float angle)
@@ -872,6 +883,24 @@ Matrix Matrix::CreateLookAt(Vector cameraPosition, Vector cameraTarget, Vector c
 	matrix.M44 = 1.0f;
 
 	return matrix;
+}
+
+void Matrix::CreateLookAt( Matrix & outMatrix, const Vector & cameraPosition, const Vector & cameraTarget, const Vector & cameraUpVector )
+{
+	Vector zAxis = cameraTarget - cameraPosition;
+	zAxis.Normalize();
+	Vector xAxis = Vector::Cross(cameraUpVector, zAxis);
+	xAxis.Normalize();
+	Vector yAxis = Vector::Cross(zAxis, xAxis);
+
+	outMatrix.M11 = xAxis.X; outMatrix.M12 = yAxis.X; outMatrix.M13 = zAxis.X; outMatrix.M14 = 0.0f;
+	outMatrix.M21 = xAxis.Y; outMatrix.M22 = yAxis.Y; outMatrix.M23 = zAxis.Y; outMatrix.M24 = 0.0f;
+	outMatrix.M31 = xAxis.Z; outMatrix.M32 = yAxis.Z; outMatrix.M33 = zAxis.Z; outMatrix.M34 = 0.0f;
+
+	outMatrix.M41 = -Vector::Dot(xAxis, cameraPosition);
+	outMatrix.M42 = -Vector::Dot(yAxis, cameraPosition);
+	outMatrix.M43 = -Vector::Dot(zAxis, cameraPosition);
+	outMatrix.M44 = 1.0f;
 }
 
 Matrix Matrix::CreateWorld(Vector position, Vector forward, Vector up)

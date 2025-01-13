@@ -28,8 +28,6 @@ void Context::Tick()
 {
 	MainCamera->Tick();
 
-	View = GetViewMatrix();
-
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 

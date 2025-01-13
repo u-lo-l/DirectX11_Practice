@@ -69,7 +69,7 @@ const Vector& Camera::GetPosition() const
 	return Position;
 }
 
-Matrix & Camera::GetViewMatrix()
+const Matrix & Camera::GetViewMatrix() const
 {
 	return ViewMat;
 }
@@ -118,21 +118,16 @@ void Camera::SetRopSpeed( float InSpeed )
 
 void Camera::SetViewMat()
 {
-	ViewMat = Matrix::CreateLookAt(Position, At(), Up);
+	Matrix::CreateLookAt(ViewMat, Position, At(), Up);
 }
 
 void Camera::SetRotationMat()
 {
-	Matrix X, Y, Z;
-	X = Matrix::CreateRotationX(EulerAngle.X);
-	Y = Matrix::CreateRotationY(EulerAngle.Y);
-	Z = Matrix::CreateRotationZ(EulerAngle.Z);
+	Matrix::CreateFromEulerAngle(RotationMat, EulerAngle);
 
-	RotationMat =  X * Y * Z;
-	
-	Forward = Vector::TransformNormal(Vector::Forward, RotationMat);
-	Up = Vector::TransformNormal(Vector::Up, RotationMat);
-	Right = Vector::TransformNormal(Vector::Right, RotationMat);
+	Forward = -RotationMat.Forward();
+	Up = RotationMat.Up();
+	Right = RotationMat.Right();
 }
 
 Vector Camera::At() const
