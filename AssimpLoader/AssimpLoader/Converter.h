@@ -32,6 +32,7 @@ namespace Sdt
 		 * @param InFileName : material의 전체 경로포함 이름. 함수 내부적으로 마지막 파일명만 추출됨.
 		 */
 		string SaveTextureAsFile(const string & InSaveFolder, const string & InFileName) const;
+		
 	private:
 		vector<MaterialData*> Materials;
 #pragma endregion

@@ -1,6 +1,9 @@
 ﻿#include "Framework.h"
 #include "Shader.h"
 
+#include <d3dcompiler.h>
+#include <fstream>
+
 Shader::Shader(const wstring& File)
 	: FileName(W_SHADER_PATH + File)
 {
@@ -40,6 +43,7 @@ void Shader::CreateEffect()
 	/*
 	 * Compile an Effect
 	 * Shader파일을 컴파일하여 그 정보를 ID3DBlob객체에 저장한다.(여기선 fxBlob)
+	 * d3dcompiler_43d에는 없다. d3dcompiler_47.dll부터 제공되는 함수이다. 
 	 */
 	HRESULT hr = D3DCompileFromFile(
 		FileName.c_str(),

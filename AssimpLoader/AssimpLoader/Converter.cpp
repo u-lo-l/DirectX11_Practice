@@ -129,6 +129,9 @@ namespace Sdt
 
 	string Converter::SaveTextureAsFile(const string & InSaveFolder, const string & InFileName) const
 	{
+		ID3D11Device * const Device = D3D::Get()->GetDevice();
+		ID3D11DeviceContext * const Context = D3D::Get()->GetDeviceContext();
+		
 		printf("InSaveFolder = %s\n", InSaveFolder.c_str());
 		printf("InFileName = %s\n", InFileName.c_str());
 		ASSERT(InSaveFolder.empty() == false, "InSaveFolder is not valid");
@@ -148,7 +151,8 @@ namespace Sdt
 				
 				return InSaveFolder + Filename;
 			}
-			// 파일정보가 아니라 Texture정보가 들어가 있는 경우.
+			// Texture정보가 decoding된 경우
+			// 1. AiTexture를 바탕으로 ID3D11Texture2D를 우선 만들어야해
 			D3D11_TEXTURE2D_DESC TextureDesc;
 			ZeroMemory(&TextureDesc, sizeof(TextureDesc));
 			TextureDesc.Width = Texture->mWidth;
@@ -167,14 +171,21 @@ namespace Sdt
 			SubResourceData.SysMemPitch = Texture->mWidth * 4;
 
 			ID3D11Texture2D * SavingTexture;
-			HRESULT Hr = D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, &SubResourceData, &SavingTexture);
-			printf("%d\n", Hr);
-			CHECK(D3DX11SaveTextureToFileA(D3D::Get()->GetDeviceContext(),
-											SavingTexture,
-											D3DX11_IFF_PNG,
-											(InSaveFolder + Filename).c_str()
-											) >= 0);
+			HRESULT Hr = Device->CreateTexture2D(&TextureDesc, &SubResourceData, &SavingTexture);
 			
+			// 2. 그 다음 ID3DTexture2D를 DirectX::Image로 캡쳐
+			DirectX::ScratchImage ScratchImage;
+			CHECK(DirectX::CaptureTexture(Device, Context, SavingTexture, ScratchImage) >= 0);
+			const DirectX::Image * SavingImage = ScratchImage.GetImage(0, 0, 0);
+
+			// 3. Image를 이용해서 png파일 작성
+			Hr = DirectX::SaveToWICFile(
+					*SavingImage,
+					DirectX::WIC_FLAGS_NONE,
+					DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG),
+					String::ToWString(InSaveFolder + Filename).c_str()
+				);
+			CHECK(Hr < 0);
 			return InSaveFolder + Filename;
 		}
 		else // FBX 내 임베디드 텍스처가 없는 경우, FBX 파일과 동일한 디렉토리에서 텍스처 파일을 찾음.
@@ -191,7 +202,6 @@ namespace Sdt
 			return InSaveFolder + Path::GetFileName(Path);
 		}
 	}
-#pragma endregion
 
 #pragma region ExtractMesh
 	

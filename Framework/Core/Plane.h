@@ -26,7 +26,7 @@ public:
 	bool operator !=(const Plane& value) const;
 
 	std::wstring ToString();
-	D3DXPLANE ToD3DXPLANE();
+	// D3DXPLANE ToD3DXPLANE();
 
 	float Dot( const Vector4& value) const;
 	float DotCoordinate( const Vector& value) const;

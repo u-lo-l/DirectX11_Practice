@@ -42,16 +42,17 @@ void Context::Tick()
  */
 void Context::Render() const
 {
+	Gui * const GuiInst = Gui::Get();
 	string Str = string("FrameRate : ") + to_string(static_cast<int>(ImGui::GetIO().Framerate));
-	Gui::Get()->RenderText(5, 5, 1, 1, 1, Str);
+	GuiInst->RenderText(5, 5, 1, 1, 1, Str);
 
 	const Vector & CamPos = MainCamera->GetPosition();
 	const Vector & CamRot = MainCamera->GetEulerAngle();
 	Str = "Camera Rotation : " + String::ToString(CamRot.ToWString());
-	Gui::Get()->RenderText(5, 20, 1, 1, 1, Str);
+	GuiInst->RenderText(5, 20, 1, 1, 1, Str);
 	
 	Str = "Camera Position : " + String::ToString(CamPos.ToWString());
-	Gui::Get()->RenderText(5, 35, 1, 1, 1, Str);
+	GuiInst->RenderText(5, 35, 1, 1, 1, Str);
 }
 
 void Context::ResizeScreen()

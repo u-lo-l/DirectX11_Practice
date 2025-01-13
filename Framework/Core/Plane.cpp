@@ -139,10 +139,10 @@ std::wstring Plane::ToString()
 ///@brief 
 ///@param 
 //////////////////////////////////////////////////////////////////////////
-D3DXPLANE Plane::ToD3DXPLANE()
-{
-	return D3DXPLANE(Normal.X, Normal.Y, Normal.Z, D);
-}
+// D3DXPLANE Plane::ToD3DXPLANE()
+// {
+// 	return D3DXPLANE(Normal.X, Normal.Y, Normal.Z, D);
+// }
 //////////////////////////////////////////////////////////////////////////
 
 

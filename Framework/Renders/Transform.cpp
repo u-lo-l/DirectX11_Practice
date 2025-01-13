@@ -35,17 +35,17 @@ void Transform::Render( const Shader * InShader )
 	CHECK(ECB_CBuffer->SetConstantBuffer(*CBuffer) >= 0);
 }
 
-const Vector & Transform::GetForward() const
+Vector Transform::GetForward() const
 {
 	return CBufferData.World.Forward();
 }
 
-const Vector & Transform::GetUp() const
+Vector Transform::GetUp() const
 {
 	return CBufferData.World.Up();
 }
 
-const Vector & Transform::GetRight() const
+Vector Transform::GetRight() const
 {
 	return CBufferData.World.Right();
 }

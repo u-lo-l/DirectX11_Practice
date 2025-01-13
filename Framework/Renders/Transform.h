@@ -15,9 +15,9 @@ public:
 	void Tick();
 	void Render(const Shader * InShader);
 public:
-	const Vector & GetForward() const;
-	const Vector & GetUp() const;
-	const Vector & GetRight() const;
+	Vector GetForward() const;
+	Vector GetUp() const;
+	Vector GetRight() const;
 
 	const Vector & GetPosition() const;
 	const Vector & GetScale() const;

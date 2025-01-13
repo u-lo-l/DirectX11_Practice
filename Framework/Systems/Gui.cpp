@@ -41,6 +41,12 @@ Gui::~Gui()
 	ImGui::DestroyContext();
 }
 
+Gui::GuiText::GuiText( const Vector2D & Position, const ::Color & Color, const string & Context )
+ : Position(Position), Color(Color), Content(Context)
+{
+	
+}
+
 LRESULT Gui::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam)
 {
 	if (ImGui::GetCurrentContext() == nullptr)
@@ -49,24 +55,19 @@ LRESULT Gui::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlP
 	return ImGui_ImplWin32_WndProcHandler(InHandle, InMessage, InwParam, InlParam);
 }
 
-void Gui::RenderText( float x, float y, float r, float g, float b, const string & context )
+void Gui::RenderText( float x, float y, float r, float g, float b, const string & Context )
 {
 	GuiText TempText;
 	TempText.Position = {x, y};
 	TempText.Color = {r, g, b, 1.0f};
-	TempText.Content = context;
+	TempText.Content = Context;
 
 	Contents.push_back(TempText);
 }
 
-void Gui::RenderText( Vector2D position, Color color, const string & context )
+void Gui::RenderText( Vector2D Position, Color Color, const string & context )
 {
-	GuiText TempText;
-	TempText.Position = position;
-	TempText.Color = color;
-	TempText.Content = context;
-
-	Contents.push_back(TempText);
+	Contents.emplace_back(Position, Color, context);
 }
 
 void Gui::Tick()

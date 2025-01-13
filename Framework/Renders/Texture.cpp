@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "Texture.h"
 
-Texture::Texture( const wstring & FileName, const D3DX11_IMAGE_INFO * InLoadInfo, bool bDefaultPath )
+Texture::Texture( const wstring & FileName, const DirectX::TexMetadata * InLoadInfo, bool bDefaultPath )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
 	wstring FullPath = FileName;
@@ -19,7 +19,7 @@ Texture::~Texture()
 	SAFE_RELEASE(this->SRV);
 }
 
-void Texture::LoadMetadata( const D3DX11_IMAGE_INFO * InLoadInfo)
+void Texture::LoadMetadata( const DirectX::TexMetadata * InLoadInfo)
 {
 	const wstring Extension = Path::GetExtension(this->FileName);
 	if (Extension == L"tga")
@@ -41,8 +41,8 @@ void Texture::LoadMetadata( const D3DX11_IMAGE_INFO * InLoadInfo)
 
 	if (InLoadInfo != nullptr)
 	{
-		TexMeta.width = InLoadInfo->Width;
-		TexMeta.height = InLoadInfo->Height;
+		TexMeta.width = InLoadInfo->width;
+		TexMeta.height = InLoadInfo->height;
 	}
 }
 
@@ -112,7 +112,9 @@ D3D11_TEXTURE2D_DESC Texture::ReadPixels( ID3D11Texture2D * InSourceTexture, con
 
 	ID3D11Texture2D * Texture;
 	CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, nullptr, &Texture) >= 0);
-	CHECK(D3DX11LoadTextureFromTexture(D3D::Get()->GetDeviceContext(), InSourceTexture, nullptr, Texture) >= 0);
+	// D3DX11LoadTextureFromTexture : D3D11X.h . 더이상 권장되지 않음.
+	// CHECK(D3DX11LoadTextureFromTexture(D3D::Get()->GetDeviceContext(), InSourceTexture, nullptr, Texture) >= 0);
+	CHECK(LoadTextureFromTexture(InSourceTexture, &Texture, nullptr) >= 0);
 	
 	UINT * Colors = new UINT[TextureDesc.Width * TextureDesc.Height];
 	D3D11_MAPPED_SUBRESOURCE SubResource;
@@ -133,4 +135,65 @@ D3D11_TEXTURE2D_DESC Texture::ReadPixels( ID3D11Texture2D * InSourceTexture, con
 	SAFE_RELEASE(Texture);
 	
 	return TextureDesc;
+}
+
+HRESULT Texture::LoadTextureFromTexture(
+	ID3D11Texture2D * InSourceTexture,
+	ID3D11Texture2D ** OutTargetTexture,
+	ID3D11ShaderResourceView ** OutTargetSRV )
+{
+	HRESULT Hr = S_OK;
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+	ID3D11DeviceContext * const Context = D3D::Get()->GetDeviceContext();
+
+	
+	D3D11_RESOURCE_DIMENSION resourceType;
+	InSourceTexture->GetType(&resourceType);
+
+	if (resourceType != D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
+		return E_INVALIDARG; // 텍스처가 2D 텍스처가 아니라면 오류
+	}
+
+	// 텍스처의 크기와 포맷을 가져오기 위해 원본 텍스처의 디스크립터 생성
+	ID3D11Texture2D* srcTexture2D = nullptr;
+	Hr = InSourceTexture->QueryInterface(&srcTexture2D);
+	if (FAILED(Hr)) {
+		return Hr;
+	}
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	srcTexture2D->GetDesc(&texDesc);
+
+	// 새로운 텍스처 생성 (원본과 동일한 크기, 포맷, MIP 레벨 등을 사용)
+	D3D11_TEXTURE2D_DESC newTexDesc = texDesc;
+	newTexDesc.Usage = D3D11_USAGE_DEFAULT;
+	newTexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	newTexDesc.CPUAccessFlags = 0;
+
+	ID3D11Texture2D* newTexture = nullptr;
+	Hr = Device->CreateTexture2D(&newTexDesc, nullptr, &newTexture);
+	if (FAILED(Hr)) {
+		return Hr;
+	}
+
+	// 텍스처 데이터를 복사
+	Context->CopyResource(newTexture, InSourceTexture);
+
+	// 텍스처에 대한 쉐이더 리소스 뷰 생성
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = texDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+
+	Hr = Device->CreateShaderResourceView(newTexture, &srvDesc, nullptr);
+	if (FAILED(Hr)) {
+		newTexture->Release();
+		return Hr;
+	}
+
+	// 최종적으로 텍스처를 반환
+	*OutTargetTexture = newTexture;
+
+	return S_OK;
+
 }

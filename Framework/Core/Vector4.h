@@ -55,8 +55,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 
-	std::wstring ToString();
-	struct D3DXVECTOR4 ToDX();
+	std::wstring ToString() const;
 
 	float Length();
 	float LengthSquared();
