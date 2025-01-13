@@ -20,10 +20,7 @@ namespace Sdt
 
 		for (const wstring & ModelName : ModelNames)
 		{
-			Model *Temp = new Model();
-			Temp->ReadMaterial(ModelName);;
-			Temp->ReadMesh(ModelName+L"/"+ModelName);;
-			Models.push_back(Temp);
+			Models.push_back(new Model(ModelName));
 		}
 	}
 
