@@ -16,16 +16,17 @@ public:
 		   float m31, float m32, float m33, float m34,
 		   float m41, float m42, float m43, float m44);
 #ifdef AI_MATRIX4X4_H_INC
+	// ReSharper disable once CppNonExplicitConvertingConstructor
 	Matrix(const aiMatrix4x4& InAiMat4X4);
 #endif
 	// Getter, Setter
-	Vector Up();			void Up(Vector value);
-	Vector Down();			void Down(Vector value);
-	Vector Right();			void Right(Vector value);
-	Vector Left();			void Left(Vector value);
-	Vector Forward();		void Forward(Vector value);
-	Vector Backward();		void Backward(Vector value);
-	Vector Translate();		void Translate(Vector value);
+	Vector Up() const;				void Up( const Vector & value);
+	Vector Down() const;			void Down( const Vector & value);
+	Vector Right() const;			void Right( const Vector & value);
+	Vector Left() const;			void Left( const Vector & value);
+	Vector Forward() const;			void Forward( const Vector & value);
+	Vector Backward() const;		void Backward( const Vector & value);
+	Vector Translate() const;		void Translate( const Vector & value);
 	Matrix operator -();
 	bool operator ==(const Matrix& matrix2) const;
 	bool operator !=(const Matrix& matrix2) const;
@@ -43,17 +44,10 @@ public:
 	void operator /=(const float& divider);
 	operator float *();
 	operator const float *() const;
-	//////////////////////////////////////////////////////////////////////////
-	///@brief float형의 *연산 처리
-	///@param scalefactor : 값
-	///@param matrix2 : 매트릭스
-	///@return 결과 매트릭스
-	//////////////////////////////////////////////////////////////////////////
-	friend Matrix operator *(const float scaleFactor, const Matrix& matrix2)
+	friend Matrix operator *(const float ScaleFactor, const Matrix& Matrix2)
 	{
-		return matrix2 * scaleFactor;
+		return Matrix2 * ScaleFactor;
 	}
-	//////////////////////////////////////////////////////////////////////////
 	std::wstring ToString();
 	std::wstring ToStringRow1();
 	std::wstring ToStringRow2();
@@ -68,10 +62,11 @@ public:
 	static Matrix Multiply(const Matrix & matrix1, const Matrix & matrix2);
 	static Matrix Multiply(const Matrix & matrix1, float scaleFactor);
 	static Matrix Negative(const Matrix & matrix);
+	void Negative();
 	static Matrix CreateBillboard(Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector* cameraForwardVector = NULL);
-	static Matrix CreateTranslation(Vector position);
+	static Matrix CreateTranslation( const Vector & position);
 	static Matrix CreateTranslation(float xPosition, float yPosition, float zPosition);
-	static Matrix CreateScale(Vector scales);
+	static Matrix CreateScale( const Vector & scales);
 	static Matrix CreateScale(float xScale, float yScale, float zScale);
 	static Matrix CreateScale(float scale);
 	static Matrix CreateRotationX(float radians);
@@ -91,6 +86,7 @@ public:
 	static Matrix Transpose(const Matrix & matrix);
 	void Transpose();
 	static Matrix Invert(const Matrix & matrix);
+	void Invert();
 	static Matrix Lerp(const Matrix & matrix1, const Matrix & matrix2, float amount);
 private:
 	struct CanonicalBasis
