@@ -12,12 +12,13 @@ private:
 	
 	using ThisClass = Model;
 public:
-	Model();
+	explicit Model( const wstring & ModelFileName );
 	~Model();
 
 	void Tick() const;
 	void Render() const;
 
+	void ReadFile(const wstring & InFileFullPath);
 	void ReadMaterial(const wstring & InFileName);
 private:
 	void ReadShaderName();
@@ -35,4 +36,7 @@ private:
 	map<string, Material*> MaterialsTable;
 
 	Matrix BoneTransforms[MaxModelTransforms];
+
+private:
+	Transform * WorldTransform;
 };

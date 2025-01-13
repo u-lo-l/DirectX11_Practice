@@ -112,6 +112,4 @@ void ConstantBuffer::BindToGPU() const
 	memcpy(Subresource.pData, Data, DataSize);
 	// Unmap : Unmap 해줘야 GPU에서 다시 리소스를 사용할 수 있다.
 	DeviceContext->Unmap(Buffer, 0);
-
-	// CHECK(ECB->SetConstantBuffer(Buffer) >= 0);
 }

@@ -49,6 +49,5 @@ namespace Sdt
 		vector<BoneData*> Bones;
 		vector<MeshData*> Meshes;
 #pragma endregion
-
 	};
 }

@@ -4,10 +4,13 @@
 #include <string>
 #include <fstream>
 
-Model::Model()
+Model::Model(const wstring & ModelFileName)
  : RootBone(nullptr)
 {
-	
+
+	WorldTransform = new Transform();
+	wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
+	ReadFile(FullFilePath);
 }
 
 Model::~Model()
@@ -16,12 +19,20 @@ Model::~Model()
 		SAFE_DELETE(Bone);
 	for (const ModelMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
+
+	for (pair<string, Material *> KeyVal : MaterialsTable)
+		SAFE_DELETE(KeyVal.second);
+	
+	SAFE_DELETE(WorldTransform);
 }
 
 void Model::Tick() const
 {
 	for (ModelMesh * mesh : Meshes)
+	{
+		mesh->SetWorldTransform(this->WorldTransform);
 		mesh->Tick();
+	}
 }
 
 void Model::Render() const
@@ -30,12 +41,49 @@ void Model::Render() const
 		mesh->Render();
 }
 
+void Model::ReadFile( const wstring & InFileFullPath )
+{
+	ifstream ifs;
+	ifs.open(InFileFullPath);
+
+	Json::Value Root;
+	ifs >> Root;
+
+	Json::Value::Members Members = Root.getMemberNames();
+	printf("Member Count : %d\n", Members.size());
+	
+	Json::Value material = Root["File"]["Material"];
+	Json::Value Mesh = Root["File"]["Mesh"];
+	Json::Value Position = Root["Transform"]["Position"];
+	Json::Value Rotation = Root["Transform"]["Rotation"];
+	Json::Value Scale = Root["Transform"]["Scale"];
+	ifs.close();
+
+	wstring MaterialName = String::ToWString(material.asString());
+	wstring MeshName = String::ToWString(Mesh.asString());
+	
+	ReadMaterial(MaterialName);
+	ReadMesh(MeshName + L"/" + MeshName);
+
+	if (WorldTransform == nullptr)
+		WorldTransform = new Transform();
+
+	vector<string> pString;
+	String::SplitString(&pString, Position.asString(), ",");
+	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+
+	String::SplitString(&pString, Rotation.asString(), ",");
+	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+
+	String::SplitString(&pString, Scale.asString(), ",");
+	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+}
+
 
 void Model::ReadMaterial( const wstring & InFileName)
 {
 	const wstring FullPath = W_MATERIAL_PATH + InFileName + L".material";
 	
-#pragma region ifstream
 	ifstream Stream;
 	Stream.open(FullPath);
 
@@ -101,7 +149,6 @@ void Model::ReadMaterial( const wstring & InFileName)
 	}
 
 	Stream.close();
-#pragma endregion
 }
 
 void Model::ReadMesh( const wstring & InFileName)

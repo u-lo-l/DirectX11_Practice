@@ -22,15 +22,19 @@ private:
 
 	void Tick();
 	void Render() const;
-
+	void SetWorldTransform( const Transform * InTransform) const;
+	
 	void CreateBuffers();
+
 	string Name = "";
+
+	Transform * WorldTransform = nullptr;
 	
 	Material * MaterialData = nullptr;
-
+	
 	// Mode::ReadMesh에서 값을 넣어준다.
 	int BoneIndex = 0;;
-	class ModelBone * Bone = nullptr;
+	ModelBone * Bone = nullptr;
 	Matrix * Transforms;
 	
 	UINT VerticesCount = 0;
@@ -38,15 +42,13 @@ private:
 	
 	UINT IndicesCount = 0;
 	UINT* Indices = nullptr;
-	
-	Matrix WorldMatrix = Matrix::Identity;
-	
+
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
 	ConstantDataBinder * CBBinder = nullptr;
 
 	/*
-	 * 의문 : Mesh가 되게 많은데, Bone정보를 갖는건 이해하겠음.
+	 * TODO : Mesh가 되게 많은데, Bone정보를 갖는건 이해하겠음.
 	 * 그런데 BoneDesc가 모든 Mesh들에 대해서 다 있어야하나?
 	 */
 	struct BoneDesc
