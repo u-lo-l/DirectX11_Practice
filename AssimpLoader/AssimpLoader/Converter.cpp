@@ -34,7 +34,7 @@ namespace Sdt
 		ASSERT(Scene != nullptr, Loader->GetErrorString());
 	}
 
-	string Converter::ColorToJson( const Color & InColor ) const
+	string Converter::ColorToJson( const Color & InColor )
 	{
 		return String::Format("%0.6f,%0.6f,%0.6f,%0.6f", InColor.R, InColor.G, InColor.B, InColor.A);
 	}
@@ -132,8 +132,6 @@ namespace Sdt
 		ID3D11Device * const Device = D3D::Get()->GetDevice();
 		ID3D11DeviceContext * const Context = D3D::Get()->GetDeviceContext();
 		
-		printf("InSaveFolder = %s\n", InSaveFolder.c_str());
-		printf("InFileName = %s\n", InFileName.c_str());
 		ASSERT(InSaveFolder.empty() == false, "InSaveFolder is not valid");
 		ASSERT(InFileName.empty() == false, "InFileName is not valid");
 
@@ -145,7 +143,7 @@ namespace Sdt
 			{
 				// const BinaryWriter * BinWriter = new BinaryWriter(String::ToWString(InSaveFolder + filename));
 				BinaryWriter * const BinWriter = new BinaryWriter();
-				BinWriter->Open(String::ToWString(InSaveFolder + Filename));
+				BinWriter->Open(InSaveFolder + Filename);
 				BinWriter->WriteByte(Texture->pcData, Texture->mWidth);
 				delete BinWriter;
 				
@@ -202,7 +200,7 @@ namespace Sdt
 			return InSaveFolder + Path::GetFileName(Path);
 		}
 	}
-
+#pragma endregion
 #pragma region ExtractMesh
 	
 	void Converter::ExportMesh( const wstring & InSaveFileName )

@@ -6,6 +6,7 @@ public:
 	BinaryWriter();
 	~BinaryWriter();
 	
+	void Open( const string & InFilePath, UINT InOption = CREATE_ALWAYS);
 	void Open(const wstring & InFilePath, UINT InOption = CREATE_ALWAYS);
 	void Close();
 

@@ -69,7 +69,7 @@ const Vector& Camera::GetPosition() const
 	return Position;
 }
 
-Matrix& Camera::GetViewMatrix()
+Matrix & Camera::GetViewMatrix()
 {
 	return ViewMat;
 }

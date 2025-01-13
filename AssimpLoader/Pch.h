@@ -1,5 +1,5 @@
 #pragma once
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #include "Framework.h"
 #pragma comment(lib, "Framework.lib")

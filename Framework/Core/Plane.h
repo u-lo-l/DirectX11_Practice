@@ -25,7 +25,7 @@ public:
 	bool operator ==(const Plane& value) const;
 	bool operator !=(const Plane& value) const;
 
-	std::wstring ToString();
+	std::wstring ToWString();
 	// D3DXPLANE ToD3DXPLANE();
 
 	float Dot( const Vector4& value) const;

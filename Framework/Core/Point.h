@@ -15,7 +15,7 @@ public:
 
 	Vector2D ToVector2();
 
-	std::wstring ToString();
+	std::wstring ToWString();
 
 public:
 	const static Point Zero;///< 0, 0

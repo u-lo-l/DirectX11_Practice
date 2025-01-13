@@ -28,8 +28,8 @@ namespace Sdt
 		void WndProc(UINT InMessage, WPARAM InWParam, LPARAM InLParam);
 
 	public:
-		__forceinline Vector GetMoveDelta() const { return WheelMoveDelta; }
-		__forceinline Vector GetPosition() const { return Position; }
+		Vector GetMoveDelta() const { return WheelMoveDelta; }
+		Vector GetPosition() const { return Position; }
 
 	public:
 		bool IsDown(MouseButton InType) const;

@@ -48,11 +48,11 @@ public:
 	}
 	//////////////////////////////////////////////////////////////////////////
 
+	std::string ToString() const;
+	std::wstring ToWString() const;
 
-	std::wstring ToString();
-
-	float Length();
-	float LengthSquared();
+	float Length() const;
+	float LengthSquared() const;
 
 	void Normalize();
 

@@ -3,21 +3,21 @@
 class String
 {
 public:
-	static void SplitString(vector<string>* InResult, string InOrigin, string InToken);
-	static void SplitString(vector<wstring>* InResult, wstring InOrigin, wstring InToken);
+	static void SplitString(vector<string>* InResult, const string & InOrigin, const string & InToken);
+	static void SplitString(vector<wstring>* InResult, const wstring & InOrigin, const wstring & InToken);
 
-	static bool StartsWith(string InValue, string InCompare);
-	static bool StartsWith(wstring InValue, wstring InCompare);
+	static bool StartsWith(const string & InValue, const string & InCompare);
+	static bool StartsWith(const wstring & InValue, const wstring & InCompare);
 
-	static bool Contain(string InValue, string InCompare);
-	static bool Contain(wstring InValue, wstring InCompare);
+	static bool Contain(const string & InValue, const string & InCompare);
+	static bool Contain(const wstring & InValue, const wstring & InCompare);
 
-	static void Replace(string* InValue, string InCompare, string InRepace);
-	static void Replace(wstring* InValue, wstring InCompare, wstring InRepace);
+	static void Replace(string* InValue, const string & InCompare, const string & InReplace);
+	static void Replace(wstring* InValue, const wstring & InCompare, const wstring & InReplace);
 
-	static wstring ToWString(string InValue);
+	static wstring ToWString( const string & Value);
 	static string ToString(const wstring & InValue);
 
-	static string Format(const string InFormat, ...);
-	static wstring Format(const wstring InFormat, ...);
+	static string Format(string InFormat, ...);
+	static wstring Format(wstring InFormat, ...);
 };

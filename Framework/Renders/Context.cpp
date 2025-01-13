@@ -29,8 +29,6 @@ void Context::Tick()
 	MainCamera->Tick();
 
 	View = GetViewMatrix();
-	// ViewInv = Matrix::Invert(GetViewMatrix());
-	// this->Desc.ViewProjection = this->Desc.View * this->Desc.Projection;
 
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
@@ -43,16 +41,13 @@ void Context::Tick()
 void Context::Render() const
 {
 	Gui * const GuiInst = Gui::Get();
-	string Str = string("FrameRate : ") + to_string(static_cast<int>(ImGui::GetIO().Framerate));
-	GuiInst->RenderText(5, 5, 1, 1, 1, Str);
+	GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(static_cast<int>(ImGui::GetIO().Framerate)));
 
 	const Vector & CamPos = MainCamera->GetPosition();
 	const Vector & CamRot = MainCamera->GetEulerAngle();
-	Str = "Camera Rotation : " + String::ToString(CamRot.ToWString());
-	GuiInst->RenderText(5, 20, 1, 1, 1, Str);
-	
-	Str = "Camera Position : " + String::ToString(CamPos.ToWString());
-	GuiInst->RenderText(5, 35, 1, 1, 1, Str);
+
+	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
+	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X, CamPos.Y, CamPos.Z));
 }
 
 void Context::ResizeScreen()

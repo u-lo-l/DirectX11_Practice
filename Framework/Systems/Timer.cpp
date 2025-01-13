@@ -30,9 +30,8 @@ namespace Sdt
 	{
 		const chrono::steady_clock::time_point current = chrono::steady_clock::now();
 
-		chrono::duration<double> temp = (current - PrevFrameTime);
-		DeltaTime = static_cast<float>(temp.count());
-		//ImGui::Text("DeltaTime : %f", DeltaTime);
+		const chrono::duration<double> Temp = (current - PrevFrameTime);
+		DeltaTime = static_cast<float>(Temp.count());
 		PrevFrameTime = current;
 	}
 

@@ -9,7 +9,7 @@ namespace Sdt
 		static void Destroy();
 		static Timer* Get();
 		 void Tick();
-		__forceinline float GetDeltaTime() const { return DeltaTime; }
+		float GetDeltaTime() const { return DeltaTime; }
 
 	private:
 		static Timer* Instance;

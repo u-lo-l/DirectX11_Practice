@@ -65,9 +65,9 @@ void Gui::RenderText( float x, float y, float r, float g, float b, const string 
 	Contents.push_back(TempText);
 }
 
-void Gui::RenderText( Vector2D Position, Color Color, const string & context )
+void Gui::RenderText(const Vector2D & Position, const Color & Color, const string & Context )
 {
-	Contents.emplace_back(Position, Color, context);
+	Contents.emplace_back(Position, Color, Context);
 }
 
 void Gui::Tick()
@@ -102,11 +102,11 @@ void Gui::Render()
 		ImGuiWindowFlags_NoNavFocus
 	);
 
-	for (GuiText content : Contents)
+	for (const GuiText & Content : Contents)
 	{
-		ImVec2 Position = {content.Position.X, content.Position.Y};
-		ImColor Color = {content.Color.R, content.Color.G, content.Color.B, content.Color.A};
-		ImGui::GetWindowDrawList()->AddText(Position, Color, content.Content.c_str());
+		ImVec2 Position = {Content.Position.X, Content.Position.Y};
+		ImColor Color = {Content.Color.R, Content.Color.G, Content.Color.B, Content.Color.A};
+		ImGui::GetWindowDrawList()->AddText(Position, Color, Content.Content.c_str());
 	}
 	Contents.clear();
 

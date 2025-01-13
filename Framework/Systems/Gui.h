@@ -13,7 +13,7 @@ public:
 
 public:
 	void RenderText(float x, float y, float r, float g, float b, const string & Context);
-	void RenderText(Vector2D Position, Color Color, const string & context);
+	void RenderText(const Vector2D & Position, const Color & Color, const string & Context);
 private:
 	static Gui * Instance;
 	Gui();

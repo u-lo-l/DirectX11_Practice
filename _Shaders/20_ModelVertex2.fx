@@ -1,12 +1,13 @@
 #include "00_Context.fx"
 #include "00_Material.fx"
 
-#define MaxModelTransforms 256
+#define MAX_MODEL_TRANSFORM 250
 cbuffer CB_ModelBones
 {
-    matrix BoneTransforms[MaxModelTransforms];
+    matrix BoneTransforms[MAX_MODEL_TRANSFORM];
+    
     uint BoneIndex;
-}
+};
 
 struct VertexInput
 {
@@ -16,44 +17,46 @@ struct VertexInput
     float3 Normal : Normal;
     float3 Tangent : Tangent;
     float4 Indices : BlendIndices;
-    float4 weights : BlendWeights;
+    float4 Weight : BlendWeights;
 };
 
 struct VertexOutput
 {
-    float4 Position : SV_POSITION;
+    float4 Position : SV_Position;
     float2 Uv : Uv;
-	float3 Normal : Normal;
+    float3 Normal : Normal;
 };
 
 VertexOutput VS(VertexInput input)
-{
+{    
     VertexOutput output;
-
+    
     World = mul(BoneTransforms[BoneIndex], World);
-
+    
     output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
-	output.Normal = mul(input.Normal, (float3x3)World);
-
+    output.Normal = mul(input.Normal, (float3x3)World);
+    
     output.Uv = input.Uv;
-
+    
     return output;
 }
 
 SamplerState Samp;
 float4 PS(VertexOutput input) : SV_Target
 {
-	float3 normal = normalize(input.Normal);
-	float Light = dot(-LightDirection, normal);
-	float3 Color = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(Samp, input.Uv).rgb;
-    Color *= Light;
-	return float4(Color, 1.0f);
+    float3 normal = normalize(input.Normal);
+    float light = dot(-LightDirection, normal);
+    
+    float3 color = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(Samp, input.Uv).rgb;
+    color *= light;
+    
+    return float4(color, 1.0f);
 }
 
-RasterizerState FillMode_WireFrame
+RasterizerState FillMode_Wireframe
 {
     FillMode = Wireframe;
 };
@@ -65,9 +68,11 @@ technique11 T0
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }
+
     pass P1
     {
-        SetRasterizerState(FillMode_WireFrame);
+        SetRasterizerState(FillMode_Wireframe);
+
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }

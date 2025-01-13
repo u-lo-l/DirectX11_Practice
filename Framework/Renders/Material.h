@@ -23,10 +23,10 @@ public:
 	void SetShader(const wstring & InShaderFileName);
 	void SetShader(Shader * InShader);
 	Shader * GetShader() const;
-	__forceinline void SetAmbient(const Color & InAmbient) { ColorData.Ambient = InAmbient; }
-	__forceinline void SetDiffuse(const Color & InDiffuse) { ColorData.Diffuse = InDiffuse; }
-	__forceinline void SetSpecular(const Color & InSpecular) { ColorData.Specular = InSpecular; }
-	__forceinline void SetEmissive(const Color & InEmissive) {	ColorData.Emissive = InEmissive; }
+	void SetAmbient(const Color & InAmbient) { ColorData.Ambient = InAmbient; }
+	void SetDiffuse(const Color & InDiffuse) { ColorData.Diffuse = InDiffuse; }
+	void SetSpecular(const Color & InSpecular) { ColorData.Specular = InSpecular; }
+	void SetEmissive(const Color & InEmissive) { ColorData.Emissive = InEmissive; }
 	void SetDiffuseMap(const string & InFilePath);
 	void SetDiffuseMap(const wstring & InWFilePath);
 	void SetSpecularMap(const string & InFilePath);

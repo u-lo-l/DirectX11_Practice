@@ -48,7 +48,7 @@ public:
 	{
 		return Matrix2 * ScaleFactor;
 	}
-	std::wstring ToString();
+	std::wstring ToWString();
 	std::wstring ToStringRow1();
 	std::wstring ToStringRow2();
 	std::wstring ToStringRow3();

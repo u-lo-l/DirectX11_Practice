@@ -172,8 +172,6 @@ void Window::MainRender()
 	
 	Context::Get()->Render();
 
-	// 이게 같은 Shader를 사용할 때 Shader에 대해서
-	// Context::Get()->BindCBufferToGPU();
 	Main->Render();
 	Gui::Get()->Render();
 	D3D::Get()->Present();

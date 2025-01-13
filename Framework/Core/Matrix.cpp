@@ -269,7 +269,7 @@ Matrix::operator float*()
 	return M;
 }
 
-std::wstring Matrix::ToString()
+std::wstring Matrix::ToWString()
 {
 	std::wstring temp = L"";
 

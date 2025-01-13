@@ -50,7 +50,6 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	ifs >> Root;
 
 	Json::Value::Members Members = Root.getMemberNames();
-	printf("Member Count : %d\n", Members.size());
 	
 	Json::Value material = Root["File"]["Material"];
 	Json::Value Mesh = Root["File"]["Mesh"];
@@ -163,5 +162,5 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 	vector<Json::String> v;
 	String::SplitString(&v, InJson, ",");
 
-	return {stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3])};
+	return Color(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
 }

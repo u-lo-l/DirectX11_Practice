@@ -123,7 +123,7 @@ bool Plane::operator!=(const Plane& value)const
 ///@brief 문자열로 변환
 ///@param 문자열
 //////////////////////////////////////////////////////////////////////////
-std::wstring Plane::ToString()
+std::wstring Plane::ToWString()
 {
 	std::wstring temp = L"";
 

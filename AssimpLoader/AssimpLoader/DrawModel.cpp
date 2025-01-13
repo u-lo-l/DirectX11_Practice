@@ -1,6 +1,5 @@
 ﻿#include "Pch.h"
 #include "DrawModel.h"
-#include "Converter.h"
 
 namespace Sdt
 {
@@ -16,7 +15,7 @@ namespace Sdt
 		MainCamera->SetPosition(0, 200, -300);
 		MainCamera->SetRotation(0.1f, 0, 0);
 		
-		vector<wstring> ModelNames = {L"Shannon", L"Mousey", L"Cube", L"Airplane"};
+		vector<wstring> ModelNames = {L"Mousey"};
 
 		for (const wstring & ModelName : ModelNames)
 		{
@@ -30,13 +29,13 @@ namespace Sdt
 
 	void DrawModel::Tick()
 	{
-		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
-
-		Models[ModelIndex]->Tick();
+		//ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
+	
+		 Models[ModelIndex]->Tick();
 	}
 
 	void DrawModel::Render()
 	{
-		Models[ModelIndex]->Render();
+		 Models[ModelIndex]->Render();
 	}
 }

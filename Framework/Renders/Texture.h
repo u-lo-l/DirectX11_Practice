@@ -7,9 +7,9 @@ public:
 	explicit Texture(const wstring& FileName, const DirectX::TexMetadata * InLoadInfo = nullptr, bool bDefaultPath = false);
 	~Texture();
 public:
-	__forceinline UINT GetWidth() const { return TexMeta.width; }
-	__forceinline UINT GetHeight() const { return TexMeta.height; }
-	__forceinline ID3D11ShaderResourceView * GetSRV() const { return SRV; }
+	UINT GetWidth() const { return TexMeta.width; }
+	UINT GetHeight() const { return TexMeta.height; }
+	ID3D11ShaderResourceView * GetSRV() const { return SRV; }
 private:
 	void LoadMetadata( const DirectX::TexMetadata * InLoadInfo = nullptr);
 	void LoadTexture();

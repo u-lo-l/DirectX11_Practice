@@ -82,7 +82,7 @@ Vector2D Point::ToVector2()
 ///@brief ���ڿ��� ��ȯ
 ///@param ���ڿ�
 //////////////////////////////////////////////////////////////////////////
-std::wstring Point::ToString()
+std::wstring Point::ToWString()
 {
 	std::wstring temp = L"";
 

@@ -19,12 +19,27 @@ void BinaryWriter::Close()
 	CloseHandle(FileHandle);
 	FileHandle = nullptr;
 }
+void BinaryWriter::Open( const string & InFilePath, UINT InOption)
+{
+	ASSERT(InFilePath.empty() == false, "[BinaryWriter] Wrong File Path");
 
+	FileHandle = CreateFileA(
+		InFilePath.c_str(),
+		GENERIC_WRITE,
+		0,
+		nullptr,
+		InOption,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr
+	);
+
+	ASSERT(FileHandle != INVALID_HANDLE_VALUE, "[BinaryWriter] Failed to create file");
+}
 void BinaryWriter::Open( const wstring & InFilePath, UINT InOption )
 {
 	ASSERT(InFilePath.empty() == false, "[BinaryWriter] Wrong File Path");
 
-	FileHandle = CreateFile(
+	FileHandle = CreateFileW(
 		InFilePath.c_str(),
 		GENERIC_WRITE,
 		0,

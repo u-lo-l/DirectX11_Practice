@@ -10,10 +10,10 @@ public:
 	void Tick();
 	void Render() const;
 
-	__forceinline void SetPass( const int InPass ) { Pass = InPass; }
-	__forceinline TerrainVertexType* GetVertice() const { return Vertices; }
-	__forceinline UINT GetWidth() const { return Width; }
-	__forceinline UINT GetHeight() const { return Height; }
+	void SetPass( const int InPass ) { Pass = InPass; }
+	TerrainVertexType* GetVertice() const { return Vertices; }
+	UINT GetWidth() const { return Width; }
+	UINT GetHeight() const { return Height; }
 	void GetPositionY(Vector& InPosition) const;
 	
 private:

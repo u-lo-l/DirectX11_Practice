@@ -12,7 +12,7 @@ namespace Sdt
 		~Converter();
 		void ReadFile(const wstring& InFileName);
 	private:
-		string ColorToJson(const Color & InColor) const;
+		static string ColorToJson(const Color & InColor);
 	private:
 		wstring FilePath;
 		Assimp::Importer* Loader;
