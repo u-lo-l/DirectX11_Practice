@@ -23,7 +23,7 @@ using namespace std;
 
 
 #pragma region Effect
-	#include "effect/d3dx11effect.h"
+	#include "Effect/d3dx11effect.h"
 	#pragma comment(lib, "Effect/Effects11d.lib")
 #pragma endregion
 
