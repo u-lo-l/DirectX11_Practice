@@ -90,7 +90,7 @@ void Terrain::GetPositionY(Vector & InPosition ) const
 	if (D3DXIntersectTri(V[3], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
 		Result = V[3] + (V[1] - V[3]) * SlopX + (V[2] - V[3]) * SlopZ;
 	InPosition.Y = Result.Y;
-	Gui::Get()->RenderText(5, 60, 1, 0, 0, String::ToString(Result.ToString()));	
+	Gui::Get()->RenderText(5, 60, 1, 0, 0, String::ToString(Result.ToWString()));	
 }
 
 void Terrain::CreateVertexData()

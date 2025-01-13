@@ -127,7 +127,7 @@ std::wstring Plane::ToString()
 {
 	std::wstring temp = L"";
 
-	temp += L"Normal:" + Normal.ToString();
+	temp += L"Normal:" + Normal.ToWString();
 	temp += L",D:" + std::to_wstring(D);
 
 	return temp;

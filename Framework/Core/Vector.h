@@ -3,9 +3,6 @@
 class Matrix;
 class Quaternion;
 
-//////////////////////////////////////////////////////////////////////////
-///@brief 3D 벡터
-//////////////////////////////////////////////////////////////////////////
 class Vector
 {
 public:
@@ -40,21 +37,13 @@ public:
 	void operator /=(const Vector& value2);
 	void operator /=(const float& divider);
 
-
-	//////////////////////////////////////////////////////////////////////////
-	///@brief float형의 *연산 처리
-	///@param scalefactor : 값
-	///@param value2 : 벡터
-	///@return 결과 벡터
-	//////////////////////////////////////////////////////////////////////////
 	friend Vector operator *(const float scaleFactor, const Vector& value2)
 	{
 		return value2 * scaleFactor;
 	}
-	//////////////////////////////////////////////////////////////////////////
 
-
-	std::wstring ToString() const;
+	std::wstring ToWString() const;
+	std::string ToString() const;
 
 	float Length() const;
 	float LengthSquared() const;

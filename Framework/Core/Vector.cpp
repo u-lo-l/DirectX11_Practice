@@ -315,7 +315,7 @@ void Vector::operator/=(const float& divider)
 ///@brief ���ڿ��� ��ȯ
 ///@return ���ڿ�
 //////////////////////////////////////////////////////////////////////////
-std::wstring Vector::ToString() const
+std::wstring Vector::ToWString() const
 {
 	std::wstring temp = L"";
 	temp += L"X:" + std::to_wstring(X);
@@ -324,6 +324,17 @@ std::wstring Vector::ToString() const
 
 	return temp;
 }
+
+std::string Vector::ToString() const
+{
+	std::string temp = "";
+	temp += "X:" + std::to_string(X);
+	temp += ",Y:" + std::to_string(Y);
+	temp += ",Z:" + std::to_string(Z);
+
+	return temp;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////

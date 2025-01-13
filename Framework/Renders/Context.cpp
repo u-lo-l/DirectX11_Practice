@@ -47,10 +47,10 @@ void Context::Render() const
 
 	const Vector & CamPos = MainCamera->GetPosition();
 	const Vector & CamRot = MainCamera->GetEulerAngle();
-	Str = "Camera Rotation : " + String::ToString(CamRot.ToString());
+	Str = "Camera Rotation : " + String::ToString(CamRot.ToWString());
 	Gui::Get()->RenderText(5, 20, 1, 1, 1, Str);
 	
-	Str = "Camera Position : " + String::ToString(CamPos.ToString());
+	Str = "Camera Position : " + String::ToString(CamPos.ToWString());
 	Gui::Get()->RenderText(5, 35, 1, 1, 1, Str);
 }
 
