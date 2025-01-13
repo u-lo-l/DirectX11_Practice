@@ -46,9 +46,7 @@ void ModelMesh::Render() const
 
 void ModelMesh::SetWorldTransform( const Transform * InTransform) const
 {
-	WorldTransform->SetPosition(InTransform->GetPosition());
-	WorldTransform->SetScale(InTransform->GetScale());
-	WorldTransform->SetRotation(InTransform->GetRotationInRadian());
+	WorldTransform->SetTRS(InTransform);
 }
 
 void ModelMesh::ReadFile(

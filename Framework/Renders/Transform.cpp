@@ -89,6 +89,24 @@ void Transform::SetScale( const Vector & InScale )
 	bDirty = true;
 }
 
+void Transform::SetTRS( const Transform & InTransform )
+{
+	Position = InTransform.Position;
+	EulerAngleInDegree = InTransform.EulerAngleInDegree;
+	EulerAngleInRadian = InTransform.EulerAngleInRadian;
+	Scale = InTransform.Scale;
+	bDirty = true;
+}
+
+
+void Transform::SetTRS( const Transform * InTransform )
+{
+	Position = InTransform->Position;
+	EulerAngleInDegree = InTransform->EulerAngleInDegree;
+	EulerAngleInRadian = InTransform->EulerAngleInRadian;
+	Scale = InTransform->Scale;
+	bDirty = true;
+}
 
 void Transform::UpdateWorldMatrix()
 {

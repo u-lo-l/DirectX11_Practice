@@ -28,9 +28,8 @@ namespace Sdt
 
 	void DrawModel::Tick()
 	{
-		//ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
-	
-		 Models[ModelIndex]->Tick();
+		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
+		Models[ModelIndex]->Tick();
 	}
 
 	void DrawModel::Render()

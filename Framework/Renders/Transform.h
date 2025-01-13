@@ -27,6 +27,8 @@ public:
 	void SetPosition(const Vector & InPosition);
 	void SetRotation(const Vector & InEulerAngle);
 	void SetScale(const Vector & InScale);
+	void SetTRS(const Transform & InTransform);
+	void SetTRS( const Transform * InTransform );
 
 private:
 	void UpdateWorldMatrix();
