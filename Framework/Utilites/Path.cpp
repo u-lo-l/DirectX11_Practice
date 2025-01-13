@@ -1,5 +1,4 @@
 #include "Framework.h"
-#include <string.h>
 #include <shlwapi.h>
 #include "Path.h"
 #include "String.h"
