@@ -8,6 +8,7 @@ namespace Sdt
 	{
 	public:
 		void Initialize() override;
+		static void MakeModelInfoFile( const wstring & InModelName );
 
 	private:
 		void Airplane();
