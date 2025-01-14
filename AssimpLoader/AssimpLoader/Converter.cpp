@@ -215,19 +215,19 @@ namespace Sdt
 		ReadSkinData();
 		//
 
-		ofstream Ofstream;
-		Ofstream.open("../Vertices.csv");
-		Ofstream << "NAME, X, Y, Z, W, SUM" "\n";
-		for ( MeshData * MeshData : this->Meshes )
-		{
-			for (const MeshData::VertexType & vertex : MeshData->Vertices)
-			{
-				Ofstream << "Pos, " << vertex.Position.X << "," << vertex.Position.Y << "," << vertex.Position.Z << "," << " , " << "\n";
-				Ofstream << "Ind, " << vertex.Indices[0] << "," << vertex.Indices[1] << "," << vertex.Indices[2] << "," << vertex.Indices[3]<< ", \n";
-				Ofstream << "Wgh, " << vertex.Weights[0] << "," << vertex.Weights[1] << "," << vertex.Weights[2] << "," << vertex.Weights[3]<< "," << vertex.Weights[0] + vertex.Weights[1] + vertex.Weights[2] + vertex.Weights[3]<< "\n";
-			}
-		}
-		Ofstream.close();
+		// ofstream Ofstream;
+		// Ofstream.open("../Vertices.csv");
+		// Ofstream << "NAME, X, Y, Z, W, SUM" "\n";
+		// for ( MeshData * MeshData : this->Meshes )
+		// {
+		// 	for (const MeshData::VertexType & vertex : MeshData->Vertices)
+		// 	{
+		// 		Ofstream << "Pos, " << vertex.Position.X << "," << vertex.Position.Y << "," << vertex.Position.Z << "," << " , " << "\n";
+		// 		Ofstream << "Ind, " << vertex.Indices[0] << "," << vertex.Indices[1] << "," << vertex.Indices[2] << "," << vertex.Indices[3]<< ", \n";
+		// 		Ofstream << "Wgh, " << vertex.Weights[0] << "," << vertex.Weights[1] << "," << vertex.Weights[2] << "," << vertex.Weights[3]<< "," << vertex.Weights[0] + vertex.Weights[1] + vertex.Weights[2] + vertex.Weights[3]<< "\n";
+		// 	}
+		// }
+		// Ofstream.close();
 		
 		WriteMesh(FullFileName);
 

@@ -16,6 +16,7 @@ namespace Sdt
 		Airplane();
 		Cube();
 		Manny();
+		YBot();
 	}
 
 	void ExportFile::MakeModelInfoFile( const wstring & InModelName )
@@ -45,7 +46,8 @@ namespace Sdt
 
 	void ExportFile::Airplane()
 	{
-		Converter* converter = new Converter();
+		Converter * converter = nullptr;
+		converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Airplane/Airplane.fbx");
 		converter->ExportMaterial(L"Airplane/Airplane", ShaderName, true);
 		converter->ExportMesh(L"Airplane/Airplane");
@@ -75,7 +77,7 @@ namespace Sdt
 
 	void ExportFile::Shannon()
 	{
-		Converter* converter = new Converter();
+		Converter * converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Shannon/Shannon.fbx");
 		converter->ExportMaterial(L"Shannon/Shannon", ShaderName, true);
 		converter->ExportMesh(L"Shannon/Shannon");
@@ -105,6 +107,16 @@ namespace Sdt
 		converter->ExportMaterial(L"Manny/Manny", ShaderName, true);
 		converter->ExportMesh(L"Manny/Manny");
 		MakeModelInfoFile(L"Manny");
+		SAFE_DELETE(converter);
+	}
+
+	void ExportFile::YBot()
+	{
+		Converter* converter = new Converter();
+		converter->ReadAiSceneFromFile(L"YBot/YBot.fbx");
+		converter->ExportMaterial(L"YBot/YBot", ShaderName, true);
+		converter->ExportMesh(L"YBot/YBot");
+		MakeModelInfoFile(L"YBot");
 		SAFE_DELETE(converter);
 	}
 }

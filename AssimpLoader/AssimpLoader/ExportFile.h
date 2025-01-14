@@ -17,5 +17,6 @@ namespace Sdt
 		static void Shannon();
 		static void Mousey();
 		static void Manny();
+		static void YBot();
 	};
 }

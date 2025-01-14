@@ -1,0 +1,11 @@
+{
+   "File" : {
+      "Material" : "YBot",
+      "Mesh" : "YBot"
+   },
+   "Transform" : {
+      "Position" : "0,0,0",
+      "Rotation" : "0,0,0",
+      "Scale" : "0.01,0.01,0.01"
+   }
+}
