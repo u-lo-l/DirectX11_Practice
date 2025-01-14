@@ -44,11 +44,16 @@ namespace Sdt
 		void ReadBoneData(const aiNode * InNode, int InIndex, int InParent);
 		void ReadMeshData();
 		static MeshData::VertexType ReadSingleVertexDataFromAiMesh(const aiMesh * Mesh, UINT VertexIndex);
-
 		void WriteMesh(const wstring& InSaveFileName) const;
+
+		void ReadSkinData();
 	private:
 		vector<BoneData*> Bones;
 		vector<MeshData*> Meshes;
 #pragma endregion
+
+
+		vector<pair<string, Matrix>> BoneMatrix;
+		vector<pair<string, Matrix>> OffsetMatrix;
 	};
 }

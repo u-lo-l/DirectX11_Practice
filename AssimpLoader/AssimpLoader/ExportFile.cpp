@@ -11,11 +11,11 @@ namespace Sdt
 	
 	void ExportFile::Initialize()
 	{
-		Mousey();
+		// Mousey();
 		Shannon();
-		Airplane();
-		Cube();
-		Manny();
+		// Airplane();
+		// Cube();
+		// Manny();
 	}
 
 	void ExportFile::MakeModelInfoFile( const wstring & InModelName )

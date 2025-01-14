@@ -210,7 +210,29 @@ namespace Sdt
 		wstring FullFileName = W_MODEL_PATH + InSaveFileName + L".mesh";
 		ReadBoneData(Scene->mRootNode, -1, -1);
 		ReadMeshData();
+
+		//
+		ReadSkinData();
+		//
+		
 		WriteMesh(FullFileName);
+
+		// 
+		ofstream Ofstream;
+		Ofstream.open("../BoneMat.csv");
+		for ( const auto & p : BoneMatrix)
+		{
+			Ofstream << p.first << "," << p.second.M41 << "," << p.second.M42 << "," << p.second.M43 << "\n";
+		}
+		Ofstream.close();
+
+		Ofstream.open("../OffsetMat.csv");
+		for ( const auto & p : OffsetMatrix)
+		{
+			Ofstream << p.first << "," << p.second.M41 << "," << p.second.M42 << "," << p.second.M43 << "\n";
+		}
+		Ofstream.close();
+		//
 	}
 	
 	void Converter::ReadBoneData( const aiNode * InNode, int InIndex, int InParent )
@@ -231,6 +253,10 @@ namespace Sdt
 		}
 		Bone->Transform = Bone->Transform * ParentMatrix;
 		Bones.push_back(Bone);
+
+		//
+		BoneMatrix.push_back(make_pair(Bone->Name, Bone->Transform));
+		//
 
 		const UINT MeshCount = InNode->mNumMeshes;
 		Bone->MeshIndices.reserve(MeshCount);
@@ -347,6 +373,34 @@ namespace Sdt
 		BinWriter->Close();
 		SAFE_DELETE(BinWriter);
 	}
-	
+
+	void Converter::ReadSkinData()
+	{
+		const UINT MeshCount = Scene->mNumMeshes;
+		for (UINT i = 0; i < MeshCount; i++)
+		{
+			aiMesh * const mesh = Scene->mMeshes[i];
+			// Bone이아니다 -> 스키닝이 될 아이가 아니다.
+			if (mesh->HasBones() == false) 
+			{
+				continue;
+			}
+
+			const UINT BoneCount = mesh->mNumBones;
+			for (UINT boneIndex = 0; boneIndex < BoneCount; boneIndex++)
+			{
+				aiBone * Bone = mesh->mBones[boneIndex];
+				// TODO : 정석적인 방법으로는 이 매트릭스를 써야한다. -> 근데 World기준으로 구한 Bone의 Matrix랑 같다.
+				// Bone->mOffsetMatrix
+
+				Matrix m;
+				memcpy(m, Bone->mOffsetMatrix[0], sizeof(Matrix));
+
+				m = Matrix::Transpose(m);
+				OffsetMatrix.push_back(pair<string, Matrix>(Bone->mName.C_Str(), m));
+			}
+		}
+	}
+
 #pragma endregion
 }
