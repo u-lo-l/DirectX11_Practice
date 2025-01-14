@@ -40,3 +40,28 @@ struct MeshData
 	vector<VertexType> Vertices;
 	vector<UINT> Indices;
 };
+
+typedef struct ClipNodeVectorData
+{
+	float Time;
+	Vector Values;
+} KeyVecData;
+
+typedef struct ClipNodeQuaternionData
+{
+	float Time;
+	Quaternion Values;
+} KeyQuatData;
+
+// Channel data
+struct ClipNodeData
+{
+	string BoneName;
+};
+
+struct ClipData
+{
+	string Name;
+	float Duration;
+	float TicksPerSecond;
+};

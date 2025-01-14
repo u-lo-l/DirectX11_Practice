@@ -81,6 +81,11 @@ namespace Sdt
 		converter->ExportMesh(L"Shannon/Shannon");
 		MakeModelInfoFile(L"Shannon");
 		SAFE_DELETE(converter);
+
+		converter = new Converter();
+		converter->ReadAiSceneFromFile(L"Shannon/Idle.fbx");
+		converter->ExportAnimation("Shannon/Idle", 0);
+		SAFE_DELETE(converter);
 	}
 	
 	void ExportFile::Mousey()

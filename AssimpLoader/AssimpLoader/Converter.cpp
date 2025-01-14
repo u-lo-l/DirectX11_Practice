@@ -448,4 +448,110 @@ namespace Sdt
 	}
 
 #pragma endregion
+	
+#pragma region Extract Animation
+
+	void Converter::ExportAnimation( const string & InSaveFileName, int InClipIndex )
+	{
+		wstring saveFileName = W_MODEL_PATH;
+		if (InClipIndex < 0)
+		{
+			vector<string> ClipNames;
+			ReadClips(ClipNames);
+
+			for (UINT i = 0; i < ClipNames.size(); i++)
+			{
+				ReadClipData(Scene->mAnimations[i]);
+			}
+			
+			return ;
+		}
+		ReadClipData(Scene->mAnimations[InClipIndex]);
+	}
+
+	void Converter::ReadClips( vector<string> & OutClips )
+	{
+		ASSERT(Scene != nullptr, "aiScene is not valid");
+
+		const UINT ClipCount = this->Scene->mNumAnimations;
+		for (int i = 0; i < ClipCount; i++)
+		{
+			OutClips.push_back( Scene->mAnimations[i]->mName.C_Str());
+		}
+	}
+
+	void Converter::ReadClipData( const aiAnimation * InAnimation )
+	{
+		ClipData Data = {
+			InAnimation->mName.C_Str(),
+			static_cast<float>(InAnimation->mDuration),
+			static_cast<float>(InAnimation->mTicksPerSecond),
+		};
+
+		// Channel이란 weight를 줄 bone 번호
+		const UINT ChannelsCount = InAnimation->mNumChannels;
+		// vector<string> Channels;
+		// Channels.reserve(ChannelsCount);
+		for (UINT i = 0; i < ChannelsCount; i++)
+		{
+			// aiNodeAnim 은 PositionKey, RotationKey, ScalingKey등 KeyFrame Animation의 Key를 갖는다.
+			const aiNodeAnim * const NodeAnim = InAnimation->mChannels[i];
+			// Channels.emplace_back(NodeAnim->mNodeName.C_Str());
+			
+			// ClipNodeData * NodeData = new ClipNodeData();
+			// NodeData->BoneName = NodeAnim->mNodeName.C_Str();
+
+			vector<KeyVecData> VecDatas;
+			vector<KeyVecData> ScaleDatas;
+			vector<KeyQuatData> QuatData;
+
+			ReadPosKeys(VecDatas, NodeAnim);
+			ReadScaleKeys(ScaleDatas, NodeAnim);
+			ReadRotKeys(QuatData, NodeAnim);
+		}
+	}
+
+	void Converter::ReadPosKeys( vector<KeyVecData> & OutPosKeys, const aiNodeAnim * InNodeAnim )
+	{
+		const UINT PosKeyCount = InNodeAnim->mNumPositionKeys;
+		OutPosKeys.reserve(PosKeyCount);
+		for (UINT i = 0; i < PosKeyCount; i++)
+		{
+			const aiVectorKey & PosKey =  InNodeAnim->mPositionKeys[i];
+			KeyVecData Key;
+			Key.Time = static_cast<float>(PosKey.mTime);
+			memcpy(&Key.Values, &PosKey.mValue, sizeof(Vector));
+			OutPosKeys.push_back(Key);
+		}
+	}
+
+	void Converter::ReadScaleKeys( vector<KeyVecData> & OutScaleKeys, const aiNodeAnim * InNodeAnim )
+	{
+		const UINT ScaleKeyCount = InNodeAnim->mNumScalingKeys;
+		OutScaleKeys.reserve(ScaleKeyCount);
+		for (UINT i = 0; i < ScaleKeyCount; i++)
+		{
+			const aiVectorKey & PosKey =  InNodeAnim->mScalingKeys[i];
+			KeyVecData Key;
+			Key.Time = static_cast<float>(PosKey.mTime);
+			memcpy(&Key.Values, &PosKey.mValue, sizeof(Vector));
+			OutScaleKeys.push_back(Key);
+		}
+	}
+
+	void Converter::ReadRotKeys( vector<KeyQuatData> & OutRotKeys, const aiNodeAnim * InNodeAnim )
+	{
+		const UINT RotKeyCount = InNodeAnim->mNumRotationKeys;
+		OutRotKeys.reserve(RotKeyCount);
+		for (UINT i = 0; i < RotKeyCount; i++)
+		{
+			const aiQuatKey & RotKey =  InNodeAnim->mRotationKeys[i];
+			KeyQuatData Key;
+			Key.Time = static_cast<float>(RotKey.mTime);
+			memcpy(&Key.Values, &RotKey.mValue, sizeof(Quaternion));
+			OutRotKeys.push_back(Key);
+		}
+	}
+
+#pragma endregion
 }

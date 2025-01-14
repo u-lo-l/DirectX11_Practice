@@ -54,5 +54,18 @@ namespace Sdt
 
 		// vector<pair<string, Matrix>> BoneMatrix;
 		// vector<pair<string, Matrix>> OffsetMatrix;
+
+#pragma region Extract Animation
+	public:
+		void ExportAnimation( const string & InSaveFileName, int InClipIndex = -1);
+	private:
+		// 애니메이션 하나하나를 Clip이라 한다.
+		void ReadClips( vector<string> & OutClips );
+		void ReadClipData(const aiAnimation * InAnimation);
+		static void ReadPosKeys(vector<KeyVecData> & OutPosKeys, const aiNodeAnim * InNodeAnim);
+		static void ReadScaleKeys(vector<KeyVecData> & OutScaleKeys, const aiNodeAnim * InNodeAnim);
+		static void ReadRotKeys(vector<KeyQuatData> & OutRotKeys, const aiNodeAnim * InNodeAnim);
+#pragma endregion
+
 	};
 }
