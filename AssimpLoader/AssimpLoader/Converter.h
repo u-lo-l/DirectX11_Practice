@@ -20,7 +20,7 @@ namespace Sdt
 		
 #pragma region ExtractMaterial
 	public:
-		void ExportMaterial(const wstring& InSaveFileName, bool InbOverwrite = true);
+		void ExportMaterial( const wstring& InSaveFileName, const string & InShaderFileName, bool InbOverwrite );
 	private:
 		void ReadMaterial(const string & InShaderName);
 		void WriteMaterial(const wstring& InSaveFileName, bool InbOverwrite) const;

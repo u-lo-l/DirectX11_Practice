@@ -19,13 +19,29 @@ public:
 	void Render() const;
 
 	void ReadFile(const wstring & InFileFullPath);
+public:
+	Transform * GetWorldTransform() const { return WorldTransform; };
+	
+	
+#pragma region Read Material Data
+
+public:
 	void ReadMaterial(const wstring & InFileName);
 private:
-	void ReadShaderName();
-	void ReadColor();
-	void ReadColorMap();
+	void ReadShaderName(const Json::Value & Value, Material * MatData);
+	void ReadColor(const Json::Value & Value, Material * MatData);
+	void ReadColorMap(const Json::Value & Value, Material * MatData);
+
+#pragma endregion
+
+#pragma region Read Mesh Data
+
 public:
 	void ReadMesh(const wstring & InFileName);
+
+#pragma endregion
+
+	
 private:
 	Color JsonStringToColor(const Json::String & InJson);
 private:
@@ -36,7 +52,18 @@ private:
 	map<string, Material*> MaterialsTable;
 
 	Matrix BoneTransforms[MaxModelTransforms];
-
 private:
 	Transform * WorldTransform;
+
+#pragma region Pass
+public:
+	void SetPass(int InPass);
+private :
+	int Pass;
+#pragma endregion
+
+public:
+	const Matrix * GetBoneTransforms() const { return BoneTransforms; }
+	UINT GetBoneCount() const { return Bones.size(); }
+	
 };

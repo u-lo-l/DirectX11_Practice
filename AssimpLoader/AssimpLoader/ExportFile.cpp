@@ -6,13 +6,16 @@
 
 namespace Sdt
 {
-
+	const string ShaderName = "20_ModelVertex2.fx";
+	const string ShaderName2= "21_ModelVertex3.fx";
+	
 	void ExportFile::Initialize()
 	{
-		this->Mousey();
-		this->Shannon();
-		this->Airplane();
-		this->Cube();
+		Mousey();
+		Shannon();
+		Airplane();
+		Cube();
+		Manny();
 	}
 
 	void ExportFile::MakeModelInfoFile( const wstring & InModelName )
@@ -22,13 +25,12 @@ namespace Sdt
 		Json::Value File;
 		File["Material"] = String::ToString(InModelName);
 		File["Mesh"] = String::ToString(InModelName);
+		Root["File"] = File;
 
 		Json::Value Transform;
 		Transform["Position"] = "0,0,0";
 		Transform["Rotation"] = "0,0,0";
 		Transform["Scale"] = "0.01,0.01,0.01";
-
-		Root["File"] = File;
 		Root["Transform"] = Transform;
 
 		Json::StyledWriter Writer;
@@ -45,7 +47,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Airplane/Airplane.fbx");
-		converter->ExportMaterial(L"Airplane/Airplane", true);
+		converter->ExportMaterial(L"Airplane/Airplane", ShaderName, true);
 		converter->ExportMesh(L"Airplane/Airplane");
 		MakeModelInfoFile(L"Airplane");
 		SAFE_DELETE(converter);
@@ -55,9 +57,19 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Cube/Cube.fbx");
-		converter->ExportMaterial(L"Cube/Cube", true);
+		converter->ExportMaterial(L"Cube/Cube", ShaderName, true);
 		converter->ExportMesh(L"Cube/Cube");
 		MakeModelInfoFile(L"Cube");
+		SAFE_DELETE(converter);
+	}
+
+	void ExportFile::Sphere()
+	{
+		Converter* converter = new Converter();
+		converter->ReadFile(L"Sphere/Sphere.fbx");
+		converter->ExportMaterial(L"Sphere/Sphere", ShaderName2, true);
+		converter->ExportMesh(L"Sphere/Sphere");
+		MakeModelInfoFile(L"Sphere");
 		SAFE_DELETE(converter);
 	}
 
@@ -65,7 +77,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Shannon/Shannon.fbx");
-		converter->ExportMaterial(L"Shannon/Shannon", true);
+		converter->ExportMaterial(L"Shannon/Shannon", ShaderName, true);
 		converter->ExportMesh(L"Shannon/Shannon");
 		MakeModelInfoFile(L"Shannon");
 		SAFE_DELETE(converter);
@@ -75,9 +87,19 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadFile(L"Mousey/Mousey.fbx");
-		converter->ExportMaterial(L"Mousey/Mousey", true);
+		converter->ExportMaterial(L"Mousey/Mousey", ShaderName, true);
 		converter->ExportMesh(L"Mousey/Mousey");
 		MakeModelInfoFile(L"Mousey");
+		SAFE_DELETE(converter);
+	}
+
+	void ExportFile::Manny()
+	{
+		Converter* converter = new Converter();
+		converter->ReadFile(L"Manny/Manny.fbx");
+		converter->ExportMaterial(L"Manny/Manny", ShaderName, true);
+		converter->ExportMesh(L"Manny/Manny");
+		MakeModelInfoFile(L"Manny");
 		SAFE_DELETE(converter);
 	}
 }

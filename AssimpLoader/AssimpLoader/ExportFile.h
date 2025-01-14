@@ -11,9 +11,11 @@ namespace Sdt
 		static void MakeModelInfoFile( const wstring & InModelName );
 
 	private:
-		void Airplane();
-		void Cube();
-		void Shannon();
-		void Mousey();
+		static void Airplane();
+		static void Cube();
+		static void Sphere();
+		static void Shannon();
+		static void Mousey();
+		static void Manny();
 	};
 }

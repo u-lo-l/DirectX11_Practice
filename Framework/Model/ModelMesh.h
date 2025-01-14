@@ -23,6 +23,8 @@ private:
 	void Tick();
 	void Render() const;
 	void SetWorldTransform( const Transform * InTransform) const;
+private :
+	int Pass = 0;
 	
 	void CreateBuffers();
 

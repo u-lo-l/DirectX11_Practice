@@ -30,6 +30,9 @@ public:
 	void SetTRS(const Transform & InTransform);
 	void SetTRS( const Transform * InTransform );
 
+public:
+	const Matrix & GetMatrix() const {return CBufferData.World; }
+	
 private:
 	void UpdateWorldMatrix();
 private :

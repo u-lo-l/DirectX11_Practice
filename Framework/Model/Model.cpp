@@ -38,7 +38,10 @@ void Model::Tick() const
 void Model::Render() const
 {
 	for (ModelMesh * mesh : Meshes)
+	{
+		mesh->Pass = this->Pass;
 		mesh->Render();
+	}
 }
 
 void Model::ReadFile( const wstring & InFileFullPath )
@@ -78,6 +81,10 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 }
 
+void Model::SetPass( int InPass )
+{
+	Pass = InPass;
+}
 
 void Model::ReadMaterial( const wstring & InFileName)
 {
@@ -95,39 +102,52 @@ void Model::ReadMaterial( const wstring & InFileName)
 		Material * MatData = new Material();
 		Json::Value Value = Root[Name];
 
-		if (Value["ShaderName"].asString().size() > 0)
-			MatData->SetShader(String::ToWString(Value["ShaderName"].asString()));
-
-		MatData->SetAmbient(JsonStringToColor(Value["Ambient"].asString()));
-		MatData->SetDiffuse(JsonStringToColor(Value["Diffuse"].asString()));
-		MatData->SetSpecular(JsonStringToColor(Value["Specular"].asString()));
-		MatData->SetEmissive(JsonStringToColor(Value["Emissive"].asString()));
-
-		UINT count = Value["DiffuseMap"].size();
-		for (UINT i = 0; i < count; i++)
-		{
-			if (Value["DiffuseMap"][i].asString().size() > 0)
-				MatData->SetDiffuseMap(String::ToWString(Value["DiffuseMap"][i].asString()));
-		}
-
-		count = Value["SpecularMap"].size();
-		for (UINT i = 0; i < count; i++)
-		{
-			if (Value["SpecularMap"][i].asString().size() > 0)
-				MatData->SetSpecularMap(String::ToWString(Value["SpecularMap"][i].asString()));
-		}
-
-		count = Value["NormalMap"].size();
-		for (UINT i = 0; i < count; i++)
-		{
-			if (Value["NormalMap"][i].asString().size() > 0)
-				MatData->SetNormalMap(String::ToWString(Value["NormalMap"][i].asString()));
-		}
+		ReadShaderName(Value, MatData);
+		ReadColor(Value, MatData);
+		ReadColorMap(Value, MatData);
 
 		MaterialsTable[Name] = MatData;
 	}
 
 	Stream.close();
+}
+
+void Model::ReadShaderName(const Json::Value & Value, Material * MatData)
+{
+	if (Value["ShaderName"].asString().size() > 0)
+		MatData->SetShader(String::ToWString(Value["ShaderName"].asString()));
+}
+
+void Model::ReadColor(const Json::Value & Value, Material * MatData)
+{
+	MatData->SetAmbient(JsonStringToColor(Value["Ambient"].asString()));
+	MatData->SetDiffuse(JsonStringToColor(Value["Diffuse"].asString()));
+	MatData->SetSpecular(JsonStringToColor(Value["Specular"].asString()));
+	MatData->SetEmissive(JsonStringToColor(Value["Emissive"].asString()));
+}
+
+void Model::ReadColorMap(const Json::Value & Value, Material * MatData)
+{
+	UINT count = Value["DiffuseMap"].size();
+	for (UINT i = 0; i < count; i++)
+	{
+		if (Value["DiffuseMap"][i].asString().size() > 0)
+			MatData->SetDiffuseMap(String::ToWString(Value["DiffuseMap"][i].asString()));
+	}
+
+	count = Value["SpecularMap"].size();
+	for (UINT i = 0; i < count; i++)
+	{
+		if (Value["SpecularMap"][i].asString().size() > 0)
+			MatData->SetSpecularMap(String::ToWString(Value["SpecularMap"][i].asString()));
+	}
+
+	count = Value["NormalMap"].size();
+	for (UINT i = 0; i < count; i++)
+	{
+		if (Value["NormalMap"][i].asString().size() > 0)
+			MatData->SetNormalMap(String::ToWString(Value["NormalMap"][i].asString()));
+	}
 }
 
 void Model::ReadMesh( const wstring & InFileName)

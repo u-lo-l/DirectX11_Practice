@@ -41,7 +41,7 @@ void ModelMesh::Render() const
 	WorldTransform->Render(Drawer);
 	
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	Drawer->DrawIndexed(0, 0, IndicesCount);
+	Drawer->DrawIndexed(0, Pass, IndicesCount);
 }
 
 void ModelMesh::SetWorldTransform( const Transform * InTransform) const

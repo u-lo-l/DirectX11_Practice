@@ -18,7 +18,6 @@ namespace Sdt
 
 	void Converter::ReadFile( const wstring & InFileName )
 	{
-		// string FileName = String::ToString(InFileName);
 		FilePath = W_ASSET_PATH + InFileName;
 
 		Scene = Loader->ReadFile(
@@ -40,11 +39,12 @@ namespace Sdt
 	}
 	
 #pragma region ExtractMaterial
-	void Converter::ExportMaterial( const wstring & InSaveFileName, bool InbOverwrite )
+	
+	void Converter::ExportMaterial( const wstring & InSaveFileName, const string & InShaderFileName, bool InbOverwrite )
 	{
 		const wstring SaveFileName = W_MODEL_PATH + InSaveFileName + L".material";
 		
-		ReadMaterial("20_ModelVertex2.fx");
+		ReadMaterial(InShaderFileName);
 		WriteMaterial(SaveFileName, InbOverwrite);
 	}
 
@@ -200,7 +200,9 @@ namespace Sdt
 			return InSaveFolder + Path::GetFileName(Path);
 		}
 	}
+	
 #pragma endregion
+	
 #pragma region ExtractMesh
 	
 	void Converter::ExportMesh( const wstring & InSaveFileName )
@@ -345,5 +347,6 @@ namespace Sdt
 		BinWriter->Close();
 		SAFE_DELETE(BinWriter);
 	}
+	
 #pragma endregion
 }
