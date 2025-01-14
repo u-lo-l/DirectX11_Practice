@@ -10,7 +10,7 @@ namespace Sdt
 	public:
 		Converter();
 		~Converter();
-		void ReadFile(const wstring& InFileName);
+		void ReadAiSceneFromFile(const wstring& InFileName);
 	private:
 		static string ColorToJson(const Color & InColor);
 	private:
@@ -52,8 +52,7 @@ namespace Sdt
 		vector<MeshData*> Meshes;
 #pragma endregion
 
-
-		vector<pair<string, Matrix>> BoneMatrix;
-		vector<pair<string, Matrix>> OffsetMatrix;
+		// vector<pair<string, Matrix>> BoneMatrix;
+		// vector<pair<string, Matrix>> OffsetMatrix;
 	};
 }

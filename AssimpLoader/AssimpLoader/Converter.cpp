@@ -16,7 +16,7 @@ namespace Sdt
 		SAFE_DELETE(Loader);
 	}
 
-	void Converter::ReadFile( const wstring & InFileName )
+	void Converter::ReadAiSceneFromFile( const wstring & InFileName )
 	{
 		FilePath = W_ASSET_PATH + InFileName;
 
@@ -214,24 +214,42 @@ namespace Sdt
 		//
 		ReadSkinData();
 		//
+
+		ofstream Ofstream;
+		Ofstream.open("../Vertices.csv");
+		Ofstream << "NAME, X, Y, Z, W, SUM" "\n";
+		for ( MeshData * MeshData : this->Meshes )
+		{
+			for (const MeshData::VertexType & vertex : MeshData->Vertices)
+			{
+				Ofstream << "Pos, " << vertex.Position.X << "," << vertex.Position.Y << "," << vertex.Position.Z << "," << " , " << "\n";
+				Ofstream << "Ind, " << vertex.Indices[0] << "," << vertex.Indices[1] << "," << vertex.Indices[2] << "," << vertex.Indices[3]<< ", \n";
+				Ofstream << "Wgh, " << vertex.Weights[0] << "," << vertex.Weights[1] << "," << vertex.Weights[2] << "," << vertex.Weights[3]<< "," << vertex.Weights[0] + vertex.Weights[1] + vertex.Weights[2] + vertex.Weights[3]<< "\n";
+			}
+		}
+		Ofstream.close();
 		
 		WriteMesh(FullFileName);
 
 		// 
-		ofstream Ofstream;
-		Ofstream.open("../BoneMat.csv");
-		for ( const auto & p : BoneMatrix)
-		{
-			Ofstream << p.first << "," << p.second.M41 << "," << p.second.M42 << "," << p.second.M43 << "\n";
-		}
-		Ofstream.close();
+		// ofstream Ofstream;
+		// Ofstream.open("../BoneMat.csv");
+		// for ( const auto & p : BoneMatrix)
+		// {
+		// 	Ofstream << p.first << "," << p.second.M41 << "," << p.second.M42 << "," << p.second.M43 << "\n";
+		// }
+		// Ofstream.close();
+		//
+		// Ofstream.open("../OffsetMat.csv");
+		// for ( const auto & p : OffsetMatrix)
+		// {
+		// 	Ofstream << p.first << "," << p.second.M41 << "," << p.second.M42 << "," << p.second.M43 << "\n";
+		// }
+		// Ofstream.close();
+		//
 
-		Ofstream.open("../OffsetMat.csv");
-		for ( const auto & p : OffsetMatrix)
-		{
-			Ofstream << p.first << "," << p.second.M41 << "," << p.second.M42 << "," << p.second.M43 << "\n";
-		}
-		Ofstream.close();
+		//
+		
 		//
 	}
 	
@@ -255,7 +273,7 @@ namespace Sdt
 		Bones.push_back(Bone);
 
 		//
-		BoneMatrix.push_back(make_pair(Bone->Name, Bone->Transform));
+		// BoneMatrix.push_back(make_pair(Bone->Name, Bone->Transform));
 		//
 
 		const UINT MeshCount = InNode->mNumMeshes;
@@ -390,16 +408,43 @@ namespace Sdt
 			for (UINT boneIndex = 0; boneIndex < BoneCount; boneIndex++)
 			{
 				aiBone * Bone = mesh->mBones[boneIndex];
-				// TODO : 정석적인 방법으로는 이 매트릭스를 써야한다. -> 근데 World기준으로 구한 Bone의 Matrix랑 같다.
-				// Bone->mOffsetMatrix
+				const char * boneName = Bone->mName.C_Str();
 
-				Matrix m;
-				memcpy(m, Bone->mOffsetMatrix[0], sizeof(Matrix));
+				UINT TargetBoneIndex = 0;
+				for (UINT j = 0; j < Bones.size(); j++)
+				{
+					if (Bones[j]->Name == boneName)
+					{
+						TargetBoneIndex = j;
+						break;
+					}
+				}
 
-				m = Matrix::Transpose(m);
-				OffsetMatrix.push_back(pair<string, Matrix>(Bone->mName.C_Str(), m));
-			}
-		}
+				for (UINT w = 0; w < Bone->mNumWeights; w++)
+				{
+					const UINT VertexId = Bone->mWeights[w].mVertexId;
+					const float Weight = Bone->mWeights[w].mWeight;
+
+					MeshData * meshdata =  this->Meshes[i];
+					Vector4 & Indices = meshdata->Vertices[VertexId].Indices;
+					Vector4 & Weights = meshdata->Vertices[VertexId].Weights;
+
+					// 최대 영향을 받을거 4개다.
+
+					UINT v = 0;
+					for (; v < 4; v++)
+					{
+						// 
+						if (Indices.V[v] <= 0)
+						{
+							Indices.V[v] = static_cast<float>(TargetBoneIndex);
+							Weights.V[v] = Weight;
+							break;
+						}
+					}// for(V)
+				}//for(w)
+			} //for(boneIndex)
+		}//for(i)
 	}
 
 #pragma endregion

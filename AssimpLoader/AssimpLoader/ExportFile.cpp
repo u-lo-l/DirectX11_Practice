@@ -11,11 +11,11 @@ namespace Sdt
 	
 	void ExportFile::Initialize()
 	{
-		// Mousey();
+		Mousey();
 		Shannon();
-		// Airplane();
-		// Cube();
-		// Manny();
+		Airplane();
+		Cube();
+		Manny();
 	}
 
 	void ExportFile::MakeModelInfoFile( const wstring & InModelName )
@@ -46,7 +46,7 @@ namespace Sdt
 	void ExportFile::Airplane()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Airplane/Airplane.fbx");
+		converter->ReadAiSceneFromFile(L"Airplane/Airplane.fbx");
 		converter->ExportMaterial(L"Airplane/Airplane", ShaderName, true);
 		converter->ExportMesh(L"Airplane/Airplane");
 		MakeModelInfoFile(L"Airplane");
@@ -56,7 +56,7 @@ namespace Sdt
 	void ExportFile::Cube()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Cube/Cube.fbx");
+		converter->ReadAiSceneFromFile(L"Cube/Cube.fbx");
 		converter->ExportMaterial(L"Cube/Cube", ShaderName, true);
 		converter->ExportMesh(L"Cube/Cube");
 		MakeModelInfoFile(L"Cube");
@@ -66,7 +66,7 @@ namespace Sdt
 	void ExportFile::Sphere()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Sphere/Sphere.fbx");
+		converter->ReadAiSceneFromFile(L"Sphere/Sphere.fbx");
 		converter->ExportMaterial(L"Sphere/Sphere", ShaderName2, true);
 		converter->ExportMesh(L"Sphere/Sphere");
 		MakeModelInfoFile(L"Sphere");
@@ -76,7 +76,7 @@ namespace Sdt
 	void ExportFile::Shannon()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Shannon/Shannon.fbx");
+		converter->ReadAiSceneFromFile(L"Shannon/Shannon.fbx");
 		converter->ExportMaterial(L"Shannon/Shannon", ShaderName, true);
 		converter->ExportMesh(L"Shannon/Shannon");
 		MakeModelInfoFile(L"Shannon");
@@ -86,7 +86,7 @@ namespace Sdt
 	void ExportFile::Mousey()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Mousey/Mousey.fbx");
+		converter->ReadAiSceneFromFile(L"Mousey/Mousey.fbx");
 		converter->ExportMaterial(L"Mousey/Mousey", ShaderName, true);
 		converter->ExportMesh(L"Mousey/Mousey");
 		MakeModelInfoFile(L"Mousey");
@@ -96,7 +96,7 @@ namespace Sdt
 	void ExportFile::Manny()
 	{
 		Converter* converter = new Converter();
-		converter->ReadFile(L"Manny/Manny.fbx");
+		converter->ReadAiSceneFromFile(L"Manny/Manny.fbx");
 		converter->ExportMaterial(L"Manny/Manny", ShaderName, true);
 		converter->ExportMesh(L"Manny/Manny");
 		MakeModelInfoFile(L"Manny");

@@ -14,7 +14,7 @@ namespace Sdt
 		Camera * MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition(0, 150, -250);
 
-		const vector<wstring> ModelNames = {L"Manny", L"Shannon", L"Airplane", L"Mousey"};
+		const vector<wstring> ModelNames = { L"Shannon", L"Manny", L"Airplane", L"Mousey"};
 
 		for (const wstring & ModelName : ModelNames)
 		{
