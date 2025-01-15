@@ -16,8 +16,6 @@ void Main::Destroy()
 {
 	for (IExecutable* executable : Executables)
 	{
-		executable->Destroy();
-
 		SAFE_DELETE(executable)
 	}
 }
