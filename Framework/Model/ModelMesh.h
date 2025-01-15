@@ -22,21 +22,28 @@ private:
 
 	void Tick();
 	void Render();
-	void SetWorldTransform( const Transform * InTransform) const;
 private :
 	Shader * CachedShader = nullptr;
 	int Pass = 0;
 	
 	void CreateBuffers();
 
-	string Name = "";
+	string Name;
 
+	void SetWorldTransform( const Transform * InTransform ) const;
 	Transform * WorldTransform = nullptr;
 	
 	Material * MaterialData = nullptr;
 	
 	// Mode::ReadMesh에서 값을 넣어준다.
+	int GetBoneIndex() const { return BoneIndex; }
+	void SetBoneIndex(int InBoneIndex)
+	{
+		BoneIndex = InBoneIndex;
+		bBoneIndexChanged = true;
+	}
 	int BoneIndex = 0;;
+	bool bBoneIndexChanged = false;
 	ModelBone * Bone = nullptr;
 	Matrix * Transforms;
 	

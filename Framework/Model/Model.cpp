@@ -186,7 +186,7 @@ void Model::ReadMesh( const wstring & InFileName)
 		this->BoneTransforms[i] = TargetBone->Transform;
 		for (UINT number : TargetBone->MeshIndices)
 		{
-			Meshes[number]->BoneIndex = TargetBone->Index;
+			Meshes[number]->SetBoneIndex(TargetBone->Index);
 			Meshes[number]->Bone = TargetBone;
 			Meshes[number]->Transforms = BoneTransforms;
 		}

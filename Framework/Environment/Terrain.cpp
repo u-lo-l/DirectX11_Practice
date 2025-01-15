@@ -36,15 +36,13 @@ void Terrain::Tick()
 	const Context * Ctxt = Context::Get();
 	
 	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
-	/*CHECK(Drawer->AsMatrix("View")->SetMatrix(Ctxt->GetViewMatrix()) >= 0);
-	CHECK(Drawer->AsMatrix("Projection")->SetMatrix(Ctxt->GetProjectionMatrix()) >= 0);*/
-	// CHECK(Drawer->AsVector("LightDirection")->SetFloatVector(Context::Get()->GetLightDirection()) >= 0);
 }
 
 void Terrain::Render() const
 {
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
+	
 	Drawer->DrawIndexed(0, Pass, IndexCount);
 }
 

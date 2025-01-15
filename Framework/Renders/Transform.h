@@ -13,7 +13,7 @@ public:
 	~Transform();
 
 	void Tick();
-	void Render(const Shader * InShader);
+	void BindCBufferToGPU(const Shader * InShader);
 public:
 	Vector GetForward() const;
 	Vector GetUp() const;
@@ -35,8 +35,7 @@ public:
 	
 private:
 	void UpdateWorldMatrix();
-private :
-	bool bDirty = true;
+	bool bTransformChanged = true;
 	
 private :
 	struct CBufferDesc

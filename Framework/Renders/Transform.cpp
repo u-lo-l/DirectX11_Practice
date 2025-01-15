@@ -16,20 +16,21 @@ Transform::~Transform()
 
 void Transform::Tick()
 {
-	if (bDirty == false)
+	if (bTransformChanged == false)
 		return ;
-	bDirty = true;
-
 	UpdateWorldMatrix();
+	
+	bTransformChanged = false;
 }
 
-void Transform::Render( const Shader * InShader )
+void Transform::BindCBufferToGPU( const Shader * InShader )
 {
 	ASSERT(CBuffer != nullptr, "CBuffer Not Valid");
 	ASSERT(InShader != nullptr, "Shader Not Valid");
 
 	if (ECB_CBuffer == nullptr)
 		ECB_CBuffer = InShader->AsConstantBuffer("CB_World");
+	
 	CBuffer->BindToGPU();
 	CHECK(ECB_CBuffer->SetConstantBuffer(*CBuffer) >= 0);
 }
@@ -72,20 +73,20 @@ const Vector & Transform::GetRotationInDegree() const
 void Transform::SetPosition( const Vector & InPosition )
 {
 	Position = InPosition;
-	bDirty = true;
+	bTransformChanged = true;
 }
 
 void Transform::SetRotation( const Vector & InEulerAngleInDegree )
 {
 	EulerAngleInDegree = InEulerAngleInDegree;
 	EulerAngleInRadian = {Math::ToRadians(EulerAngleInDegree.X), Math::ToRadians(EulerAngleInDegree.Y), Math::ToRadians(EulerAngleInDegree.Z)};
-	bDirty = true;
+	bTransformChanged = true;
 }
 
 void Transform::SetScale( const Vector & InScale )
 {
 	Scale = InScale;
-	bDirty = true;
+	bTransformChanged = true;
 }
 
 void Transform::SetTRS( const Transform & InTransform )
@@ -94,7 +95,7 @@ void Transform::SetTRS( const Transform & InTransform )
 	EulerAngleInDegree = InTransform.EulerAngleInDegree;
 	EulerAngleInRadian = InTransform.EulerAngleInRadian;
 	Scale = InTransform.Scale;
-	bDirty = true;
+	bTransformChanged = true;
 }
 
 
@@ -104,7 +105,7 @@ void Transform::SetTRS( const Transform * InTransform )
 	EulerAngleInDegree = InTransform->EulerAngleInDegree;
 	EulerAngleInRadian = InTransform->EulerAngleInRadian;
 	Scale = InTransform->Scale;
-	bDirty = true;
+	bTransformChanged = true;
 }
 
 void Transform::UpdateWorldMatrix()
@@ -114,4 +115,5 @@ void Transform::UpdateWorldMatrix()
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
 	CBufferData.World = Scale * Rotation * Translation;
+	bTransformChanged = true;
 }

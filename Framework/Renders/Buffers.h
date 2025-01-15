@@ -2,18 +2,27 @@
 // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
 #pragma once
 
-class VertexBuffer
+class BufferBase
+{
+protected:
+	// BufferBase(void * InData, UINT InCount, UINT InStride);
+	virtual ~BufferBase();
+public:
+	virtual void BindToGPU() = 0;
+protected:
+	ID3D11Buffer * Buffer = nullptr;
+	void * Data = nullptr;
+	UINT Count = 0;
+	UINT Stride = 0;
+};
+
+class VertexBuffer : public BufferBase
 {
 public:
 	VertexBuffer(void * InData, UINT InCount, UINT InStride, UINT InSlot = 0, bool InCpuWrite = false, bool InGpuWrite = false);
-	~VertexBuffer();
-
-	void BindToGPU() const;
+	~VertexBuffer() override = default;
+	void BindToGPU() override;
 private:
-	ID3D11Buffer * Buffer;
-	void * Data;
-	UINT Count;
-	UINT Stride;
 	UINT Slot;
 
 	bool bCpwWrite;
@@ -22,40 +31,32 @@ private:
 
 /*=============================================================================*/
 
-class IndexBuffer
+class IndexBuffer : public BufferBase
 {
 public:
 	IndexBuffer(UINT * InData, UINT InCount);
-	~IndexBuffer();
+	~IndexBuffer() override = default;
 
 	UINT GetCount() const { return Count; }
-	void BindToGPU() const;
+	void BindToGPU() override;
 private:
-	ID3D11Buffer * Buffer;
-	UINT * Data;
-	UINT Count;
 };
 
 /*=============================================================================*/
 
-class ConstantBuffer
+class ConstantBuffer : public BufferBase
 {
 public:
-	ConstantBuffer(void * InData = nullptr, const string & InDataName = "", UINT InDataSize = 0);
-	~ConstantBuffer();
+	ConstantBuffer(void * InData = nullptr, string InDataName = "", UINT InDataSize = 0);
+	~ConstantBuffer() override = default;
 
-//
 	operator ID3D11Buffer *() { return Buffer; }
 	operator ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() { return Buffer; }
 	
-	void BindToGPU() const;
+	void BindToGPU() override;
 private:
-	ID3D11Buffer * Buffer = nullptr;
-	// ID3DX11EffectConstantBuffer * ECB = nullptr;
-	
-	void * Data = nullptr;
 	UINT DataSize = 0;
-	string DataName = "";
+	string DataName;
 };

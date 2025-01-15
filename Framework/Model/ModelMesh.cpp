@@ -5,6 +5,8 @@ ModelMesh::ModelMesh()
 	: Transforms(nullptr), BoneData(), BoneMatrixCBuffer(nullptr), ECB_BoneMatrixBuffer(nullptr)
 {
 	WorldTransform = new Transform();
+	bBoneIndexChanged = true;
+	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 ModelMesh::~ModelMesh()
@@ -20,9 +22,13 @@ void ModelMesh::Tick()
 	if (CBBinder != nullptr)
 		CBBinder->Tick();
 
-	BoneData.BoneIndex = BoneIndex;
-	memcpy(BoneData.Transforms, Transforms, sizeof(Matrix) * MaxModelTransforms);
-
+	if (bBoneIndexChanged == true)
+	{
+		BoneData.BoneIndex = BoneIndex;
+		memcpy(BoneData.Transforms, Transforms, sizeof(Matrix) * MaxModelTransforms);
+		bBoneIndexChanged = false;
+	}
+	
 	WorldTransform->Tick();
 }
 
@@ -30,7 +36,7 @@ void ModelMesh::Render()
 {
 	if (CachedShader == nullptr)
 		CachedShader = MaterialData->GetShader();
-
+	
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();
@@ -39,9 +45,8 @@ void ModelMesh::Render()
 	BoneMatrixCBuffer->BindToGPU();
 	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);
 	
-	WorldTransform->Render(CachedShader);
-	
-	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	WorldTransform->BindCBufferToGPU(CachedShader);
+
 	CachedShader->DrawIndexed(0, Pass, IndicesCount);
 }
 
