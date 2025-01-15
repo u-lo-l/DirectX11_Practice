@@ -43,6 +43,8 @@ public:
 private:
 	Color JsonStringToColor(const Json::String & InJson);
 
+	string ModelName;
+	
 	map<string, Material*> MaterialsTable;
 	
 	vector<ModelMesh *> Meshes;
@@ -68,6 +70,8 @@ private:
 	vector<ModelBone *> Bones;
 	Matrix BoneTransforms[MaxModelTransforms];
 	CachedBoneTableType * CachedBoneTable = nullptr;
+
+	
 #pragma endregion Bone Data
 	
 #pragma region ReadFile

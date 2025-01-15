@@ -11,7 +11,7 @@ private:
 	using VertexType = ModelVertex;
 	friend class Model;
 	
-	static void ReadFile(
+	static void ReadMeshFile(
 		const BinaryReader * InReader,
 		vector<ThisClassPtr> & OutMeshes,
 		const map<string, Material*> & InMaterialTable
@@ -28,7 +28,7 @@ private :
 	
 	void CreateBuffers();
 
-	string Name;
+	string MeshName;
 
 	void SetWorldTransform( const Transform * InTransform ) const;
 	Transform * WorldTransform = nullptr;

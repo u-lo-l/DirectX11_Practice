@@ -4,7 +4,7 @@
 BufferBase::~BufferBase()
 {
 #ifdef _DEBUG
-	printf("Buffer Safely Released\n");
+	printf("%s : Buffer Safely Released\n", BufferType.c_str());
 #endif
 	SAFE_RELEASE(Buffer);
 }
@@ -21,6 +21,10 @@ VertexBuffer::VertexBuffer(
 	Data = InData;
 	Count = InCount;
 	Stride = InStride;
+#ifdef _DEBUG
+	BufferType = "Vertex";
+	printf("%s Buffer size %d Created\n", BufferType.c_str(), Count * Stride);
+#endif
 	
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	D3D11_BUFFER_DESC BufferDesc;
@@ -66,7 +70,10 @@ IndexBuffer::IndexBuffer(UINT * InData,	UINT InCount)
 	Data = InData;
 	Count = InCount;
 	Stride = sizeof(UINT);
-	
+#ifdef _DEBUG
+	BufferType = "Index";
+	printf("%s Buffer size %d Created\n", BufferType.c_str(), Count * Stride);
+#endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
@@ -92,7 +99,10 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
  : DataSize(InDataSize), DataName(std::move(InDataName))
 {
 	Data = InData;
-	
+#ifdef _DEBUG
+	BufferType = "Constant";
+	printf("%s Buffer size %d for %s Created\n", BufferType.c_str(), InDataSize, DataName.c_str());
+#endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));

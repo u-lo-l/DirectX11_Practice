@@ -111,7 +111,7 @@ void Transform::SetTRS( const Transform * InTransform )
 void Transform::UpdateWorldMatrix()
 {
 	const Matrix Translation = Matrix::CreateTranslation(Position);
-	const Matrix Rotation = Matrix::CreateFromYawPitchRoll(EulerAngleInRadian.Y, EulerAngleInRadian.X, EulerAngleInRadian.Z);
+	const Matrix Rotation = Matrix::CreateFromYawPitchRoll(EulerAngleInRadian.Z, EulerAngleInRadian.Y, EulerAngleInRadian.X);
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
 	CBufferData.World = Scale * Rotation * Translation;

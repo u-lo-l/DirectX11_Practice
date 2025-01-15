@@ -14,6 +14,9 @@ protected:
 	void * Data = nullptr;
 	UINT Count = 0;
 	UINT Stride = 0;
+#ifdef DO_DEBUG
+	string BufferType;
+#endif
 };
 
 class VertexBuffer : public BufferBase
@@ -47,7 +50,7 @@ private:
 class ConstantBuffer : public BufferBase
 {
 public:
-	ConstantBuffer(void * InData = nullptr, string InDataName = "", UINT InDataSize = 0);
+	explicit ConstantBuffer(void * InData = nullptr, string InDataName = "", UINT InDataSize = 0);
 	~ConstantBuffer() override = default;
 
 	operator ID3D11Buffer *() { return Buffer; }

@@ -11,7 +11,7 @@ class ModelBone
 	ModelBone();
 	~ModelBone();
 	
-	static void ReadFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones);
+	static void ReadModelFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones);
 	
 	int Index = -1;
 	string Name;

@@ -55,20 +55,24 @@ void ModelMesh::SetWorldTransform( const Transform * InTransform) const
 	WorldTransform->SetTRS(InTransform);
 }
 
-void ModelMesh::ReadFile(
+void ModelMesh::ReadMeshFile(
 	const BinaryReader * InReader,
 	vector<ThisClassPtr> & OutMeshes,
 	const map<string, Material*> & InMaterialTable )
 {
-	UINT MeshCount = InReader->ReadUint();
+	const UINT MeshCount = InReader->ReadUint();
 	OutMeshes.resize( MeshCount );
 	for (UINT i = 0; i < MeshCount; i++)
 	{
 		OutMeshes[i] = new ThisClass();
 
-		OutMeshes[i]->Name = InReader->ReadString();
+		OutMeshes[i]->MeshName = InReader->ReadString();
 		
 		const string MaterialName = InReader->ReadString();
+		if (OutMeshes[i]->MeshName.empty() == true)
+		{
+			OutMeshes[i]->MeshName = "Mesh for " + MaterialName;
+		}
 		OutMeshes[i]->MaterialData = InMaterialTable.at(MaterialName);
 
 		OutMeshes[i]->VerticesCount = InReader->ReadUint();
@@ -97,7 +101,13 @@ void ModelMesh::CreateBuffers()
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
 	
-	CBBinder = new ConstantDataBinder(MaterialData->GetShader());
-	BoneMatrixCBuffer = new ConstantBuffer(&BoneData, "ModelMesh.Bone.Matrix", sizeof(BoneDesc));
+	// 여기서 하나의 모델에 대해 ConstantDataBinder와 ConstantBuffer가 중복으로 생성되는 것 같다.
+	// ConstantDataBinder와 : View, Projection, LightDirection들어있음. -> 모델메쉬, 모델과 별개 아닌가?
+	// ConstantBuffer = BoneData들어있음 -> 모델마다 하나씩만 있으면 안 되나?
+	// TODO : ConstantDataBinder 모델과 독립시키기
+	// TODO : BoneDataCBuffer 모델메쉬와 독립시키기
+ 	CBBinder = new ConstantDataBinder(MaterialData->GetShader());
+	const string CBufferInfo = MeshName + "__ModelMesh.Bone.Matrix";
+	BoneMatrixCBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
 	ECB_BoneMatrixBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 }

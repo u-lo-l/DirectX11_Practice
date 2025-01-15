@@ -10,6 +10,7 @@ Model::Model(const wstring & ModelFileName)
 {
 	WorldTransform = new Transform();
 	wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
+	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
 }
 
@@ -110,6 +111,9 @@ void Model::ReadMaterial( const wstring & InFileName)
 	Stream >> Root;
 	
 	Json::Value::Members Members = Root.getMemberNames();
+#ifdef DO_DEBUG
+	printf("Model : %s -> Material Count : %d\n", ModelName.c_str(), Members.size());
+#endif
 	for (const Json::String & Name : Members)
 	{
 		Material * MatData = new Material();
@@ -170,9 +174,12 @@ void Model::ReadMesh( const wstring & InFileName)
 	BinaryReader * BinReader = new BinaryReader();
 	BinReader->Open(FullPath);
 
-	ModelBone::ReadFile(BinReader, this->Bones);
-	ModelMesh::ReadFile(BinReader, this->Meshes, this->MaterialsTable);
-
+	ModelBone::ReadModelFile(BinReader, this->Bones);
+	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable);
+#ifdef DO_DEBUG
+	printf("Model : %s -> Bone Count : %d\n", ModelName.c_str(), Bones.size());
+	printf("Model : %s -> Mesh Count : %d\n", ModelName.c_str(), Meshes.size());
+#endif
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 

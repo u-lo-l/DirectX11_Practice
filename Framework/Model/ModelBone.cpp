@@ -9,9 +9,10 @@ ModelBone::~ModelBone()
 {
 }
 
-void ModelBone::ReadFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones )
+void ModelBone::ReadModelFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones )
 {
 	const UINT BoneCount = InReader->ReadUint();
+
 	OutBones.resize(BoneCount);
 	for (UINT i = 0; i < BoneCount; i++)
 	{
