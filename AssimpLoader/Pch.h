@@ -1,5 +1,6 @@
 #pragma once
-// #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+
+
 
 #include "Framework.h"
 #pragma comment(lib, "Framework.lib")
@@ -12,5 +13,8 @@
 #include "JsonCpp/json.h"
 #pragma comment(lib, "JsonCpp/jsoncpp_static.lib")
 
+#ifdef DO_DEBUG
+	#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
 
 #define PUSH_MAIN(x) Push(new x())

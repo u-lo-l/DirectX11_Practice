@@ -25,7 +25,7 @@ public:
 	const Vector & GetRotationInDegree() const;
 
 	void SetPosition(const Vector & InPosition);
-	void SetRotation(const Vector & InEulerAngle);
+	void SetRotation(const Vector & InEulerAngleInDegree);
 	void SetScale(const Vector & InScale);
 	void SetTRS(const Transform & InTransform);
 	void SetTRS( const Transform * InTransform );

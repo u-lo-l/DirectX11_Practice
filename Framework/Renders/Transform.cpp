@@ -20,7 +20,6 @@ void Transform::Tick()
 		return ;
 	bDirty = true;
 
-	
 	UpdateWorldMatrix();
 }
 

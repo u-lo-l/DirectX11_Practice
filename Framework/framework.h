@@ -1,5 +1,7 @@
 #pragma once
 
+#define DO_DEBUG 1
+
 #include <Windows.h>
 #include <assert.h>
 
