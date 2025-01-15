@@ -72,6 +72,7 @@ using namespace std;
 	#include "Model/Model.h"
 	#include "Model/ModelBone.h"
 	#include "Model/ModelMesh.h"
+	#include "Model/ModelAnimation.h"
 
 	#include "Environment/Terrain.h"
 #pragma endregion

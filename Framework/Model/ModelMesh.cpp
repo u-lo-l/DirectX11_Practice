@@ -26,9 +26,10 @@ void ModelMesh::Tick()
 	WorldTransform->Tick();
 }
 
-void ModelMesh::Render() const
+void ModelMesh::Render()
 {
-	Shader * const Drawer = MaterialData->GetShader();
+	if (CachedShader == nullptr)
+		CachedShader = MaterialData->GetShader();
 
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
@@ -38,10 +39,10 @@ void ModelMesh::Render() const
 	BoneMatrixCBuffer->BindToGPU();
 	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);
 	
-	WorldTransform->Render(Drawer);
+	WorldTransform->Render(CachedShader);
 	
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	Drawer->DrawIndexed(0, Pass, IndicesCount);
+	CachedShader->DrawIndexed(0, Pass, IndicesCount);
 }
 
 void ModelMesh::SetWorldTransform( const Transform * InTransform) const

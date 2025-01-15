@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include "ExportFile.h"
-#include "Converter.h"
+#include "Converter/Converter.h"
 
 namespace Sdt
 {
@@ -11,12 +11,13 @@ namespace Sdt
 	
 	void ExportFile::Initialize()
 	{
-		Mousey();
+		// Mousey();
 		Shannon();
-		Airplane();
-		Cube();
-		Manny();
-		YBot();
+		// Airplane();
+		// Cube();
+		// Manny();
+		// YBot();
+		// XYBot();
 	}
 
 	void ExportFile::MakeModelInfoFile( const wstring & InModelName )
@@ -33,6 +34,8 @@ namespace Sdt
 		Transform["Rotation"] = "0,0,0";
 		Transform["Scale"] = "0.01,0.01,0.01";
 		Root["Transform"] = Transform;
+
+		Root["Animations"].append(String::ToString(InModelName + L"/Idle"));
 
 		Json::StyledWriter Writer;
 		string Str = Writer.write(Root);
@@ -51,6 +54,7 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"Airplane/Airplane.fbx");
 		converter->ExportMaterial(L"Airplane/Airplane", ShaderName, true);
 		converter->ExportMesh(L"Airplane/Airplane");
+		
 		MakeModelInfoFile(L"Airplane");
 		SAFE_DELETE(converter);
 	}
@@ -61,6 +65,7 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"Cube/Cube.fbx");
 		converter->ExportMaterial(L"Cube/Cube", ShaderName, true);
 		converter->ExportMesh(L"Cube/Cube");
+		
 		MakeModelInfoFile(L"Cube");
 		SAFE_DELETE(converter);
 	}
@@ -81,13 +86,12 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"Shannon/Shannon.fbx");
 		converter->ExportMaterial(L"Shannon/Shannon", ShaderName, true);
 		converter->ExportMesh(L"Shannon/Shannon");
-		MakeModelInfoFile(L"Shannon");
-		SAFE_DELETE(converter);
 
-		converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Shannon/Idle.fbx");
 		converter->ExportAnimation("Shannon/Idle", 0);
 		SAFE_DELETE(converter);
+		
+		MakeModelInfoFile(L"Shannon");
 	}
 	
 	void ExportFile::Mousey()
@@ -117,6 +121,16 @@ namespace Sdt
 		converter->ExportMaterial(L"YBot/YBot", ShaderName, true);
 		converter->ExportMesh(L"YBot/YBot");
 		MakeModelInfoFile(L"YBot");
+		SAFE_DELETE(converter);
+	}
+
+	void ExportFile::XYBot()
+	{
+		Converter* converter = new Converter();
+		converter->ReadAiSceneFromFile(L"XYBot/XYBot.fbx");
+		converter->ExportMaterial(L"XYBot/XYBot", ShaderName, true);
+		converter->ExportMesh(L"XYBot/XYBot");
+		MakeModelInfoFile(L"XYBot");
 		SAFE_DELETE(converter);
 	}
 }

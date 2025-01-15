@@ -21,9 +21,10 @@ private:
 	~ModelMesh();
 
 	void Tick();
-	void Render() const;
+	void Render();
 	void SetWorldTransform( const Transform * InTransform) const;
 private :
+	Shader * CachedShader = nullptr;
 	int Pass = 0;
 	
 	void CreateBuffers();

@@ -3,22 +3,46 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="AssimpLoader\Converter.cpp" />
-    <ClCompile Include="AssimpLoader\DrawModel.cpp" />
-    <ClCompile Include="AssimpLoader\ExportFile.cpp" />
     <ClCompile Include="AssimpLoader\Types.cpp" />
+    <ClCompile Include="AssimpLoader\DrawModel.cpp">
+      <Filter>Execute</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\ExportFile.cpp">
+      <Filter>Execute</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\Converter\Converter.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\Converter\Converter_Animation.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\Converter\Converter_Material.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\Converter\Converter_Mesh.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="AssimpLoader\Converter.h" />
-    <ClInclude Include="AssimpLoader\DrawModel.h" />
-    <ClInclude Include="AssimpLoader\ExportFile.h" />
     <ClInclude Include="AssimpLoader\Types.h" />
+    <ClInclude Include="AssimpLoader\ExportFile.h">
+      <Filter>Execute</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpLoader\DrawModel.h">
+      <Filter>Execute</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpLoader\Converter\Converter.h">
+      <Filter>Converter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Execute">
       <UniqueIdentifier>{c35a6040-8b75-4c80-a295-b824cb825f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Converter">
+      <UniqueIdentifier>{43b8e950-09af-4954-b4bc-01afa94e50e4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

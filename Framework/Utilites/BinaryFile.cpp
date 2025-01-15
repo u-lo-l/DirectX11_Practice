@@ -7,6 +7,11 @@ BinaryWriter::BinaryWriter()
 	
 }
 
+BinaryWriter::BinaryWriter( const string & InFileName )
+{
+	Open(InFileName);
+}
+
 BinaryWriter::~BinaryWriter()
 {
 	Close();
@@ -66,6 +71,13 @@ void BinaryWriter::WriteInt( INT InData ) const
 	ASSERT((Result == true), "[BinaryWriter] Failed to write to file to UINT");
 }
 
+void BinaryWriter::WriteFloat( float InData ) const
+{
+	DWORD BytesWritten = 0;
+	const bool Result = WriteFile(FileHandle, &InData, sizeof(float), &BytesWritten, nullptr);
+	ASSERT((Result == true), "[BinaryWriter] Failed to write to file to float");
+}
+
 void BinaryWriter::WriteString( const string & InData ) const
 {
 	DWORD BytesWritten = 0;
@@ -101,6 +113,12 @@ BinaryReader::BinaryReader()
 {
 }
 
+BinaryReader::BinaryReader(const wstring & InFilePath)
+: FileHandle(nullptr)
+{
+	Open(InFilePath);
+}
+
 BinaryReader::~BinaryReader()
 {
 	Close();
@@ -108,8 +126,10 @@ BinaryReader::~BinaryReader()
 
 bool BinaryReader::Open( const wstring & InFilePath )
 {
+	ASSERT(FileHandle == nullptr, "[BinaryReader] BinaryReader In Use");
 	ASSERT(InFilePath.empty() == false, "[BinaryRead] Wrong File Path");
 
+	FileName = InFilePath;
 	FileHandle = CreateFile(
 		InFilePath.c_str(),
 		GENERIC_READ,
@@ -130,6 +150,7 @@ void BinaryReader::Close()
 		return;
 	CloseHandle(FileHandle);
 	FileHandle = nullptr;
+	FileName = L"";
 }
 
 UINT BinaryReader::ReadUint() const
@@ -152,6 +173,17 @@ INT BinaryReader::ReadInt() const
 	ASSERT((Result == true) && (ByteRead == sizeof(INT)), "[BinaryReader] Failed to read INT from file");
 	
 	return IntBuffer;
+}
+
+float BinaryReader::ReadFloat() const
+{
+	float FloatBuffer;
+	DWORD ByteRead = 0;
+	
+	const bool Result = ReadFile(FileHandle, &FloatBuffer, sizeof(float), &ByteRead, nullptr);
+	ASSERT((Result == true) && (ByteRead == sizeof(float)), "[BinaryReader] Failed to read float from file");
+	
+	return FloatBuffer;
 }
 
 string BinaryReader::ReadString() const

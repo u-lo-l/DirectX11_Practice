@@ -5,8 +5,7 @@ namespace Sdt
 {
 	DrawModel::~DrawModel()
 	{
-		for (const Model * Model : Models)
-			SAFE_DELETE(Model);
+		Destroy();
 	}
 
 	void DrawModel::Initialize()
@@ -14,7 +13,9 @@ namespace Sdt
 		Camera * MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition(0, 150, -250);
 
-		const vector<wstring> ModelNames = {L"YBot", L"Shannon", L"Manny", L"Airplane", L"Mousey"};
+		// const vector<wstring> ModelNames = {L"XYBot", L"Shannon", L"Airplane", L"Mousey"};
+		const vector<wstring> ModelNames = {L"Shannon"};
+
 
 		for (const wstring & ModelName : ModelNames)
 		{
@@ -35,26 +36,28 @@ namespace Sdt
 	void DrawModel::Tick()
 	{
 		int prevIndex= ModelIndex;
+		static int Pass = 1;
 		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
+		ImGui::SliderInt("Pass", &Pass, 0, 1);
+		ImGui::SliderInt("ShowBone", &ShowBone, 0, 1);
+
 		if (prevIndex != ModelIndex)
 		{
 			SetBoneIndicators();
 		}
 		Models[ModelIndex]->Tick();
+		Models[ModelIndex]->SetPass(Pass);
 	}
 
 	void DrawModel::Render()
 	{
-		static int Pass = 1;
-		ImGui::SliderInt("Pass", &Pass, 0, 1);
-
-		Models[ModelIndex]->SetPass(Pass);
 		Models[ModelIndex]->Render();
 
+		if (ShowBone == false)
+			return ;
 		for (const Vector& v : Positions)
 		{
-			Sphere->GetWorldTransform()->SetPosition(v);
-
+			Sphere->SetWorldPosition(v);
 			Sphere->Tick();
 			Sphere->Render();
 		}

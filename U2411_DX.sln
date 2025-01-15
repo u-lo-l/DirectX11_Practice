@@ -35,8 +35,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{47
 		_Shaders\19_ModelVertex.fx = _Shaders\19_ModelVertex.fx
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShaderConvertor", "ShaderConvertor\ShaderConvertor.vcxproj", "{A35557FC-6BD1-4E5D-94C8-CE7EF76E6555}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -55,10 +53,6 @@ Global
 		{9F9A34CD-07FA-49BB-B206-CF0F99BC30DE}.Debug|x86.Build.0 = Debug|Win32
 		{9F9A34CD-07FA-49BB-B206-CF0F99BC30DE}.Release|x86.ActiveCfg = Release|Win32
 		{9F9A34CD-07FA-49BB-B206-CF0F99BC30DE}.Release|x86.Build.0 = Release|Win32
-		{A35557FC-6BD1-4E5D-94C8-CE7EF76E6555}.Debug|x86.ActiveCfg = Debug|Win32
-		{A35557FC-6BD1-4E5D-94C8-CE7EF76E6555}.Debug|x86.Build.0 = Debug|Win32
-		{A35557FC-6BD1-4E5D-94C8-CE7EF76E6555}.Release|x86.ActiveCfg = Release|Win32
-		{A35557FC-6BD1-4E5D-94C8-CE7EF76E6555}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

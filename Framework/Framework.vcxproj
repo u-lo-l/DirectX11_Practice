@@ -25,6 +25,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="Model\ModelAnimation.cpp" />
     <ClCompile Include="Model\ModelBone.cpp" />
     <ClCompile Include="Model\ModelMesh.cpp" />
     <ClCompile Include="Renders\Buffers.cpp" />
@@ -63,6 +64,7 @@
     <ClInclude Include="Environment\Terrain.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="Model\ModelAnimation.h" />
     <ClInclude Include="Model\ModelBone.h" />
     <ClInclude Include="Model\ModelMesh.h" />
     <ClInclude Include="Renders\Buffers.h" />

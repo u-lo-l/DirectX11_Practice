@@ -3,11 +3,11 @@
 #include "Model.h"
 #include <string>
 #include <fstream>
+#include <unordered_map>
 
 Model::Model(const wstring & ModelFileName)
  : RootBone(nullptr)
 {
-
 	WorldTransform = new Transform();
 	wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
 	ReadFile(FullFilePath);
@@ -19,18 +19,23 @@ Model::~Model()
 		SAFE_DELETE(Bone);
 	for (const ModelMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
-
 	for (pair<string, Material *> KeyVal : MaterialsTable)
 		SAFE_DELETE(KeyVal.second);
+	for (ModelAnimation * Animation : Animations)
+		SAFE_DELETE(Animation);
 	
 	SAFE_DELETE(WorldTransform);
 }
 
-void Model::Tick() const
+void Model::Tick()
 {
 	for (ModelMesh * mesh : Meshes)
 	{
-		mesh->SetWorldTransform(this->WorldTransform);
+		if (bTransformChanged == true)
+		{
+			mesh->SetWorldTransform(this->WorldTransform);
+			bTransformChanged = false;
+		}
 		mesh->Tick();
 	}
 }
@@ -51,6 +56,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	Json::Value Root;
 	ifs >> Root;
+	ifs.close();
 
 	Json::Value::Members Members = Root.getMemberNames();
 	
@@ -59,7 +65,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	Json::Value Position = Root["Transform"]["Position"];
 	Json::Value Rotation = Root["Transform"]["Rotation"];
 	Json::Value Scale = Root["Transform"]["Scale"];
-	ifs.close();
+	
 
 	wstring MaterialName = String::ToWString(material.asString());
 	wstring MeshName = String::ToWString(Mesh.asString());
@@ -79,6 +85,13 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	String::SplitString(&pString, Scale.asString(), ",");
 	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+	
+	Json::Value Animations = Root["Animations"];
+	const UINT AnimationCount = Animations.size();
+	for (UINT i = 0; i < AnimationCount; i++)
+	{
+		ReadAnimation(String::ToWString(Animations[i].asString()));
+	}
 }
 
 void Model::SetPass( int InPass )
@@ -162,20 +175,34 @@ void Model::ReadMesh( const wstring & InFileName)
 
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
-	
-	int count = 0;
-	for (ModelBone * Bone : this->Bones)
+
+	const UINT BoneCount = this->Bones.size();
+	if (BoneCount == 0)
+		return ;
+	this->CachedBoneTable = new CachedBoneTableType(); // 애니메이션 다 읽으면 지워진다.
+	for (UINT i = 0; i < BoneCount; i++)
 	{
-		this->BoneTransforms[count++] = Bone->Transform;
-		for (UINT number : Bone->MeshIndices)
+		ModelBone * TargetBone = this->Bones[i];
+		this->BoneTransforms[i] = TargetBone->Transform;
+		for (UINT number : TargetBone->MeshIndices)
 		{
-			Meshes[number]->BoneIndex = Bone->Index;
-			Meshes[number]->Bone = Bone;
+			Meshes[number]->BoneIndex = TargetBone->Index;
+			Meshes[number]->Bone = TargetBone;
 			Meshes[number]->Transforms = BoneTransforms;
 		}
+		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
 	}
-
 }
+
+void Model::ReadAnimation( const wstring & InFileName )
+{
+	BinaryReader * BinReader = new BinaryReader(W_MODEL_PATH + InFileName + L".animation");
+	
+	Animations.push_back(ModelAnimation::ReadAnimationFile(BinReader, this->CachedBoneTable));
+
+	SAFE_DELETE(BinReader);
+}
+
 
 Color Model::JsonStringToColor( const Json::String & InJson )
 {

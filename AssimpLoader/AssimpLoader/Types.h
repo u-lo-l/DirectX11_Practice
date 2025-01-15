@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Pch.h"
+#include "Model/ModelAnimation.h"
 
 
 struct MaterialData
@@ -41,22 +42,25 @@ struct MeshData
 	vector<UINT> Indices;
 };
 
-typedef struct ClipNodeVectorData
-{
-	float Time;
-	Vector Values;
-} KeyVecData;
-
-typedef struct ClipNodeQuaternionData
-{
-	float Time;
-	Quaternion Values;
-} KeyQuatData;
+// typedef struct ClipNodeVectorData
+// {
+// 	float Time;
+// 	Vector Values;
+// } KeyVecData;
+//
+// typedef struct ClipNodeQuaternionData
+// {
+// 	float Time;
+// 	Quaternion Values;
+// } KeyQuatData;
 
 // Channel data
 struct ClipNodeData
 {
 	string BoneName;
+	vector<FrameDataVec> PosKeys;
+	vector<FrameDataVec> ScaleKeys;
+	vector<FrameDataQuat> RotKeys;
 };
 
 struct ClipData
@@ -64,4 +68,5 @@ struct ClipData
 	string Name;
 	float Duration;
 	float TicksPerSecond;
+	vector<ClipNodeData *> NodeDatas;
 };

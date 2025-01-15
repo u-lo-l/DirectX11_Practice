@@ -6,14 +6,15 @@ class ModelBone
 	using ThisClass = ModelBone;
 	using ThisClassPtr = ThisClass*;
 	friend class Model;
+	friend class ModelAnimation;
 
 	ModelBone();
 	~ModelBone();
-
+	
 	static void ReadFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones);
 	
 	int Index = -1;
-	string Name = "";
+	string Name;
 	
 	int ParentIndex = -1;
 	ThisClassPtr Parent = nullptr;
