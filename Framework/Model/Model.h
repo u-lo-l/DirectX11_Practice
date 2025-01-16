@@ -41,7 +41,7 @@ public:
 	}
 	
 private:
-	Color JsonStringToColor(const Json::String & InJson);
+	static Color JsonStringToColor(const Json::String & InJson);
 
 	string ModelName;
 	
