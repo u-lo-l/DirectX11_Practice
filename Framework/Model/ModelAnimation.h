@@ -10,6 +10,7 @@ class ModelAnimation
 private :
 	friend class Model;
 	struct KeyFrameData;
+	struct ClipTransform;
 	ModelAnimation() = default;
 	~ModelAnimation();
 private:
