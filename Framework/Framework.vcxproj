@@ -25,6 +25,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="Model\Model.ReadFile.cpp" />
     <ClCompile Include="Model\ModelAnimation.cpp" />
     <ClCompile Include="Model\ModelBone.cpp" />
     <ClCompile Include="Model\ModelMesh.cpp" />

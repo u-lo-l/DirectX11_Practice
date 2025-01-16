@@ -326,7 +326,7 @@ float Matrix::Determinant()
 	return temp;
 }
 
-bool Matrix::Decompose(Vector& scale, Quaternion& rotation, Vector& translation)
+bool Matrix::Decompose(Vector& scale, Quaternion& rotation, Vector& translation) const
 {
 	translation.X = M41;
 	translation.Y = M42;

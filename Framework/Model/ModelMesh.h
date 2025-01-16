@@ -63,7 +63,7 @@ private :
 	 */
 	struct BoneDesc
 	{
-		Matrix Transforms[MaxModelTransforms];
+		Matrix BoneTransforms[MaxModelTransforms];
 		UINT BoneIndex;
 		float Padding[3];
 	};

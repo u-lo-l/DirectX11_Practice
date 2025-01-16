@@ -48,6 +48,9 @@ private:
 // KeyFrame Animation의 Transform정보에서 Translation와 Scale에 대한 정보를 담을 구조체
 struct ModelAnimationFrameVector
 {
+	ModelAnimationFrameVector() = default;
+	ModelAnimationFrameVector(float InTime, const Vector& InValue)
+		: Time(InTime), Value(InValue) {}
 	float Time = 0;
 	Vector Value;
 };
@@ -55,6 +58,9 @@ struct ModelAnimationFrameVector
 // KeyFrame Animation의 Transform정보에서 Rotation에 대한 정보를 담을 구조체
 struct ModelAnimationFrameQuat
 {
+	ModelAnimationFrameQuat() = default;
+	ModelAnimationFrameQuat(float InTime, const Quaternion& InValue)
+		: Time(InTime), Value(InValue) {}
 	float Time = 0;
 	Quaternion Value;
 };

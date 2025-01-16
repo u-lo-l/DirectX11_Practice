@@ -26,8 +26,7 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 		}
 		else
 		{
-			TargetData.BoneIndex = -1;
-			TargetData.BoneName = "";
+			// 이 친구들은 버린다?
 		}
 		
 		TargetData.PosCount = InReader->ReadUint();

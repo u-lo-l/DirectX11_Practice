@@ -57,17 +57,17 @@ namespace Sdt
 
 #pragma region Extract Animation
 	public:
-		void ExportAnimation( const string & InSaveFileName, int InClipIndex = -1) const;
+		void ExportAnimation( const string & InSaveFileName, int InClipIndex = -1);
 	private:
 		// 애니메이션 하나하나를 Clip이라 한다.
 		// void ReadClips( vector<string> & OutClips ) const;
 		static ClipData * ReadClipData(const aiAnimation * InAnimation);
 		static void WriteClipData( const string & InSaveFileName, const ClipData * InClipData );
-
 		static void ReadPosKeys(vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim);
 		static void ReadScaleKeys(vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim);
 		static void ReadRotKeys(vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim);
-		
+
+		static void ConnectNodeWithBone(ClipData * InClipData, const aiNode * InNode);
 #pragma endregion
 	};
 }

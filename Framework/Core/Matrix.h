@@ -56,7 +56,7 @@ public:
 	std::wstring ToStringRow3();
 	std::wstring ToStringRow4();
 	float Determinant();
-	bool Decompose(Vector& scale, Quaternion& rotation, Vector& translation);
+	bool Decompose(Vector& scale, Quaternion& rotation, Vector& translation) const;
 	bool DecomposeUniformScale(float& scale, Quaternion& rotation, Vector& translation);
 	static Matrix Add(const Matrix & matrix1, const Matrix & matrix2);
 	static Matrix Divide(const Matrix & matrix1, const Matrix & matrix2 );
