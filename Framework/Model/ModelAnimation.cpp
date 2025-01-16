@@ -29,28 +29,31 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 			// 이 친구들은 버린다?
 		}
 		
-		TargetData.PosCount = InReader->ReadUint();
-		if (TargetData.PosCount > 0)
+		const UINT PosCount = InReader->ReadUint();
+		TargetData->Positions.resize(PosCount);
+		if (PosCount > 0)
 		{
-			TargetData.Positions = new FrameDataVec[TargetData.PosCount];
-			const UINT ReadSize = sizeof(FrameDataVec) * TargetData.PosCount;
-			InReader->ReadByte(reinterpret_cast<void **>(&(TargetData.Positions)), ReadSize);
+			const UINT ReadSize = sizeof(FrameDataVec) * PosCount;
+			void * Ptr = TargetData->Positions.data();
+			InReader->ReadByte(&Ptr, ReadSize);
 		}
 
-		TargetData.ScaleCount = InReader->ReadUint();
-		if (TargetData.ScaleCount > 0)
+		const UINT ScaleCount = InReader->ReadUint();
+		TargetData->Scales.resize(ScaleCount);
+		if (ScaleCount > 0)
 		{
-			TargetData.Scales = new FrameDataVec[TargetData.ScaleCount];
-			const UINT ReadSize = sizeof(FrameDataVec) * TargetData.ScaleCount;
-			InReader->ReadByte(reinterpret_cast<void **>(&(TargetData.Scales)), ReadSize);
+			const UINT ReadSize = sizeof(FrameDataVec) * ScaleCount;
+			void * Ptr = TargetData->Scales.data();
+			InReader->ReadByte(&Ptr, ReadSize);
 		}
 
-		TargetData.RotCount = InReader->ReadUint();
-		if (TargetData.RotCount > 0)
+		const UINT RotCount = InReader->ReadUint();
+		TargetData->Rotations.resize(RotCount);
+		if (RotCount > 0)
 		{
-			TargetData.Rotations = new FrameDataQuat[TargetData.RotCount];
-			const UINT ReadSize = sizeof(FrameDataQuat) * TargetData.RotCount;
-			InReader->ReadByte(reinterpret_cast<void **>(&(TargetData.Rotations)), ReadSize);
+			const UINT ReadSize = sizeof(FrameDataQuat) * RotCount;
+			void * Ptr = TargetData->Rotations.data();
+			InReader->ReadByte(&Ptr, ReadSize);
 		}
 	}
 	return ModelAnimationToReturn;
