@@ -156,3 +156,19 @@ void Model::ReadAnimation( const wstring & InFileName )
 
 	SAFE_DELETE(BinReader);
 }
+
+// TODO : 미완
+void Model::CreateAnimationTexture() const
+{
+	if (Animations.size() == 0)
+		return ;
+	// 일단 Animation 하나만 다루니까 0번째 index에 대해서만 처리.
+	const UINT KeyFrameCount = Animations[0]->GetKeyFrameCount();
+	for (UINT i = 0; i < KeyFrameCount; i++)
+	{
+		ModelAnimation::KeyFrameData * TargetKeyFrame = Animations[0]->KeyFrames[i];
+#ifdef DO_DEBUG
+		printf("%u, %s, PosCount : %u, RotCount : %u, ScaleCount : %u\n", TargetKeyFrame->BoneIndex, TargetKeyFrame->BoneName.c_str(), TargetKeyFrame->Positions.size(), TargetKeyFrame->Rotations.size(), TargetKeyFrame->Scales.size());
+#endif
+	}
+}

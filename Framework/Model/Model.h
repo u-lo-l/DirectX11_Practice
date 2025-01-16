@@ -96,8 +96,9 @@ public:
 #pragma endregion Read Mesh Data
 
 #pragma region Read Animation Data
-	public :
-		void ReadAnimation(const wstring & InFileName);
+public :
+	void ReadAnimation(const wstring & InFileName);
+	void CreateAnimationTexture() const;
 #pragma endregion Read Animation Data
 #pragma endregion ReadFile
 };
