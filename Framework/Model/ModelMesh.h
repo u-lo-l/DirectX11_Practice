@@ -4,8 +4,9 @@ struct MeshData;
 
 class ModelMesh
 {
+public:
+	static constexpr UINT MaxBoneTFCount = 256;
 private:
-	static constexpr UINT MaxModelTransforms = 256;
 	using ThisClass = ModelMesh;
 	using ThisClassPtr = ThisClass*;
 	using VertexType = ModelVertex;
@@ -63,7 +64,7 @@ private :
 	 */
 	struct BoneDesc
 	{
-		Matrix BoneTransforms[MaxModelTransforms];
+		Matrix BoneTransforms[MaxBoneTFCount];
 		UINT BoneIndex;
 		float Padding[3];
 	};

@@ -8,6 +8,7 @@ typedef struct ModelAnimationFrameQuat FrameDataQuat;
 class ModelAnimation
 {
 private :
+	static constexpr UINT MaxFrameLength = 512;
 	friend class Model;
 	struct KeyFrameData;
 	struct ClipTransform;

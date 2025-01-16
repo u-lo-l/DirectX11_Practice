@@ -25,7 +25,7 @@ void ModelMesh::Tick()
 	if (bBoneIndexChanged == true)
 	{
 		BoneData.BoneIndex = BoneIndex;
-		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxModelTransforms);
+		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneTFCount);
 		bBoneIndexChanged = false;
 	}
 	

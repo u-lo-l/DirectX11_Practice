@@ -71,9 +71,6 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 ModelAnimation::KeyFrameData::KeyFrameData( int InBoneIndex, string InBoneName )
 	: BoneIndex(InBoneIndex)
 	, BoneName(std::move(InBoneName))
-	, Positions(nullptr)
-	, Rotations(nullptr)
-	, Scales(nullptr)
 {
 }
 
