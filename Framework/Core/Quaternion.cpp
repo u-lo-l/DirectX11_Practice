@@ -50,6 +50,23 @@ Quaternion::Quaternion(Vector vectorPart, float scalarPart)
 	Z = vectorPart.Z;
 	W = scalarPart;
 }
+
+Quaternion::Quaternion( const Quaternion & Other )
+	:X(Other.X), Y(Other.Y), Z(Other.Z), W(Other.W)
+{
+}
+
+Quaternion & Quaternion::operator=( const Quaternion & Other )
+{
+	if (this == &Other)
+		return *this;
+	X = Other.X;
+	Y = Other.Y;
+	Z = Other.Z;
+	W = Other.W;
+	return *this;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 

@@ -6,13 +6,13 @@ class Quaternion;
 class Vector
 {
 public:
-	Vector(void);
+	Vector();
 	explicit Vector(float value);
 	Vector(float x, float y, float z);
 	Vector(const Vector& v);
 	Vector& operator=(const Vector& v);
 	
-	Vector operator -(void);
+	Vector operator -();
 
 	operator float* ();
 	operator const float* () const;

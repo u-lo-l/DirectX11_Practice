@@ -9,11 +9,13 @@ class Matrix;
 class Quaternion
 {
 public:
-	Quaternion(void);
+	Quaternion();
 	Quaternion(float x, float y, float z, float w);
 	Quaternion(Vector vectorPart, float scalarPart);
-
-	Quaternion operator -(void);
+	Quaternion(const Quaternion& Other);
+	Quaternion& operator=(const Quaternion& Other);
+	
+	Quaternion operator -();
 	
 	operator float* ();
 	operator const float* () const;
