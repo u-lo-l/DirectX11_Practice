@@ -4,34 +4,16 @@
 
 namespace Sdt
 {
-	void Converter::ExportAnimation( const string & InSaveFileName, int InClipIndex ) const
+	void Converter::ExportAnimation( const string & InSaveFileName, int InClipIndex )
 	{
 		const string SaveFileName = MODEL_PATH + InSaveFileName + ".animation";
-		// if (InClipIndex < 0)
-		// {
-		// 	vector<string> ClipNames;
-		// 	ReadClips(ClipNames);
-		//
-		// 	for (UINT i = 0; i < ClipNames.size(); i++)
-		// 	{
-		// 		ReadClipData(Scene->mAnimations[i]);
-		// 	}
-		// 	return ;
-		// }
-		const ClipData * const Clip = ReadClipData(Scene->mAnimations[InClipIndex]);
+
+		ClipData * const Clip = ReadClipData(Scene->mAnimations[InClipIndex]);
+
+		ConnectNodeWithBone(Clip, Scene->mRootNode);
+		
 		WriteClipData(SaveFileName, Clip);
 	}
-
-	// void Converter::ReadClips( vector<string> & OutClips ) const
-	// {
-	// 	ASSERT(Scene != nullptr, "aiScene is not valid");
-	//
-	// 	const UINT ClipCount = this->Scene->mNumAnimations;
-	// 	for (UINT i = 0; i < ClipCount; i++)
-	// 	{
-	// 		OutClips.push_back( Scene->mAnimations[i]->mName.C_Str());
-	// 	}
-	// }
 
 	ClipData * Converter::ReadClipData( const aiAnimation * InAnimation )
 	{
@@ -47,6 +29,8 @@ namespace Sdt
 			const aiNodeAnim * const NodeAnim = InAnimation->mChannels[i];
 
 			ClipNodeData * NodeData = new ClipNodeData();
+
+			
 			NodeData->BoneName = NodeAnim->mNodeName.C_Str();
 			ReadPosKeys(NodeData->PosKeys, NodeAnim);
 			ReadScaleKeys(NodeData->ScaleKeys, NodeAnim);
@@ -98,6 +82,60 @@ namespace Sdt
 			OutRotKeys.push_back(Key);
 		}
 	}
+
+	/**
+	 * @breif Missing된 Bonen에 정보를 써 준다?
+	 * @param InClipData 
+	 * @param InNode 
+	 */
+	void Converter::ConnectNodeWithBone( ClipData * InClipData, const aiNode * InNode )
+	{
+		bool bFound = false;
+		const UINT NodeCount = InClipData->NodeDatas.size();
+		for (UINT i = 0 ; i < NodeCount; i++)
+		{
+			ClipNodeData * NodeData = InClipData->NodeDatas[i];
+
+			const string & NodeName = InNode->mName.C_Str();
+			if (NodeName == NodeData->BoneName)
+			{
+				bFound = true;
+				break;
+			}
+		}
+
+		// InNode에 맞는 ClipData가 없다?
+		if (bFound == true)
+		{
+#ifdef DO_DEBUG
+			printf("Bone which is not connected to animation : %s\n", InNode->mName.C_Str());
+#endif
+			ClipNodeData * NodeData = new ClipNodeData();
+
+			Matrix TempMat = InNode->mTransformation;
+			TempMat.Transpose();
+			Vector T, S;
+			Quaternion R;
+			TempMat.Decompose(S, R, T);
+			const UINT TotalFrameCount = static_cast<UINT>(InClipData->Duration);
+			NodeData->BoneName = InNode->mName.C_Str();
+			for (UINT f = 0; f < TotalFrameCount; f++)
+			{
+				// 해당 Bone에 대한 NodeData생성
+				NodeData->PosKeys.emplace_back(static_cast<float>(f), T);
+				NodeData->ScaleKeys.emplace_back(static_cast<float>(f), S);
+				NodeData->RotKeys.emplace_back(static_cast<float>(f), R);
+			}
+			InClipData->NodeDatas.push_back(NodeData);
+		}
+		
+		const UINT ChildCount = InNode->mNumChildren;
+		for (UINT i = 0 ; i < ChildCount; i++)
+		{
+			ConnectNodeWithBone(InClipData, InNode->mChildren[i]);
+		}
+	}
+
 
 	void Converter::WriteClipData( const string & InSaveFileName, const ClipData * InClipData )
 	{
