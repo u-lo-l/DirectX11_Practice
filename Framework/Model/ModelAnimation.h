@@ -11,17 +11,21 @@ private :
 	friend class Model;
 	struct KeyFrameData;
 	ModelAnimation() = default;
-	~ModelAnimation() = default;
+	~ModelAnimation();
 private:
 	static ModelAnimation * ReadAnimationFile(
 		const BinaryReader * InReader,
 		const Model::CachedBoneTableType * InCachedBoneTable
 	);
 private:
+	UINT GetKeyFrameCount() const { return KeyFrames.size(); }
 	string Name;
 	float Duration = 0.f;
 	float TicksPerSecond = 0.f;;
-	vector<KeyFrameData> KeyFrames;
+	vector<KeyFrameData *> KeyFrames;
+
+private :
+	ClipTransform * CalcClipTransform( const vector<ModelBone *> & InBone ) const;
 	
 private:
 	struct KeyFrameData
@@ -32,16 +36,15 @@ private:
 		int BoneIndex = -1;
 		string BoneName;
 
-		// 왜 여기선 vector<T> 안 쓰고 pointer 쓰나요?
-		// ReadByte로 읽어올 거라 어차피 포인터 필요함. 굳이 vector로 옮길 필요 없음.
-		UINT PosCount = 0;
-		FrameDataVec * Positions;
-
-		UINT RotCount = 0;
-		FrameDataQuat * Rotations;
-
-		UINT ScaleCount = 0;
-		FrameDataVec * Scales;
+		vector<FrameDataVec> Positions;
+		vector<FrameDataVec> Scales;
+		vector<FrameDataQuat> Rotations;
+	};
+	struct ClipTransform
+	{
+		Matrix** TransformMats;
+		ClipTransform();
+		~ClipTransform();
 	};
 };
 

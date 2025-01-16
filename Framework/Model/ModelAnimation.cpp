@@ -1,6 +1,12 @@
 ﻿#include "framework.h"
 #include "ModelAnimation.h"
 
+ModelAnimation::~ModelAnimation()
+{
+	for (const KeyFrameData * Data : KeyFrames)
+		SAFE_DELETE(Data);
+}
+
 ModelAnimation * ModelAnimation::ReadAnimationFile(
 	const BinaryReader * InReader,
 	const Model::CachedBoneTableType * InCachedBoneTable
@@ -12,17 +18,18 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 	ModelAnimationToReturn->Duration = InReader->ReadFloat();
 	ModelAnimationToReturn->TicksPerSecond = InReader->ReadFloat();
 
-	const UINT NodeCount = InReader->ReadUint();
-	ModelAnimationToReturn->KeyFrames.resize(NodeCount);
-	for (UINT i = 0; i < NodeCount; i++)
+	const UINT KeyFrameCount = InReader->ReadUint();
+	ModelAnimationToReturn->KeyFrames.assign(KeyFrameCount, nullptr);
+	for (UINT i = 0; i < KeyFrameCount; i++)
 	{
-		KeyFrameData & TargetData = ModelAnimationToReturn->KeyFrames[i];
+		ModelAnimationToReturn->KeyFrames[i] = new KeyFrameData();
+		KeyFrameData * &TargetData = ModelAnimationToReturn->KeyFrames[i];
 		const string StringToCompare = InReader->ReadString();
 		const auto Iterator = InCachedBoneTable->find(StringToCompare);
 		if (Iterator != InCachedBoneTable->cend())
 		{
-			TargetData.BoneIndex = Iterator->second->Index;
-			TargetData.BoneName = Iterator->second->Name;
+			TargetData->BoneIndex = Iterator->second->Index;
+			TargetData->BoneName = Iterator->second->Name;
 		}
 		else
 		{
