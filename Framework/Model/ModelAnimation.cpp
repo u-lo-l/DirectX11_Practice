@@ -79,7 +79,19 @@ ModelAnimation::KeyFrameData::~KeyFrameData()
 #ifdef DO_DEBUG
 	printf("KeyFrameData Destruct : [%d], <%s>\n", BoneIndex, BoneName.c_str());
 #endif
-	SAFE_DELETE_ARR(Positions);
-	SAFE_DELETE_ARR(Rotations);
-	SAFE_DELETE_ARR(Scales);
+}
+
+ModelAnimation::ClipTransform::ClipTransform()
+{
+	TransformMats = new Matrix* [MaxFrameLength];
+
+	for (UINT i = 0; i < MaxFrameLength; i++)
+		TransformMats[i] = new Matrix[ModelMesh::MaxBoneTFCount];
+}
+
+ModelAnimation::ClipTransform::~ClipTransform()
+{
+	for (UINT i = 0; i < MaxFrameLength; i++)
+		SAFE_DELETE_ARR(TransformMats[i]);
+	SAFE_DELETE_ARR(TransformMats);
 }
