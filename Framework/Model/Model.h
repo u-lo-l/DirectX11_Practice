@@ -9,10 +9,10 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-private:
 	// 대부분의 모델에서 250개면 충분하다.
 	// Shader에서는 동적할당이 안 돼서 정적 크기를 지정해준다.
 	static constexpr UINT MaxModelTransforms = 256;
+private:
 	
 	using ThisClass = Model;
 public:
@@ -71,6 +71,9 @@ private:
 	Matrix BoneTransforms[MaxModelTransforms];
 	CachedBoneTableType * CachedBoneTable = nullptr;
 
+	// KeyFrameAnimation을 Texture로 Bake한 것.
+	ID3D11Texture2D * ClipTexture = nullptr;
+	ID3D11ShaderResourceView * ClipSRV = nullptr;
 	
 #pragma endregion Bone Data
 	
@@ -98,7 +101,7 @@ public:
 #pragma region Read Animation Data
 public :
 	void ReadAnimation(const wstring & InFileName);
-	void CreateAnimationTexture() const;
+	void CreateAnimationTexture();
 #pragma endregion Read Animation Data
 #pragma endregion ReadFile
 };

@@ -44,6 +44,9 @@ void ModelMesh::Render()
 	
 	BoneMatrixCBuffer->BindToGPU();
 	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);
+
+	if (ClipsSRVVar != nullptr)
+		ClipsSRVVar->SetResource(ClipsSRV);
 	
 	WorldTransform->BindCBufferToGPU(CachedShader);
 
@@ -110,4 +113,6 @@ void ModelMesh::CreateBuffers()
 	const string CBufferInfo = MeshName + "__ModelMesh.Bone.Matrix";
 	BoneMatrixCBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
 	ECB_BoneMatrixBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
+
+	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
 }

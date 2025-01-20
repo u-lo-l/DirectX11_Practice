@@ -10,7 +10,7 @@ class ModelBone
 
 	ModelBone();
 	~ModelBone();
-	
+	bool IsRootBone() const {return ParentIndex < 0;}
 	static void ReadModelFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones);
 	
 	int Index = -1;

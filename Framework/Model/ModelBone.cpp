@@ -16,7 +16,7 @@ void ModelBone::ReadModelFile( const BinaryReader * InReader, vector<ThisClassPt
 	OutBones.resize(BoneCount);
 	for (UINT i = 0; i < BoneCount; i++)
 	{
-		OutBones[i] = new ThisClass();
+		OutBones[i] = new ModelBone();
 		OutBones[i]->Index = InReader->ReadUint();
 		OutBones[i]->Name = InReader->ReadString();
 		OutBones[i]->ParentIndex = InReader->ReadInt();
@@ -36,7 +36,7 @@ void ModelBone::ReadModelFile( const BinaryReader * InReader, vector<ThisClassPt
 
 	for (ThisClassPtr Bone : OutBones)
 	{
-		if (Bone->ParentIndex < 0) // root bone-node
+		if (Bone->IsRootBone() == true) // root bone-node
 			continue;;
 		
 		Bone->Parent = OutBones[Bone->ParentIndex];

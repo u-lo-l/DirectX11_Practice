@@ -71,4 +71,11 @@ private :
 	BoneDesc BoneData;
 	ConstantBuffer * BoneMatrixCBuffer;
 	IECB_t * ECB_BoneMatrixBuffer;
+	
+private :
+	// 애니메이션 정보가 담긴 SRV
+	ID3D11ShaderResourceView * ClipsSRV = nullptr;
+	ID3D11Texture2D * ClipsTexture = nullptr;
+	IESRV_t * ClipsSRVVar = nullptr;
+	
 };

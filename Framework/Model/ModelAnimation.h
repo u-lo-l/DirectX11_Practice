@@ -7,11 +7,12 @@ typedef struct ModelAnimationFrameQuat FrameDataQuat;
 
 class ModelAnimation
 {
-private :
+public:
 	static constexpr UINT MaxFrameLength = 512;
+private :
 	friend class Model;
 	struct KeyFrameData;
-	struct ClipTransform;
+	struct KeyFrameTFTable;
 	ModelAnimation() = default;
 	~ModelAnimation();
 private:
@@ -27,9 +28,10 @@ private:
 	vector<KeyFrameData *> KeyFrames;
 
 private :
-	ClipTransform * CalcClipTransform( const vector<ModelBone *> & InBone ) const;
+	KeyFrameTFTable *  CalcClipTransform( const vector<ModelBone *> & InBone) const;
 	
 private:
+	// 어떤 특정 Bone에 연결된 Key 정보들?
 	struct KeyFrameData
 	{
 		explicit KeyFrameData(int InBoneIndex = -1, string InBoneName = "");
@@ -42,11 +44,12 @@ private:
 		vector<FrameDataVec> Scales;
 		vector<FrameDataQuat> Rotations;
 	};
-	struct ClipTransform
+	
+	struct KeyFrameTFTable // ClipTransform
 	{
 		Matrix** TransformMats;
-		ClipTransform();
-		~ClipTransform();
+		KeyFrameTFTable();
+		~KeyFrameTFTable();
 	};
 };
 

@@ -14,6 +14,9 @@ Model::Model(const wstring & ModelFileName)
 
 Model::~Model()
 {
+	SAFE_RELEASE(ClipTexture);
+	SAFE_RELEASE(ClipSRV);
+	
 	for (const ModelBone * Bone : Bones)
 		SAFE_DELETE(Bone);
 	for (const ModelMesh * Mesh : Meshes)
