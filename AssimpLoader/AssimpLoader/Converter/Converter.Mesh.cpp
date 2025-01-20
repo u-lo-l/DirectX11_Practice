@@ -149,6 +149,12 @@ namespace Sdt
 
 	void Converter::ReadSkinData()
 	{
+		map<string, BoneData*> TempBoneTable;
+		for (BoneData * const Bone : this->Bones)
+		{
+			TempBoneTable.insert(make_pair(Bone->Name, Bone));
+		}
+		
 		const UINT MeshCount = Scene->mNumMeshes;
 		for (UINT MeshIndex = 0; MeshIndex < MeshCount; MeshIndex++)
 		{
@@ -159,23 +165,26 @@ namespace Sdt
 				continue;
 			}
 
+			// Mesh가 가지는 모든 aiBone에 대해서 
 			const UINT BoneCount = TargetMesh->mNumBones;
 			for (UINT boneIndex = 0; boneIndex < BoneCount; boneIndex++)
 			{
-				aiBone * Bone = TargetMesh->mBones[boneIndex];
-				const char * boneName = Bone->mName.C_Str();
+				const aiBone * Bone = TargetMesh->mBones[boneIndex];
+				const char * BoneName = Bone->mName.C_Str();
 
 				UINT TargetBoneIndex = 0;
-				// Bones : fbx 모델의 모든 Bone정보.
-				for (UINT j = 0; j < Bones.size(); j++)
+				const auto It = TempBoneTable.find(BoneName);
+				if (It != TempBoneTable.cend())
 				{
-					if (Bones[j]->Name == boneName)
-					{
-						TargetBoneIndex = j;
-						break;
-					}
+					TargetBoneIndex = It->second->Index;
+				}
+				else
+				{
+					break;
 				}
 
+				// aiBone은 어떤 Vertex에 대해 얼마나 weight를 줄 지 가지고 있다.
+				// 이 데이터를 MeshData를 저장한다.
 				for (UINT w = 0; w < Bone->mNumWeights; w++)
 				{
 					const UINT VertexId = Bone->mWeights[w].mVertexId; // ex) VertexId : 20978
