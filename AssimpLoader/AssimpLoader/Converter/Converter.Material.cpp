@@ -106,8 +106,7 @@ namespace Sdt
 			if (Texture->mHeight == 0) // jpeg나 png처럼 압축된 형식의 image
 			{
 				// const BinaryWriter * BinWriter = new BinaryWriter(String::ToWString(InSaveFolder + filename));
-				BinaryWriter * const BinWriter = new BinaryWriter();
-				BinWriter->Open(InSaveFolder + Filename);
+				BinaryWriter * const BinWriter = new BinaryWriter(InSaveFolder + Filename);
 				BinWriter->WriteByte(Texture->pcData, Texture->mWidth);
 				delete BinWriter;
 				

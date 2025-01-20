@@ -26,7 +26,7 @@ struct BoneData
 	string Name;
 	int Parent;
 	Matrix Transform;
-
+	// Bone이 어떤 Mesh를 변형시킬지, 즉 어떤 Mesh에 의해 참조되는지. 그 Mesh들에 접근하기 위한 Index 
 	vector<UINT> MeshIndices;
 };
 

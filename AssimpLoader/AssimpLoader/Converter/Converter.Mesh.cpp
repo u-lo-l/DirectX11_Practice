@@ -147,6 +147,10 @@ namespace Sdt
 		SAFE_DELETE(BinWriter);
 	}
 
+	/**
+	 *  Mesh는 여러 Node들에 의해서 참조될 수 있다.
+	 *  Skinning은 Bone에 의존하기 때문에, aiMesh가 가진 mBones만큼 데이터를 처리한다.
+	 */
 	void Converter::ReadSkinData()
 	{
 		map<string, BoneData*> TempBoneTable;

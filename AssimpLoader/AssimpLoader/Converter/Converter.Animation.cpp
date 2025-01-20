@@ -104,8 +104,6 @@ namespace Sdt
 	 */
 	void Converter::ConnectNodeWithBone( ClipData * InOutClipData, const aiNode * InNode,  const set<string> & InBoneNames_BinTree )
 	{
-		bool bFound = false;
-
 		// InClipData : 하나의 Animation.
 		// ReadClipData를 이용해서 Assimp가 읽은 aiScene데이터를 InClipData에 저장했다.
 		// Animation Clip의 NodeData는 특정 Bone에 대한 KeyFrameData (Pos, Rot, Scale)를 갖는다.

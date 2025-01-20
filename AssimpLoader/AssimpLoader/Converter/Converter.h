@@ -48,6 +48,7 @@ namespace Sdt
 
 		void ReadSkinData();
 	private:
+		// Scene의 모든 BoneNode정보.
 		vector<BoneData*> Bones;
 		vector<MeshData*> Meshes;
 #pragma endregion
@@ -63,11 +64,11 @@ namespace Sdt
 		// void ReadClips( vector<string> & OutClips ) const;
 		static ClipData * ReadClipData(const aiAnimation * InAnimation);
 		static void WriteClipData( const string & InSaveFileName, const ClipData * InClipData );
-		static void ReadPosKeys(vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim);
-		static void ReadScaleKeys(vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim);
-		static void ReadRotKeys(vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim);
+		static void ReadPosKeySequences(vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim);
+		static void ReadScaleKeySequences(vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim);
+		static void ReadRotKeySequences(vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim);
 
-		static void ConnectNodeWithBone(ClipData * InClipData, const aiNode * InNode);
+		static void ConnectNodeWithBone(ClipData * InOutClipData, const aiNode * InNode, const set<string> & InBoneNames_BinTree);
 #pragma endregion
 	};
 }
