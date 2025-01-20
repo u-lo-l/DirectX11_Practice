@@ -119,11 +119,7 @@ namespace Sdt
 			BinWriter->WriteString(BoneData->Name);
 			BinWriter->WriteInt(BoneData->Parent);
 			BinWriter->WriteMatrix(BoneData->Transform);
-
-			const UINT MeshIndexCount = BoneData->MeshIndices.size();
-			BinWriter->WriteUint(MeshIndexCount);
-			if (MeshIndexCount > 0)
-				BinWriter->WriteByte(&(BoneData->MeshIndices[0]), MeshIndexCount * sizeof(UINT));
+			BinWriter->WriteSTDVector<UINT>(BoneData->MeshIndices);
 			SAFE_DELETE(BoneData);
 		}
 
@@ -132,6 +128,8 @@ namespace Sdt
 		{
 			BinWriter->WriteString(MeshData->Name);
 			BinWriter->WriteString(MeshData->MaterialName);
+			BinWriter->WriteSTDVector<MeshData::VertexType>(MeshData->Vertices);
+			BinWriter->WriteSTDVector<UINT>(MeshData->Indices);
 
 			const UINT VerticesCount = MeshData->Vertices.size();
 			BinWriter->WriteUint(VerticesCount);

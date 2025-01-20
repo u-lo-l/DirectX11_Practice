@@ -161,18 +161,9 @@ namespace Sdt
 		for (const ClipNodeData * const clipNodeData : InClipData->NodeDatas)
 		{
 			BinWriter->WriteString(clipNodeData->BoneName);
-
-			const UINT PosKeyCount = clipNodeData->PosKeys.size();
-			BinWriter->WriteUint(PosKeyCount);
-			BinWriter->WriteByte(&clipNodeData->PosKeys[0], sizeof(FrameDataVec) * PosKeyCount);
-
-			const UINT ScaleKeyCount = clipNodeData->ScaleKeys.size();
-			BinWriter->WriteUint(ScaleKeyCount);
-			BinWriter->WriteByte(&clipNodeData->ScaleKeys[0], sizeof(FrameDataVec) * ScaleKeyCount);
-
-			const UINT RotKeyCount = clipNodeData->RotKeys.size();
-			BinWriter->WriteUint(RotKeyCount);
-			BinWriter->WriteByte(&clipNodeData->RotKeys[0], sizeof(FrameDataQuat) * RotKeyCount);
+			BinWriter->WriteSTDVector<FrameDataVec>(clipNodeData->PosKeys);
+			BinWriter->WriteSTDVector<FrameDataVec>(clipNodeData->ScaleKeys);
+			BinWriter->WriteSTDVector<FrameDataQuat>(clipNodeData->RotKeys);
 		}
 
 		SAFE_DELETE(BinWriter);
