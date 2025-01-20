@@ -45,6 +45,10 @@ Vector& Vector::operator=( const Vector & v )
 	return *this;
 }
 
+Vector::Vector( const aiVector3D & v )
+	: X(v.x), Y(v.y), Z(v.z)
+{
+}
 
 Vector Vector::operator-(void)
 {

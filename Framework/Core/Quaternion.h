@@ -2,6 +2,7 @@
 
 class Vector;
 class Matrix;
+#include <assimp/quaternion.h>
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief 사원수
@@ -11,9 +12,12 @@ class Quaternion
 public:
 	Quaternion();
 	Quaternion(float x, float y, float z, float w);
-	Quaternion(Vector vectorPart, float scalarPart);
+	Quaternion( const Vector & vectorPart, float scalarPart);
 	Quaternion(const Quaternion& Other);
 	Quaternion& operator=(const Quaternion& Other);
+#ifdef AI_QUATERNION_H_INC
+	explicit Quaternion(const aiQuaternion & aiQuat);
+#endif
 	
 	Quaternion operator -();
 	

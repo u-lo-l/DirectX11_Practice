@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <assimp/vector3.h>
 
 class Matrix;
 class Quaternion;
@@ -11,6 +12,8 @@ public:
 	Vector(float x, float y, float z);
 	Vector(const Vector& v);
 	Vector& operator=(const Vector& v);
+
+	explicit Vector(const aiVector3D & v);
 	
 	Vector operator -();
 

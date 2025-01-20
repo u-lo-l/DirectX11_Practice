@@ -43,7 +43,7 @@ Quaternion::Quaternion(float x, float y, float z, float w)
 ///@param vectorPart : ����(XYZ)
 ///@param scalarPart : ��(W)
 //////////////////////////////////////////////////////////////////////////
-Quaternion::Quaternion(Vector vectorPart, float scalarPart)
+Quaternion::Quaternion( const Vector & vectorPart, float scalarPart)
 {
 	X = vectorPart.X;
 	Y = vectorPart.Y;
@@ -65,6 +65,14 @@ Quaternion & Quaternion::operator=( const Quaternion & Other )
 	Z = Other.Z;
 	W = Other.W;
 	return *this;
+}
+
+Quaternion::Quaternion( const aiQuaternion & aiQuat )
+{
+	X = aiQuat.x;
+	Y = aiQuat.y;
+	Z = aiQuat.z;
+	W = aiQuat.w;
 }
 
 //////////////////////////////////////////////////////////////////////////
