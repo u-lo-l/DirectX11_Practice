@@ -1,5 +1,6 @@
 #pragma once
-#include "Buffers.h"
+
+class ConstantDataBinder;
 
 class Context
 {
@@ -31,4 +32,6 @@ public:
 private:
 	Camera * MainCamera;
 	D3D11_VIEWPORT * Viewport;
+public:
+	ConstantDataBinder * CBBinder = nullptr;
 };

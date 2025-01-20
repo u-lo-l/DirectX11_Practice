@@ -19,8 +19,8 @@ ModelMesh::~ModelMesh()
 
 void ModelMesh::Tick()
 {
-	if (CBBinder != nullptr)
-		CBBinder->Tick();
+	// if (CBBinder != nullptr)
+	// 	CBBinder->Tick();
 
 	if (bBoneIndexChanged == true)
 	{
@@ -40,7 +40,7 @@ void ModelMesh::Render()
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();
-	CBBinder->BindToGPU();
+	// CBBinder->BindToGPU();
 	
 	BoneMatrixCBuffer->BindToGPU();
 	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);

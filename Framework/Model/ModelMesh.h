@@ -56,7 +56,7 @@ private :
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-	ConstantDataBinder * CBBinder = nullptr;
+	// ConstantDataBinder * CBBinder = nullptr;
 
 	/*
 	 * TODO : Mesh가 되게 많은데, Bone정보를 갖는건 이해하겠음.
