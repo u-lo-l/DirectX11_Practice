@@ -92,6 +92,7 @@ void BinaryWriter::WriteString( const string & InData ) const
 void BinaryWriter::WriteMatrix( const Matrix & InMatrix ) const
 {
 	DWORD BytesWritten = 0;
+	
 	const float * const MatrixInRow = InMatrix;
 	const bool Result = WriteFile(FileHandle, MatrixInRow, sizeof(Matrix), &BytesWritten, nullptr);
 	ASSERT((Result == true) && (BytesWritten == sizeof(Matrix)), "[BinaryWriter] Failed to write to file to Matrix");

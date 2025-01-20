@@ -16,10 +16,24 @@ public:
 	void WriteFloat(float InData) const;
 	void WriteString(const string & InData) const;
 	void WriteMatrix(const Matrix & InMatrix) const;
+	template<typename T>
+	void WriteSTDVector(const vector<T>& InVector) const;
 	void WriteByte( const void * InData, UINT InDataSize) const;
+
 private:
 	HANDLE FileHandle;
 };
+
+template <typename T>
+void BinaryWriter::WriteSTDVector( const vector<T> & InVector ) const
+{
+	const UINT DataCount = InVector.size();
+	const UINT DataStride = sizeof(T);
+	const UINT DataSize = DataCount * DataStride;
+	WriteUint(DataCount);
+	if (DataSize > 0)
+		WriteByte(InVector.data(), DataSize);
+}
 
 /*-----------------------------------------------------------------------------*/
 
