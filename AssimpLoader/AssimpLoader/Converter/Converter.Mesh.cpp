@@ -131,15 +131,6 @@ namespace Sdt
 			BinWriter->WriteSTDVector<MeshData::VertexType>(MeshData->Vertices);
 			BinWriter->WriteSTDVector<UINT>(MeshData->Indices);
 
-			const UINT VerticesCount = MeshData->Vertices.size();
-			BinWriter->WriteUint(VerticesCount);
-			if (VerticesCount > 0)
-				BinWriter->WriteByte(&(MeshData->Vertices[0]), VerticesCount * sizeof(MeshData::VertexType));
-
-			const UINT IndicesCount = MeshData->Indices.size();
-			BinWriter->WriteUint(IndicesCount);
-			if (IndicesCount > 0)
-				BinWriter->WriteByte(&(MeshData->Indices[0]), IndicesCount * sizeof(UINT));	
 			SAFE_DELETE(MeshData);
 		}
 		
