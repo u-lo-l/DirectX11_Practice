@@ -251,6 +251,16 @@ Matrix::operator float*()
 	return M;
 }
 
+void Matrix::Display() const
+{
+	printf("==Matrix  Display==\n");
+	printf("%.2f %.2f %.2f %.2f\n", M11, M12, M13, M14);
+	printf("%.2f %.2f %.2f %.2f\n", M21, M22, M23, M24);
+	printf("%.2f %.2f %.2f %.2f\n", M31, M32, M33, M34);
+	printf("%.2f %.2f %.2f %.2f\n", M41, M42, M43, M44);
+	printf("===================\n");
+}
+
 std::wstring Matrix::ToWString()
 {
 	std::wstring Temp = ToStringRow1();
@@ -919,31 +929,31 @@ Matrix Matrix::CreateWorld(Vector position, Vector forward, Vector up)
 
 Matrix Matrix::CreateFromQuaternion(Quaternion quaternion)
 {
-	float x = quaternion.X * quaternion.X;
-	float y = quaternion.Y * quaternion.Y;
-	float z = quaternion.Z * quaternion.Z;
-	float value = quaternion.X * quaternion.Y;
-	float z1 = quaternion.Z * quaternion.W;
-	float value1 = quaternion.Z * quaternion.X;
-	float y1 = quaternion.Y * quaternion.W;
-	float y2 = quaternion.Y * quaternion.Z;
-	float x1 = quaternion.X * quaternion.W;
+	float xx = quaternion.X * quaternion.X;
+	float yy = quaternion.Y * quaternion.Y;
+	float zz = quaternion.Z * quaternion.Z;
+	float xy = quaternion.X * quaternion.Y;
+	float zw = quaternion.Z * quaternion.W;
+	float zx = quaternion.Z * quaternion.X;
+	float yw = quaternion.Y * quaternion.W;
+	float yz = quaternion.Y * quaternion.Z;
+	float xw = quaternion.X * quaternion.W;
 
 
 	Matrix matrix;
-	matrix.M11 = 1.0f - 2.0f * (y + z);
-	matrix.M12 = 2.0f * (value + z1);
-	matrix.M13 = 2.0f * (value1 - y1);
+	matrix.M11 = 1.0f - 2.0f * (yy + zz);
+	matrix.M12 = 2.0f * (xy + zw);
+	matrix.M13 = 2.0f * (zx - yw);
 	matrix.M14 = 0.0f;
 
-	matrix.M21 = 2.0f * (value - z1);
-	matrix.M22 = 1.0f - 2.0f * (z + x);
-	matrix.M23 = 2.0f * (y2 + x1);
+	matrix.M21 = 2.0f * (xy - zw);
+	matrix.M22 = 1.0f - 2.0f * (zz + xx);
+	matrix.M23 = 2.0f * (yz + xw);
 	matrix.M24 = 0.0f;
 
-	matrix.M31 = 2.0f * (value1 + y1);
-	matrix.M32 = 2.0f * (y2 - x1);
-	matrix.M33 = 1.0f - 2.0f * (y + x);
+	matrix.M31 = 2.0f * (zx + yw);
+	matrix.M32 = 2.0f * (yz - xw);
+	matrix.M33 = 1.0f - 2.0f * (yy + xx);
 	matrix.M34 = 0.0f;
 
 	matrix.M41 = 0.0f;

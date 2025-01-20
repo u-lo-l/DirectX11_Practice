@@ -4,7 +4,7 @@
 BufferBase::~BufferBase()
 {
 #ifdef _DEBUG
-	printf("%s : Buffer Safely Released\n", BufferType.c_str());
+	printf("%s : Buffer Safely Released : [%s]\n", BufferType.c_str(), BufferInfo.c_str());
 #endif
 	SAFE_RELEASE(Buffer);
 }
@@ -23,6 +23,7 @@ VertexBuffer::VertexBuffer(
 	Stride = InStride;
 #ifdef _DEBUG
 	BufferType = "Vertex";
+	BufferInfo = "";
 	printf("%s Buffer size %d Created\n", BufferType.c_str(), Count * Stride);
 #endif
 	
@@ -72,6 +73,7 @@ IndexBuffer::IndexBuffer(UINT * InData,	UINT InCount)
 	Stride = sizeof(UINT);
 #ifdef _DEBUG
 	BufferType = "Index";
+	BufferInfo = "";
 	printf("%s Buffer size %d Created\n", BufferType.c_str(), Count * Stride);
 #endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
@@ -96,11 +98,12 @@ void IndexBuffer::BindToGPU()
 /*=============================================================================*/
 
 ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize)
- : DataSize(InDataSize), DataName(std::move(InDataName))
+ : DataSize(InDataSize), DataName(move(InDataName))
 {
 	Data = InData;
 #ifdef _DEBUG
 	BufferType = "Constant";
+	BufferInfo = move(DataName);
 	printf("%s Buffer size %d for %s Created\n", BufferType.c_str(), InDataSize, DataName.c_str());
 #endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
@@ -117,17 +120,23 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
 }
 
 /**
- * D3D11_MAPPED_SUBRESOURCE : DX에서 버퍼에 접근하기 위한 매핑정보를 저장하는 구조체
- * Map : GPU에 있는 리소스를 CPU가 수정할 수 있도록 매핑함. 따라서 BufferDesc.Usage = D3D11_USAGE_DYNAMIC로 설정함.
- * Unmap : Unmap 해줘야 GPU에서 다시 리소스를 사용할 수 있다.
+ * <code>D3D11_MAPPED_SUBRESOURCE</code> : DirectX에서 버퍼에 접근하기 위한 매핑 정보를 저장하는 구조체
+ * 
+ * Map : GPU 리소스를 CPU가 수정할 수 있도록 매핑.
+ *       - <code>BufferDesc.Usage = D3D11_USAGE_DYNAMIC</code>로 설정된 리소스에만 사용 가능.
+ *       - <code>D3D11_MAP_WRITE_DISCARD</code>: 기존 데이터를 버리고 새 데이터를 쓰는 방식. 동기화를 방지하여 성능 최적화.
+ * 
+ * Unmap : GPU가 다시 리소스를 사용할 수 있도록 매핑을 해제.
+ *         - 반드시 Unmap을 호출해야 GPU가 데이터를 정상적으로 읽을 수 있음.
  */
 void ConstantBuffer::BindToGPU()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
 	D3D11_MAPPED_SUBRESOURCE Subresource;
+	// D3D11_MAP_WRITE_DISCARD : 기존 데이터를 버리고 새 데이터를 쓸 때 사용. GPU와 CPU 간 동기화를 방지하고 성능을 최적화하기 위해 기존 데이터를 무시.
 	CHECK(DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource) >= 0);
-	memcpy(Subresource.pData, Data, DataSize);
+	memcpy(Subresource.pData, this->Data, this->DataSize);
 	DeviceContext->Unmap(Buffer, 0);
 }
 

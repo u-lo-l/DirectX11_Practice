@@ -7,7 +7,8 @@
 namespace Sdt
 {
 	const string ShaderName = "20_ModelVertex2.fx";
-	const string ShaderName2= "21_ModelVertex3.fx";
+	const string ShaderForBoneIndicatorSphere= "21_ModelVertex3.fx";
+	const string ShaderForAnimation = "22_Animation.fx";
 	
 	void ExportFile::Initialize()
 	{
@@ -52,7 +53,7 @@ namespace Sdt
 		Converter * converter = nullptr;
 		converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Airplane/Airplane.fbx");
-		converter->ExportMaterial(L"Airplane/Airplane", ShaderName, true);
+		converter->ExportMaterial(L"Airplane/Airplane", ShaderForAnimation, true);
 		converter->ExportMesh(L"Airplane/Airplane");
 		
 		MakeModelInfoFile(L"Airplane");
@@ -63,7 +64,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Cube/Cube.fbx");
-		converter->ExportMaterial(L"Cube/Cube", ShaderName, true);
+		converter->ExportMaterial(L"Cube/Cube", ShaderForAnimation, true);
 		converter->ExportMesh(L"Cube/Cube");
 		
 		MakeModelInfoFile(L"Cube");
@@ -74,7 +75,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Sphere/Sphere.fbx");
-		converter->ExportMaterial(L"Sphere/Sphere", ShaderName2, true);
+		converter->ExportMaterial(L"Sphere/Sphere", ShaderForBoneIndicatorSphere, true);
 		converter->ExportMesh(L"Sphere/Sphere");
 		MakeModelInfoFile(L"Sphere");
 		SAFE_DELETE(converter);
@@ -84,7 +85,7 @@ namespace Sdt
 	{
 		Converter * converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Shannon/Shannon.fbx");
-		converter->ExportMaterial(L"Shannon/Shannon", ShaderName, true);
+		converter->ExportMaterial(L"Shannon/Shannon", ShaderForAnimation, true);
 		converter->ExportMesh(L"Shannon/Shannon");
 
 		converter->ReadAiSceneFromFile(L"Shannon/Idle.fbx");
@@ -98,7 +99,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Mousey/Mousey.fbx");
-		converter->ExportMaterial(L"Mousey/Mousey", ShaderName, true);
+		converter->ExportMaterial(L"Mousey/Mousey", ShaderForAnimation, true);
 		converter->ExportMesh(L"Mousey/Mousey");
 		MakeModelInfoFile(L"Mousey");
 		SAFE_DELETE(converter);
@@ -108,7 +109,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadAiSceneFromFile(L"Manny/Manny.fbx");
-		converter->ExportMaterial(L"Manny/Manny", ShaderName, true);
+		converter->ExportMaterial(L"Manny/Manny", ShaderForAnimation, true);
 		converter->ExportMesh(L"Manny/Manny");
 		MakeModelInfoFile(L"Manny");
 		SAFE_DELETE(converter);
@@ -118,7 +119,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadAiSceneFromFile(L"YBot/YBot.fbx");
-		converter->ExportMaterial(L"YBot/YBot", ShaderName, true);
+		converter->ExportMaterial(L"YBot/YBot", ShaderForAnimation, true);
 		converter->ExportMesh(L"YBot/YBot");
 		MakeModelInfoFile(L"YBot");
 		SAFE_DELETE(converter);
@@ -128,7 +129,7 @@ namespace Sdt
 	{
 		Converter* converter = new Converter();
 		converter->ReadAiSceneFromFile(L"XYBot/XYBot.fbx");
-		converter->ExportMaterial(L"XYBot/XYBot", ShaderName, true);
+		converter->ExportMaterial(L"XYBot/XYBot", ShaderForAnimation, true);
 		converter->ExportMesh(L"XYBot/XYBot");
 		MakeModelInfoFile(L"XYBot");
 		SAFE_DELETE(converter);

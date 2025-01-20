@@ -7,7 +7,7 @@ namespace Sdt
 	void Converter::ExportMesh( const wstring & InSaveFileName )
 	{
 		wstring FullFileName = W_MODEL_PATH + InSaveFileName + L".mesh";
-		ReadBoneData(Scene->mRootNode, -1, -1);
+		ReadBoneData(Scene->mRootNode, 0, -1);
 		ReadMeshData();
 		ReadSkinData();
 		
@@ -22,15 +22,14 @@ namespace Sdt
 		Bone->Name = InNode->mName.C_Str();
 		
 		Bone->Transform = InNode->mTransformation;
+		// row-major(Assimp) to colum-major(DX)
 		Bone->Transform.Transpose();
 
-		Matrix ParentMatrix = Matrix::Identity;
 		if (InParent >= 0)
 		{
-			// 이미 Transpose된 부모 bone의 local-coord Transform.
-			ParentMatrix = Bones[InParent]->Transform;
+			// local-coord to world-coord
+			Bone->Transform = Bone->Transform * Bones[InParent]->Transform;
 		}
-		Bone->Transform = Bone->Transform * ParentMatrix;
 		Bones.push_back(Bone);
 
 
@@ -153,22 +152,23 @@ namespace Sdt
 	void Converter::ReadSkinData()
 	{
 		const UINT MeshCount = Scene->mNumMeshes;
-		for (UINT i = 0; i < MeshCount; i++)
+		for (UINT MeshIndex = 0; MeshIndex < MeshCount; MeshIndex++)
 		{
-			aiMesh * const mesh = Scene->mMeshes[i];
+			const aiMesh * const TargetMesh = Scene->mMeshes[MeshIndex];
 			// Bone이아니다 -> 스키닝이 될 아이가 아니다.
-			if (mesh->HasBones() == false) 
+			if (TargetMesh->HasBones() == false) 
 			{
 				continue;
 			}
 
-			const UINT BoneCount = mesh->mNumBones;
+			const UINT BoneCount = TargetMesh->mNumBones;
 			for (UINT boneIndex = 0; boneIndex < BoneCount; boneIndex++)
 			{
-				aiBone * Bone = mesh->mBones[boneIndex];
+				aiBone * Bone = TargetMesh->mBones[boneIndex];
 				const char * boneName = Bone->mName.C_Str();
 
 				UINT TargetBoneIndex = 0;
+				// Bones : fbx 모델의 모든 Bone정보.
 				for (UINT j = 0; j < Bones.size(); j++)
 				{
 					if (Bones[j]->Name == boneName)
@@ -180,19 +180,16 @@ namespace Sdt
 
 				for (UINT w = 0; w < Bone->mNumWeights; w++)
 				{
-					const UINT VertexId = Bone->mWeights[w].mVertexId;
-					const float Weight = Bone->mWeights[w].mWeight;
+					const UINT VertexId = Bone->mWeights[w].mVertexId; // ex) VertexId : 20978
+					const float Weight = Bone->mWeights[w].mWeight; // ex) 20978번 Vertex에 이 Bone이 미치는 영향력이 0.025f다.
 
-					MeshData * meshdata =  this->Meshes[i];
+					MeshData * const meshdata =  this->Meshes[MeshIndex];
 					Vector4 & Indices = meshdata->Vertices[VertexId].Indices;
 					Vector4 & Weights = meshdata->Vertices[VertexId].Weights;
 
 					// 최대 영향을 받을거 4개다.
-
-					UINT v = 0;
-					for (; v < 4; v++)
+					for (UINT v = 0; v < 4; v++)
 					{
-						// 
 						if (Indices.V[v] <= 0)
 						{
 							Indices.V[v] = static_cast<float>(TargetBoneIndex);
@@ -202,6 +199,21 @@ namespace Sdt
 					}// for(V)
 				}//for(w)
 			} //for(boneIndex)
-		}//for(i)
+		}//for(MeshIndex)
+
+		// for (UINT MeshIndex = 0; MeshIndex < MeshCount; MeshIndex++)
+		// {
+		// 	const aiMesh * const TargetMesh = Scene->mMeshes[MeshIndex];
+		// 	const UINT BoneCount = TargetMesh->mNumBones;
+		// 	for (UINT BoneIndex = 0; BoneIndex <BoneCount; BoneIndex++)
+		// 	{
+		// 		aiBone * Bone = TargetMesh->mBones[BoneIndex];
+		// 		for (UINT w = 0; w < Bone->mNumWeights; w++)
+		// 		{
+		// 			MeshData * const meshdata =  this->Meshes[MeshIndex];
+		// 			Vector4 & Weights = meshdata->Vertices[VertexId].Weights;
+		// 		}
+		// 	}
+		// }
 	}
 }

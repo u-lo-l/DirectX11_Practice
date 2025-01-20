@@ -49,7 +49,8 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 
-	std::wstring ToString();
+	std::wstring ToWString() const;
+	std::string ToString() const;
 
 	float Length();
 	float LengthSquared();

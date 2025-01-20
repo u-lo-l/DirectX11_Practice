@@ -42,19 +42,19 @@ struct MeshData
 	vector<UINT> Indices;
 };
 
-// typedef struct ClipNodeVectorData
-// {
-// 	float Time;
-// 	Vector Values;
-// } KeyVecData;
-//
-// typedef struct ClipNodeQuaternionData
-// {
-// 	float Time;
-// 	Quaternion Values;
-// } KeyQuatData;
-
-// Channel data
+/**
+ *  @breif
+ *  KeyFrameAnimation 내에서 특정 Bone에 대한 KeyFrameData를 저장하는 구조체.
+ *  @property 
+ *  BoneName  : 어떤 Bone에 적용되는 Animation인지
+ *  PosKeys   : 위치 정보
+ *  ScaleKeys : 크기 정보
+ *  RotKeys   : 회전 정보
+ *  @details
+ *  애니메이션 은 모든 Frame에 대해 데이터를 저장하지 않는다.<br/>
+ *  그래서 ClipData의 Duration보다 Pos, Scale, Rot데이터의 vector의 크기가 작을 수 있다.<br/>
+ *  대신 중간중간 빈 부분은 보간해주어 애니메이션을 표현한다.
+ */
 struct ClipNodeData
 {
 	string BoneName;
@@ -63,6 +63,13 @@ struct ClipNodeData
 	vector<FrameDataQuat> RotKeys;
 };
 
+/**
+ *  하나의 KeyFrameAnimation Clip에 대한 정보.
+ *  Name : Animation 이름
+ *  Duration : 전체 Frame수 - 1 : 마지막 프레임의 번호가 저장된다.
+ *  TicksPerSecond : 애니메이션의 FPS
+ *  NodeDatas : 
+ */
 struct ClipData
 {
 	string Name;

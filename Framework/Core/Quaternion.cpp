@@ -297,7 +297,7 @@ void Quaternion::operator/=(const Quaternion& quaternion2)
 ///@brief ���ڿ��� ��ȯ
 ///@param ���ڿ�
 //////////////////////////////////////////////////////////////////////////
-std::wstring Quaternion::ToString()
+std::wstring Quaternion::ToWString() const
 {
 	std::wstring temp = L"";
 
@@ -308,6 +308,19 @@ std::wstring Quaternion::ToString()
 
 	return temp;
 }
+
+std::string Quaternion::ToString() const
+{
+	std::string temp;
+
+	temp += "X:" + std::to_string(X);
+	temp += ",Y:" + std::to_string(Y);
+	temp += ",Z:" + std::to_string(Z);
+	temp += ",W:" + std::to_string(W);
+
+	return temp;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////

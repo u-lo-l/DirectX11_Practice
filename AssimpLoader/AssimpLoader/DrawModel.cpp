@@ -42,9 +42,7 @@ namespace Sdt
 		ImGui::SliderInt("ShowBone", &ShowBone, 0, 1);
 
 		if (prevIndex != ModelIndex)
-		{
 			SetBoneIndicators();
-		}
 		Models[ModelIndex]->Tick();
 		Models[ModelIndex]->SetPass(Pass);
 	}
