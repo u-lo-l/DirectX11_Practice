@@ -78,18 +78,11 @@ namespace Sdt
 		Bone->Index = InIndex;
 		Bone->Parent = InParent;
 		Bone->Name = InNode->mName.C_Str();
-		
 		Bone->Transform = InNode->mTransformation;
-		// row-major(Assimp) to colum-major(DX)
-		Bone->Transform.Transpose();
-
-		if (InParent >= 0)
-		{
-			// local-coord to world-coord
-			Bone->Transform = Bone->Transform * Bones[InParent]->Transform;
-		}
+		Bone->Transform.Transpose(); // row-major(Assimp) to colum-major(DX)
+		if (Bone->Parent >= 0)
+			Bone->Transform = Bone->Transform * Bones[Bone->Parent]->Transform;
 		Bones.push_back(Bone);
-
 
 		const UINT MeshCount = InNode->mNumMeshes;
 		Bone->MeshIndices.reserve(MeshCount);
@@ -180,7 +173,8 @@ namespace Sdt
 			BinWriter->WriteSTDVector<UINT>(BoneData->MeshIndices);
 			SAFE_DELETE(BoneData);
 		}
-
+		Bones.clear();
+		
 		BinWriter->WriteUint(Meshes.size());
 		for (const MeshData * MeshData : Meshes)
 		{
@@ -191,6 +185,7 @@ namespace Sdt
 
 			SAFE_DELETE(MeshData);
 		}
+		Meshes.clear();
 		
 		BinWriter->Close();
 		SAFE_DELETE(BinWriter);
@@ -233,10 +228,12 @@ namespace Sdt
 				{
 					const UINT VertexId = Bone->mWeights[w].mVertexId; // ex) VertexId : 20978
 					const float Weight = Bone->mWeights[w].mWeight; // ex) 20978번 Vertex에 이 Bone이 미치는 영향력이 0.025f다.
-
-					MeshData * const meshdata =  this->Meshes[MeshIndex];
-					Vector4 & Indices = meshdata->Vertices[VertexId].Indices;
-					Vector4 & Weights = meshdata->Vertices[VertexId].Weights;
+					constexpr float WeightThreshold = 0.015f; 
+					if (Weight < WeightThreshold)
+						continue;
+					MeshData::VertexType & TargetVertex = this->Meshes[MeshIndex]->Vertices[VertexId];
+					Vector4 & Indices = TargetVertex.Indices;
+					Vector4 & Weights = TargetVertex.Weights;
 
 					// 최대 영향을 받을거 4개다.
 					for (UINT v = 0; v < 4; v++)
