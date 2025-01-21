@@ -14,3 +14,9 @@ cbuffer CB_Context
 
 	float3 LightDirection;
 }
+
+cbuffer CB_Frame
+{
+    uint frame;
+    float3 padding;
+};

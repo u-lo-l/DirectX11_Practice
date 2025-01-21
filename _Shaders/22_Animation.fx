@@ -55,7 +55,7 @@ void SetAnimationWorld(inout matrix world, VertexInput input)
         }
     }
     uint Clip = 0;
-    uint CurrentFrame = 60;
+    uint CurrentFrame = frame;
 
     float4 ClipTransform[4];
 
