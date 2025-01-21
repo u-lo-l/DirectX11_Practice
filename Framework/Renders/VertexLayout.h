@@ -74,6 +74,6 @@ typedef struct VertexTextureColorNormalTangentBlend
 	Color Color;
 	Vector Normal;
 	Vector Tangent;
-	Vector4 Indices {-1, }; // 가중치를 부여할 BoneIndex. 이 Vertex는 Indices[i] 번 째 Bone에 의해서 Weight[i]만큼 영향받는다.
+	Vector4 Indices {0, }; // 가중치를 부여할 BoneIndex. 이 Vertex는 Indices[i] 번 째 Bone에 의해서 Weight[i]만큼 영향받는다.
 	Vector4 Weights {0, };
 } ModelVertex;
