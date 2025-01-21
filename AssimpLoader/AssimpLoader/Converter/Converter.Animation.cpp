@@ -103,11 +103,20 @@ namespace Sdt
 		// Matching Bone Not Found
 		if (InBoneNames_BinTree.find(BoneName) == InBoneNames_BinTree.cend())
 		{
+
+			Matrix Mat = InNode->mTransformation;
+			Mat.Transpose();
+
+			Vector S, T;
+			Quaternion R;
+			Mat.Decompose(S, R, T);
+
+			// 어차피 다 같은거 들어가는데, 길이 1이여도 똑같음. -> for문 제거
 			ClipNodeData * NodeData = new ClipNodeData();
 			NodeData->BoneName = move(BoneName);
-			NodeData->PosKeys.emplace_back(0.f, Vector(0,0,0));
-			NodeData->ScaleKeys.emplace_back(0.f, Vector(1,1,1));
-			NodeData->RotKeys.emplace_back(0.f, Quaternion(1,0,0,0));
+			NodeData->PosKeys.emplace_back(0.f, T);
+			NodeData->ScaleKeys.emplace_back(0.f, S);
+			NodeData->RotKeys.emplace_back(0.f, R);
 			InOutClipData->NodeDatas.push_back(NodeData);
 		}
 		
