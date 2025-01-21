@@ -110,8 +110,12 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
  *   즉 <b>KeyFrame</b>에 작성된 <b>BoneB</b>의 <b>Local-Transform(A_T_B)</b>을 <b>World-Transform(W_T_B)</b>으로 변환하기 위해선, <b>BoneA</b>에 대한 <b>World-Transform(W_T_A)</b>이 필요해.<br/>
  *   <b>W_T_B = A_T_B * AtoWorld_Mat = A_T_B * W_T_A</b>가 된다.
  */
+constexpr int TargetFrameToWatch = 10;
+
 ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vector<ModelBone *> & InBone) const
 {
+	vector<Matrix> TempHipAnimMatrix;
+	
 	KeyFrameTFTable * TransformTableToReturn = new KeyFrameTFTable();
 	
 	// 길이 Frame'0'부터 Frame 'Duration'까지 Animation Length가 Duration + 1인 애니메이션의 각 프레임에 대해서 반복한다.  
@@ -141,7 +145,7 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vecto
 																			});
 			if (It == KeyFrames.cend())
 				continue;
-			const KeyFrameData * const TargetKeyFrameData = *It;
+			const KeyFrameData * const TargetKeyFrameData = It->second;
 			
 			// 현재 Bone에 대한 NodeData를 찾았다면 해당 Bone의 F번쨰 프레임의 TRS를 가져온다.
 			const Vector & Pos     = TargetKeyFrameData->Positions.size() == 1 ? TargetKeyFrameData->Positions[0].Value : TargetKeyFrameData->Positions[FrameNum].Value;
@@ -151,6 +155,7 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vecto
 			Matrix S = Matrix::CreateScale(Scale);
 			Matrix R = Matrix::CreateFromQuaternion(Rot);
 			Matrix T = Matrix::CreateTranslation(Pos);
+			// 여기서 만들어진 AnimationMatrix는 ParentNode의 Local-Coordinate가 기준이다.
 			Matrix AnimationMatrix = S * R * T; // A_T_B : SRT of B from A-coordinate
  
 			if (TargetBone->IsRootBone() == true)
@@ -162,8 +167,57 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vecto
 				const Matrix & ParentMat = BoneMatrixUpdatingArr[TargetBone->ParentIndex]; // W_T_A. 이미 업데이트 된 부모노드의 World-Transform.
 				BoneMatrixUpdatingArr[BoneNum] =  AnimationMatrix * ParentMat;// W_T_B = A_T_B * W_T_A
 			}
+			if (TargetBone->Name == "mixamorig5:Hips")
+			{
+				TempHipAnimMatrix.push_back(BoneMatrixUpdatingArr[BoneNum]);
+			}
+#ifdef DO_DEBUG
+			if (CurrentFrame < TargetFrameToWatch && (TargetBone->Name == "mixamorig5:Spine1" || TargetBone->Name == "mixamorig5:Hips"))
+			{
+				printf("===========[%s | Watching Frame : %d for %s]==============\n", __FUNCTION__, TargetFrameToWatch, TargetBone->Name.c_str());
+				printf("CurrentFrame = %d\n", CurrentFrame);
+				printf("BoneIndex = %d\n", TargetBone->Index);
+				printf("BoneName = %s\n", TargetBone->Name.c_str());
+				printf("Bone Transform\n");
+				Vector _T;
+				Quaternion _R;
+				Vector _S;
+				TargetBone->Transform.Decompose(_S, _R, _T);
+				printf("\tT : %s\n", _T.ToString().c_str());
+				printf("\tR : %s\n", _R.ToString().c_str());
+				printf("\tS : %s\n", _S.ToString().c_str());
+				printf("Anim Transform\n");
+				printf("\tT : %s\n", Pos.ToString().c_str());
+				printf("\tR : %s\n", Rot.ToString().c_str());
+				printf("\tS : %s\n", Scale.ToString().c_str());
+				printf("============================Final Mat=================================\n");
+				BoneMatrixUpdatingArr[BoneNum].Decompose(_S, _R, _T);
+				printf("\tT : %s\n", _T.ToString().c_str());
+				printf("\tR : %s\n", _R.ToString().c_str());
+				printf("\tS : %s\n", _S.ToString().c_str());
+			}
+#endif
 		} // for(b)
 	} // for(f)
+
+	for (UINT i = 0; i < 10; i++)
+	{
+		printf("==========[FRAME: %d]=============\n", i);
+		TempHipAnimMatrix[i].Display();
+		if (i == 0) continue;
+		printf("==========[DEATA]=============\n", i);
+		Vector PrevT;
+		Quaternion PrevR;
+		Vector PrevS;
+		TempHipAnimMatrix[i - 1].Decompose(PrevS, PrevR, PrevT);
+		Vector NewT;
+		Quaternion NewR;
+		Vector NewS;
+		TempHipAnimMatrix[i].Decompose(NewS, NewR, NewT);
+		printf("\tT : %s : %s->%s\n", (NewT-PrevT).ToString().c_str() ,PrevT.ToString().c_str(), NewT.ToString().c_str());
+		printf("\tR : %s->%s\n", PrevR.ToString().c_str(), NewR.ToString().c_str());
+		printf("\tS : %s->%s\n", PrevS.ToString().c_str(), NewS.ToString().c_str());
+	}
 	return TransformTableToReturn;
 }
 
