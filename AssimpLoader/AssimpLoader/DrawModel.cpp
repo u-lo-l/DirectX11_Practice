@@ -75,7 +75,7 @@ namespace Sdt
 			Matrix Mat = model->GetBoneTransforms()[i];
 			
 			Vector v = Vector::Zero;
-			v = Vector::TransformCoord(v, Mat);
+			v = Vector::TransformCoord(v, Matrix::Invert(Mat));
 		
 			Positions.push_back(v);
 		}

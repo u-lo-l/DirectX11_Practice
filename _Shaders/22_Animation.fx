@@ -4,7 +4,7 @@
 #define MAX_MODEL_TRANSFORM 256
 cbuffer CB_ModelBones
 {
-    matrix BoneTransforms[MAX_MODEL_TRANSFORM];
+    matrix WorldToBoneTF[MAX_MODEL_TRANSFORM]; // WorldToBone Matrix. == Inv(Bone의 WorldTransform)
     
     uint BoneIndex;
 };
@@ -29,8 +29,8 @@ struct VertexOutput
 
 struct AnimationFrame
 {
-    uint Clip; // 몇 번 째 clip인지
-    uint CurrentFrame; // 그 clip에서 몇 번째 Frame인지지
+    uint Clip;          // 몇 번 째 clip인지
+    uint CurrentFrame;  // 그 clip에서 몇 번째 Frame인지지
 
     float2 Padding;
 };
@@ -40,54 +40,58 @@ cbuffer CB_AnimationFrame
     AnimationFrame KeyFrameData;
 };
 
-Texture2DArray ClipsTFMap;
+Texture2DArray<float4> ClipsTFMap;
 
-void SetAnimationWorld(inout matrix world, VertexInput input)
+int BoneCountToFindWeight = 4;
+int MipMapLevel = 0;
+
+float4 SetAnimatedBoneToWorldTF(VertexInput input)
 {
-    int Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
+    int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
     float Weights[4] = { input.Weight.x, input.Weight.y, input.Weight.z, input.Weight.w };
-    float weightSum = Weights[0] + Weights[1] + Weights[2] + Weights[3];
-    if (weightSum > 0)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            Weights[i] /= weightSum;
-        }
-    }
-    uint Clip = 0;
-    uint CurrentFrame = frame;
+    uint  AnimationIndex = 0;
+    uint  CurrentFrame = frame;
 
     float4 ClipTransform[4];
 
     matrix current = 0;
-    matrix transform = 0;
+    float4 pos = 0;
 
-    for(int i = 0 ; i < 4 ; i++)
+    // 4개의 Bone에 대해서 Weight를 탐색.
+    for(int i = 0 ; i < BoneCountToFindWeight ; i++)
     {
-        ClipTransform[0] = ClipsTFMap.Load(int4(Indices[i] * 4 + 0, CurrentFrame, Clip, 0));
-        ClipTransform[1] = ClipsTFMap.Load(int4(Indices[i] * 4 + 1, CurrentFrame, Clip, 0));
-        ClipTransform[2] = ClipsTFMap.Load(int4(Indices[i] * 4 + 2, CurrentFrame, Clip, 0));
-        ClipTransform[3] = ClipsTFMap.Load(int4(Indices[i] * 4 + 3, CurrentFrame, Clip, 0));
-        current = matrix(ClipTransform[0], ClipTransform[1], ClipTransform[2], ClipTransform[3]);
-        transform += mul(Weights[i], current);
-    }
+        int targetBoneIndex = Indices[i];
+        matrix TargetBoneInvMat = WorldToBoneTF[targetBoneIndex];
+        float4 VertexPosInBoneSpace = mul(input.Position, TargetBoneInvMat);
 
-    world = mul(transform, world);
+        // Indices[i] : 이 Vertex가 참조 할 Bone. -> Indices[i] * 4 + j : 몇 째 열의 데이터인지
+        // CurrentFrame : 몇 째 행의 데이터인지지
+        // Clip : 몇 번 째 Animation인지. 지금은 하나만 있다.
+        // 0 : MipMap Level : 사용하지 않는다. 0최상위 해상도를 사용한다는 의미.
+        ClipTransform[0] = ClipsTFMap.Load(int4(targetBoneIndex * BoneCountToFindWeight + 0, CurrentFrame, AnimationIndex, MipMapLevel));
+        ClipTransform[1] = ClipsTFMap.Load(int4(targetBoneIndex * BoneCountToFindWeight + 1, CurrentFrame, AnimationIndex, MipMapLevel));
+        ClipTransform[2] = ClipsTFMap.Load(int4(targetBoneIndex * BoneCountToFindWeight + 2, CurrentFrame, AnimationIndex, MipMapLevel));
+        ClipTransform[3] = ClipsTFMap.Load(int4(targetBoneIndex * BoneCountToFindWeight + 3, CurrentFrame, AnimationIndex, MipMapLevel));
+
+        //이렇게 접근하면 안 된다. 2차원 배열은 일반적으로 Arr[row][col]이지만 Texture는 Tex[col][row]
+        // ClipTransform[0] = ClipsTFMap.Load(int4(CurrentFrame, Indices[i] * 4 + 0, AnimationIndex, 0));
+
+        current = matrix(ClipTransform[0], ClipTransform[1], ClipTransform[2], ClipTransform[3]);
+        current = mul(current, Weights[i]);
+        pos += mul(VertexPosInBoneSpace, current);
+    }
+    return pos;
 }
 
 VertexOutput VS(VertexInput input)
 {    
     VertexOutput output;
-    
-    World = mul(BoneTransforms[BoneIndex], World);
-    SetAnimationWorld(World, input);
-    
-    output.Position = mul(input.Position, World);
+
+    output.Position = SetAnimatedBoneToWorldTF(input);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
-    output.Normal = mul(input.Normal, (float3x3)World);
-    
+    output.Normal = input.Normal;
     output.Uv = input.Uv;
     
     return output;
@@ -123,6 +127,7 @@ technique11 T0
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }
+
 }
 
 /*===========================================================================*/

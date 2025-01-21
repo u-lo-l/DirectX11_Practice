@@ -150,12 +150,12 @@ void Model::ReadMesh( const wstring & InFileName)
 	for (UINT i = 0; i < BoneCount; i++)
 	{
 		ModelBone * TargetBone = this->Bones[i];
-		this->BoneTransforms[i] = TargetBone->Transform;
+		this->BoneTransforms[i] = Matrix::Invert(TargetBone->Transform);
 		for (UINT number : TargetBone->MeshIndices)
 		{
 			Meshes[number]->SetBoneIndex(TargetBone->Index);
 			Meshes[number]->Bone = TargetBone;
-			Meshes[number]->Transforms = BoneTransforms;
+			Meshes[number]->SetBoneTransforms(this->BoneTransforms);
 		}
 		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
 	}
@@ -171,7 +171,6 @@ void Model::ReadAnimation( const wstring & InFileName )
 	SAFE_DELETE(BinReader);
 }
 
-// TODO : 미완
 void Model::CreateAnimationTexture()
 {
 	const UINT AnimationCount = Animations.size();
