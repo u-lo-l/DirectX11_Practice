@@ -118,11 +118,20 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vecto
 	
 	KeyFrameTFTable * TransformTableToReturn = new KeyFrameTFTable();
 	
-	// 길이 Frame'0'부터 Frame 'Duration'까지 Animation Length가 Duration + 1인 애니메이션의 각 프레임에 대해서 반복한다.  
-	const UINT AnimationLength = static_cast<UINT>(Duration) + 1;
-	for (UINT FrameNum = 0; FrameNum < AnimationLength ; FrameNum++)
+#pragma region Configure Temp FrameNameBinTree
+	map<string, KeyFrameData *> TempKeyFrameNameTable;
+	const UINT KeyFrameCount = KeyFrames.size();
+	for (UINT i = 0; i < KeyFrameCount; i++)
 	{
-		Matrix * const BoneMatrixUpdatingArr = TransformTableToReturn->TransformMats[FrameNum];
+		TempKeyFrameNameTable[KeyFrames[i]->BoneName] = KeyFrames[i];
+	}
+#pragma endregion
+	
+	// 길이 Frame'0'부터 Frame 'Duration'까지 Animation Length가 Duration + 1인 애니메이션의 각 프레임에 대해서 반복한다.  
+	const UINT AnimationLength = static_cast<UINT>(GetAnimationLength());
+	for (UINT CurrentFrame = 0; CurrentFrame < AnimationLength ; CurrentFrame++)
+	{
+		Matrix * const BoneMatrixUpdatingArr = TransformTableToReturn->TransformMats[CurrentFrame];
 
 		// Animation을 수행 할 Model에 속한 모든 Bone에 대해서 반복한다.
 		const UINT BoneCount = InBone.size();
@@ -140,24 +149,21 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vecto
 #endif
 
 			// 현재 Animation의 모든 NodeData에서 현재 Bone에 대한 NodeData를 찾는다.
-			const vector<KeyFrameData*>::const_iterator It = std::find_if(KeyFrames.begin(), KeyFrames.end(), [BoneNum](const KeyFrameData *KeyFrame) {
-																			  return KeyFrame->BoneIndex == BoneNum;
-																			});
-			if (It == KeyFrames.cend())
+			const auto It = TempKeyFrameNameTable.find(TargetBone->Name);
+			if (It == TempKeyFrameNameTable.cend())
 				continue;
 			const KeyFrameData * const TargetKeyFrameData = It->second;
 			
 			// 현재 Bone에 대한 NodeData를 찾았다면 해당 Bone의 F번쨰 프레임의 TRS를 가져온다.
-			const Vector & Pos     = TargetKeyFrameData->Positions.size() == 1 ? TargetKeyFrameData->Positions[0].Value : TargetKeyFrameData->Positions[FrameNum].Value;
-			const Vector & Scale   = TargetKeyFrameData->Scales.size()    == 1 ? TargetKeyFrameData->Scales[0].Value    : TargetKeyFrameData->Scales[FrameNum].Value;
-			const Quaternion & Rot = TargetKeyFrameData->Rotations.size() == 1 ? TargetKeyFrameData->Rotations[0].Value : TargetKeyFrameData->Rotations[FrameNum].Value;
+			const Vector & Pos     = TargetKeyFrameData->Positions.size() == 1 ? TargetKeyFrameData->Positions[0].Value : TargetKeyFrameData->Positions[CurrentFrame].Value;
+			const Vector & Scale   = TargetKeyFrameData->Scales.size()    == 1 ? TargetKeyFrameData->Scales[0].Value    : TargetKeyFrameData->Scales[CurrentFrame].Value;
+			const Quaternion & Rot = TargetKeyFrameData->Rotations.size() == 1 ? TargetKeyFrameData->Rotations[0].Value : TargetKeyFrameData->Rotations[CurrentFrame].Value;
 			
 			Matrix S = Matrix::CreateScale(Scale);
 			Matrix R = Matrix::CreateFromQuaternion(Rot);
 			Matrix T = Matrix::CreateTranslation(Pos);
 			// 여기서 만들어진 AnimationMatrix는 ParentNode의 Local-Coordinate가 기준이다.
 			Matrix AnimationMatrix = S * R * T; // A_T_B : SRT of B from A-coordinate
- 
 			if (TargetBone->IsRootBone() == true)
 			{
 				BoneMatrixUpdatingArr[BoneNum] = AnimationMatrix; // BoneMatrixArr[b] = AnimationMatrix * Matrix::Identity;
