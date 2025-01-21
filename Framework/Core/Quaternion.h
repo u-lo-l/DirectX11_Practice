@@ -5,13 +5,13 @@ class Matrix;
 #include <assimp/quaternion.h>
 
 //////////////////////////////////////////////////////////////////////////
-///@brief 사원수
+///@brief Quaternion In Left Hand Coordinate
 //////////////////////////////////////////////////////////////////////////
 class Quaternion
 {
 public:
 	Quaternion();
-	Quaternion(float x, float y, float z, float w);
+	Quaternion(float w, float x, float y, float z);
 	Quaternion( const Vector & vectorPart, float scalarPart);
 	Quaternion(const Quaternion& Other);
 	Quaternion& operator=(const Quaternion& Other);
@@ -20,9 +20,9 @@ public:
 #endif
 	
 	Quaternion operator -();
-	
-	operator float* ();
-	operator const float* () const;
+
+	// explicit operator float* ();
+	// explicit operator const float* () const;
 
 	bool operator ==(const Quaternion& quaternion2) const;
 	bool operator !=(const Quaternion& quaternion2) const;
@@ -92,10 +92,10 @@ public:
 	{
 		struct
 		{
-			float X;///< X
-			float Y;///< Y
-			float Z;///< Z
-			float W;///< W
+			float W; // Scalar Part
+			float X; // Imaginary I
+			float Y; // Imaginary J
+			float Z; // Imaginary K
 		};
 
 		float Q[4];
