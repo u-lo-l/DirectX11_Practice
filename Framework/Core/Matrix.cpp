@@ -70,25 +70,24 @@ void Matrix::Left( const Vector & value)
 	M11 = -value.X; M12 = -value.Y; M13 = -value.Z;
 }
 
-// z-기저의 반대방향.
 Vector Matrix::Forward() const
-{
-	return {-M31, -M32, -M33};
-}
-
-void Matrix::Forward( const Vector & value)
-{
-	M31 = -value.X; M32 = -value.Y; M33 = -value.Z;
-}
-
-Vector Matrix::Backward() const
 {
 	return {M31, M32, M33};
 }
 
-void Matrix::Backward( const Vector & value)
+void Matrix::Forward( const Vector & value)
 {
 	M31 = value.X; M32 = value.Y; M33 = value.Z;
+}
+
+Vector Matrix::Backward() const
+{
+	return {-M31, -M32, -M33};
+}
+
+void Matrix::Backward( const Vector & value)
+{
+	M31 = -value.X; M32 = -value.Y; M33 = -value.Z;
 }
 
 Vector Matrix::Translate() const
@@ -254,10 +253,10 @@ Matrix::operator float*()
 void Matrix::Display() const
 {
 	printf("==Matrix  Display==\n");
-	printf("%.2f %.2f %.2f %.2f\n", M11, M12, M13, M14);
-	printf("%.2f %.2f %.2f %.2f\n", M21, M22, M23, M24);
-	printf("%.2f %.2f %.2f %.2f\n", M31, M32, M33, M34);
-	printf("%.2f %.2f %.2f %.2f\n", M41, M42, M43, M44);
+	printf("%.5f %.5f %.5f %.5f\n", M11, M12, M13, M14);
+	printf("%.5f %.5f %.5f %.5f\n", M21, M22, M23, M24);
+	printf("%.5f %.5f %.5f %.5f\n", M31, M32, M33, M34);
+	printf("%.5f %.5f %.5f %.5f\n", M41, M42, M43, M44);
 	printf("===================\n");
 }
 
