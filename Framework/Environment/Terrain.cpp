@@ -147,7 +147,12 @@ void Terrain::CreateNormalData() const
 
 void Terrain::CreateBuffer()
 {
+#ifdef DO_DEBUG
+	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType), "Terrain");
+#else
 	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType));
+#endif
+	
 	IBuffer = new IndexBuffer(Indices, IndexCount);
 }
 

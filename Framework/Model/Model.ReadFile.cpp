@@ -74,7 +74,11 @@ void Model::ReadMaterial( const wstring & InFileName)
 #endif
 	for (const Json::String & Name : Members)
 	{
+#ifdef DO_DEBUG
+		Material * MatData = new Material("Material : [" + String::ToString(InFileName) + "_" + Name + "]");
+#else
 		Material * MatData = new Material();
+#endif
 		Json::Value Value = Root[Name];
 
 		ReadShaderName(Value, MatData);
@@ -134,10 +138,10 @@ void Model::ReadMesh( const wstring & InFileName)
 
 	ModelBone::ReadModelFile(BinReader, this->Bones);
 	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable);
-#ifdef DO_DEBUG
-	printf("Model : %s -> Bone Count : %d\n", ModelName.c_str(), Bones.size());
-	printf("Model : %s -> Mesh Count : %d\n", ModelName.c_str(), Meshes.size());
-#endif
+// #ifdef DO_DEBUG
+// 	printf("Model : %s -> Bone Count : %d\n", ModelName.c_str(), Bones.size());
+// 	printf("Model : %s -> Mesh Count : %d\n", ModelName.c_str(), Meshes.size());
+// #endif
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 
@@ -198,38 +202,46 @@ void Model::CreateAnimationTexture()
 		void * p = VirtualAlloc(nullptr, PageSize * AnimationCount, MEM_RESERVE, PAGE_READWRITE);
 
 #ifdef DO_DEBUG
+		// 가상 메모리 디버깅 정보 출력
 		MEMORY_BASIC_INFORMATION MemInfo = {};
-		const SIZE_T BytesWritten = VirtualQuery(p, &MemInfo, sizeof(MEMORY_BASIC_INFORMATION));
-		printf("%u\n", BytesWritten);
+		const SIZE_T BytesWritten = VirtualQuery(ReservedVirtualMemory , &MemInfo, sizeof(MEMORY_BASIC_INFORMATION));
+		printf("\n=========================================================================\n");
+		printf("\t[DEBUG] %s Memory Base Address: %p\n", __FUNCTION__, MemInfo.BaseAddress);
+		printf("\t[DEBUG] %s Allocation Base: %p\n", __FUNCTION__, MemInfo.AllocationBase);
+		
+		printf("\t[DEBUG] %s Page Size : %zu_bytes\n", __FUNCTION__, PageSize);
+		printf("\t[DEBUG] %s Region Size: %zu_bytes | %zu_KB | %zu_MB\n", __FUNCTION__, MemInfo.RegionSize, MemInfo.RegionSize / 1024, MemInfo.RegionSize / 1024 / 1024);
+		printf("\t[DEBUG] %s State: %s\n", __FUNCTION__, 
+			(MemInfo.State == MEM_COMMIT) ? "COMMIT" : 
+			(MemInfo.State == MEM_RESERVE) ? "RESERVE" : "FREE");
+		printf("\t[DEBUG] %s Protection: %u\n", __FUNCTION__, MemInfo.Protect);
+		printf("=========================================================================\n\n");
 #endif
-
+		// 애니메이션 데이터를 가상메모리에 저장.
 		for (UINT c = 0; c < AnimationCount ; c++)
 		{
-			const UINT start = c * PageSize;
+			BYTE * CurrentAnimationAddress = static_cast<BYTE *>(ReservedVirtualMemory) + c * PageSize;
 			for (UINT f = 0; f < ModelAnimation::MaxFrameLength ; f++)
 			{
-				// TODO : why?
-				// if (f > Animations[c]->Duration)
-				// 	break;
-				//
-				void * temp = (BYTE *)p + sizeof(Matrix) * Model::MaxModelTransforms * f + start;
-				VirtualAlloc(temp, Model::MaxModelTransforms * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
-				memcpy(temp, ClipTFTables[c]->TransformMats[f], Model::MaxModelTransforms * sizeof(Matrix));
+				void * CurrentFrameAddress = CurrentAnimationAddress + sizeof(Matrix) * Model::MaxModelTransforms * f;
+				// 페이지 메모리 할당 및 데이터 복사
+				VirtualAlloc(CurrentFrameAddress, Model::MaxModelTransforms * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
+				memcpy(CurrentFrameAddress, ClipTFTables[c]->TransformMats[f], Model::MaxModelTransforms * sizeof(Matrix));
 			}
 		}
 
 #pragma region SSD to VRAM
-
-		D3D11_SUBRESOURCE_DATA * SubResource = new D3D11_SUBRESOURCE_DATA[AnimationCount];
+		// GPU에 텍스처 업로드
+		D3D11_SUBRESOURCE_DATA * SubResources = new D3D11_SUBRESOURCE_DATA[AnimationCount];
 		for (UINT c = 0; c < AnimationCount ; c++)
 		{
-			void * temp = (BYTE *)p + c * PageSize;
-			SubResource[c].pSysMem = temp;
-			SubResource[c].SysMemPitch = Model::MaxModelTransforms * sizeof(Matrix);
-			SubResource[c].SysMemSlicePitch = PageSize;
+			void * CurrentAnimationAddress = static_cast<BYTE *>(ReservedVirtualMemory) + c * PageSize;
+			SubResources[c].pSysMem = CurrentAnimationAddress;
+			SubResources[c].SysMemPitch = Model::MaxModelTransforms * sizeof(Matrix);
+			SubResources[c].SysMemSlicePitch = PageSize;
 		}
-		D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResource, &ClipTexture);
-		SAFE_DELETE_ARR(SubResource);
+		CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
+		SAFE_DELETE_ARR(SubResources);
 
 #pragma endregion
 #pragma region Clear Memory
@@ -241,9 +253,8 @@ void Model::CreateAnimationTexture()
 		VirtualFree(p, 0, MEM_RELEASE);
 		
 #pragma endregion
-#pragma region Create SRV
-		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-		ZeroMemory(&SRVDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+#pragma region Create SRV // 셰이더 리소스 뷰 생성
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 		SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 		SRVDesc.Texture2DArray.MipLevels = 1;

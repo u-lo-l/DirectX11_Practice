@@ -6,7 +6,11 @@
 Model::Model(const wstring & ModelFileName)
  : RootBone(nullptr)
 {
+#ifdef DO_DEBUG
+	WorldTransform = new Transform("Model WorldTransform of [" + String::ToString(ModelFileName) + "]");
+#else
 	WorldTransform = new Transform();
+#endif
 	wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);

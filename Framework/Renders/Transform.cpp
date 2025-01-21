@@ -1,6 +1,15 @@
 ﻿#include "framework.h"
 #include "Transform.h"
 
+#ifdef DO_DEBUG
+Transform::Transform( const string & MetaData )
+: CBuffer(nullptr), ECB_CBuffer(nullptr)
+, Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
+{
+	CBufferData.World= Matrix::Identity;
+	CBuffer = new ConstantBuffer(&CBufferData, MetaData, sizeof(ThisClass::CBufferData));
+}
+#else
 Transform::Transform()
  : CBuffer(nullptr), ECB_CBuffer(nullptr)
  , Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
@@ -8,6 +17,7 @@ Transform::Transform()
 	CBufferData.World= Matrix::Identity;
 	CBuffer = new ConstantBuffer(&CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
 }
+#endif
 
 Transform::~Transform()
 {

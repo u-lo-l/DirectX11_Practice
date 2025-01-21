@@ -17,8 +17,13 @@ private:
 		vector<ThisClassPtr> & OutMeshes,
 		const map<string, Material*> & InMaterialTable
 	);
-	
+
+#ifdef DO_DEBUG
+	explicit ModelMesh(const string & MetaData = "ModelMesh");
+	string MetaData;
+#else
 	ModelMesh();
+#endif
 	~ModelMesh();
 
 	void Tick();

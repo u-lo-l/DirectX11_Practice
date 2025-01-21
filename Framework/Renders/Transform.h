@@ -9,7 +9,11 @@ class Transform
 private:
 	using ThisClass = Transform;
 public:
+#ifdef DO_DEBUG
+	explicit Transform( const string & MetaData = "Transform Matrix");
+#else
 	Transform();
+#endif
 	~Transform();
 
 	void Tick();

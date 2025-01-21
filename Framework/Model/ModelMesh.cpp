@@ -1,13 +1,29 @@
 ﻿#include "framework.h"
 #include "ModelMesh.h"
 
-ModelMesh::ModelMesh()
-	: Transforms(nullptr), BoneData(), BoneMatrixCBuffer(nullptr), ECB_BoneMatrixBuffer(nullptr)
+#ifdef DO_DEBUG
+ModelMesh::ModelMesh( const string & MetaData )
+	: Transforms(nullptr), BoneData(), BoneMatrixCBuffer(nullptr), ECB_BoneMatrixBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
+	ECB_FrameBuffer(nullptr)
 {
-	WorldTransform = new Transform();
+	this->MetaData = MetaData;
+	WorldTransform = new Transform("World Transform of " + MetaData);
 	bBoneIndexChanged = true;
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
+#else
+ModelMesh::ModelMesh()
+	: Transforms(nullptr), BoneData(), BoneMatrixCBuffer(nullptr), ECB_BoneMatrixBuffer(nullptr)
+{
+#ifdef DO_DEBUG
+	WorldTransform = new Transform("ModelMesh WorldTransform");
+#else
+	WorldTransform = new Transform();
+#endif
+	bBoneIndexChanged = true;
+	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+#endif
 
 ModelMesh::~ModelMesh()
 {

@@ -3,6 +3,25 @@
 #include "Material.h"
 #include "Buffers.h"
 
+#ifdef DO_DEBUG
+Material::Material( const string & MetaData )
+: Drawer(nullptr), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr, }, SRVs{nullptr,}
+{
+	CBuffer = new ConstantBuffer(&ColorData, MetaData,sizeof(ThisClass::Colors));
+}
+
+Material::Material( Shader * InDrawer, const string & MetaData )
+: Drawer(InDrawer), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
+{
+	CBuffer = new ConstantBuffer(&ColorData, MetaData,sizeof(ThisClass::Colors));
+}
+
+Material::Material( const wstring & InShaderFileName, const string & MetaData )
+: Drawer(new Shader(InShaderFileName)), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
+{
+	CBuffer = new ConstantBuffer(&ColorData, MetaData,sizeof(ThisClass::Colors));
+}
+#else
 Material::Material()
  : Drawer(nullptr), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
@@ -20,6 +39,7 @@ Material::Material( const wstring & InShaderFileName )
 {
 	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
+#endif
 
 Material::~Material()
 {

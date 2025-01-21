@@ -13,9 +13,15 @@ private:
 	static constexpr UINT MaxTextureCount = static_cast<UINT>(TextureMapType::Max);
 	
 public:
+#ifdef DO_DEBUG
+	explicit Material(const string & MetaData = "Material.ColorData");
+	explicit Material(Shader * InDrawer, const string & MetaData = "Material.ColorData");
+	explicit Material(const wstring & InShaderFileName, const string & MetaData = "Material.ColorData");
+#else
 	Material();
 	explicit Material(Shader * InDrawer);
 	explicit Material(const wstring & InShaderFileName);
+#endif
 	~Material();
 
 	void Render();

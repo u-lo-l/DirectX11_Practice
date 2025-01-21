@@ -12,7 +12,9 @@ ModelBone::~ModelBone()
 void ModelBone::ReadModelFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones )
 {
 	const UINT BoneCount = InReader->ReadUint();
-
+#ifdef DO_DEBUG
+	printf("Bone Count : %d\n", BoneCount);
+#endif
 	OutBones.resize(BoneCount);
 	for (UINT i = 0; i < BoneCount; i++)
 	{
