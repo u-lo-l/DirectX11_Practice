@@ -8,7 +8,7 @@ namespace Sdt
 	{
 	public:
 		void Initialize() override;
-		static void MakeModelInfoFile( const wstring & InModelName );
+		static void MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames );
 
 	private:
 		static void Airplane();
@@ -19,5 +19,6 @@ namespace Sdt
 		static void Manny();
 		static void YBot();
 		static void XYBot();
+		static void Example();
 	};
 }

@@ -19,9 +19,10 @@ namespace Sdt
 		// Manny();
 		// YBot();
 		// XYBot();
+		// Example();
 	}
 
-	void ExportFile::MakeModelInfoFile( const wstring & InModelName )
+	void ExportFile::MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames )
 	{
 		Json::Value Root;
 
@@ -35,8 +36,8 @@ namespace Sdt
 		Transform["Rotation"] = "0,0,0";
 		Transform["Scale"] = "0.01,0.01,0.01";
 		Root["Transform"] = Transform;
-
-		Root["Animations"].append(String::ToString(InModelName + L"/Idle"));
+		for (const wstring & AnimationName : InAnimationNames)
+			Root["Animations"].append(String::ToString(InModelName + L"/" + AnimationName));
 
 		Json::StyledWriter Writer;
 		string Str = Writer.write(Root);
@@ -56,7 +57,7 @@ namespace Sdt
 		converter->ExportMaterial(L"Airplane/Airplane", ShaderForAnimation, true);
 		converter->ExportMesh(L"Airplane/Airplane");
 		
-		MakeModelInfoFile(L"Airplane");
+		MakeModelInfoFile(L"Airplane", {});
 		SAFE_DELETE(converter);
 	}
 
@@ -67,7 +68,7 @@ namespace Sdt
 		converter->ExportMaterial(L"Cube/Cube", ShaderForAnimation, true);
 		converter->ExportMesh(L"Cube/Cube");
 		
-		MakeModelInfoFile(L"Cube");
+		MakeModelInfoFile(L"Cube", {});
 		SAFE_DELETE(converter);
 	}
 
@@ -77,22 +78,24 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"Sphere/Sphere.fbx");
 		converter->ExportMaterial(L"Sphere/Sphere", ShaderForBoneIndicatorSphere, true);
 		converter->ExportMesh(L"Sphere/Sphere");
-		MakeModelInfoFile(L"Sphere");
+		MakeModelInfoFile(L"Sphere", {});
 		SAFE_DELETE(converter);
 	}
 
 	void ExportFile::Shannon()
 	{
+		const wstring ModelName = L"Shannon";
+		const wstring AnimationName = L"Idle";
 		Converter * converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Shannon/Shannon.fbx");
-		converter->ExportMaterial(L"Shannon/Shannon", ShaderForAnimation, true);
-		converter->ExportMesh(L"Shannon/Shannon");
+		converter->ReadAiSceneFromFile(ModelName + L"/" + ModelName + L".fbx");
+		converter->ExportMaterial(ModelName + L"/" + ModelName, ShaderForAnimation, true);
+		converter->ExportMesh(ModelName + L"/" + ModelName);
 
-		converter->ReadAiSceneFromFile(L"Shannon/Idle.fbx");
-		converter->ExportAnimation("Shannon/Idle", 0);
+		converter->ReadAiSceneFromFile(ModelName + L"/" + AnimationName + L".fbx");
+		converter->ExportAnimation(String::ToString(ModelName) + "/" + String::ToString(AnimationName), 0);
 		SAFE_DELETE(converter);
 		
-		MakeModelInfoFile(L"Shannon");
+		MakeModelInfoFile(ModelName, {AnimationName});
 	}
 	
 	void ExportFile::Mousey()
@@ -101,7 +104,7 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"Mousey/Mousey.fbx");
 		converter->ExportMaterial(L"Mousey/Mousey", ShaderForAnimation, true);
 		converter->ExportMesh(L"Mousey/Mousey");
-		MakeModelInfoFile(L"Mousey");
+		MakeModelInfoFile(L"Mousey", {});
 		SAFE_DELETE(converter);
 	}
 
@@ -111,7 +114,7 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"Manny/Manny.fbx");
 		converter->ExportMaterial(L"Manny/Manny", ShaderForAnimation, true);
 		converter->ExportMesh(L"Manny/Manny");
-		MakeModelInfoFile(L"Manny");
+		MakeModelInfoFile(L"Manny", {});
 		SAFE_DELETE(converter);
 	}
 
@@ -121,7 +124,7 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"YBot/YBot.fbx");
 		converter->ExportMaterial(L"YBot/YBot", ShaderForAnimation, true);
 		converter->ExportMesh(L"YBot/YBot");
-		MakeModelInfoFile(L"YBot");
+		MakeModelInfoFile(L"YBot", {});
 		SAFE_DELETE(converter);
 	}
 
@@ -131,7 +134,21 @@ namespace Sdt
 		converter->ReadAiSceneFromFile(L"XYBot/XYBot.fbx");
 		converter->ExportMaterial(L"XYBot/XYBot", ShaderForAnimation, true);
 		converter->ExportMesh(L"XYBot/XYBot");
-		MakeModelInfoFile(L"XYBot");
+		MakeModelInfoFile(L"XYBot", {});
 		SAFE_DELETE(converter);
+	}
+
+	void ExportFile::Example()
+	{
+		Converter * converter = new Converter();
+		converter->ReadAiSceneFromFile(L"Example/Example.fbx");
+		converter->ExportMaterial(L"Example/Example", ShaderForAnimation, true);
+		converter->ExportMesh(L"Example/Example");
+
+		converter->ReadAiSceneFromFile(L"Example/Anim.fbx");
+		converter->ExportAnimation("Example/Anim", 0);
+		SAFE_DELETE(converter);
+		
+		MakeModelInfoFile(L"Example", {L"Anim"});
 	}
 }
