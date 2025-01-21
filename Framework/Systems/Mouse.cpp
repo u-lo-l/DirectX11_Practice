@@ -119,7 +119,7 @@ namespace Sdt
 		ZeroMemory(ButtonPrevStatus, sizeof(BYTE) * MAX_MOUSE_BUTTON);
 		ZeroMemory(ButtonMaps, sizeof(MouseButtonState) * MAX_MOUSE_BUTTON);
 
-		WheelStatus = WheelPrevStatus = WheelMoveDelta= { 0, 0, 0 };
+		WheelStatus = WheelPrevStatus = WheelMoveDelta = { 0, 0, 0 };
 
 
 		DWORD Line = 0;

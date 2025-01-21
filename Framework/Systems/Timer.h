@@ -8,7 +8,7 @@ namespace Sdt
 		static void Create();
 		static void Destroy();
 		static Timer* Get();
-		 void Tick();
+		void Tick();
 		float GetDeltaTime() const { return DeltaTime; }
 
 	private:

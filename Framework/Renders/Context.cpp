@@ -27,9 +27,6 @@ Context * Context::Get()
 void Context::Tick()
 {
 	MainCamera->Tick();
-	//TODO
-	// if (CBBinder != nullptr)
-	// 	CBBinder->Tick();
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 

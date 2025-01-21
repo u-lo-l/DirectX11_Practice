@@ -5,6 +5,8 @@
  */
 class ConstantDataBinder
 {
+private:
+	static UINT Count;
 public:
 	explicit ConstantDataBinder(Shader * InDrawer);
 	~ConstantDataBinder();

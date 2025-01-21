@@ -1,15 +1,19 @@
 ﻿#include "framework.h"
 #include "ConstantDataBinder.h"
+UINT ConstantDataBinder::Count = 0;
 
 ConstantDataBinder::ConstantDataBinder( Shader * InDrawer )
  : Drawer( InDrawer )
 {
-	ContextBuffer = new ConstantBuffer(&ContextDescData, "Context.Matrix.Constants", sizeof(ContextDesc));
+	string DataInfo = "World Context Desc #" + to_string( ConstantDataBinder::Count );
+	ContextBuffer = new ConstantBuffer(&ContextDescData, DataInfo, sizeof(ContextDesc));
 	ContextECB = Drawer->AsConstantBuffer("CB_Context");
+	ConstantDataBinder::Count++;
 }
 
 ConstantDataBinder::~ConstantDataBinder()
 {
+	ConstantDataBinder::Count--;
 	SAFE_DELETE( ContextBuffer );
 }
 
