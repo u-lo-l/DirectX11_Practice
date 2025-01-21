@@ -37,11 +37,6 @@ void ModelMesh::Tick()
 {
 	if (CBBinder != nullptr)
 		CBBinder->Tick();
-	if (bBoneIndexChanged == true)
-	{
-		BoneData.BoneIndex = BoneIndex;
-		bBoneIndexChanged = false;
-	}
 	WorldTransform->Tick();
 }
 
