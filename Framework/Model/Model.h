@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <unordered_map>
+#include "ModelMesh.h"
 
 class ModelBone;
 class ModelMesh;
@@ -20,7 +21,7 @@ public:
 	~Model();
 
 	void Tick();
-	void Render() const;
+	void Render();
 
 public:
 	Transform * GetWorldTransform() const { return WorldTransform; };
@@ -48,7 +49,9 @@ private:
 	map<string, Material*> MaterialsTable;
 	
 	vector<ModelMesh *> Meshes;
-	
+public:
+	int Frame;
+private:
 	vector<ModelAnimation *> Animations;
 
 	bool bTransformChanged = false;
@@ -85,9 +88,9 @@ public:
 public:
 	void ReadMaterial(const wstring & InFileName);
 private:
-	void ReadShaderName(const Json::Value & Value, Material * MatData);
-	void ReadColor(const Json::Value & Value, Material * MatData);
-	void ReadColorMap(const Json::Value & Value, Material * MatData);
+	static void ReadShaderName(const Json::Value & Value, Material * MatData);
+	static void ReadColor(const Json::Value & Value, Material * MatData);
+	static void ReadColorMap(const Json::Value & Value, Material * MatData);
 
 #pragma endregion Read Material Data
 

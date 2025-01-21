@@ -46,12 +46,30 @@ void Model::Tick()
 	}
 }
 
-void Model::Render() const
+void Model::Render()
 {
+	if (this->Animations.size() > 0)
+	{
+		static float time = 0;
+		static int bPlay = 1;
+		static float PlayRate = 1.f;
+		ImGui::SliderInt("Play/Pause", &bPlay, 0, 1);
+		ImGui::SliderInt("Frame", &Frame, 0, Animations[0]->Duration);
+		ImGui::SliderFloat("Speed", &PlayRate, 0.1f, 2.f);
+
+		if (time > (1.f / (Animations[0]->TicksPerSecond * PlayRate)))
+		{
+			Frame += 1;
+			Frame %= static_cast<int>(this->Animations[0]->GetAnimationLength());
+			time = 0;
+		}
+		if (bPlay == 1)
+			time += Sdt::Timer::Get()->GetDeltaTime();
+	}
 	for (ModelMesh * mesh : Meshes)
 	{
 		mesh->Pass = this->Pass;
-		mesh->Render();
+		mesh->Render(Frame);
 	}
 }
 
