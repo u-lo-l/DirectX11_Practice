@@ -26,9 +26,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	ReadMaterial(MaterialName);
 	ReadMesh(MeshName + L"/" + MeshName);
 
-	if (WorldTransform == nullptr)
-		WorldTransform = new Transform();
-
+	ASSERT(WorldTransform != nullptr, "WorldTransform Not Valid");
 	vector<string> pString;
 	String::SplitString(&pString, Position.asString(), ",");
 	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
@@ -179,13 +177,14 @@ void Model::CreateAnimationTexture()
 	const UINT AnimationCount = Animations.size();
 	vector<ModelAnimation::KeyFrameTFTable *> ClipTFTables;
 	ClipTFTables.reserve(AnimationCount);
-	
+	// 각 애니메이션의 Transform정보를 Table에 저장.
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
 		ClipTFTables.push_back (Animations[i]->CalcClipTransform(Bones));		
 	}
 
 	{
+		constexpr UINT PixelChannel = 4;
 		D3D11_TEXTURE2D_DESC TextureDesc;
 		ZeroMemory(&TextureDesc, sizeof(TextureDesc));
 		TextureDesc.Width = Model::MaxModelTransforms * 4;
@@ -197,9 +196,10 @@ void Model::CreateAnimationTexture()
 		TextureDesc.MipLevels = 1;
 		TextureDesc.SampleDesc.Count = 1;
 
-		// 가상 메모리 사용
-		const UINT PageSize = TextureDesc.Width * TextureDesc.Height * 16;
-		void * p = VirtualAlloc(nullptr, PageSize * AnimationCount, MEM_RESERVE, PAGE_READWRITE);
+		// 가상 메모리 예약
+		constexpr UINT FloatsInMatrix = 16;
+		const UINT PageSize = TextureDesc.Width * TextureDesc.Height * FloatsInMatrix;
+		void * ReservedVirtualMemory  = VirtualAlloc(nullptr, PageSize * AnimationCount, MEM_RESERVE, PAGE_READWRITE);
 
 #ifdef DO_DEBUG
 		// 가상 메모리 디버깅 정보 출력
@@ -250,7 +250,7 @@ void Model::CreateAnimationTexture()
 		{
 			SAFE_DELETE(TFTable);			
 		}
-		VirtualFree(p, 0, MEM_RELEASE);
+		VirtualFree(ReservedVirtualMemory , 0, MEM_RELEASE);
 		
 #pragma endregion
 #pragma region Create SRV // 셰이더 리소스 뷰 생성
