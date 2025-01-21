@@ -37,8 +37,10 @@ void Shader::CreateEffect()
 {
 	ID3DBlob * fxBlob = nullptr;
 	ID3DBlob * error = nullptr;
-	constexpr INT flag = D3D10_SHADER_ENABLE_BACKWARDS_COMPATIBILITY | D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
-
+	
+	//constexpr INT flag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION |D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
+	constexpr INT flag = D3D10_SHADER_ENABLE_BACKWARDS_COMPATIBILITY | D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;;
+	
 //https://learn.microsoft.com/en-us/windows/win32/direct3d11/d3d11-graphics-programming-guide-effects-compile
 	/*
 	 * Compile an Effect
