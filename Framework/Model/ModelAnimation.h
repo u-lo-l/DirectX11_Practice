@@ -22,6 +22,7 @@ private:
 	);
 private:
 	UINT GetKeyFrameCount() const { return KeyFrames.size(); }
+	float GetAnimationLength () const { return 1 + Duration; }
 	string Name;
 	float Duration = 0.f;
 	float TicksPerSecond = 0.f;;
