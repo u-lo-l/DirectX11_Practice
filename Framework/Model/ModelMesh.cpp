@@ -3,7 +3,7 @@
 
 #ifdef DO_DEBUG
 ModelMesh::ModelMesh( const string & MetaData )
-	: Transforms(nullptr), BoneData(), BoneMatrixCBuffer(nullptr), ECB_BoneMatrixBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
+	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
 	ECB_FrameBuffer(nullptr)
 {
 	this->MetaData = MetaData;
@@ -57,8 +57,8 @@ void ModelMesh::Render(int frame)
 	if (CBBinder != nullptr)
 		CBBinder->BindToGPU();
 	
-	BoneMatrixCBuffer->BindToGPU();
-	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);
+	BoneDescBuffer->BindToGPU();
+	CHECK(ECB_BoneDescBuffer->SetConstantBuffer(*BoneDescBuffer) >= 0);
 	
 	FrameCBuffer->BindToGPU();
 	CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
@@ -146,8 +146,8 @@ void ModelMesh::CreateBuffers()
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
 
 	const string CBufferInfo = MeshName + " : All Model Transform Matrix and Index for this Mesh";
-	BoneMatrixCBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
-	ECB_BoneMatrixBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
+	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
+	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 	
 	FrameCBuffer = new ConstantBuffer(&this->FrameData, "Temp Frame", sizeof(FrameDesc));
 	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_Frame");

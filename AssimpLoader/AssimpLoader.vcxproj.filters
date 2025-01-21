@@ -13,15 +13,9 @@
     <ClCompile Include="AssimpLoader\Converter\Converter.cpp">
       <Filter>Converter</Filter>
     </ClCompile>
-    <ClCompile Include="AssimpLoader\Converter\Converter_Animation.cpp">
-      <Filter>Converter</Filter>
-    </ClCompile>
-    <ClCompile Include="AssimpLoader\Converter\Converter_Material.cpp">
-      <Filter>Converter</Filter>
-    </ClCompile>
-    <ClCompile Include="AssimpLoader\Converter\Converter_Mesh.cpp">
-      <Filter>Converter</Filter>
-    </ClCompile>
+    <ClCompile Include="AssimpLoader\Converter\Converter.Animation.cpp" />
+    <ClCompile Include="AssimpLoader\Converter\Converter.Material.cpp" />
+    <ClCompile Include="AssimpLoader\Converter\Converter.Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />

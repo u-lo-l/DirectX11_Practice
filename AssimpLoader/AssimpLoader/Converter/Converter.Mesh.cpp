@@ -69,7 +69,7 @@ namespace Sdt
 		ReadMeshData();
 		ReadSkinData();
 		
-		WriteMesh(FullFileName);
+		WriteAndClearBonesAndMeshes(FullFileName);
 	}
 	
 	void Converter::ReadBoneData( const aiNode * InNode, int InIndex, int InParent )
@@ -108,7 +108,7 @@ namespace Sdt
 	void Converter::ReadMeshData()
 	{
 		const UINT MeshCount = Scene->mNumMeshes;
-		Meshes.resize(MeshCount);
+		this->Meshes.resize(MeshCount);
 		for (UINT i = 0; i < MeshCount; i++)
 		{
 			Meshes[i] = new MeshData();
@@ -164,7 +164,7 @@ namespace Sdt
 		return Vertex;
 	}
 
-	void Converter::WriteMesh( const wstring & InSaveFileName ) const
+	void Converter::WriteAndClearBonesAndMeshes( const wstring & InSaveFileName )
 	{
 		Path::CreateFolders(Path::GetDirectoryName(InSaveFileName));
 		BinaryWriter * BinWriter = new BinaryWriter();
@@ -217,28 +217,15 @@ namespace Sdt
 			{
 				continue;
 			}
-
-			// Mesh가 가지는 모든 aiBone에 대해서 
 			const UINT BoneCount = TargetMesh->mNumBones;
-// #ifdef DO_DEBUG
-// 			printf("[%s] Bone Count : %d\n", __FUNCTION__, BoneCount);
-// #endif
 			for (UINT boneIndex = 0; boneIndex < BoneCount; boneIndex++)
 			{
 				const aiBone * Bone = TargetMesh->mBones[boneIndex];
 				const char * BoneName = Bone->mName.C_Str();
-// #ifdef DO_DEBUG
-// 				printf("[%s] Bone Name : %s\n", __FUNCTION__, BoneName);
-// #endif
 				const auto It = TempBoneTable.find(BoneName);
-				if (It != TempBoneTable.cend())
-				{
-					TargetBoneIndex = It->second->Index;
-				}
-				else
-				{
-					break;
-				}
+				if (It == TempBoneTable.cend())
+					break; // Bone NotFound
+				const UINT TargetBoneIndex = It->second->Index;
 
 				// aiBone은 어떤 Vertex에 대해 얼마나 weight를 줄 지 가지고 있다.
 				// 이 데이터를 MeshData를 저장한다.

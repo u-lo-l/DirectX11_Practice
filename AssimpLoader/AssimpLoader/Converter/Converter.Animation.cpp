@@ -49,7 +49,6 @@ namespace Sdt
 			ClipDataNowMaking->BoneName = NodeAnim->mNodeName.C_Str();
 
 			// 모든 KeySequence들은 부모 노드에 상대적인 값으로 저장된다. 따라서 이후에 사용할 때는 좌표변환 해서 사용해야 한다.
-			printf("[[[[[[[[[[[[[[[[[[[[[[[[[[[[%s]]]]]]]]]]]]]]]]]]]]]]]]\n", ClipDataNowMaking->BoneName.c_str());
 			ReadPosKeySequences(ClipDataNowMaking->PosKeys, NodeAnim);
 			ReadScaleKeySequences(ClipDataNowMaking->ScaleKeys, NodeAnim);
 			ReadRotKeySequences(ClipDataNowMaking->RotKeys, NodeAnim);
@@ -64,9 +63,6 @@ namespace Sdt
 		for (UINT i = 0; i < PosKeyCount; i++)
 		{
 			const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[i];
-#ifdef DO_DEBUG
-			printf("[READ POS KEY FROM AI_NODE_ANIM] < %.4f, %.4f, %.4f >\n", PosKey.mValue.x, PosKey.mValue.y, PosKey.mValue.z);			
-#endif
 			OutPosKeys.emplace_back(static_cast<float>(PosKey.mTime), static_cast<Vector>(PosKey.mValue));
 		}
 	}

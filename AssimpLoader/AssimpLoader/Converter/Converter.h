@@ -44,7 +44,7 @@ namespace Sdt
 		void ReadBoneData(const aiNode * InNode, int InIndex, int InParent);
 		void ReadMeshData();
 		static MeshData::VertexType ReadSingleVertexDataFromAiMesh(const aiMesh * Mesh, UINT VertexIndex);
-		void WriteMesh(const wstring& InSaveFileName) const;
+		void WriteAndClearBonesAndMeshes(const wstring& InSaveFileName);
 
 		void ReadSkinData();
 	private:

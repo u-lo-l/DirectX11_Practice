@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{0688B656-22DE-41DD-AAB9-301CEB139698}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C} = {F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "Framework\Framework.vcxproj", "{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssimpLoader", "AssimpLoader\AssimpLoader.vcxproj", "{9F9A34CD-07FA-49BB-B206-CF0F99BC30DE}"
@@ -33,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{47
 		_Shaders\17_TerrainNormal.fx = _Shaders\17_TerrainNormal.fx
 		_Shaders\18_TerrainNormalVector.fx = _Shaders\18_TerrainNormalVector.fx
 		_Shaders\19_ModelVertex.fx = _Shaders\19_ModelVertex.fx
+		_Shaders\22_Animation.fx = _Shaders\22_Animation.fx
 	EndProjectSection
 EndProject
 Global
@@ -41,10 +37,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0688B656-22DE-41DD-AAB9-301CEB139698}.Debug|x86.ActiveCfg = Debug|Win32
-		{0688B656-22DE-41DD-AAB9-301CEB139698}.Debug|x86.Build.0 = Debug|Win32
-		{0688B656-22DE-41DD-AAB9-301CEB139698}.Release|x86.ActiveCfg = Release|Win32
-		{0688B656-22DE-41DD-AAB9-301CEB139698}.Release|x86.Build.0 = Release|Win32
 		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}.Debug|x86.ActiveCfg = Debug|Win32
 		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}.Debug|x86.Build.0 = Debug|Win32
 		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}.Release|x86.ActiveCfg = Release|Win32

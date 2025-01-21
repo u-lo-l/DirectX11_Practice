@@ -6,7 +6,7 @@ struct MeshData;
 class ModelMesh
 {
 public:
-	static constexpr UINT MaxBoneTFCount = 256;
+	static constexpr UINT MaxBoneCount = 256;
 private:
 	using ThisClass = ModelMesh;
 	using ThisClassPtr = ThisClass*;
@@ -52,7 +52,7 @@ private :
 	void SetBoneTransforms(Matrix * const Transforms)
 	{
 		this->Transforms = Transforms;
-		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneTFCount);
+		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneCount);
 	}
 	int BoneIndex = 0;
 	bool bBoneIndexChanged = false;
@@ -77,13 +77,13 @@ private :
 	 */
 	struct BoneDesc
 	{
-		Matrix BoneTransforms[MaxBoneTFCount];
+		Matrix BoneTransforms[MaxBoneCount];
 		UINT BoneIndex;
 		float Padding[3];
 	};
 	BoneDesc BoneData;
-	ConstantBuffer * BoneMatrixCBuffer;
-	IECB_t * ECB_BoneMatrixBuffer;
+	ConstantBuffer * BoneDescBuffer;
+	IECB_t * ECB_BoneDescBuffer;
 	
 private:
 	struct FrameDesc

@@ -184,10 +184,10 @@ void Model::CreateAnimationTexture()
 	}
 
 	{
-		constexpr UINT PixelChannel = 4;
+		constexpr UINT PixelChannel = 4; // 그래서 Format == DXGI_FORMAT_R32G32B32A32_FLOAT이다.
 		D3D11_TEXTURE2D_DESC TextureDesc;
 		ZeroMemory(&TextureDesc, sizeof(TextureDesc));
-		TextureDesc.Width = Model::MaxModelTransforms * 4;
+		TextureDesc.Width = Model::MaxBoneCount * PixelChannel;
 		TextureDesc.Height = ModelAnimation::MaxFrameLength;
 		TextureDesc.ArraySize = Animations.size();
 		TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; //16Byte * 4 = 64 Byte
@@ -197,8 +197,7 @@ void Model::CreateAnimationTexture()
 		TextureDesc.SampleDesc.Count = 1;
 
 		// 가상 메모리 예약
-		constexpr UINT FloatsInMatrix = 16;
-		const UINT PageSize = TextureDesc.Width * TextureDesc.Height * FloatsInMatrix;
+		constexpr UINT PageSize = ModelAnimation::MaxFrameLength * Model::MaxBoneCount * sizeof(Matrix);
 		void * ReservedVirtualMemory  = VirtualAlloc(nullptr, PageSize * AnimationCount, MEM_RESERVE, PAGE_READWRITE);
 
 #ifdef DO_DEBUG
@@ -206,39 +205,36 @@ void Model::CreateAnimationTexture()
 		MEMORY_BASIC_INFORMATION MemInfo = {};
 		const SIZE_T BytesWritten = VirtualQuery(ReservedVirtualMemory , &MemInfo, sizeof(MEMORY_BASIC_INFORMATION));
 		printf("\n=========================================================================\n");
-		printf("\t[DEBUG] %s Memory Base Address: %p\n", __FUNCTION__, MemInfo.BaseAddress);
-		printf("\t[DEBUG] %s Allocation Base: %p\n", __FUNCTION__, MemInfo.AllocationBase);
-		
-		printf("\t[DEBUG] %s Page Size : %zu_bytes\n", __FUNCTION__, PageSize);
-		printf("\t[DEBUG] %s Region Size: %zu_bytes | %zu_KB | %zu_MB\n", __FUNCTION__, MemInfo.RegionSize, MemInfo.RegionSize / 1024, MemInfo.RegionSize / 1024 / 1024);
-		printf("\t[DEBUG] %s State: %s\n", __FUNCTION__, 
-			(MemInfo.State == MEM_COMMIT) ? "COMMIT" : 
-			(MemInfo.State == MEM_RESERVE) ? "RESERVE" : "FREE");
-		printf("\t[DEBUG] %s Protection: %u\n", __FUNCTION__, MemInfo.Protect);
+		printf("\t[VMEM DEBUG] %s Memory Base Address: %p\n", __FUNCTION__, MemInfo.BaseAddress);
+		printf("\t[VMEM DEBUG] %s Allocation Base: %p\n", __FUNCTION__, MemInfo.AllocationBase);
+		printf("\t[VMEM DEBUG] %s Page Size : %zu_bytes\n", __FUNCTION__, PageSize);
+		printf("\t[VMEM DEBUG] %s Region Size: %zu_bytes | %zu_KB | %zu_MB\n", __FUNCTION__, MemInfo.RegionSize, MemInfo.RegionSize / 1024, MemInfo.RegionSize / 1024 / 1024);
+		printf("\t[VMEM DEBUG] %s State: %s\n", __FUNCTION__, (MemInfo.State == MEM_COMMIT) ? "COMMIT" : (MemInfo.State == MEM_RESERVE) ? "RESERVE" : "FREE");
+		printf("\t[VMEM DEBUG] %s Protection: %u\n", __FUNCTION__, MemInfo.Protect);
 		printf("=========================================================================\n\n");
 #endif
 		// 애니메이션 데이터를 가상메모리에 저장.
-		for (UINT c = 0; c < AnimationCount ; c++)
+		for (UINT PageIndex = 0; PageIndex < AnimationCount ; PageIndex++)
 		{
-			BYTE * CurrentAnimationAddress = static_cast<BYTE *>(ReservedVirtualMemory) + c * PageSize;
-			for (UINT f = 0; f < ModelAnimation::MaxFrameLength ; f++)
+			BYTE * AnimationPageAddress = static_cast<BYTE *>(ReservedVirtualMemory) + PageIndex * PageSize; // Animation 지금은 하나라 PageIndex우선 0이다.
+			for (UINT FrameIndex = 0; FrameIndex < ModelAnimation::MaxFrameLength ; FrameIndex++)
 			{
-				void * CurrentFrameAddress = CurrentAnimationAddress + sizeof(Matrix) * Model::MaxModelTransforms * f;
+				void * CurrentFrameAddressInPage = AnimationPageAddress + sizeof(Matrix) * Model::MaxBoneCount * FrameIndex;
 				// 페이지 메모리 할당 및 데이터 복사
-				VirtualAlloc(CurrentFrameAddress, Model::MaxModelTransforms * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
-				memcpy(CurrentFrameAddress, ClipTFTables[c]->TransformMats[f], Model::MaxModelTransforms * sizeof(Matrix));
+				VirtualAlloc(CurrentFrameAddressInPage, Model::MaxBoneCount * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
+				memcpy(CurrentFrameAddressInPage, ClipTFTables[PageIndex]->TransformMats[FrameIndex], Model::MaxBoneCount * sizeof(Matrix));
 			}
 		}
 
 #pragma region SSD to VRAM
 		// GPU에 텍스처 업로드
 		D3D11_SUBRESOURCE_DATA * SubResources = new D3D11_SUBRESOURCE_DATA[AnimationCount];
-		for (UINT c = 0; c < AnimationCount ; c++)
+		for (UINT AnimationIndex = 0; AnimationIndex < AnimationCount ; AnimationIndex++)
 		{
-			void * CurrentAnimationAddress = static_cast<BYTE *>(ReservedVirtualMemory) + c * PageSize;
-			SubResources[c].pSysMem = CurrentAnimationAddress;
-			SubResources[c].SysMemPitch = Model::MaxModelTransforms * sizeof(Matrix);
-			SubResources[c].SysMemSlicePitch = PageSize;
+			void * AnimationPageAddress = static_cast<BYTE *>(ReservedVirtualMemory) + AnimationIndex * PageSize;
+			SubResources[AnimationIndex].pSysMem = AnimationPageAddress;
+			SubResources[AnimationIndex].SysMemPitch = Model::MaxBoneCount * sizeof(Matrix); // 가로 길이
+			SubResources[AnimationIndex].SysMemSlicePitch = PageSize;						// 전체 배열 크기
 		}
 		CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
 		SAFE_DELETE_ARR(SubResources);

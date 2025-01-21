@@ -10,9 +10,9 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-	// 대부분의 모델에서 250개면 충분하다.
+	// 대부분의 모델에서 Bone 개수 250개면 충분하다.
 	// Shader에서는 동적할당이 안 돼서 정적 크기를 지정해준다.
-	static constexpr UINT MaxModelTransforms = 256;
+	static constexpr UINT MaxBoneCount = 256;
 private:
 	
 	using ThisClass = Model;
@@ -71,7 +71,7 @@ public:
 private:
 	ModelBone * RootBone;
 	vector<ModelBone *> Bones;
-	Matrix BoneTransforms[MaxModelTransforms];
+	Matrix BoneTransforms[MaxBoneCount];
 	CachedBoneTableType * CachedBoneTable = nullptr;
 
 	// KeyFrameAnimation을 Texture로 Bake한 것.
