@@ -3,29 +3,31 @@
 
 BufferBase::~BufferBase()
 {
-#ifdef _DEBUG
+#ifdef DO_DEBUG
 	printf("%s : Buffer Safely Released : [%s]\n", BufferType.c_str(), BufferInfo.c_str());
 #endif
 	SAFE_RELEASE(Buffer);
 }
 
+#ifdef DO_DEBUG
 VertexBuffer::VertexBuffer(
 	void * InData,
 	UINT InCount,
 	UINT InStride,
+	const string & MetaData,
 	UINT InSlot,
 	bool InCpuWrite,
-	bool InGpuWrite )
+	bool InGpuWrite
+)
 : Slot(InSlot), bCpwWrite(InCpuWrite), bGpuWrite(InGpuWrite)
 {
 	Data = InData;
 	Count = InCount;
 	Stride = InStride;
-#ifdef _DEBUG
-	BufferType = "Vertex";
-	BufferInfo = "";
-	printf("%s Buffer size %d Created\n", BufferType.c_str(), Count * Stride);
-#endif
+	
+	BufferType = "Vertex  ";
+	BufferInfo = "Size : " + std::to_string(InCount) + " x " + std::to_string(InStride);
+	printf("%s Buffer size %d Created : [%s]\n", BufferType.c_str(), Count * Stride, MetaData.c_str());
 	
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	D3D11_BUFFER_DESC BufferDesc;
@@ -59,6 +61,53 @@ VertexBuffer::VertexBuffer(
 	CHECK(Device->CreateBuffer(&BufferDesc, &SubresourceData, &Buffer) >= 0);
 }
 
+#else
+VertexBuffer::VertexBuffer(
+	void * InData,
+	UINT InCount,
+	UINT InStride,
+	UINT InSlot,
+	bool InCpuWrite,
+	bool InGpuWrite )
+: Slot(InSlot), bCpwWrite(InCpuWrite), bGpuWrite(InGpuWrite)
+{
+	Data = InData;
+	Count = InCount;
+	Stride = InStride;
+	
+	ID3D11Device * Device = D3D::Get()->GetDevice();
+	D3D11_BUFFER_DESC BufferDesc;
+	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+	
+	BufferDesc.ByteWidth = Stride * Count;
+	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	if (bCpwWrite == false && bGpuWrite == false)
+	{
+		BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	}
+	else if (bCpwWrite == true && bGpuWrite == false)
+	{
+		BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	}
+	else if (bCpwWrite == false && bGpuWrite == true)
+	{
+		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	}
+	else
+	{
+		BufferDesc.Usage = D3D11_USAGE_STAGING;
+		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+	}
+
+	D3D11_SUBRESOURCE_DATA SubresourceData;
+	ZeroMemory(&SubresourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+	SubresourceData.pSysMem = Data;
+	CHECK(Device->CreateBuffer(&BufferDesc, &SubresourceData, &Buffer) >= 0);
+}
+#endif
+
 void VertexBuffer::BindToGPU()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
@@ -71,9 +120,9 @@ IndexBuffer::IndexBuffer(UINT * InData,	UINT InCount)
 	Data = InData;
 	Count = InCount;
 	Stride = sizeof(UINT);
-#ifdef _DEBUG
-	BufferType = "Index";
-	BufferInfo = "";
+#ifdef DO_DEBUG
+	BufferType = "Index   ";
+	BufferInfo = "Size : " + std::to_string(InCount) + " x sizeof(UINT)";
 	printf("%s Buffer size %d Created\n", BufferType.c_str(), Count * Stride);
 #endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
@@ -101,10 +150,10 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
  : DataSize(InDataSize), DataName(move(InDataName))
 {
 	Data = InData;
-#ifdef _DEBUG
+#ifdef DO_DEBUG
 	BufferType = "Constant";
 	BufferInfo = move(DataName);
-	printf("%s Buffer size %d for %s Created\n", BufferType.c_str(), InDataSize, DataName.c_str());
+	printf("%s Buffer size %d for %s Created [%s]\n", BufferType.c_str(), InDataSize, DataName.c_str(), BufferInfo.c_str());
 #endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	D3D11_BUFFER_DESC BufferDesc;
@@ -118,6 +167,8 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
 
 	CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &this->Buffer) >= 0);
 }
+
+
 
 /**
  * <code>D3D11_MAPPED_SUBRESOURCE</code> : DirectX에서 버퍼에 접근하기 위한 매핑 정보를 저장하는 구조체

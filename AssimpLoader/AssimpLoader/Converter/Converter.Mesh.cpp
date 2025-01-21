@@ -1,7 +1,65 @@
 ﻿#include "Pch.h"
 #include "Converter.h"
 #include <fstream>
+#ifdef DO_DEBUG
+static void CheckWeight(UINT MeshCount, const vector<MeshData *> & Meshes)
+{
+	UINT TotalWeightCount = 0;
+	UINT CompleteWeightCount = 0;
+	UINT NotCompleteWeightCount = 0;
+	UINT ZeroWeightCount = 0;
+	UINT NullIndex = 0;
+	UINT ZeroIndex = 0;
+	UINT TotalMeshIndexCount = 0;
 
+	for (UINT MeshIndex = 0; MeshIndex < MeshCount; MeshIndex++)
+	{
+		const MeshData * const TargetMesh = Meshes[MeshIndex];
+		const UINT VCount = TargetMesh->Vertices.size();
+		for (UINT v  = 0 ; v < VCount ; v++)
+		{
+			float sum = 0;
+			for (int i = 0 ; i < 4 ; i++)
+			{
+				sum += TargetMesh->Vertices[v].Weights[i];
+			}
+			if (sum < 0.999f)
+			{
+				NotCompleteWeightCount++;
+				// printf("MeshIndex : %d, VertexIndex : %d, weight sum : %f [%f, %f, %f, %f]\n", MeshIndex, v, sum, TargetMesh->Vertices[v].Weights[0], TargetMesh->Vertices[v].Weights[1], TargetMesh->Vertices[v].Weights[2], TargetMesh->Vertices[v].Weights[3]);
+			}
+			else if (sum < 0.0001f)
+			{
+				ZeroWeightCount++;
+			}
+			else
+			{
+				CompleteWeightCount++;
+			}
+			TotalWeightCount++;
+			for (int i = 0 ; i < 4 ; i++)
+			{
+				if (TargetMesh->Vertices[v].Indices[i] < 0)
+				{
+					if (i == 0)
+						ZeroIndex++;
+					NullIndex++;
+					break;
+				}
+			}
+			TotalMeshIndexCount++;
+		}
+	}
+	printf("=== === AnimNode Weight Info === ===\n");
+	printf("=== TotalWeightCount : %d\n", TotalWeightCount);
+	printf("=== NotCompleteWeightCount : %d\n", NotCompleteWeightCount);
+	printf("=== CompleteWeightCount : %d\n", CompleteWeightCount);
+	printf("=== ZeroWeightCount : %d\n", ZeroWeightCount);
+	printf("=== NullIndex: %d / %d\n", NullIndex, TotalMeshIndexCount);
+	printf("=== ZeroIndex: %d / %d\n", ZeroIndex, TotalMeshIndexCount);
+	printf("=== === === === === === === === === === \n");
+}
+#endif
 namespace Sdt
 {
 	void Converter::ExportMesh( const wstring & InSaveFileName )
@@ -162,12 +220,16 @@ namespace Sdt
 
 			// Mesh가 가지는 모든 aiBone에 대해서 
 			const UINT BoneCount = TargetMesh->mNumBones;
+// #ifdef DO_DEBUG
+// 			printf("[%s] Bone Count : %d\n", __FUNCTION__, BoneCount);
+// #endif
 			for (UINT boneIndex = 0; boneIndex < BoneCount; boneIndex++)
 			{
 				const aiBone * Bone = TargetMesh->mBones[boneIndex];
 				const char * BoneName = Bone->mName.C_Str();
-
-				UINT TargetBoneIndex = 0;
+// #ifdef DO_DEBUG
+// 				printf("[%s] Bone Name : %s\n", __FUNCTION__, BoneName);
+// #endif
 				const auto It = TempBoneTable.find(BoneName);
 				if (It != TempBoneTable.cend())
 				{
@@ -203,19 +265,9 @@ namespace Sdt
 			} //for(boneIndex)
 		}//for(MeshIndex)
 
-		// for (UINT MeshIndex = 0; MeshIndex < MeshCount; MeshIndex++)
-		// {
-		// 	const aiMesh * const TargetMesh = Scene->mMeshes[MeshIndex];
-		// 	const UINT BoneCount = TargetMesh->mNumBones;
-		// 	for (UINT BoneIndex = 0; BoneIndex <BoneCount; BoneIndex++)
-		// 	{
-		// 		aiBone * Bone = TargetMesh->mBones[BoneIndex];
-		// 		for (UINT w = 0; w < Bone->mNumWeights; w++)
-		// 		{
-		// 			MeshData * const meshdata =  this->Meshes[MeshIndex];
-		// 			Vector4 & Weights = meshdata->Vertices[VertexId].Weights;
-		// 		}
-		// 	}
-		// }
+#ifdef DO_DEBUG
+		CheckWeight(MeshCount, this->Meshes);
+#endif
+		
 	}
 }

@@ -49,6 +49,7 @@ namespace Sdt
 			ClipDataNowMaking->BoneName = NodeAnim->mNodeName.C_Str();
 
 			// 모든 KeySequence들은 부모 노드에 상대적인 값으로 저장된다. 따라서 이후에 사용할 때는 좌표변환 해서 사용해야 한다.
+			printf("[[[[[[[[[[[[[[[[[[[[[[[[[[[[%s]]]]]]]]]]]]]]]]]]]]]]]]\n", ClipDataNowMaking->BoneName.c_str());
 			ReadPosKeySequences(ClipDataNowMaking->PosKeys, NodeAnim);
 			ReadScaleKeySequences(ClipDataNowMaking->ScaleKeys, NodeAnim);
 			ReadRotKeySequences(ClipDataNowMaking->RotKeys, NodeAnim);
@@ -63,10 +64,10 @@ namespace Sdt
 		for (UINT i = 0; i < PosKeyCount; i++)
 		{
 			const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[i];
-			FrameDataVec Key;
-			Key.Time = static_cast<float>(PosKey.mTime);
-			memcpy(&Key.Value, &PosKey.mValue, sizeof(Vector));
-			OutPosKeys.push_back(Key);
+#ifdef DO_DEBUG
+			printf("[READ POS KEY FROM AI_NODE_ANIM] < %.4f, %.4f, %.4f >\n", PosKey.mValue.x, PosKey.mValue.y, PosKey.mValue.z);			
+#endif
+			OutPosKeys.emplace_back(static_cast<float>(PosKey.mTime), static_cast<Vector>(PosKey.mValue));
 		}
 	}
 	void Converter::ReadScaleKeySequences( vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim )
@@ -75,11 +76,8 @@ namespace Sdt
 		OutScaleKeys.reserve(ScaleKeyCount);
 		for (UINT i = 0; i < ScaleKeyCount; i++)
 		{
-			const aiVectorKey & PosKey =  InNodeAnim->mScalingKeys[i];
-			FrameDataVec Key;
-			Key.Time = static_cast<float>(PosKey.mTime);
-			memcpy(&Key.Value, &PosKey.mValue, sizeof(Vector));
-			OutScaleKeys.push_back(Key);
+			const aiVectorKey & ScaleKey =  InNodeAnim->mScalingKeys[i];
+			OutScaleKeys.emplace_back(static_cast<float>(ScaleKey.mTime), static_cast<Vector>(ScaleKey.mValue));
 		}
 	}
 	void Converter::ReadRotKeySequences( vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim )
@@ -89,10 +87,7 @@ namespace Sdt
 		for (UINT i = 0; i < RotKeyCount; i++)
 		{
 			const aiQuatKey & RotKey =  InNodeAnim->mRotationKeys[i];
-			FrameDataQuat Key;
-			Key.Time = static_cast<float>(RotKey.mTime);
-			memcpy(&Key.Value, &RotKey.mValue, sizeof(Quaternion));
-			OutRotKeys.push_back(Key);
+			OutRotKeys.emplace_back(static_cast<float>(RotKey.mTime), static_cast<Quaternion>(RotKey.mValue));
 		}
 	}
 
@@ -116,7 +111,7 @@ namespace Sdt
 			NodeData->BoneName = move(BoneName);
 			NodeData->PosKeys.emplace_back(0.f, Vector(0,0,0));
 			NodeData->ScaleKeys.emplace_back(0.f, Vector(1,1,1));
-			NodeData->RotKeys.emplace_back(0.f, Quaternion(0,0,0,1));
+			NodeData->RotKeys.emplace_back(0.f, Quaternion(1,0,0,0));
 			InOutClipData->NodeDatas.push_back(NodeData);
 		}
 		

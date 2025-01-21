@@ -125,7 +125,7 @@ void Camera::SetRotationMat()
 {
 	Matrix::CreateFromEulerAngle(RotationMat, EulerAngle);
 
-	Forward = -RotationMat.Forward();
+	Forward = RotationMat.Forward();
 	Up = RotationMat.Up();
 	Right = RotationMat.Right();
 }

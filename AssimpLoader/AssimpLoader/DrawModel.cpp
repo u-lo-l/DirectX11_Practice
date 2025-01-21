@@ -69,8 +69,8 @@ namespace Sdt
 		Model *	model = Models[ModelIndex];
 		Matrix WorldMat = model->GetWorldTransform()->GetMatrix(); 		
 
-		const UINT BoundCount = model->GetBoneCount(); 
-		for (UINT i = 0 ; i < BoundCount ; i += 1)
+		const UINT BoneCount = model->GetBoneCount(); 
+		for (UINT i = 0 ; i < BoneCount ; i += 1)
 		{
 			Matrix Mat = model->GetBoneTransforms()[i];
 			
@@ -81,6 +81,6 @@ namespace Sdt
 		}
 		
 		Sphere = new Model(L"Sphere");
-		Sphere->GetWorldTransform()->SetScale({0.02f, 0.02f, 0.02f});
+		Sphere->GetWorldTransform()->SetScale({0.015f, 0.015f, 0.015f});
 	}
 }
