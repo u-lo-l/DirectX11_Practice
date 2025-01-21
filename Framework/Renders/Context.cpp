@@ -27,8 +27,9 @@ Context * Context::Get()
 void Context::Tick()
 {
 	MainCamera->Tick();
-	if (CBBinder != nullptr)
-		CBBinder->Tick();
+	//TODO
+	// if (CBBinder != nullptr)
+	// 	CBBinder->Tick();
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 
@@ -39,8 +40,6 @@ void Context::Tick()
  */
 void Context::Render() const
 {
-	if (CBBinder != nullptr)
-		CBBinder->BindToGPU();
 	Gui * const GuiInst = Gui::Get();
 	GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(static_cast<int>(ImGui::GetIO().Framerate)));
 

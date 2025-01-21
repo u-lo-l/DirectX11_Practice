@@ -35,32 +35,34 @@ ModelMesh::~ModelMesh()
 
 void ModelMesh::Tick()
 {
-	// if (CBBinder != nullptr)
-	// 	CBBinder->Tick();
-
+	if (CBBinder != nullptr)
+		CBBinder->Tick();
 	if (bBoneIndexChanged == true)
 	{
 		BoneData.BoneIndex = BoneIndex;
-		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneTFCount);
 		bBoneIndexChanged = false;
 	}
-	
 	WorldTransform->Tick();
 }
 
-void ModelMesh::Render()
+void ModelMesh::Render(int frame)
 {
+	this->FrameData.Frame = frame;
 	if (CachedShader == nullptr)
 		CachedShader = MaterialData->GetShader();
 	
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();
-	// CBBinder->BindToGPU();
+	if (CBBinder != nullptr)
+		CBBinder->BindToGPU();
 	
 	BoneMatrixCBuffer->BindToGPU();
 	CHECK(ECB_BoneMatrixBuffer->SetConstantBuffer(*BoneMatrixCBuffer) >= 0);
-
+	
+	FrameCBuffer->BindToGPU();
+	CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
+	
 	if (ClipsSRVVar != nullptr)
 		ClipsSRVVar->SetResource(ClipsSRV);
 	
@@ -81,16 +83,23 @@ void ModelMesh::ReadMeshFile(
 {
 	const UINT MeshCount = InReader->ReadUint();
 	OutMeshes.resize( MeshCount );
+
+#ifdef DO_DEBUG
+	printf("Mesh Count : %d\n", MeshCount);
+#endif
 	for (UINT i = 0; i < MeshCount; i++)
 	{
+#ifdef DO_DEBUG
+		OutMeshes[i] = new ThisClass("Mesh #" + to_string(i));
+#else
 		OutMeshes[i] = new ThisClass();
-
+#endif
 		OutMeshes[i]->MeshName = InReader->ReadString();
 		
 		const string MaterialName = InReader->ReadString();
 		if (OutMeshes[i]->MeshName.empty() == true)
 		{
-			OutMeshes[i]->MeshName = "Mesh for " + MaterialName;
+			OutMeshes[i]->MeshName = "Mesh #" + to_string(i) + " for " + MaterialName;
 		}
 		OutMeshes[i]->MaterialData = InMaterialTable.at(MaterialName);
 
@@ -115,20 +124,33 @@ void ModelMesh::ReadMeshFile(
 		Mesh->CreateBuffers();
 }
 
+
+
 void ModelMesh::CreateBuffers()
 {
-	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
-	IBuffer = new IndexBuffer(Indices, IndicesCount);
 	
 	// 여기서 하나의 모델에 대해 ConstantDataBinder와 ConstantBuffer가 중복으로 생성되는 것 같다.
 	// ConstantDataBinder와 : View, Projection, LightDirection들어있음. -> 모델메쉬, 모델과 별개 아닌가?
 	// ConstantBuffer = BoneData들어있음 -> 모델마다 하나씩만 있으면 안 되나?
 	// TODO : ConstantDataBinder 모델과 독립시키기
 	// TODO : BoneDataCBuffer 모델메쉬와 독립시키기
- 	CBBinder = new ConstantDataBinder(MaterialData->GetShader());
-	const string CBufferInfo = MeshName + "__ModelMesh.Bone.Matrix";
+	if (CBBinder == nullptr)
+ 		CBBinder = new ConstantDataBinder(MaterialData->GetShader());
+
+	
+#ifdef DO_DEBUG
+	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType), MeshName);
+#else
+	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
+#endif
+	IBuffer = new IndexBuffer(Indices, IndicesCount);
+
+	const string CBufferInfo = MeshName + " : All Model Transform Matrix and Index for this Mesh";
 	BoneMatrixCBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
 	ECB_BoneMatrixBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
+	
+	FrameCBuffer = new ConstantBuffer(&this->FrameData, "Temp Frame", sizeof(FrameDesc));
+	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_Frame");
 
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
 }

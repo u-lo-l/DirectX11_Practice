@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class ModelBone;
 struct MeshData;
 
 class ModelMesh
@@ -25,9 +26,8 @@ private:
 	ModelMesh();
 #endif
 	~ModelMesh();
-
 	void Tick();
-	void Render();
+	void Render(int InFrame = 0);
 private :
 	Shader * CachedShader = nullptr;
 	int Pass = 0;
@@ -46,9 +46,15 @@ private :
 	void SetBoneIndex(int InBoneIndex)
 	{
 		BoneIndex = InBoneIndex;
+		BoneData.BoneIndex = InBoneIndex;
 		bBoneIndexChanged = true;
 	}
-	int BoneIndex = 0;;
+	void SetBoneTransforms(Matrix * const Transforms)
+	{
+		this->Transforms = Transforms;
+		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneTFCount);
+	}
+	int BoneIndex = 0;
 	bool bBoneIndexChanged = false;
 	ModelBone * Bone = nullptr;
 	Matrix * Transforms;
@@ -61,11 +67,13 @@ private :
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-	// ConstantDataBinder * CBBinder = nullptr;
+	ConstantDataBinder * CBBinder = nullptr;
 
 	/*
 	 * TODO : Mesh가 되게 많은데, Bone정보를 갖는건 이해하겠음.
 	 * 그런데 BoneDesc가 모든 Mesh들에 대해서 다 있어야하나?
+	 * GPU에 넘겨줘야하는 정보라 일단 다 가지고 있어야 하긴 함.
+	 * 최적화 할 수 있는 방법이 있을거임.
 	 */
 	struct BoneDesc
 	{
@@ -76,6 +84,16 @@ private :
 	BoneDesc BoneData;
 	ConstantBuffer * BoneMatrixCBuffer;
 	IECB_t * ECB_BoneMatrixBuffer;
+	
+private:
+	struct FrameDesc
+	{
+		int Frame;
+		float Padding[3];
+	};
+	FrameDesc FrameData;
+	ConstantBuffer * FrameCBuffer;
+	IECB_t * ECB_FrameBuffer;
 	
 private :
 	// 애니메이션 정보가 담긴 SRV

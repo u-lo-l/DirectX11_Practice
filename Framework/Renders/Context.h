@@ -33,5 +33,5 @@ private:
 	Camera * MainCamera;
 	D3D11_VIEWPORT * Viewport;
 public:
-	ConstantDataBinder * CBBinder = nullptr;
+	// ConstantDataBinder * CBBinder = nullptr;
 };
