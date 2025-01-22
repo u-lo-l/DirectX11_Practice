@@ -1100,67 +1100,26 @@ void Matrix::Transpose()
 	std::swap( M34, M43 );
 }
 
-
-Matrix Matrix::Invert( const Matrix & matrix )
+Matrix Matrix::Invert( const Matrix & matrix, bool IsTransform )
 {
-	float value5 = matrix.M11; float value4 = matrix.M12; float value3 = matrix.M13; float value2 = matrix.M14;
-	float value9 = matrix.M21; float value8 = matrix.M22; float value7 = matrix.M23; float value6 = matrix.M24;
-	float value17 = matrix.M31; float value16 = matrix.M32; float value15 = matrix.M33; float value14 = matrix.M34;
-	float value13 = matrix.M41; float value12 = matrix.M42; float value11 = matrix.M43; float value10 = matrix.M44;
-
-	float value23 = (value15 * value10) - (value14 * value11);
-	float value22 = (value16 * value10) - (value14 * value12);
-	float value21 = (value16 * value11) - (value15 * value12);
-	float value20 = (value17 * value10) - (value14 * value13);
-	float value19 = (value17 * value11) - (value15 * value13);
-	float value18 = (value17 * value12) - (value16 * value13);
-	float value39 = ((value8 * value23) - (value7 * value22)) + (value6 * value21);
-	float value38 = -(((value9 * value23) - (value7 * value20)) + (value6 * value19));
-	float value37 = ((value9 * value22) - (value8 * value20)) + (value6 * value18);
-	float value36 = -(((value9 * value21) - (value8 * value19)) + (value7 * value18));
-	float value = 1.0f / ((((value5 * value39) + (value4 * value38)) + (value3 * value37)) + (value2 * value36));
-
-
-	Matrix matrix2;
-
-	matrix2.M11 = value39 * value;
-	matrix2.M21 = value38 * value;
-	matrix2.M31 = value37 * value;
-	matrix2.M41 = value36 * value;
-
-	matrix2.M12 = -(((value4 * value23) - (value3 * value22)) + (value2 * value21)) * value;
-	matrix2.M22 = (((value5 * value23) - (value3 * value20)) + (value2 * value19)) * value;
-	matrix2.M32 = -(((value5 * value22) - (value4 * value20)) + (value2 * value18)) * value;
-	matrix2.M42 = (((value5 * value21) - (value4 * value19)) + (value3 * value18)) * value;
-
-	float value35 = (value7 * value10) - (value6 * value11);
-	float value34 = (value8 * value10) - (value6 * value12);
-	float value33 = (value8 * value11) - (value7 * value12);
-	float value32 = (value9 * value10) - (value6 * value13);
-	float value31 = (value9 * value11) - (value7 * value13);
-	float value30 = (value9 * value12) - (value8 * value13);
-
-	matrix2.M13 = (((value4 * value35) - (value3 * value34)) + (value2 * value33)) * value;
-	matrix2.M23 = -(((value5 * value35) - (value3 * value32)) + (value2 * value31)) * value;
-	matrix2.M33 = (((value5 * value34) - (value4 * value32)) + (value2 * value30)) * value;
-	matrix2.M43 = -(((value5 * value33) - (value4 * value31)) + (value3 * value30)) * value;
-
-	float value29 = (value7 * value14) - (value6 * value15);
-	float value28 = (value8 * value14) - (value6 * value16);
-	float value27 = (value8 * value15) - (value7 * value16);
-	float value26 = (value9 * value14) - (value6 * value17);
-	float value25 = (value9 * value15) - (value7 * value17);
-	float value24 = (value9 * value16) - (value8 * value17);
-
-	matrix2.M14 = -(((value4 * value29) - (value3 * value28)) + (value2 * value27)) * value;
-	matrix2.M24 = (((value5 * value29) - (value3 * value26)) + (value2 * value25)) * value;
-	matrix2.M34 = -(((value5 * value28) - (value4 * value26)) + (value2 * value24)) * value;
-	matrix2.M44 = (((value5 * value27) - (value4 * value25)) + (value3 * value24)) * value;
-
-	return matrix2;
+	Matrix Inv(matrix);
+	Inv.Invert(IsTransform);
+	return Inv;
 }
 
-void Matrix::Invert()
+void Matrix::Invert(bool bIsTransform)
+{
+	if (bIsTransform == false)
+	{
+		this->NormalInvert();
+	}
+	else
+	{
+		this->TransformInvert();
+	}
+}
+
+void Matrix::NormalInvert()
 {
 	float value5 = this->M11; float value4 = this->M12; float value3 = this->M13; float value2 = this->M14;
 	float value9 = this->M21; float value8 = this->M22; float value7 = this->M23; float value6 = this->M24;
@@ -1212,6 +1171,39 @@ void Matrix::Invert()
 	this->M24 = (((value5 * value29) - (value3 * value26)) + (value2 * value25)) * value;
 	this->M34 = -(((value5 * value28) - (value4 * value26)) + (value2 * value24)) * value;
 	this->M44 = (((value5 * value27) - (value4 * value25)) + (value3 * value24)) * value;
+}
+
+void Matrix::TransformInvert()
+{
+	// -T
+	const float Tx = -M41;
+	const float Ty = -M42;
+	const float Tz = -M43;
+
+	// Inv(S)
+	const float Sx = 1 / sqrtf((M11 * M11) + (M12 * M12) + (M13 * M13));
+	const float Sy = 1 / sqrtf((M21 * M21) + (M22 * M22) + (M23 * M23));
+	const float Sz = 1 / sqrtf((M31 * M31) + (M32 * M32) + (M33 * M33));
+
+	// R_T
+	const float R11 = M11 * Sx;
+	const float R21 = M12 * Sx;
+	const float R31 = M13 * Sx;
+	const float R12 = M21 * Sy;
+	const float R22 = M22 * Sy;
+	const float R32 = M23 * Sy;
+	const float R13 = M31 * Sz;
+	const float R23 = M32 * Sz;
+	const float R33 = M33 * Sz;
+
+	// inv(M) = (-T) * R^T * inv(S)
+	M11 = R11 * Sx; M12 = R12 * Sy; M13 = R13 * Sz; M14 = 0;
+	M21 = R21 * Sx; M22 = R22 * Sy; M23 = R23 * Sz; M24 = 0;
+	M31 = R31 * Sx;	M32 = R32 * Sy; M33 = R33 * Sz; M34 = 0;
+	M41 = Sx * (Tx * R11 + Ty * R21 + Tz * R31);
+	M42 = Sy * (Tx * R12 + Ty * R22 + Tz * R32);
+	M43 = Sz * (Tx * R13 + Ty * R23 + Tz * R33);
+	M44 = 1;
 }
 
 Matrix Matrix::Lerp( const Matrix & matrix1, const Matrix & matrix2, float amount )

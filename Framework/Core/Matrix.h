@@ -29,7 +29,11 @@ public:
 	Vector Translate() const;		void Translate( const Vector & value);
 	Matrix operator -() const;
 	void Transpose();
-	void Invert();
+	void Invert(bool bIsTransform = false);
+private :
+	void NormalInvert();
+	void TransformInvert();
+public:
 	bool operator ==(const Matrix& matrix2) const;
 	bool operator !=(const Matrix& matrix2) const;
 	Matrix operator +(const Matrix& matrix2) const;
@@ -89,8 +93,7 @@ public:
 	static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
 	static Matrix Transform(const Matrix & value, const Quaternion & rotation);
 	static Matrix Transpose(const Matrix & matrix);
-	
-	static Matrix Invert(const Matrix & matrix);
+	static Matrix Invert(const Matrix & matrix, bool IsTransform = false);
 	static Matrix Lerp(const Matrix & matrix1, const Matrix & matrix2, float amount);
 private:
 	struct CanonicalBasis
