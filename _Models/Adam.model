@@ -1,0 +1,12 @@
+{
+   "Animations" : [ "Adam/Idle", "Adam/Dance01", "Adam/Dance02", "Adam/Dance03" ],
+   "File" : {
+      "Material" : "Adam",
+      "Mesh" : "Adam"
+   },
+   "Transform" : {
+      "Position" : "0,0,0",
+      "Rotation" : "0,0,0",
+      "Scale" : "1,1,1"
+   }
+}
