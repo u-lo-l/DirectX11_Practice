@@ -67,7 +67,7 @@ private :
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-	ConstantDataBinder * CBBinder = nullptr;
+	ConstantDataBinder * GlobalMatrixCBBinder = nullptr;
 
 	/*
 	 * TODO : Mesh가 되게 많은데, Bone정보를 갖는건 이해하겠음.
@@ -88,8 +88,9 @@ private :
 private:
 	struct FrameDesc
 	{
+		int Clip;
 		int Frame;
-		float Padding[3];
+		float Padding[2];
 	};
 	FrameDesc FrameData;
 	ConstantBuffer * FrameCBuffer;
@@ -100,5 +101,4 @@ private :
 	ID3D11ShaderResourceView * ClipsSRV = nullptr;
 	ID3D11Texture2D * ClipsTexture = nullptr;
 	IESRV_t * ClipsSRVVar = nullptr;
-	
 };

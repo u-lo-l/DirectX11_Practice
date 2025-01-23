@@ -31,8 +31,9 @@ public:
 	void SetPosition(const Vector & InPosition);
 	void SetRotation(const Vector & InEulerAngleInDegree);
 	void SetScale(const Vector & InScale);
-	void SetTRS(const Transform & InTransform);
+	void SetTRS( const Transform & InTransform );
 	void SetTRS( const Transform * InTransform );
+	void SetTRS( const Vector & InPosition, const Quaternion & InRotation, const Vector & InScale );
 
 public:
 	const Matrix & GetMatrix() const {return CBufferData.World; }

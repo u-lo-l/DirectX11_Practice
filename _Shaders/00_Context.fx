@@ -1,6 +1,6 @@
 cbuffer CB_World
 {
-	matrix World;
+	matrix ModelWorldTF;
 }
 /**
  * Constant Buffer
@@ -11,12 +11,5 @@ cbuffer CB_Context
 	matrix ViewInv;
 	matrix Projection;
 	matrix ViewProjection;
-
 	float3 LightDirection;
 }
-
-cbuffer CB_Frame
-{
-    uint frame;
-    float3 padding;
-};

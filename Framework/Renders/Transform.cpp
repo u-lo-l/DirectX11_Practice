@@ -118,6 +118,15 @@ void Transform::SetTRS( const Transform * InTransform )
 	bTransformChanged = true;
 }
 
+void Transform::SetTRS( const Vector & InPosition, const Quaternion & InRotation, const Vector & InScale )
+{
+	Position = InPosition;
+	Scale = InScale;
+	EulerAngleInRadian = InRotation.ToEulerAngles();
+	EulerAngleInDegree = { Math::ToDegrees(EulerAngleInRadian.X), Math::ToDegrees(EulerAngleInRadian.Y), Math::ToDegrees(EulerAngleInRadian.Z)};
+	bTransformChanged = true;
+}
+
 void Transform::UpdateWorldMatrix()
 {
 	const Matrix Translation = Matrix::CreateTranslation(Position);

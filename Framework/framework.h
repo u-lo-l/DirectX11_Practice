@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <bitset>
 #include <chrono> // for timer, steady_clock
+
 using namespace std;
 
 #pragma region DirectX

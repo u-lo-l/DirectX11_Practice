@@ -59,6 +59,8 @@ public:
 	float Length();
 	float LengthSquared();
 
+	Vector ToEulerAngles() const;
+
 	void Normalize();
 	static Quaternion Normalize( const Quaternion & quaternion);
 
@@ -84,6 +86,7 @@ public:
 	static Quaternion Lerp( const Quaternion & quaternion1, const Quaternion & quaternion2, float amount);
 
 	static Quaternion Concatenate( const Quaternion & quaternion1, const Quaternion & quaternion2);
+
 
 public:
 	const static Quaternion Identity;///< 0.0f, 0.0f, 0.0f, 1.0f

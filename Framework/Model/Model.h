@@ -18,6 +18,7 @@ private:
 	using ThisClass = Model;
 public:
 	explicit Model( const wstring & ModelFileName );
+	Model( const wstring & ModelFileName, const Vector& Pos, const Quaternion& Rot, const Vector& Scale);
 	~Model();
 
 	void Tick();
@@ -28,17 +29,14 @@ public:
 	__forceinline void SetWorldPosition(const Vector & InPos)
 	{
 		WorldTransform->SetPosition(InPos);
-		bTransformChanged = true;
 	}
 	__forceinline void SetWorldRotation(const Vector & InEuler)
 	{
 		WorldTransform->SetRotation(InEuler);
-		bTransformChanged = true;
 	}
 	__forceinline void SetScale(const Vector & InScale)
 	{
 		WorldTransform->SetScale(InScale);
-		bTransformChanged = true;
 	}
 	
 private:
@@ -49,12 +47,7 @@ private:
 	map<string, Material*> MaterialsTable;
 	
 	vector<ModelMesh *> Meshes;
-public:
-	int Frame;
-private:
-	vector<ModelAnimation *> Animations;
 
-	bool bTransformChanged = false;
 	Transform * WorldTransform;
 
 #pragma region Pass
@@ -74,11 +67,30 @@ private:
 	Matrix BoneTransforms[MaxBoneCount];
 	CachedBoneTableType * CachedBoneTable = nullptr;
 
+
+#pragma endregion Bone Data
+
+#pragma region Animation Data
+public:
+	UINT GetClipIndex() const { return ClipIndex; }
+	UINT GetClipCount() const { return Animations.size(); }
+	UINT GetFrameCount(UINT InClipIndex) const;
+
+	void SetClipIndex(UINT InClipIndex);
+	void SetAnimationFrame(UINT InFrameIndex) const;
+private:
+	UINT ClipIndex;
+	UINT Frame;
+	vector<ModelAnimation *> Animations;
+
 	// KeyFrameAnimation을 Texture로 Bake한 것.
 	ID3D11Texture2D * ClipTexture = nullptr;
 	ID3D11ShaderResourceView * ClipSRV = nullptr;
+#pragma endregion Animation Data
+
 	
-#pragma endregion Bone Data
+/*====================================================================================*/
+	
 	
 #pragma region ReadFile
 public:

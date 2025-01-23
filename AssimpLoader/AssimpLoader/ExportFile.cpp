@@ -6,22 +6,32 @@
 
 namespace Sdt
 {
-	const string ShaderName = "20_ModelVertex2.fx";
-	const string ShaderForBoneIndicatorSphere= "21_ModelVertex3.fx";
 	const string ShaderForAnimation = "22_Animation.fx";
 	
-	void ExportFile::Initialize()
+	void ExportFile::Initialize(  )
 	{
-		// Mousey();
-		Shannon();
-		// Airplane();
-		// Cube();
-		// Manny();
-		// YBot();
-		// XYBot();
-		// Example();
+		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"});
+		// MakeModel(L"Misaki", {L"Idle", L"Move"});
+		// MakeModel(L"Misaki", {L"Idle" });
 	}
 
+	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames)
+	{
+		Converter * converter = new Converter();
+		converter->ReadAiSceneFromFile(InModelName + L"/" + InModelName + L".fbx");
+		converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForAnimation, true);
+		converter->ExportMesh(InModelName + L"/" + InModelName);
+
+		for (wstring AnimationName : InAnimationNames)
+		{
+			converter->ReadAiSceneFromFile(InModelName + L"/" + AnimationName + L".fbx");
+			converter->ExportAnimation(String::ToString(InModelName) + "/" + String::ToString(AnimationName), 0);
+		}
+		SAFE_DELETE(converter);
+		
+		MakeModelInfoFile(InModelName, InAnimationNames);
+	}
+	
 	void ExportFile::MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames )
 	{
 		Json::Value Root;
@@ -34,7 +44,7 @@ namespace Sdt
 		Json::Value Transform;
 		Transform["Position"] = "0,0,0";
 		Transform["Rotation"] = "0,0,0";
-		Transform["Scale"] = "0.01,0.01,0.01";
+		Transform["Scale"] = "1,1,1";
 		Root["Transform"] = Transform;
 		for (const wstring & AnimationName : InAnimationNames)
 			Root["Animations"].append(String::ToString(InModelName + L"/" + AnimationName));
@@ -47,108 +57,5 @@ namespace Sdt
 		ofs.open(ModelFilePath);
 		ofs << Str;
 		ofs.close();
-	}
-
-	void ExportFile::Airplane()
-	{
-		Converter * converter = nullptr;
-		converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Airplane/Airplane.fbx");
-		converter->ExportMaterial(L"Airplane/Airplane", ShaderForAnimation, true);
-		converter->ExportMesh(L"Airplane/Airplane");
-		
-		MakeModelInfoFile(L"Airplane", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::Cube()
-	{
-		Converter* converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Cube/Cube.fbx");
-		converter->ExportMaterial(L"Cube/Cube", ShaderForAnimation, true);
-		converter->ExportMesh(L"Cube/Cube");
-		
-		MakeModelInfoFile(L"Cube", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::Sphere()
-	{
-		Converter* converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Sphere/Sphere.fbx");
-		converter->ExportMaterial(L"Sphere/Sphere", ShaderForBoneIndicatorSphere, true);
-		converter->ExportMesh(L"Sphere/Sphere");
-		MakeModelInfoFile(L"Sphere", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::Shannon()
-	{
-		const wstring ModelName = L"Shannon";
-		const wstring AnimationName = L"Idle";
-		Converter * converter = new Converter();
-		converter->ReadAiSceneFromFile(ModelName + L"/" + ModelName + L".fbx");
-		converter->ExportMaterial(ModelName + L"/" + ModelName, ShaderForAnimation, true);
-		converter->ExportMesh(ModelName + L"/" + ModelName);
-
-		converter->ReadAiSceneFromFile(ModelName + L"/" + AnimationName + L".fbx");
-		converter->ExportAnimation(String::ToString(ModelName) + "/" + String::ToString(AnimationName), 0);
-		SAFE_DELETE(converter);
-		
-		MakeModelInfoFile(ModelName, {AnimationName});
-	}
-	
-	void ExportFile::Mousey()
-	{
-		Converter* converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Mousey/Mousey.fbx");
-		converter->ExportMaterial(L"Mousey/Mousey", ShaderForAnimation, true);
-		converter->ExportMesh(L"Mousey/Mousey");
-		MakeModelInfoFile(L"Mousey", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::Manny()
-	{
-		Converter* converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Manny/Manny.fbx");
-		converter->ExportMaterial(L"Manny/Manny", ShaderForAnimation, true);
-		converter->ExportMesh(L"Manny/Manny");
-		MakeModelInfoFile(L"Manny", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::YBot()
-	{
-		Converter* converter = new Converter();
-		converter->ReadAiSceneFromFile(L"YBot/YBot.fbx");
-		converter->ExportMaterial(L"YBot/YBot", ShaderForAnimation, true);
-		converter->ExportMesh(L"YBot/YBot");
-		MakeModelInfoFile(L"YBot", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::XYBot()
-	{
-		Converter* converter = new Converter();
-		converter->ReadAiSceneFromFile(L"XYBot/XYBot.fbx");
-		converter->ExportMaterial(L"XYBot/XYBot", ShaderForAnimation, true);
-		converter->ExportMesh(L"XYBot/XYBot");
-		MakeModelInfoFile(L"XYBot", {});
-		SAFE_DELETE(converter);
-	}
-
-	void ExportFile::Example()
-	{
-		Converter * converter = new Converter();
-		converter->ReadAiSceneFromFile(L"Example/Example.fbx");
-		converter->ExportMaterial(L"Example/Example", ShaderForAnimation, true);
-		converter->ExportMesh(L"Example/Example");
-
-		converter->ReadAiSceneFromFile(L"Example/Anim.fbx");
-		converter->ExportAnimation("Example/Anim", 0);
-		SAFE_DELETE(converter);
-		
-		MakeModelInfoFile(L"Example", {L"Anim"});
 	}
 }

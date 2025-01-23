@@ -35,22 +35,23 @@ ModelMesh::~ModelMesh()
 
 void ModelMesh::Tick()
 {
-	if (CBBinder != nullptr)
-		CBBinder->Tick();
+	if (GlobalMatrixCBBinder != nullptr)
+		GlobalMatrixCBBinder->Tick();
 	WorldTransform->Tick();
 }
 
-void ModelMesh::Render(int frame)
+void ModelMesh::Render(int InFrame)
 {
-	this->FrameData.Frame = frame;
+	this->FrameData.Frame = InFrame;
 	if (CachedShader == nullptr)
 		CachedShader = MaterialData->GetShader();
-	
+
+	WorldTransform->BindCBufferToGPU(CachedShader);
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();
-	if (CBBinder != nullptr)
-		CBBinder->BindToGPU();
+	if (GlobalMatrixCBBinder != nullptr)
+		GlobalMatrixCBBinder->BindToGPU();
 	
 	BoneDescBuffer->BindToGPU();
 	CHECK(ECB_BoneDescBuffer->SetConstantBuffer(*BoneDescBuffer) >= 0);
@@ -61,7 +62,6 @@ void ModelMesh::Render(int frame)
 	if (ClipsSRVVar != nullptr)
 		ClipsSRVVar->SetResource(ClipsSRV);
 	
-	WorldTransform->BindCBufferToGPU(CachedShader);
 
 	CachedShader->DrawIndexed(0, Pass, IndicesCount);
 }
@@ -123,15 +123,8 @@ void ModelMesh::ReadMeshFile(
 
 void ModelMesh::CreateBuffers()
 {
-	
-	// 여기서 하나의 모델에 대해 ConstantDataBinder와 ConstantBuffer가 중복으로 생성되는 것 같다.
-	// ConstantDataBinder와 : View, Projection, LightDirection들어있음. -> 모델메쉬, 모델과 별개 아닌가?
-	// ConstantBuffer = BoneData들어있음 -> 모델마다 하나씩만 있으면 안 되나?
-	// TODO : ConstantDataBinder 모델과 독립시키기
-	// TODO : BoneDataCBuffer 모델메쉬와 독립시키기
-	if (CBBinder == nullptr)
- 		CBBinder = new ConstantDataBinder(MaterialData->GetShader());
-
+	if (GlobalMatrixCBBinder == nullptr)
+ 		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
 	
 #ifdef DO_DEBUG
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType), MeshName);
@@ -145,7 +138,8 @@ void ModelMesh::CreateBuffers()
 	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 	
 	FrameCBuffer = new ConstantBuffer(&this->FrameData, "Temp Frame", sizeof(FrameDesc));
-	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_Frame");
+	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationFrame");
 
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
 }
+

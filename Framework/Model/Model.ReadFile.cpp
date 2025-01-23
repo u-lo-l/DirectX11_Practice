@@ -1,6 +1,31 @@
 ﻿#include "framework.h"
 #include "Model.h"
 #include <fstream>
+#include <iomanip>
+
+UINT Model::GetFrameCount( UINT InClipIndex ) const
+{
+	return 0;
+}
+
+void Model::SetClipIndex( UINT InClipIndex )
+{
+	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
+	ClipIndex = InClipIndex;
+	for (ModelMesh * TargetMesh : Meshes)
+	{
+		TargetMesh->FrameData.Clip = InClipIndex;
+	}
+}
+
+void Model::SetAnimationFrame(UINT InFrameIndex) const
+{
+	ASSERT(InFrameIndex < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
+	for (ModelMesh * TargetMesh : Meshes)
+	{
+		TargetMesh->FrameData.Frame = InFrameIndex;
+	}
+}
 
 void Model::ReadFile( const wstring & InFileFullPath )
 {
@@ -18,7 +43,6 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	Json::Value Position = Root["Transform"]["Position"];
 	Json::Value Rotation = Root["Transform"]["Rotation"];
 	Json::Value Scale = Root["Transform"]["Scale"];
-	
 
 	wstring MaterialName = String::ToWString(material.asString());
 	wstring MeshName = String::ToWString(Mesh.asString());
@@ -32,10 +56,10 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 
 	String::SplitString(&pString, Rotation.asString(), ",");
-	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+	WorldTransform->SetRotation({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 
 	String::SplitString(&pString, Scale.asString(), ",");
-	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+	WorldTransform->SetScale({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 	
 	Json::Value Animations = Root["Animations"];
 	const UINT AnimationCount = Animations.size();
@@ -127,7 +151,7 @@ void Model::ReadColorMap(const Json::Value & Value, Material * MatData)
 	}
 }
 
-void Model::ReadMesh( const wstring & InFileName)
+void Model::ReadMesh( const wstring & InFileName  )
 {
 	const wstring FullPath = W_MODEL_PATH + InFileName + L".mesh";
 
@@ -136,10 +160,12 @@ void Model::ReadMesh( const wstring & InFileName)
 
 	ModelBone::ReadModelFile(BinReader, this->Bones);
 	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable);
+	
 // #ifdef DO_DEBUG
 // 	printf("Model : %s -> Bone Count : %d\n", ModelName.c_str(), Bones.size());
 // 	printf("Model : %s -> Mesh Count : %d\n", ModelName.c_str(), Meshes.size());
 // #endif
+	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 
@@ -151,7 +177,7 @@ void Model::ReadMesh( const wstring & InFileName)
 	{
 		ModelBone * TargetBone = this->Bones[i];
 		this->BoneTransforms[i] = Matrix::Invert(TargetBone->Transform);
-		for (UINT number : TargetBone->MeshIndices)
+		for (const UINT number : TargetBone->MeshIndices)
 		{
 			Meshes[number]->SetBoneIndex(TargetBone->Index);
 			Meshes[number]->Bone = TargetBone;
@@ -180,8 +206,42 @@ void Model::CreateAnimationTexture()
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
 		ClipTFTables.push_back (Animations[i]->CalcClipTransform(Bones));		
+		// 만들어진 ClipTFTable 출력해서 확인해보자
+		ofstream stream;
+		stream.open("../" + ModelName + "_" + Animations[i]->Name + ".BoneMatrix.csv");
+		int old_flags = stream.flags();
+		// stream << std::fixed << std::setprecision(3);  // 소수점 2자리 고정
+		stream << std::scientific;
+		
+		Matrix** Table = ClipTFTables[i]->TransformMats;
+		stream << "Frame" << ",";
+		for (UINT b = 0; b < Bones.size(); b++)
+		{
+			if (Bones[b]->Name.find("Assimp") != string::npos)
+				continue;
+			stream << Bones[b]->Name << ",";
+		}
+		stream << std::endl;
+		for (UINT f = 0; f < Animations[0]->GetAnimationLength(); f++)
+		{
+			stream << f << ",";
+			for (UINT b = 0; b < Bones.size(); b++)
+			{
+				if (Bones[b]->Name.find("Assimp") != string::npos)
+					continue;
+				const Matrix & Mat = Table[f][b];
+				stream << Mat.M11 << " " << Mat.M12 << " " << Mat.M13 << " " << Mat.M14 << " " ;
+				stream << Mat.M21 << " " << Mat.M22 << " " << Mat.M23 << " " << Mat.M24 << " " ;
+				stream << Mat.M31 << " " << Mat.M32 << " " << Mat.M33 << " " << Mat.M34 << " " ;
+				stream << Mat.M41 << " " << Mat.M42 << " " << Mat.M43 << " " << Mat.M44 << "," ;
+			}
+			stream << std::endl;
+		}
+		stream.flags(old_flags);
+		stream.close();
 	}
 
+	
 	{
 		constexpr UINT PixelChannel = 4; // 그래서 Format == DXGI_FORMAT_R32G32B32A32_FLOAT이다.
 		D3D11_TEXTURE2D_DESC TextureDesc;

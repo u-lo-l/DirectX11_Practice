@@ -4,8 +4,7 @@
 #define MAX_MODEL_TRANSFORM 256
 cbuffer CB_ModelBones
 {
-    matrix WorldToBoneTF[MAX_MODEL_TRANSFORM]; // WorldToBone Matrix. == Inv(Bone의 WorldTransform)
-    
+    matrix RootToBoneTF[MAX_MODEL_TRANSFORM]; // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
     uint BoneIndex;
 };
 
@@ -29,8 +28,8 @@ struct VertexOutput
 
 struct AnimationFrame
 {
-    uint Clip;          // 몇 번 째 clip인지
-    uint CurrentFrame;  // 그 clip에서 몇 번째 Frame인지지
+    uint Clip;           // 몇 번 째 Clip인지
+    uint Frame;          // 그 clip에서 몇 번째 Frame인지지
 
     float2 Padding;
 };
@@ -49,8 +48,8 @@ float4 SetAnimatedBoneToWorldTF(VertexInput input)
 {
     int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
     float Weights[4] = { input.Weight.x, input.Weight.y, input.Weight.z, input.Weight.w };
-    uint  AnimationIndex = 0;
-    uint  CurrentFrame = frame;
+    uint  AnimationIndex = KeyFrameData.Clip;
+    uint  CurrentFrame = KeyFrameData.Frame;
 
     float4 ClipTransform[4];
 
@@ -61,8 +60,8 @@ float4 SetAnimatedBoneToWorldTF(VertexInput input)
     for(int i = 0 ; i < BoneCountToFindWeight ; i++)
     {
         int targetBoneIndex = Indices[i];
-        matrix TargetBoneInvMat = WorldToBoneTF[targetBoneIndex];
-        float4 VertexPosInBoneSpace = mul(input.Position, TargetBoneInvMat);
+        matrix TargetRootBoneInvMat = RootToBoneTF[targetBoneIndex];
+        float4 VertexPosInBoneSpace = mul(input.Position, TargetRootBoneInvMat);
 
         // Indices[i] : 이 Vertex가 참조 할 Bone. -> Indices[i] * 4 + j : 몇 째 열의 데이터인지
         // CurrentFrame : 몇 째 행의 데이터인지지
@@ -86,8 +85,8 @@ float4 SetAnimatedBoneToWorldTF(VertexInput input)
 VertexOutput VS(VertexInput input)
 {    
     VertexOutput output;
-
-    output.Position = SetAnimatedBoneToWorldTF(input);
+    output.Position = SetAnimatedBoneToWorldTF(input); // Local_Space(Bone Root Space)
+    output.Position = mul(output.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
@@ -123,7 +122,6 @@ technique11 T0
     pass P1
     {
         SetRasterizerState(FillMode_Wireframe);
-
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }

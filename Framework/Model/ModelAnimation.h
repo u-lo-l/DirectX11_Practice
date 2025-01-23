@@ -41,8 +41,8 @@ private:
 		int BoneIndex = -1;
 		string BoneName;
 
-		vector<FrameDataVec> Positions;
-		vector<FrameDataVec> Scales;
+		vector<FrameDataVec>  Positions;
+		vector<FrameDataVec>  Scales;
 		vector<FrameDataQuat> Rotations;
 	};
 	

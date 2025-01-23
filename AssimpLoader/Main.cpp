@@ -14,7 +14,7 @@ void Main::Initialize()
 
 void Main::Destroy()
 {
-	for (IExecutable* executable : Executables)
+	for (IExecutable * executable : Executables)
 	{
 		SAFE_DELETE(executable)
 	}
@@ -22,13 +22,13 @@ void Main::Destroy()
 
 void Main::Tick()
 {
-	for (IExecutable* executable : Executables)
+	for (IExecutable * executable : Executables)
 		executable->Tick();
 }
 
 void Main::Render()
 {
-	for (IExecutable* executable : Executables)
+	for (IExecutable * executable : Executables)
 		executable->Render();
 }
 

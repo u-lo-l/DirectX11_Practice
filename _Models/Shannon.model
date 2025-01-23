@@ -1,5 +1,10 @@
 {
-   "Animations" : [ "Shannon/Idle" ],
+   "Animations" : [
+      "Shannon/Idle",
+      "Shannon/Dance",
+      "Shannon/Taunt",
+      "Shannon/SillyDancing"
+   ],
    "File" : {
       "Material" : "Shannon",
       "Mesh" : "Shannon"

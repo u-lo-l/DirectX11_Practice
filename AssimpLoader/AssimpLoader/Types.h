@@ -22,6 +22,7 @@ struct MaterialData
 
 struct BoneData
 {
+	bool IsRootBone() const { return Parent < 0; }
 	UINT Index;
 	string Name;
 	int Parent;
@@ -72,6 +73,7 @@ struct ClipNodeData
  */
 struct ClipData
 {
+	bool bDiscrete = false;
 	string Name;
 	float Duration;
 	float TicksPerSecond;

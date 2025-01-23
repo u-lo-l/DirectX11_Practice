@@ -64,7 +64,7 @@ void Window::Create()
 		wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wndClass.hbrBackground = reinterpret_cast<HBRUSH>((COLOR_WINDOW + 2));
+		wndClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 2);
 		wndClass.lpszMenuName = nullptr;
 		wndClass.lpszClassName = desc.AppName.c_str();
 

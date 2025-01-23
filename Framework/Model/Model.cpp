@@ -11,7 +11,21 @@ Model::Model(const wstring & ModelFileName)
 #else
 	WorldTransform = new Transform();
 #endif
-	wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
+	const wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
+	this->ModelName = String::ToString(ModelFileName);
+	ReadFile(FullFilePath);
+}
+
+Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
+	:RootBone(nullptr)
+{
+#ifdef DO_DEBUG
+	WorldTransform = new Transform("Model WorldTransform of [" + String::ToString(ModelFileName) + "]");
+#else
+	WorldTransform = new Transform();
+#endif
+	WorldTransform->SetTRS(Pos,Rot,Scale);
+	const wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
 }
@@ -37,11 +51,7 @@ void Model::Tick()
 {
 	for (ModelMesh * mesh : Meshes)
 	{
-		if (bTransformChanged == true)
-		{
-			mesh->SetWorldTransform(this->WorldTransform);
-			bTransformChanged = false;
-		}
+		mesh->SetWorldTransform(this->WorldTransform);
 		mesh->Tick();
 	}
 }
@@ -53,14 +63,17 @@ void Model::Render()
 		static float time = 0;
 		static int bPlay = 1;
 		static float PlayRate = 1.f;
+		int clip = (int)GetClipIndex();
+		ImGui::SliderInt("Animation Clip #", &clip, 0, (int)GetClipCount() - 1);
+		SetClipIndex(clip);
 		ImGui::SliderInt("Play/Pause", &bPlay, 0, 1);
-		ImGui::SliderInt("Frame", &Frame, 0, Animations[0]->Duration);
+		// ImGui::SliderInt("Frame", &Frame, 0, Animations[0]->Duration);
 		ImGui::SliderFloat("Speed", &PlayRate, 0.1f, 2.f);
 
 		if (time > (1.f / (Animations[0]->TicksPerSecond * PlayRate)))
 		{
 			Frame += 1;
-			Frame %= static_cast<int>(this->Animations[0]->GetAnimationLength());
+			Frame %= static_cast<int>(this->Animations[clip]->GetAnimationLength());
 			time = 0;
 		}
 		if (bPlay == 1)
@@ -68,7 +81,6 @@ void Model::Render()
 	}
 	for (ModelMesh * mesh : Meshes)
 	{
-		mesh->Pass = this->Pass;
 		mesh->Render(Frame);
 	}
 }
@@ -76,6 +88,10 @@ void Model::Render()
 void Model::SetPass( int InPass )
 {
 	Pass = InPass;
+	for (ModelMesh * TargetMesh : Meshes)
+	{
+		TargetMesh->Pass = this->Pass;
+	}
 }
 
 Color Model::JsonStringToColor( const Json::String & InJson )
