@@ -6,6 +6,8 @@ namespace Sdt
 	class Converter
 	{
 	private:
+		static constexpr int DefaultTicksPerSecond = 30;
+	private:
 		using ThisClass = Converter;
 	public:
 		Converter();
@@ -64,9 +66,9 @@ namespace Sdt
 		// void ReadClips( vector<string> & OutClips ) const;
 		static ClipData * ReadClipData(const aiAnimation * InAnimation);
 		static void WriteClipData( const string & InSaveFileName, const ClipData * InClipData );
-		static void ReadPosKeySequences(vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim);
-		static void ReadScaleKeySequences(vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim);
-		static void ReadRotKeySequences(vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim);
+		static void ReadPosKeySequences(vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim, const ClipData * InClipData );
+		static void ReadScaleKeySequences(vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim, const ClipData * InClipData );
+		static void ReadRotKeySequences(vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim, const ClipData * InClipData );
 
 		static void ConnectNodeWithBone(ClipData * InOutClipData, const aiNode * InNode, const set<string> & InBoneNames_BinTree);
 #pragma endregion

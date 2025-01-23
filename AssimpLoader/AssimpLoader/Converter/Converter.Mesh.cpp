@@ -80,8 +80,10 @@ namespace Sdt
 		Bone->Name = InNode->mName.C_Str();
 		Bone->Transform = InNode->mTransformation;
 		Bone->Transform.Transpose(); // row-major(Assimp) to colum-major(DX)
-		if (Bone->Parent >= 0)
+		if (Bone->IsRootBone() == false)
+		{
 			Bone->Transform = Bone->Transform * Bones[Bone->Parent]->Transform;
+		}
 		Bones.push_back(Bone);
 
 		const UINT MeshCount = InNode->mNumMeshes;

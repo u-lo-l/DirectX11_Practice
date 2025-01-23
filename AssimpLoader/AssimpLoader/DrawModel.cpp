@@ -22,7 +22,7 @@ namespace Sdt
 			Models.push_back(new Model(ModelName));
 		}
 
-		SetBoneIndicators();
+		// SetBoneIndicators();
 	}
 
 	void DrawModel::Destroy()

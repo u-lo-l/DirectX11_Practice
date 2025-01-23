@@ -10,6 +10,8 @@ namespace Sdt
 
 		// Scene에 있는 ClipFrameData(aiNodeAnim)정보를 읽는다.
 		ClipData * const Clip = ReadClipData(Scene->mAnimations[InClipIndex]);
+
+		
 		// ReadClipData내부에서 만들어도 되는데 일단은 여기 두자.
 		set<string> BoneNamesInModel_BinTree;
 		const UINT NodeCount = Clip->NodeDatas.size();
@@ -27,11 +29,17 @@ namespace Sdt
 	ClipData * Converter::ReadClipData( const aiAnimation * InAnimation )
 	{
 		ClipData * AnimationClipDataToReturn = new ClipData{
+			(InAnimation->mTicksPerSecond != 1),
 			InAnimation->mName.C_Str(),
 			static_cast<float>(InAnimation->mDuration),
 			static_cast<float>(InAnimation->mTicksPerSecond),
 		};
 		// mNumChannels : 애니메이션이 영향을 미치는 aiNode의 개수. aiNode는 Bone일수 있지만 반드시 Bone은 아니다
+		if (AnimationClipDataToReturn->bDiscrete == false)
+		{
+			AnimationClipDataToReturn->Duration = static_cast<float>(static_cast<UINT>(InAnimation->mDuration * DefaultTicksPerSecond));
+			AnimationClipDataToReturn->TicksPerSecond = DefaultTicksPerSecond;
+		}
 		const UINT ChannelsCount = InAnimation->mNumChannels;
 		
 #ifdef DO_DEBUG
@@ -56,34 +64,103 @@ namespace Sdt
 		return AnimationClipDataToReturn;
 	}
 
-	void Converter::ReadPosKeySequences( vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim )
+	void Converter::ReadPosKeySequences( vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim, const ClipData * const InClipData)
 	{
-		const UINT PosKeyCount = InNodeAnim->mNumPositionKeys;
-		OutPosKeys.reserve(PosKeyCount);
-		for (UINT i = 0; i < PosKeyCount; i++)
+		if (InClipData->bDiscrete == true)
 		{
-			const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[i];
-			OutPosKeys.emplace_back(static_cast<float>(PosKey.mTime), static_cast<Vector>(PosKey.mValue));
+			const UINT PosKeyCount = InNodeAnim->mNumPositionKeys;
+			OutPosKeys.reserve(PosKeyCount);
+			for (UINT i = 0; i < PosKeyCount; i++)
+			{
+				const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[i];
+				OutPosKeys.emplace_back(static_cast<float>(PosKey.mTime), static_cast<Vector>(PosKey.mValue));
+			}
+		}
+		else
+		{
+			const UINT PosKeyCount = InNodeAnim->mNumPositionKeys == 1 ? 1 : 1 + static_cast<UINT>(InClipData->Duration);
+			OutPosKeys.reserve(PosKeyCount);
+			UINT KeySequenceIndex = 0;
+			UINT NextKeySequenceIndex = 1;
+			const UINT MaxKeySequenceIndex = InNodeAnim->mNumPositionKeys - 1;
+			for (UINT i = 0; i < PosKeyCount; i++) // PosKeyCount = Duration + 1 = Animation Clip Length
+			{
+				const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[KeySequenceIndex];
+				const aiVectorKey & NextPosKey = InNodeAnim->mPositionKeys[NextKeySequenceIndex];
+				const UINT TargetFrame = static_cast<UINT>(NextPosKey.mTime * (ThisClass::DefaultTicksPerSecond));
+				if (i > TargetFrame)
+				{
+					KeySequenceIndex = min(KeySequenceIndex + 1, MaxKeySequenceIndex);
+					NextKeySequenceIndex = min(NextKeySequenceIndex + 1, MaxKeySequenceIndex);
+				}
+				OutPosKeys.emplace_back(static_cast<float>(i), static_cast<Vector>(PosKey.mValue));
+			}
 		}
 	}
-	void Converter::ReadScaleKeySequences( vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim )
+	void Converter::ReadScaleKeySequences( vector<FrameDataVec> & OutScaleKeys, const aiNodeAnim * InNodeAnim, const ClipData * const InClipData)
 	{
-		const UINT ScaleKeyCount = InNodeAnim->mNumScalingKeys;
-		OutScaleKeys.reserve(ScaleKeyCount);
-		for (UINT i = 0; i < ScaleKeyCount; i++)
+		if (InClipData->bDiscrete == true)
 		{
-			const aiVectorKey & ScaleKey =  InNodeAnim->mScalingKeys[i];
-			OutScaleKeys.emplace_back(static_cast<float>(ScaleKey.mTime), static_cast<Vector>(ScaleKey.mValue));
+			const UINT ScaleKeyCount = InNodeAnim->mNumScalingKeys;
+			OutScaleKeys.reserve(ScaleKeyCount);
+			for (UINT i = 0; i < ScaleKeyCount; i++)
+			{
+				const aiVectorKey & ScaleKey =  InNodeAnim->mScalingKeys[i];
+				OutScaleKeys.emplace_back(static_cast<float>(ScaleKey.mTime), static_cast<Vector>(ScaleKey.mValue));
+			}
+		}
+		else
+		{
+			const UINT ScaleKeyCount = InNodeAnim->mNumScalingKeys == 1 ? 1 : 1 + static_cast<UINT>(InClipData->Duration);
+			OutScaleKeys.reserve(ScaleKeyCount);
+			UINT KeySequenceIndex = 0;
+			UINT NextKeySequenceIndex = 1;
+			const UINT MaxKeySequenceIndex = InNodeAnim->mNumScalingKeys - 1;
+			for (UINT i = 0; i < ScaleKeyCount; i++) // ScaleKeyCount = Duration + 1 = Animation Clip Length
+			{
+				const aiVectorKey & ScaleKey = InNodeAnim->mScalingKeys[KeySequenceIndex];
+				const aiVectorKey & NextScaleKey = InNodeAnim->mScalingKeys[NextKeySequenceIndex];
+				const UINT TargetFrame = static_cast<UINT>(NextScaleKey.mTime * (ThisClass::DefaultTicksPerSecond));
+				if (i > TargetFrame)
+				{
+					KeySequenceIndex = min(KeySequenceIndex + 1, MaxKeySequenceIndex);
+					NextKeySequenceIndex = min(NextKeySequenceIndex + 1, MaxKeySequenceIndex);
+				}
+				OutScaleKeys.emplace_back(static_cast<float>(i), static_cast<Vector>(ScaleKey.mValue));
+			}
 		}
 	}
-	void Converter::ReadRotKeySequences( vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim )
+	void Converter::ReadRotKeySequences( vector<FrameDataQuat> & OutRotKeys, const aiNodeAnim * InNodeAnim, const ClipData * const InClipData)
 	{
-		const UINT RotKeyCount = InNodeAnim->mNumRotationKeys;
-		OutRotKeys.reserve(RotKeyCount);
-		for (UINT i = 0; i < RotKeyCount; i++)
+		if (InClipData->bDiscrete == true)
 		{
-			const aiQuatKey & RotKey =  InNodeAnim->mRotationKeys[i];
-			OutRotKeys.emplace_back(static_cast<float>(RotKey.mTime), static_cast<Quaternion>(RotKey.mValue));
+			const UINT RotKeyCount = InNodeAnim->mNumRotationKeys;
+			OutRotKeys.reserve(RotKeyCount);
+			for (UINT i = 0; i < RotKeyCount; i++)
+			{
+				const aiQuatKey & RotKey =  InNodeAnim->mRotationKeys[i];
+				OutRotKeys.emplace_back(static_cast<float>(RotKey.mTime), static_cast<Quaternion>(RotKey.mValue));
+			}
+		}
+		else
+		{
+			const UINT RotKeyCount = InNodeAnim->mNumRotationKeys == 1 ? 1 : 1 + static_cast<UINT>(InClipData->Duration);
+			OutRotKeys.reserve(RotKeyCount);
+			UINT KeySequenceIndex = 0;
+			UINT NextKeySequenceIndex = 1;
+			const UINT MaxKeySequenceIndex = InNodeAnim->mNumRotationKeys - 1;
+			for (UINT i = 0; i < RotKeyCount; i++) // RotKeyCount = Duration + 1 = Animation Clip Length
+			{
+				const aiQuatKey & RotKey = InNodeAnim->mRotationKeys[KeySequenceIndex];
+				const aiQuatKey & NextRotKey = InNodeAnim->mRotationKeys[NextKeySequenceIndex];
+				const UINT TargetFrame = static_cast<UINT>(NextRotKey.mTime * (ThisClass::DefaultTicksPerSecond));
+				if (i > TargetFrame)
+				{
+					KeySequenceIndex = min(KeySequenceIndex + 1, MaxKeySequenceIndex);
+					NextKeySequenceIndex = min(NextKeySequenceIndex + 1, MaxKeySequenceIndex);
+				}
+				OutRotKeys.emplace_back(static_cast<float>(i), static_cast<Quaternion>(RotKey.mValue));
+			}
 		}
 	}
 
@@ -103,7 +180,6 @@ namespace Sdt
 		// Matching Bone Not Found
 		if (InBoneNames_BinTree.find(BoneName) == InBoneNames_BinTree.cend())
 		{
-
 			Matrix Mat = InNode->mTransformation;
 			Mat.Transpose();
 
