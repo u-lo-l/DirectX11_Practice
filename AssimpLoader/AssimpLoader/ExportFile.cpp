@@ -8,19 +8,21 @@ namespace Sdt
 {
 	const string ShaderForAnimation = "22_Animation.fx";
 	
-	void ExportFile::Initialize(  )
+	void ExportFile::Initialize()
 	{
-		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"});
+		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
 		// MakeModel(L"Misaki", {L"Idle", L"Move"});
 		// MakeModel(L"Misaki", {L"Idle" });
 	}
 
-	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames)
+	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)
 	{
 		Converter * converter = new Converter();
 		converter->ReadAiSceneFromFile(InModelName + L"/" + InModelName + L".fbx");
 		converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForAnimation, true);
 		converter->ExportMesh(InModelName + L"/" + InModelName);
+		
+		MakeModelInfoFile(InModelName, InAnimationNames, InScale);
 
 		for (wstring AnimationName : InAnimationNames)
 		{
@@ -28,11 +30,9 @@ namespace Sdt
 			converter->ExportAnimation(String::ToString(InModelName) + "/" + String::ToString(AnimationName), 0);
 		}
 		SAFE_DELETE(converter);
-		
-		MakeModelInfoFile(InModelName, InAnimationNames);
 	}
 	
-	void ExportFile::MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames )
+	void ExportFile::MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)
 	{
 		Json::Value Root;
 
@@ -44,7 +44,8 @@ namespace Sdt
 		Json::Value Transform;
 		Transform["Position"] = "0,0,0";
 		Transform["Rotation"] = "0,0,0";
-		Transform["Scale"] = "1,1,1";
+		string ScaleFactor = std::to_string(InScale);
+		Transform["Scale"] = ScaleFactor+","+ScaleFactor+","+ScaleFactor;
 		Root["Transform"] = Transform;
 		for (const wstring & AnimationName : InAnimationNames)
 			Root["Animations"].append(String::ToString(InModelName + L"/" + AnimationName));

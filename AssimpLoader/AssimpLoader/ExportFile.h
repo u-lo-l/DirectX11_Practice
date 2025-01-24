@@ -9,7 +9,7 @@ namespace Sdt
 	public:
 		void Initialize( ) override;
 	private:
-		static void MakeModel( const wstring & InModelName, const vector<wstring> & InAnimationNames );
-		static void MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames );
+		static void MakeModel( const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale = 1.f);
+		static void MakeModelInfoFile( const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale = 1.f );
 	};
 }

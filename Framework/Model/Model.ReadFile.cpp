@@ -207,38 +207,38 @@ void Model::CreateAnimationTexture()
 	{
 		ClipTFTables.push_back (Animations[i]->CalcClipTransform(Bones));		
 		// 만들어진 ClipTFTable 출력해서 확인해보자
-		ofstream stream;
-		stream.open("../" + ModelName + "_" + Animations[i]->Name + ".BoneMatrix.csv");
-		int old_flags = stream.flags();
-		// stream << std::fixed << std::setprecision(3);  // 소수점 2자리 고정
-		stream << std::scientific;
-		
-		Matrix** Table = ClipTFTables[i]->TransformMats;
-		stream << "Frame" << ",";
-		for (UINT b = 0; b < Bones.size(); b++)
-		{
-			if (Bones[b]->Name.find("Assimp") != string::npos)
-				continue;
-			stream << Bones[b]->Name << ",";
-		}
-		stream << std::endl;
-		for (UINT f = 0; f < Animations[0]->GetAnimationLength(); f++)
-		{
-			stream << f << ",";
-			for (UINT b = 0; b < Bones.size(); b++)
-			{
-				if (Bones[b]->Name.find("Assimp") != string::npos)
-					continue;
-				const Matrix & Mat = Table[f][b];
-				stream << Mat.M11 << " " << Mat.M12 << " " << Mat.M13 << " " << Mat.M14 << " " ;
-				stream << Mat.M21 << " " << Mat.M22 << " " << Mat.M23 << " " << Mat.M24 << " " ;
-				stream << Mat.M31 << " " << Mat.M32 << " " << Mat.M33 << " " << Mat.M34 << " " ;
-				stream << Mat.M41 << " " << Mat.M42 << " " << Mat.M43 << " " << Mat.M44 << "," ;
-			}
-			stream << std::endl;
-		}
-		stream.flags(old_flags);
-		stream.close();
+		// ofstream stream;
+		// stream.open("../" + ModelName + "_" + Animations[i]->Name + ".BoneMatrix.csv");
+		// int old_flags = stream.flags();
+		// // stream << std::fixed << std::setprecision(3);  // 소수점 2자리 고정
+		// stream << std::scientific;
+		//
+		// Matrix** Table = ClipTFTables[i]->TransformMats;
+		// stream << "Frame" << ",";
+		// for (UINT b = 0; b < Bones.size(); b++)
+		// {
+		// 	if (Bones[b]->Name.find("Assimp") != string::npos)
+		// 		continue;
+		// 	stream << Bones[b]->Name << ",";
+		// }
+		// stream << std::endl;
+		// for (UINT f = 0; f < Animations[0]->GetAnimationLength(); f++)
+		// {
+		// 	stream << f << ",";
+		// 	for (UINT b = 0; b < Bones.size(); b++)
+		// 	{
+		// 		if (Bones[b]->Name.find("Assimp") != string::npos)
+		// 			continue;
+		// 		const Matrix & Mat = Table[f][b];
+		// 		stream << Mat.M11 << " " << Mat.M12 << " " << Mat.M13 << " " << Mat.M14 << " " ;
+		// 		stream << Mat.M21 << " " << Mat.M22 << " " << Mat.M23 << " " << Mat.M24 << " " ;
+		// 		stream << Mat.M31 << " " << Mat.M32 << " " << Mat.M33 << " " << Mat.M34 << " " ;
+		// 		stream << Mat.M41 << " " << Mat.M42 << " " << Mat.M43 << " " << Mat.M44 << "," ;
+		// 	}
+		// 	stream << std::endl;
+		// }
+		// stream.flags(old_flags);
+		// stream.close();
 	}
 
 	
