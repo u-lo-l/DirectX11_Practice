@@ -77,7 +77,7 @@ void Model::Render()
 			time = 0;
 		}
 		if (bPlay == 1)
-			time += Sdt::Timer::Get()->GetDeltaTime();
+			time += Sdt::SystemTimer::Get()->GetDeltaTime();
 	}
 	for (ModelMesh * mesh : Meshes)
 	{

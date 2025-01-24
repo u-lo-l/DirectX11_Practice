@@ -16,7 +16,7 @@ Camera::~Camera()
 
 void Camera::Tick()
 {
-	const float DeltaTime = Sdt::Timer::Get()->GetDeltaTime();
+	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
 	if (Sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
 	{
 		return;

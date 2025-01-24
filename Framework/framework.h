@@ -55,8 +55,8 @@ using namespace std;
 
 	#include "Systems/D3D.h"
 	#include "Systems/Gui.h"
-	#include "Systems/Timer.h"
-	#include "Systems/Keyboard.h"
+	#include "Systems/SystemTimer.h"
+#include "Systems/Keyboard.h"
 	#include "Systems/Mouse.h"
 
 	#include "Viewer/Camera.h"

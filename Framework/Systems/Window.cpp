@@ -12,7 +12,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	Gui::Create();
 	Keyboard::Create();
 	Sdt::Mouse::Create();
-	Sdt::Timer::Create();
+	Sdt::SystemTimer::Create();
 	Context::Create();
 
 	Main = InMain;
@@ -38,7 +38,7 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Main->Destroy();
 	Context::Destroy();
-	Sdt::Timer::Destroy();
+	Sdt::SystemTimer::Destroy();
 	Sdt::Mouse::Destroy();
 	Keyboard::Destroy();
 	Gui::Destroy();
@@ -161,7 +161,7 @@ LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM I
 void Window::MainRender()
 {
 	Gui::Tick();
-	Sdt::Timer::Get()->Tick();	// DeltaTime 계산
+	Sdt::SystemTimer::Get()->Tick();	// DeltaTime 계산
 	Sdt::Mouse::Get()->Tick();	// Mouse변화량 계산
 	Context::Get()->Tick();		//
 	Main->Tick();				// Main에 Push된 IExecutable들 실행
