@@ -1,7 +1,6 @@
 ﻿#include "Framework.h"
 #include "Quaternion.h"
 
-
 const Quaternion Quaternion::Identity = Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
 
 Quaternion::Quaternion()
@@ -46,7 +45,7 @@ Quaternion::Quaternion( const aiQuaternion & aiQuat )
 
 
 
-Quaternion Quaternion::operator-(void)
+Quaternion Quaternion::operator-() const
 {
 	Quaternion quaternion1;
 	quaternion1.W = -W;
@@ -67,8 +66,6 @@ Quaternion Quaternion::operator-(void)
 // 	return Q;
 // }
 
-
-
 bool Quaternion::operator==(const Quaternion& quaternion2) const
 {
 	if (X == quaternion2.X && Y == quaternion2.Y && Z == quaternion2.Z)
@@ -76,7 +73,6 @@ bool Quaternion::operator==(const Quaternion& quaternion2) const
 	else
 		return false;
 }
-
 
 bool Quaternion::operator!=(const Quaternion& quaternion2) const
 {
@@ -86,66 +82,65 @@ bool Quaternion::operator!=(const Quaternion& quaternion2) const
 		return true;
 }
 
+Quaternion Quaternion::operator+(const Quaternion& Other) const
+{
+	Quaternion Q;
+	Q.X = X + Other.X;
+	Q.Y = Y + Other.Y;
+	Q.Z = Z + Other.Z;
+	Q.W = W + Other.W;
 
-Quaternion Quaternion::operator+(const Quaternion& quaternion2) const
+	return Q;
+}
+
+
+Quaternion Quaternion::operator-(const Quaternion& Other) const
+{
+	Quaternion Q;
+	Q.X = X - Other.X;
+	Q.Y = Y - Other.Y;
+	Q.Z = Z - Other.Z;
+	Q.W = W - Other.W;
+	return Q;
+}
+
+
+Quaternion Quaternion::operator*(const Quaternion& Other) const
+{
+	float value1 = Y * Other.Z - Z * Other.Y;
+	float value2 = Z * Other.X - X * Other.Z;
+	float value3 = X * Other.Y - Y * Other.X;
+	float value4 = X * Other.X + Y * Other.Y + Z * Other.Z;
+
+	Quaternion Q;
+	Q.X = X * Other.W + Other.X * W + value1;
+	Q.Y = Y * Other.W + Other.Y * W + value2;
+	Q.Z = Z * Other.W + Other.Z * W + value3;
+	Q.W = W * Other.W - value4;
+
+	return Q;
+}
+
+
+Quaternion Quaternion::operator*(const float& InScaleFactor) const
 {
 	Quaternion quaternion;
-	quaternion.X = X + quaternion2.X;
-	quaternion.Y = Y + quaternion2.Y;
-	quaternion.Z = Z + quaternion2.Z;
-	quaternion.W = W + quaternion2.W;
+	quaternion.X = X * InScaleFactor;
+	quaternion.Y = Y * InScaleFactor;
+	quaternion.Z = Z * InScaleFactor;
+	quaternion.W = W * InScaleFactor;
 
 	return quaternion;
 }
 
 
-Quaternion Quaternion::operator-(const Quaternion& quaternion2) const
+Quaternion Quaternion::operator/(const Quaternion& Other) const
 {
-	Quaternion quaternion;
-	quaternion.X = X - quaternion2.X;
-	quaternion.Y = Y - quaternion2.Y;
-	quaternion.Z = Z - quaternion2.Z;
-	quaternion.W = W - quaternion2.W;
-	return quaternion;
-}
-
-
-Quaternion Quaternion::operator*(const Quaternion& quaternion2) const
-{
-	float value1 = Y * quaternion2.Z - Z * quaternion2.Y;
-	float value2 = Z * quaternion2.X - X * quaternion2.Z;
-	float value3 = X * quaternion2.Y - Y * quaternion2.X;
-	float value4 = X * quaternion2.X + Y * quaternion2.Y + Z * quaternion2.Z;
-
-	Quaternion quaternion;
-	quaternion.X = X * quaternion2.W + quaternion2.X * W + value1;
-	quaternion.Y = Y * quaternion2.W + quaternion2.Y * W + value2;
-	quaternion.Z = Z * quaternion2.W + quaternion2.Z * W + value3;
-	quaternion.W = W * quaternion2.W - value4;
-
-	return quaternion;
-}
-
-
-Quaternion Quaternion::operator*(const float& scaleFactor) const
-{
-	Quaternion quaternion;
-	quaternion.X = X * scaleFactor;
-	quaternion.Y = Y * scaleFactor;
-	quaternion.Z = Z * scaleFactor;
-	quaternion.W = W * scaleFactor;
-
-	return quaternion;
-}
-
-
-Quaternion Quaternion::operator/(const Quaternion& quaternion2) const
-{
-	float value1 = 1.0f / quaternion2.X * quaternion2.X + quaternion2.Y * quaternion2.Y + quaternion2.Z * quaternion2.Z + quaternion2.W * quaternion2.W;
-	float value2 = -quaternion2.X * value1;
-	float value3 = -quaternion2.Y * value1;
-	float value4 = -quaternion2.Z * value1;
-	float value5 = quaternion2.W * value1;
+	float value1 = 1.0f / Other.X * Other.X + Other.Y * Other.Y + Other.Z * Other.Z + Other.W * Other.W;
+	float value2 = -Other.X * value1;
+	float value3 = -Other.Y * value1;
+	float value4 = -Other.Z * value1;
+	float value5 = Other.W * value1;
 
 	float multiple1 = Y * value4 - Z * value3;
 	float multiple2 = Z * value2 - X * value4;
@@ -162,62 +157,62 @@ Quaternion Quaternion::operator/(const Quaternion& quaternion2) const
 }
 
 
-void Quaternion::operator+=(const Quaternion& quaternion2)
+void Quaternion::operator+=(const Quaternion& Other)
 {
-	*this = *this + quaternion2;
+	*this = *this + Other;
 }
 
 
-void Quaternion::operator-=(const Quaternion& quaternion2)
+void Quaternion::operator-=(const Quaternion& Other)
 {
-	*this = *this - quaternion2;
+	*this = *this - Other;
 }
 
 
-void Quaternion::operator*=(const Quaternion& quaternion2)
+void Quaternion::operator*=(const Quaternion& Other)
 {
-	*this = *this * quaternion2;
+	*this = *this * Other;
 }
 
 
-void Quaternion::operator*=(const float& scaleFactor)
+void Quaternion::operator*=(const float& Other)
 {
-	*this = *this * scaleFactor;
+	*this = *this * Other;
 }
 
 
-void Quaternion::operator/=(const Quaternion& quaternion2)
+void Quaternion::operator/=(const Quaternion& Other)
 {
-	*this = *this / quaternion2;
+	*this = *this / Other;
 }
 
 
 std::wstring Quaternion::ToWString() const
 {
-	std::wstring temp = L"";
+	std::wstring Temp = L"";
 
-	temp += L"W:" + std::to_wstring(W);
-	temp += L",X:" + std::to_wstring(X);
-	temp += L",Y:" + std::to_wstring(Y);
-	temp += L",Z:" + std::to_wstring(Z);
+	Temp += L"W:" + std::to_wstring(W);
+	Temp += L",X:" + std::to_wstring(X);
+	Temp += L",Y:" + std::to_wstring(Y);
+	Temp += L",Z:" + std::to_wstring(Z);
 
-	return temp;
+	return Temp;
 }
 
 std::string Quaternion::ToString() const
 {
-	std::string temp;
+	std::string Temp;
 
-	temp += "W:" + std::to_string(W);
-	temp += ",X:" + std::to_string(X);
-	temp += ",Y:" + std::to_string(Y);
-	temp += ",Z:" + std::to_string(Z);
+	Temp += "W:" + std::to_string(W);
+	Temp += ",X:" + std::to_string(X);
+	Temp += ",Y:" + std::to_string(Y);
+	Temp += ",Z:" + std::to_string(Z);
 
-	return temp;
+	return Temp;
 }
 
 
-float Quaternion::Length()
+float Quaternion::Length() const
 {
 	float x = X * X + Y * Y + Z * Z + W * W;
 
@@ -225,7 +220,7 @@ float Quaternion::Length()
 }
 
 
-float Quaternion::LengthSquared()
+float Quaternion::LengthSquared() const
 {
 	return X * X + Y * Y + Z * Z + W * W;
 }
@@ -424,13 +419,6 @@ Quaternion Quaternion::CreateFromAxisAngle( const Vector & axis, float angle)
 	return quaternion;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-///@brief �� ������ ���� ȸ���� ���ʹϿ�
-///@param yaw : Yaw - Y
-///@param pitch : Pitch - X
-///@param roll : Roll - Z
-//////////////////////////////////////////////////////////////////////////
 Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
 {
 	float value = roll * 0.5f;

@@ -26,15 +26,15 @@ public:
 
 public:
 	Transform * GetWorldTransform() const { return WorldTransform; };
-	__forceinline void SetWorldPosition(const Vector & InPos)
+	__forceinline void SetWorldPosition(const Vector & InPos) const
 	{
 		WorldTransform->SetPosition(InPos);
 	}
-	__forceinline void SetWorldRotation(const Vector & InEuler)
+	__forceinline void SetWorldRotation(const Vector & InEuler) const
 	{
 		WorldTransform->SetRotation(InEuler);
 	}
-	__forceinline void SetScale(const Vector & InScale)
+	__forceinline void SetScale(const Vector & InScale) const
 	{
 		WorldTransform->SetScale(InScale);
 	}

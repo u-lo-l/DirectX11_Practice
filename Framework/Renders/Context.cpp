@@ -32,8 +32,8 @@ void Context::Tick()
 
 /**
  *	@brief :
- *	1. GUI를 활용해서, FPS, Camera transform 정보등을 표시한다.
- *	2. Constant Buffer를 GPU에 Bind한다.
+ *	1. Displays information such as FPS and Camera transform using GUI.
+ *	2. Binds the Constant Buffer to the GPU.
  */
 void Context::Render() const
 {

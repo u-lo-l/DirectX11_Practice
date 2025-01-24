@@ -20,7 +20,8 @@ namespace Sdt
 
 	float Timer::ElapsedTime()
 	{
-		return chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - StartTime).count();
+		return 0.0f;
+		// return chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - StartTime).count();
 	}
 #pragma endregion Timer
 

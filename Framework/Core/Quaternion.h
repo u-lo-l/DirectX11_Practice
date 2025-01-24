@@ -19,7 +19,7 @@ public:
 	explicit Quaternion(const aiQuaternion & aiQuat);
 #endif
 	
-	Quaternion operator -();
+	Quaternion operator -() const;
 
 	// explicit operator float* ();
 	// explicit operator const float* () const;
@@ -27,17 +27,17 @@ public:
 	bool operator ==(const Quaternion& quaternion2) const;
 	bool operator !=(const Quaternion& quaternion2) const;
 
-	Quaternion operator +(const Quaternion& quaternion2) const;
-	Quaternion operator -(const Quaternion& quaternion2) const;
-	Quaternion operator *(const Quaternion& quaternion2) const;
-	Quaternion operator *(const float& scaleFactor) const;
-	Quaternion operator /(const Quaternion& quaternion2) const;
+	Quaternion operator +(const Quaternion& Other) const;
+	Quaternion operator -(const Quaternion& Other) const;
+	Quaternion operator *(const Quaternion& Other) const;
+	Quaternion operator *(const float& InScaleFactor) const;
+	Quaternion operator /(const Quaternion& Other) const;
 
-	void operator +=(const Quaternion& quaternion2);
-	void operator -=(const Quaternion& quaternion2);
-	void operator *=(const Quaternion& quaternion2);
-	void operator *=(const float& scaleFactor);
-	void operator /=(const Quaternion& quaternion2);
+	void operator +=(const Quaternion& Other);
+	void operator -=(const Quaternion& Other);
+	void operator *=(const Quaternion& Other);
+	void operator *=(const float& Other);
+	void operator /=(const Quaternion& Other);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -56,8 +56,8 @@ public:
 	std::wstring ToWString() const;
 	std::string ToString() const;
 
-	float Length();
-	float LengthSquared();
+	float Length() const;
+	float LengthSquared() const;
 
 	Vector ToEulerAngles() const;
 

@@ -13,9 +13,9 @@ public:
 	bool operator ==(const Point& value2) const;
 	bool operator !=(const Point& value2) const;
 
-	Vector2D ToVector2();
+	Vector2D ToVector2() const;
 
-	std::wstring ToWString();
+	std::wstring ToWString() const;
 
 public:
 	const static Point Zero;///< 0, 0
