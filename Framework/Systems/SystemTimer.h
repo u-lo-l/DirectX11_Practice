@@ -10,7 +10,7 @@ namespace Sdt
 		~Timer();
 
 		void Start();
-		float ElapsedTime();
+		float ElapsedTime() const;
 
 	private:
 		chrono::steady_clock::time_point StartTime;

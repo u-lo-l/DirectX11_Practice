@@ -1,31 +1,8 @@
-#include "Framework.h"
+#include "framework.h"
 #include "SystemTimer.h"
 
 namespace Sdt
 {
-#pragma region Timer
-
-	Timer::Timer()
-	{
-	}
-
-	Timer::~Timer()
-	{
-	}
-
-	void Timer::Start()
-	{
-		StartTime = chrono::steady_clock::now();
-	}
-
-	float Timer::ElapsedTime()
-	{
-		return 0.0f;
-		// return chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - StartTime).count();
-	}
-#pragma endregion Timer
-
-#pragma region SystemTimer
 	SystemTimer* SystemTimer::Instance = nullptr;
 
 	void SystemTimer::Create()
@@ -68,6 +45,4 @@ namespace Sdt
 	SystemTimer::~SystemTimer()
 	{
 	}
-#pragma endregion SystemTimer
-
 }

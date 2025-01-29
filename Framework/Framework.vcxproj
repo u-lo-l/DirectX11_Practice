@@ -43,6 +43,7 @@
     <ClCompile Include="Systems\Keyboard.cpp" />
     <ClCompile Include="Systems\Mouse.cpp" />
     <ClCompile Include="Systems\SystemTimer.cpp" />
+    <ClCompile Include="Systems\Timer.cpp" />
     <ClCompile Include="Systems\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
