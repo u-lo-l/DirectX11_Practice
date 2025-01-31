@@ -12,33 +12,43 @@ void Model::SetClipIndex( UINT InClipIndex )
 {
 	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
 	ClipIndex = InClipIndex;
-	const ModelAnimation * const TargetAnimation = Animations[InClipIndex];
+	// const ModelAnimation * const TargetAnimation = Animations[InClipIndex];
 	for (ModelMesh * const TargetMesh : Meshes)
 	{
-		TargetMesh->FrameData.Clip = InClipIndex;
-		TargetMesh->FrameData.Duration = TargetAnimation->Duration;
-		TargetMesh->FrameData.TicksPerSecond = TargetAnimation->TicksPerSecond;
-		TargetMesh->FrameData.CurrentTime = 0;
-		TargetMesh->FrameData.CurrentFrame = 0;
-		TargetMesh->FrameData.NextFrame = 0;
+		if (TargetMesh->BlendingData.Current.Clip < 0)
+		{
+			TargetMesh->BlendingData.Current.Clip = InClipIndex;
+			TargetMesh->BlendingData.Current.CurrentTime = 0;
+			TargetMesh->BlendingData.Current.CurrentFrame = 0;
+			TargetMesh->BlendingData.Current.NextFrame = 0;
+
+			TargetMesh->BlendingData.Next.Clip = -1;
+		}
+		else if (TargetMesh->BlendingData.Next.Clip >= 0 && TargetMesh->BlendingData.Next.Clip != TargetMesh->BlendingData.Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
+		{
+			TargetMesh->BlendingData.TakeTime = 1.f;
+			TargetMesh->BlendingData.ChangingTime = 0.0f;
+			
+			TargetMesh->BlendingData.Next.Clip = InClipIndex;
+			TargetMesh->BlendingData.Next.CurrentTime = 0;
+			TargetMesh->BlendingData.Next.CurrentFrame = 0;
+			TargetMesh->BlendingData.Next.NextFrame = 0;
+		}
 	}
 }
 
-void Model::SetAnimationTime(float InAnimationTime) const
+void Model::SetAnimationTime(float InAnimationTime)
 {
 	ASSERT(InAnimationTime < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
 	for (ModelMesh * const TargetMesh : Meshes)
 	{
-		TargetMesh->FrameData.CurrentTime = InAnimationTime;
+		TargetMesh->BlendingData.Current.CurrentTime = InAnimationTime;
 	}
 }
 
-void Model::SetAnimationSpeed( float InAnimationSpeed ) const
+void Model::SetAnimationSpeed( float InAnimationSpeed )
 {
-	for (ModelMesh * const TargetMesh : Meshes)
-	{
-		TargetMesh->FrameData.Speed = InAnimationSpeed;
-	}
+	Animations[ClipIndex]->SetPlayRate(InAnimationSpeed);
 }
 
 void Model::ReadFile( const wstring & InFileFullPath )

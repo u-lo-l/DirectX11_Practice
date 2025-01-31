@@ -88,16 +88,28 @@ private :
 private:
 	struct FrameDesc
 	{
-		int Clip;
-		float TicksPerSecond;	// ! 여기 있는게 맞나 싶다.
-		float Duration;			// ! 여기 있는게 맞나 싶다.
-		float CurrentTime = 0;
-		int CurrentFrame;
-		int NextFrame;
-		float Speed = 1.f;		// ! 여기 있는게 맞나 싶다.
-		float Padding;
+		int		Clip = -1;
+		float	CurrentTime = 0;
+		int		CurrentFrame;
+		int		NextFrame;
 	};
-	FrameDesc FrameData;
+	// FrameDesc FrameData;
+
+	/**
+	 * <b>TakeTime</b> : 애니메이션이 걸리는 시간 (기본값 1.0초)<br/>
+	 * <b>ChangingTime</b> : 애니메이션이 변경될 때 걸리는 시간 (기본값 0.0초)
+	 */
+	struct AnimationBlendingDesc
+	{
+		float TakeTime = 1.0f;
+		float ChangingTime = 0.0f;
+		float Padding[2];
+
+		FrameDesc Current;
+		FrameDesc Next;
+	};
+	AnimationBlendingDesc BlendingData;
+	
 	ConstantBuffer * FrameCBuffer;
 	IECB_t * ECB_FrameBuffer;
 	

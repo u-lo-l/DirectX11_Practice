@@ -6,13 +6,11 @@
 
 namespace Sdt
 {
-	const string ShaderForAnimation = "22_Animation.fx";
+	const string ShaderForAnimation = "23_AnimationTwinning.fx";
 	
 	void ExportFile::Initialize()
 	{
 		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
-		// MakeModel(L"Misaki", {L"Idle", L"Move"});
-		// MakeModel(L"Misaki", {L"Idle" });
 	}
 
 	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)

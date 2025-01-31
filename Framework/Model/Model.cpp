@@ -49,17 +49,43 @@ Model::~Model()
 
 void Model::Tick()
 {
-	if (this->Animations.size() > 0)
+	if (this->Animations.empty() == true)
+		return;
+	
+	int clip = static_cast<int>(GetClipIndex());
+	ImGui::SliderInt("Animation Clip #", &clip, 0, static_cast<int>(GetClipCount()) - 1);
+	if (clip != static_cast<int>(GetClipIndex()))
+		SetClipIndex(clip);
+	
+	const ModelAnimation * const TargetAnimation = this->Animations[clip];
+	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
+	const UINT AnimationLength = static_cast<UINT>(TargetAnimation->GetAnimationLength());
+	
+	for (ModelMesh * M : Meshes)
 	{
-		int clip = (int)GetClipIndex();
-		ImGui::SliderInt("Animation Clip #", &clip, 0, (int)GetClipCount() - 1);
-		if (clip != (int)GetClipIndex())
-			SetClipIndex(clip);
-	}
-	for (ModelMesh * mesh : Meshes)
-	{
-		mesh->SetWorldTransform(this->WorldTransform);
-		mesh->Tick();
+		ModelMesh::AnimationBlendingDesc & BlendingData = M->BlendingData; 
+		BlendingData.Current.CurrentTime += DeltaTime * TargetAnimation->GetPlayRate();
+		BlendingData.Current.CurrentTime = fmod(BlendingData.Current.CurrentTime, AnimationLength);
+		BlendingData.Current.CurrentFrame = static_cast<int>(BlendingData.Current.CurrentTime);
+		BlendingData.Current.NextFrame = (BlendingData.Current.CurrentFrame + 1) % AnimationLength;
+
+		if (BlendingData.Next.Clip > -1)
+		{
+			BlendingData.ChangingTime += DeltaTime;
+			BlendingData.ChangingTime /= BlendingData.TakeTime;
+			
+			if (BlendingData.ChangingTime >= 1.0f) // Blending완료
+			{
+				BlendingData.Next.Clip = -1;
+			}
+			else // Blending 끝
+			{
+				// Do Nothing
+			}
+		}
+
+		M->SetWorldTransform(this->WorldTransform);
+		M->Tick();
 	}
 }
 

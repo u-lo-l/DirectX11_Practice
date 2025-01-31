@@ -77,18 +77,17 @@ public:
 	UINT GetFrameCount(UINT InClipIndex) const;
 
 	void SetClipIndex(UINT InClipIndex);
-	void SetAnimationTime(float InAnimationTime) const;
-	void SetAnimationSpeed(float InAnimationSpeed) const;
+	void SetAnimationTime(float InAnimationTime);
+	void SetAnimationSpeed(float InAnimationSpeed);
 private:
-	UINT ClipIndex = 0;
-	UINT Frame;
+	UINT ClipIndex = 0; // 몇 번째 애니메이션의
+	UINT Frame; // 몇 frame의 동작인지
 	vector<ModelAnimation *> Animations;
 
 	// KeyFrameAnimation을 Texture로 Bake한 것.
 	ID3D11Texture2D * ClipTexture = nullptr;
 	ID3D11ShaderResourceView * ClipSRV = nullptr;
 #pragma endregion Animation Data
-
 	
 /*====================================================================================*/
 	

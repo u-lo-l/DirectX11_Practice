@@ -22,9 +22,12 @@ private:
 private:
 	UINT GetKeyFrameCount() const { return KeyFrames.size(); }
 	float GetAnimationLength () const { return 1 + Duration; }
+	float GetPlayRate() const { return PlayRate; }
+	void SetPlayRate(float InPlayRate) { PlayRate = InPlayRate; }
 	string Name;
 	float Duration = 0.f;
 	float TicksPerSecond = 0.f;;
+	float PlayRate = 1.0f;
 	vector<KeyFrameData *> KeyFrames;
 
 private :

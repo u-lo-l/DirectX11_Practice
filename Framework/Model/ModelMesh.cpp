@@ -3,7 +3,7 @@
 
 #ifdef DO_DEBUG
 ModelMesh::ModelMesh( const string & MetaData )
-	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
+	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), BlendingData(), FrameCBuffer(nullptr),
 	ECB_FrameBuffer(nullptr)
 {
 	this->MetaData = MetaData;
@@ -16,11 +16,11 @@ ModelMesh::ModelMesh()
 	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
 	ECB_FrameBuffer(nullptr)
 {
-#ifdef DO_DEBUG
+	#ifdef DO_DEBUG
 	WorldTransform = new Transform("ModelMesh WorldTransform");
-#else
+	#else
 	WorldTransform = new Transform();
-#endif
+	#endif
 	bBoneIndexChanged = true;
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -39,15 +39,6 @@ void ModelMesh::Tick()
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->Tick();
 	WorldTransform->Tick();
-
-	if (ClipsSRVVar != nullptr)
-	{
-		const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * FrameData.TicksPerSecond;
-		FrameData.CurrentTime += DeltaTime * FrameData.Speed;
-		FrameData.CurrentTime = fmod(FrameData.CurrentTime, FrameData.Duration + 1);
-		FrameData.CurrentFrame = static_cast<int>(FrameData.CurrentTime);
-		FrameData.NextFrame = (FrameData.CurrentFrame + 1) % (static_cast<int>(FrameData.Duration) + 1);
-	}
 }
 
 void ModelMesh::Render()
@@ -147,7 +138,7 @@ void ModelMesh::CreateBuffers()
 	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
 	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 	
-	FrameCBuffer = new ConstantBuffer(&this->FrameData, "Current Animation Frame Description", sizeof(FrameDesc));
+	FrameCBuffer = new ConstantBuffer(&this->BlendingData.Current, "Current Animation Frame Description", sizeof(FrameDesc));
 	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationFrame");
 
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
