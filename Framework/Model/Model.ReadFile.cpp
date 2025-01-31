@@ -12,18 +12,32 @@ void Model::SetClipIndex( UINT InClipIndex )
 {
 	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
 	ClipIndex = InClipIndex;
-	for (ModelMesh * TargetMesh : Meshes)
+	const ModelAnimation * const TargetAnimation = Animations[InClipIndex];
+	for (ModelMesh * const TargetMesh : Meshes)
 	{
 		TargetMesh->FrameData.Clip = InClipIndex;
+		TargetMesh->FrameData.Duration = TargetAnimation->Duration;
+		TargetMesh->FrameData.TicksPerSecond = TargetAnimation->TicksPerSecond;
+		TargetMesh->FrameData.CurrentTime = 0;
+		TargetMesh->FrameData.CurrentFrame = 0;
+		TargetMesh->FrameData.NextFrame = 0;
 	}
 }
 
-void Model::SetAnimationFrame(UINT InFrameIndex) const
+void Model::SetAnimationTime(float InAnimationTime) const
 {
-	ASSERT(InFrameIndex < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
-	for (ModelMesh * TargetMesh : Meshes)
+	ASSERT(InAnimationTime < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
+	for (ModelMesh * const TargetMesh : Meshes)
 	{
-		TargetMesh->FrameData.Frame = InFrameIndex;
+		TargetMesh->FrameData.CurrentTime = InAnimationTime;
+	}
+}
+
+void Model::SetAnimationSpeed( float InAnimationSpeed ) const
+{
+	for (ModelMesh * const TargetMesh : Meshes)
+	{
+		TargetMesh->FrameData.Speed = InAnimationSpeed;
 	}
 }
 
@@ -195,6 +209,8 @@ void Model::ReadAnimation( const wstring & InFileName )
 	Animations.push_back(Anim);
 	
 	SAFE_DELETE(BinReader);
+	if (Animations.size() > 0)
+		SetClipIndex(0);
 }
 
 void Model::CreateAnimationTexture()

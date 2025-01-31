@@ -15,13 +15,8 @@ namespace Sdt
 	private:
 		vector<Model *> Models;
 		int ModelIndex = 0;
-		int ShowBone = 0;
-
+		int Pass = 0;
 	/*=========================================================================*/
 
-	private:
-		vector<Vector> Positions;
-		Model * Sphere = nullptr;
-		void SetBoneIndicators();
 	};
 }

@@ -27,7 +27,7 @@ private:
 #endif
 	~ModelMesh();
 	void Tick();
-	void Render(int InFrame = 0);
+	void Render();
 private :
 	Shader * CachedShader = nullptr;
 	int Pass = 0;
@@ -89,8 +89,13 @@ private:
 	struct FrameDesc
 	{
 		int Clip;
-		int Frame;
-		float Padding[2];
+		float TicksPerSecond;	// ! 여기 있는게 맞나 싶다.
+		float Duration;			// ! 여기 있는게 맞나 싶다.
+		float CurrentTime = 0;
+		int CurrentFrame;
+		int NextFrame;
+		float Speed = 1.f;		// ! 여기 있는게 맞나 싶다.
+		float Padding;
 	};
 	FrameDesc FrameData;
 	ConstantBuffer * FrameCBuffer;

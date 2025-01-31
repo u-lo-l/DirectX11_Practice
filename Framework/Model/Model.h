@@ -77,9 +77,10 @@ public:
 	UINT GetFrameCount(UINT InClipIndex) const;
 
 	void SetClipIndex(UINT InClipIndex);
-	void SetAnimationFrame(UINT InFrameIndex) const;
+	void SetAnimationTime(float InAnimationTime) const;
+	void SetAnimationSpeed(float InAnimationSpeed) const;
 private:
-	UINT ClipIndex;
+	UINT ClipIndex = 0;
 	UINT Frame;
 	vector<ModelAnimation *> Animations;
 

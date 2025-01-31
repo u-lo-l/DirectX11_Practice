@@ -39,7 +39,8 @@ namespace Sdt
 	SystemTimer::SystemTimer()
 	: DeltaTime(0.f), RunningTime(0.f)
 	{
-		//StartTime = chrono::steady_clock::now();
+		StartTime = chrono::steady_clock::now();
+		PrevFrameTime = chrono::steady_clock::now();
 	}
 
 	SystemTimer::~SystemTimer()

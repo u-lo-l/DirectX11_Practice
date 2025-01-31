@@ -49,6 +49,13 @@ Model::~Model()
 
 void Model::Tick()
 {
+	if (this->Animations.size() > 0)
+	{
+		int clip = (int)GetClipIndex();
+		ImGui::SliderInt("Animation Clip #", &clip, 0, (int)GetClipCount() - 1);
+		if (clip != (int)GetClipIndex())
+			SetClipIndex(clip);
+	}
 	for (ModelMesh * mesh : Meshes)
 	{
 		mesh->SetWorldTransform(this->WorldTransform);
@@ -58,30 +65,9 @@ void Model::Tick()
 
 void Model::Render()
 {
-	if (this->Animations.size() > 0)
-	{
-		static float time = 0;
-		static int bPlay = 1;
-		static float PlayRate = 1.f;
-		int clip = (int)GetClipIndex();
-		ImGui::SliderInt("Animation Clip #", &clip, 0, (int)GetClipCount() - 1);
-		SetClipIndex(clip);
-		ImGui::SliderInt("Play/Pause", &bPlay, 0, 1);
-		// ImGui::SliderInt("Frame", &Frame, 0, Animations[0]->Duration);
-		ImGui::SliderFloat("Speed", &PlayRate, 0.1f, 2.f);
-
-		if (time > (1.f / (Animations[0]->TicksPerSecond * PlayRate)))
-		{
-			Frame += 1;
-			Frame %= static_cast<int>(this->Animations[clip]->GetAnimationLength());
-			time = 0;
-		}
-		if (bPlay == 1)
-			time += Sdt::SystemTimer::Get()->GetDeltaTime();
-	}
 	for (ModelMesh * mesh : Meshes)
 	{
-		mesh->Render(Frame);
+		mesh->Render();
 	}
 }
 

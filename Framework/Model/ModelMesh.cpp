@@ -16,7 +16,6 @@ ModelMesh::ModelMesh()
 	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
 	ECB_FrameBuffer(nullptr)
 {
-#endif
 #ifdef DO_DEBUG
 	WorldTransform = new Transform("ModelMesh WorldTransform");
 #else
@@ -25,6 +24,7 @@ ModelMesh::ModelMesh()
 	bBoneIndexChanged = true;
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
+#endif
 
 ModelMesh::~ModelMesh()
 {
@@ -39,11 +39,19 @@ void ModelMesh::Tick()
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->Tick();
 	WorldTransform->Tick();
+
+	if (ClipsSRVVar != nullptr)
+	{
+		const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * FrameData.TicksPerSecond;
+		FrameData.CurrentTime += DeltaTime * FrameData.Speed;
+		FrameData.CurrentTime = fmod(FrameData.CurrentTime, FrameData.Duration + 1);
+		FrameData.CurrentFrame = static_cast<int>(FrameData.CurrentTime);
+		FrameData.NextFrame = (FrameData.CurrentFrame + 1) % (static_cast<int>(FrameData.Duration) + 1);
+	}
 }
 
-void ModelMesh::Render(int InFrame)
+void ModelMesh::Render()
 {
-	this->FrameData.Frame = InFrame;
 	if (CachedShader == nullptr)
 		CachedShader = MaterialData->GetShader();
 
