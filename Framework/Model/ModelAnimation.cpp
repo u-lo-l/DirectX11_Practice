@@ -1,6 +1,8 @@
 ﻿#include "framework.h"
 #include "ModelAnimation.h"
 
+#include <fstream>
+
 ModelAnimation::~ModelAnimation()
 {
 	for (const KeyFrameData * Data : KeyFrames)

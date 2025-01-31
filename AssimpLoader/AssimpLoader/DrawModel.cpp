@@ -35,7 +35,7 @@ namespace Sdt
 	void DrawModel::Tick()
 	{
 		int prevIndex= ModelIndex;
-		static int Pass = 1;
+		static int Pass = 0;
 		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
 		ImGui::SliderInt("Pass", &Pass, 0, 1);
 		ImGui::SliderInt("ShowBone", &ShowBone, 0, 1);

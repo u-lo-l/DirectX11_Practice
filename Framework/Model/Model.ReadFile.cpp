@@ -206,39 +206,6 @@ void Model::CreateAnimationTexture()
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
 		ClipTFTables.push_back (Animations[i]->CalcClipTransform(Bones));		
-		// 만들어진 ClipTFTable 출력해서 확인해보자
-		// ofstream stream;
-		// stream.open("../" + ModelName + "_" + Animations[i]->Name + ".BoneMatrix.csv");
-		// int old_flags = stream.flags();
-		// // stream << std::fixed << std::setprecision(3);  // 소수점 2자리 고정
-		// stream << std::scientific;
-		//
-		// Matrix** Table = ClipTFTables[i]->TransformMats;
-		// stream << "Frame" << ",";
-		// for (UINT b = 0; b < Bones.size(); b++)
-		// {
-		// 	if (Bones[b]->Name.find("Assimp") != string::npos)
-		// 		continue;
-		// 	stream << Bones[b]->Name << ",";
-		// }
-		// stream << std::endl;
-		// for (UINT f = 0; f < Animations[0]->GetAnimationLength(); f++)
-		// {
-		// 	stream << f << ",";
-		// 	for (UINT b = 0; b < Bones.size(); b++)
-		// 	{
-		// 		if (Bones[b]->Name.find("Assimp") != string::npos)
-		// 			continue;
-		// 		const Matrix & Mat = Table[f][b];
-		// 		stream << Mat.M11 << " " << Mat.M12 << " " << Mat.M13 << " " << Mat.M14 << " " ;
-		// 		stream << Mat.M21 << " " << Mat.M22 << " " << Mat.M23 << " " << Mat.M24 << " " ;
-		// 		stream << Mat.M31 << " " << Mat.M32 << " " << Mat.M33 << " " << Mat.M34 << " " ;
-		// 		stream << Mat.M41 << " " << Mat.M42 << " " << Mat.M43 << " " << Mat.M44 << "," ;
-		// 	}
-		// 	stream << std::endl;
-		// }
-		// stream.flags(old_flags);
-		// stream.close();
 	}
 
 	
@@ -264,6 +231,7 @@ void Model::CreateAnimationTexture()
 		MEMORY_BASIC_INFORMATION MemInfo = {};
 		const SIZE_T BytesWritten = VirtualQuery(ReservedVirtualMemory , &MemInfo, sizeof(MEMORY_BASIC_INFORMATION));
 		printf("\n=========================================================================\n");
+		printf("\t[VMEM DEBUG] %s Bytes Written: %d\n", __FUNCTION__, BytesWritten);
 		printf("\t[VMEM DEBUG] %s Memory Base Address: %p\n", __FUNCTION__, MemInfo.BaseAddress);
 		printf("\t[VMEM DEBUG] %s Allocation Base: %p\n", __FUNCTION__, MemInfo.AllocationBase);
 		printf("\t[VMEM DEBUG] %s Page Size : %zu_bytes\n", __FUNCTION__, PageSize);
@@ -297,17 +265,16 @@ void Model::CreateAnimationTexture()
 		}
 		CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
 		SAFE_DELETE_ARR(SubResources);
-
 #pragma endregion
+		
 #pragma region Clear Memory
-	
 		for (ModelAnimation::KeyFrameTFTable * TFTable : ClipTFTables)
 		{
 			SAFE_DELETE(TFTable);			
 		}
 		VirtualFree(ReservedVirtualMemory , 0, MEM_RELEASE);
-		
 #pragma endregion
+		
 #pragma region Create SRV // 셰이더 리소스 뷰 생성
 		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 		SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

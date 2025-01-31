@@ -14,8 +14,10 @@ public:
 	// Shader에서는 동적할당이 안 돼서 정적 크기를 지정해준다.
 	static constexpr UINT MaxBoneCount = 256;
 private:
-	
 	using ThisClass = Model;
+
+/*====================================================================================*/
+
 public:
 	explicit Model( const wstring & ModelFileName );
 	Model( const wstring & ModelFileName, const Vector& Pos, const Quaternion& Rot, const Vector& Scale);
@@ -24,20 +26,14 @@ public:
 	void Tick();
 	void Render();
 
+#pragma region GettersSetters
 public:
-	Transform * GetWorldTransform() const { return WorldTransform; };
-	__forceinline void SetWorldPosition(const Vector & InPos) const
-	{
-		WorldTransform->SetPosition(InPos);
-	}
-	__forceinline void SetWorldRotation(const Vector & InEuler) const
-	{
-		WorldTransform->SetRotation(InEuler);
-	}
-	__forceinline void SetScale(const Vector & InScale) const
-	{
-		WorldTransform->SetScale(InScale);
-	}
+	Transform * GetWorldTransform() const { return WorldTransform; }
+	const string & GetModelName() const { return ModelName; }
+	__forceinline void SetWorldPosition(const Vector & InPos) const	{ WorldTransform->SetPosition(InPos); }
+	__forceinline void SetWorldRotation(const Vector & InEuler) const { WorldTransform->SetRotation(InEuler); }
+	__forceinline void SetScale(const Vector & InScale) const {	WorldTransform->SetScale(InScale); }
+#pragma endregion GettersSetters
 	
 private:
 	static Color JsonStringToColor(const Json::String & InJson);
@@ -49,6 +45,8 @@ private:
 	vector<ModelMesh *> Meshes;
 
 	Transform * WorldTransform;
+	
+/*====================================================================================*/
 
 #pragma region Pass
 public:
@@ -56,6 +54,8 @@ public:
 private :
 	int Pass;
 #pragma endregion
+
+/*====================================================================================*/
 
 #pragma region Bone Data
 public:
@@ -66,9 +66,9 @@ private:
 	vector<ModelBone *> Bones;
 	Matrix BoneTransforms[MaxBoneCount];
 	CachedBoneTableType * CachedBoneTable = nullptr;
-
-
 #pragma endregion Bone Data
+
+/*====================================================================================*/
 
 #pragma region Animation Data
 public:
@@ -91,33 +91,31 @@ private:
 	
 /*====================================================================================*/
 	
-	
 #pragma region ReadFile
+	
 public:
 	void ReadFile(const wstring & InFileFullPath);
-#pragma region Read Material Data
 
-public:
-	void ReadMaterial(const wstring & InFileName);
-private:
-	static void ReadShaderName(const Json::Value & Value, Material * MatData);
-	static void ReadColor(const Json::Value & Value, Material * MatData);
-	static void ReadColorMap(const Json::Value & Value, Material * MatData);
+	#pragma region Read Material Data
+	public:
+		void ReadMaterial(const wstring & InFileName);
+	private:
+		static void ReadShaderName(const Json::Value & Value, Material * MatData);
+		static void ReadColor(const Json::Value & Value, Material * MatData);
+		static void ReadColorMap(const Json::Value & Value, Material * MatData);
+	#pragma endregion Read Material Data
 
-#pragma endregion Read Material Data
+	#pragma region Read Mesh Data
+	public:
+		void ReadMesh(const wstring & InFileName);
+	#pragma endregion Read Mesh Data
 
-#pragma region Read Mesh Data
-
-public:
-	void ReadMesh(const wstring & InFileName);
-
-#pragma endregion Read Mesh Data
-
-#pragma region Read Animation Data
-public :
-	void ReadAnimation(const wstring & InFileName);
-	void CreateAnimationTexture();
-#pragma endregion Read Animation Data
+	#pragma region Read Animation Data
+	public :
+		void ReadAnimation(const wstring & InFileName);
+		void CreateAnimationTexture();
+	#pragma endregion Read Animation Data
+	
 #pragma endregion ReadFile
 };
 

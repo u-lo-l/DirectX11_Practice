@@ -13,8 +13,10 @@ ModelMesh::ModelMesh( const string & MetaData )
 }
 #else
 ModelMesh::ModelMesh()
-	: Transforms(nullptr), BoneData(), BoneMatrixCBuffer(nullptr), ECB_BoneMatrixBuffer(nullptr)
+	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
+	ECB_FrameBuffer(nullptr)
 {
+#endif
 #ifdef DO_DEBUG
 	WorldTransform = new Transform("ModelMesh WorldTransform");
 #else
@@ -23,7 +25,6 @@ ModelMesh::ModelMesh()
 	bBoneIndexChanged = true;
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
-#endif
 
 ModelMesh::~ModelMesh()
 {
@@ -127,17 +128,18 @@ void ModelMesh::CreateBuffers()
  		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
 	
 #ifdef DO_DEBUG
+	printf("---\n");
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType), MeshName);
 #else
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 #endif
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
 
-	const string CBufferInfo = MeshName + " : All Model Transform Matrix and Index for this Mesh";
+	const string CBufferInfo = MeshName + " : Every Bone TF Matrix and Current Bone Index for this Mesh";
 	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
 	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 	
-	FrameCBuffer = new ConstantBuffer(&this->FrameData, "Temp Frame", sizeof(FrameDesc));
+	FrameCBuffer = new ConstantBuffer(&this->FrameData, "Current Animation Frame Description", sizeof(FrameDesc));
 	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationFrame");
 
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");

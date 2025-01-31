@@ -1,6 +1,6 @@
 #pragma once
 
-#define DO_DEBUG 1
+// #define DO_DEBUG 0
 
 #include <Windows.h>
 #include <assert.h>

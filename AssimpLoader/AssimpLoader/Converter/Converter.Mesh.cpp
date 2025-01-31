@@ -8,7 +8,6 @@ static void CheckWeight(UINT MeshCount, const vector<MeshData *> & Meshes)
 	UINT CompleteWeightCount = 0;
 	UINT NotCompleteWeightCount = 0;
 	UINT ZeroWeightCount = 0;
-	UINT NullIndex = 0;
 	UINT ZeroIndex = 0;
 	UINT TotalMeshIndexCount = 0;
 
@@ -43,7 +42,6 @@ static void CheckWeight(UINT MeshCount, const vector<MeshData *> & Meshes)
 				{
 					if (i == 0)
 						ZeroIndex++;
-					NullIndex++;
 					break;
 				}
 			}
@@ -52,10 +50,9 @@ static void CheckWeight(UINT MeshCount, const vector<MeshData *> & Meshes)
 	}
 	printf("=== === AnimNode Weight Info === ===\n");
 	printf("=== TotalWeightCount : %d\n", TotalWeightCount);
-	printf("=== NotCompleteWeightCount : %d\n", NotCompleteWeightCount);
+	printf("=== IncompleteWeightCount : %d\n", NotCompleteWeightCount);
 	printf("=== CompleteWeightCount : %d\n", CompleteWeightCount);
 	printf("=== ZeroWeightCount : %d\n", ZeroWeightCount);
-	printf("=== NullIndex: %d / %d\n", NullIndex, TotalMeshIndexCount);
 	printf("=== ZeroIndex: %d / %d\n", ZeroIndex, TotalMeshIndexCount);
 	printf("=== === === === === === === === === === \n");
 }

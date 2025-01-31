@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Core/Quaternion.h"
-// #include "Model.h"
 
 typedef struct ModelAnimationFrameVector FrameDataVec;
 typedef struct ModelAnimationFrameQuat FrameDataQuat;
@@ -45,7 +44,7 @@ private:
 		vector<FrameDataVec>  Scales;
 		vector<FrameDataQuat> Rotations;
 	};
-	
+
 	struct KeyFrameTFTable // ClipTransform
 	{
 		Matrix** TransformMats;
