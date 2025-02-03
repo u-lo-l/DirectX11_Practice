@@ -101,7 +101,7 @@ private:
 	 */
 	struct AnimationBlendingDesc
 	{
-		float TakeTime = 1.0f;
+		float TakeTime = 5.0f;
 		float ChangingTime = 0.0f;
 		float Padding[2];
 

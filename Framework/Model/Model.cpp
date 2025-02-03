@@ -82,10 +82,10 @@ void Model::Tick()
 			else // Blending 중
 			{
 				CalculateAnimationTime(BlendingData.Next);
-				const UINT ClipIndex = GetClipIndex();
+				const UINT ClipIndex = BlendingData.Next.Clip;
 				const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];
 				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
-				BlendingData.ChangingTime += DeltaTime;
+				BlendingData.ChangingTime += DeltaTime / BlendingData.TakeTime;
 			}
 		}
 
