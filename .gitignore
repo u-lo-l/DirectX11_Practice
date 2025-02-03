@@ -5,3 +5,5 @@ Debug*/*
 .vs/
 */*.lib
 */*.pdb
+*.lib
+*.pdb
