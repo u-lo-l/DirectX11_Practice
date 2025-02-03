@@ -1,10 +1,9 @@
 ﻿#include "framework.h"
-#include "ModelMesh.h"
+#include "StaticMesh.h"
+#include "SkeletalMesh.h"
 
 #ifdef DO_DEBUG
 ModelMesh::ModelMesh( const string & MetaData )
-	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), BlendingData(), FrameCBuffer(nullptr),
-	ECB_FrameBuffer(nullptr)
 {
 	this->MetaData = MetaData;
 	WorldTransform = new Transform("World Transform of " + MetaData);
@@ -13,15 +12,8 @@ ModelMesh::ModelMesh( const string & MetaData )
 }
 #else
 ModelMesh::ModelMesh()
-	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
-	ECB_FrameBuffer(nullptr)
+	: WorldTransform(new Transform()), BlendingData(), FrameCBuffer(nullptr), ECB_FrameBuffer(nullptr)
 {
-	#ifdef DO_DEBUG
-	WorldTransform = new Transform("ModelMesh WorldTransform");
-	#else
-	WorldTransform = new Transform();
-	#endif
-	bBoneIndexChanged = true;
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 #endif
@@ -32,6 +24,15 @@ ModelMesh::~ModelMesh()
 	SAFE_DELETE_ARR(Indices);
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
+	SAFE_DELETE(GlobalMatrixCBBinder);
+
+#pragma region Animation
+	SAFE_DELETE(FrameCBuffer);
+	SAFE_RELEASE(ECB_FrameBuffer);
+	SAFE_RELEASE(ClipsSRV);
+	SAFE_RELEASE(ClipsTexture);
+	SAFE_RELEASE(ClipsSRVVar);
+#pragma endregion Animation
 }
 
 void ModelMesh::Tick()
@@ -52,17 +53,17 @@ void ModelMesh::Render()
 	MaterialData->Render();
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->BindToGPU();
+
 	
-	BoneDescBuffer->BindToGPU();
-	CHECK(ECB_BoneDescBuffer->SetConstantBuffer(*BoneDescBuffer) >= 0);
-	
-	FrameCBuffer->BindToGPU();
-	CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
+	if (FrameCBuffer != nullptr)
+	{
+		FrameCBuffer->BindToGPU();
+		CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
+	}
 	
 	if (ClipsSRVVar != nullptr)
-		ClipsSRVVar->SetResource(ClipsSRV);
+		CHECK(ClipsSRVVar->SetResource(ClipsSRV) >= 0);
 	
-
 	CachedShader->DrawIndexed(0, Pass, IndicesCount);
 }
 
@@ -74,7 +75,8 @@ void ModelMesh::SetWorldTransform( const Transform * InTransform) const
 void ModelMesh::ReadMeshFile(
 	const BinaryReader * InReader,
 	vector<ThisClassPtr> & OutMeshes,
-	const map<string, Material*> & InMaterialTable )
+	const map<string, Material*> & InMaterialTable,
+	bool bIsSkeletal)
 {
 	const UINT MeshCount = InReader->ReadUint();
 	OutMeshes.resize( MeshCount );
@@ -82,13 +84,19 @@ void ModelMesh::ReadMeshFile(
 #ifdef DO_DEBUG
 	printf("Mesh Count : %d\n", MeshCount);
 #endif
+
 	for (UINT i = 0; i < MeshCount; i++)
 	{
+		
 #ifdef DO_DEBUG
 		OutMeshes[i] = new ThisClass("Mesh #" + to_string(i));
 #else
-		OutMeshes[i] = new ThisClass();
+		if (bIsSkeletal == false)
+			OutMeshes[i] = new StaticMesh();
+		else
+			OutMeshes[i] = new SkeletalMesh();
 #endif
+
 		OutMeshes[i]->MeshName = InReader->ReadString();
 		
 		const string MaterialName = InReader->ReadString();
@@ -108,15 +116,15 @@ void ModelMesh::ReadMeshFile(
 		
 		OutMeshes[i]->IndicesCount = InReader->ReadUint();
 		OutMeshes[i]->Indices = new UINT[OutMeshes[i]->IndicesCount];
-		if (OutMeshes[i]->VerticesCount > 0)
+		if (OutMeshes[i]->IndicesCount > 0)
 		{
 			void * Ptr = OutMeshes[i]->Indices;
 			InReader->ReadByte(&Ptr, sizeof(UINT) * OutMeshes[i]->IndicesCount);
 		}
 	}
 
-	for (const ThisClassPtr Mesh : OutMeshes)
-		Mesh->CreateBuffers();
+	// for (const ThisClassPtr Mesh : OutMeshes)
+	// 	Mesh->CreateBuffers();
 }
 
 
@@ -124,7 +132,7 @@ void ModelMesh::ReadMeshFile(
 void ModelMesh::CreateBuffers()
 {
 	if (GlobalMatrixCBBinder == nullptr)
- 		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
+		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
 	
 #ifdef DO_DEBUG
 	printf("---\n");
@@ -132,15 +140,12 @@ void ModelMesh::CreateBuffers()
 #else
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 #endif
+	
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
 
-	const string CBufferInfo = MeshName + " : Every Bone TF Matrix and Current Bone Index for this Mesh";
-	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
-	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
-	
-	FrameCBuffer = new ConstantBuffer(&this->BlendingData, "Current Animation Blending Description", sizeof(FrameDesc));
+	if (BlendingData.Current.Clip < 0)
+		return ;
+	FrameCBuffer = new ConstantBuffer(&this->BlendingData, "Current Animation Blending Description", sizeof(AnimationBlendingDesc));
 	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationBlending");
-
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
 }
-

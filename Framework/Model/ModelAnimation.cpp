@@ -197,7 +197,7 @@ ModelAnimation::KeyFrameTFTable::KeyFrameTFTable()
 	TransformMats = new Matrix* [MaxFrameLength];
 
 	for (UINT i = 0; i < MaxFrameLength; i++)
-		TransformMats[i] = new Matrix[ModelMesh::MaxBoneCount];
+		TransformMats[i] = new Matrix[SkeletalMesh::MaxBoneCount];
 }
 
 ModelAnimation::KeyFrameTFTable::~KeyFrameTFTable()

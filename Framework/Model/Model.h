@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <unordered_map>
-#include "ModelMesh.h"
+#include "SkeletalMesh.h"
 
 class ModelBone;
 class ModelMesh;
@@ -12,7 +12,7 @@ public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
 	// 대부분의 모델에서 Bone 개수 250개면 충분하다.
 	// Shader에서는 동적할당이 안 돼서 정적 크기를 지정해준다.
-	static constexpr UINT MaxBoneCount = 256;
+	// static constexpr UINT MaxBoneCount = 256;
 private:
 	using ThisClass = Model;
 
@@ -67,7 +67,7 @@ public:
 private:
 	ModelBone * RootBone;
 	vector<ModelBone *> Bones;
-	Matrix BoneTransforms[MaxBoneCount];
+	Matrix BoneTransforms[SkeletalMesh::MaxBoneCount];
 	CachedBoneTableType * CachedBoneTable = nullptr;
 #pragma endregion Bone Data
 
@@ -77,13 +77,13 @@ private:
 public:
 	UINT GetClipIndex() const { return ClipIndex; }
 	UINT GetClipCount() const { return Animations.size(); }
-	UINT GetFrameCount(UINT InClipIndex) const;
 
 	void SetClipIndex(UINT InClipIndex);
 	void SetAnimationTime(float InAnimationTime);
 	void SetAnimationSpeed(float InAnimationSpeed);
 private:
-	void CalculateAnimationTime(ModelMesh::FrameDesc & FrameData) const;
+	void CalculateAnimationTime(SkeletalMesh::FrameDesc & FrameData) const;
+	
 private:
 	UINT ClipIndex = 0; // 몇 번째 애니메이션의
 	UINT Frame; // 몇 frame의 동작인지

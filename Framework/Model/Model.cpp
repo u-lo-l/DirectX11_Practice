@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "SkeletalMesh.h"
+
 Model::Model(const wstring & ModelFileName)
  : RootBone(nullptr)
 {
@@ -61,44 +63,48 @@ void Model::Tick()
 	
 	int clip = static_cast<int>(GetClipIndex());
 	ImGui::SliderInt("Animation Clip #", &clip, 0, static_cast<int>(GetClipCount()) - 1);
-
+	static float InterpSpeed = 1.0f;
+	ImGui::SliderFloat("InterpSpeed", &InterpSpeed, 0.1f, 5.0f);
 	if (clip != static_cast<int>(GetClipIndex()))
 		SetClipIndex(clip);
 	
 	for (ModelMesh * const M : Meshes)
 	{
-		ModelMesh::AnimationBlendingDesc & BlendingData = M->BlendingData; 
+		SkeletalMesh * const Skm = dynamic_cast<SkeletalMesh * const>(M);
+		if (Skm == nullptr)
+			continue;
+		SkeletalMesh::AnimationBlendingDesc & BlendingData = Skm->BlendingData; 
 		
 		CalculateAnimationTime(BlendingData.Current);
 		
 		if (BlendingData.Next.Clip > -1)
 		{
-			if (BlendingData.ChangingTime >= 1.0f) // Blending완료
+			if (BlendingData.ElapsedBlendTime >= 1.0f) // Blending완료
 			{
 				BlendingData.Current = BlendingData.Next;
 				BlendingData.Next.Clip = -1;
-				BlendingData.ChangingTime = 0.0f;
+				BlendingData.ElapsedBlendTime = 0.0f;
 			}
 			else // Blending 중
 			{
 				CalculateAnimationTime(BlendingData.Next);
-				const UINT ClipIndex = GetClipIndex();
+				const UINT ClipIndex = BlendingData.Next.Clip;
 				const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];
-				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
-				BlendingData.ChangingTime += DeltaTime;
+				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+				BlendingData.ElapsedBlendTime += DeltaTime / BlendingData.BlendingDuration * InterpSpeed;
 			}
 		}
 
-		M->SetWorldTransform(this->WorldTransform);
-		M->Tick();
+		Skm->SetWorldTransform(this->WorldTransform);
+		Skm->Tick();
 	}
 }
 
 void Model::Render()
 {
-	for (ModelMesh * mesh : Meshes)
+	for (ModelMesh * const M : Meshes)
 	{
-		mesh->Render();
+		M->Render();
 	}
 }
 
@@ -119,7 +125,7 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 	return Color(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
 }
 
-void Model::CalculateAnimationTime( ModelMesh::FrameDesc & FrameData ) const
+void Model::CalculateAnimationTime( SkeletalMesh::FrameDesc & FrameData ) const
 {
 	const UINT ClipIndex = GetClipIndex();
 	const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];

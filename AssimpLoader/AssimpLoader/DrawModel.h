@@ -4,6 +4,7 @@
 
 namespace Sdt
 {
+	// NOLINT(cppcoreguidelines-special-member-functions)
 	class DrawModel final : public IExecutable
 	{
 	public:
@@ -16,7 +17,5 @@ namespace Sdt
 		vector<Model *> Models;
 		int ModelIndex = 0;
 		int Pass = 0;
-	/*=========================================================================*/
-
 	};
 }

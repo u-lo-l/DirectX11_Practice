@@ -3,10 +3,6 @@
 #include <fstream>
 #include <iomanip>
 
-UINT Model::GetFrameCount( UINT InClipIndex ) const
-{
-	return 0;
-}
 
 void Model::SetClipIndex( UINT InClipIndex )
 {
@@ -25,8 +21,8 @@ void Model::SetClipIndex( UINT InClipIndex )
 		}
 		else if (InClipIndex != TargetMesh->BlendingData.Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
 		{
-			TargetMesh->BlendingData.TakeTime = 1.f;
-			TargetMesh->BlendingData.ChangingTime = 0.0f;
+			TargetMesh->BlendingData.BlendingDuration = 0.1f;
+			TargetMesh->BlendingData.ElapsedBlendTime = 0.0f;
 			
 			TargetMesh->BlendingData.Next.Clip = InClipIndex;
 			TargetMesh->BlendingData.Next.CurrentTime = 0;
@@ -61,11 +57,11 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	Json::Value::Members Members = Root.getMemberNames();
 	
-	Json::Value material = Root["File"]["Material"];
-	Json::Value Mesh = Root["File"]["Mesh"];
-	Json::Value Position = Root["Transform"]["Position"];
-	Json::Value Rotation = Root["Transform"]["Rotation"];
-	Json::Value Scale = Root["Transform"]["Scale"];
+	Json::Value material	= Root["File"]["Material"];
+	Json::Value Mesh		= Root["File"]["Mesh"];
+	Json::Value Position	= Root["Transform"]["Position"];
+	Json::Value Rotation	= Root["Transform"]["Rotation"];
+	Json::Value Scale		= Root["Transform"]["Scale"];
 
 	wstring MaterialName = String::ToWString(material.asString());
 	wstring MeshName = String::ToWString(Mesh.asString());
@@ -73,6 +69,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	ReadMaterial(MaterialName);
 	ReadMesh(MeshName + L"/" + MeshName);
 
+	// World Transform
 	ASSERT(WorldTransform != nullptr, "WorldTransform Not Valid");
 	vector<string> pString;
 	String::SplitString(&pString, Position.asString(), ",");
@@ -83,7 +80,8 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	String::SplitString(&pString, Scale.asString(), ",");
 	WorldTransform->SetScale({stof(pString[0]), stof(pString[1]), stof(pString[2])});
-	
+
+	// Animation
 	Json::Value Animations = Root["Animations"];
 	const UINT AnimationCount = Animations.size();
 	for (UINT i = 0; i < AnimationCount; i++)
@@ -98,9 +96,12 @@ void Model::ReadFile( const wstring & InFileFullPath )
 		{
 			M->ClipsTexture = ClipTexture;
 			M->ClipsSRV = ClipSRV;
+			M->BlendingData.Current.Clip = 0;
 		}
 	}
 	SAFE_DELETE(CachedBoneTable);
+	for (ModelMesh * M : this->Meshes)
+		M->CreateBuffers();
 }
 
 void Model::ReadMaterial( const wstring & InFileName)
@@ -182,17 +183,12 @@ void Model::ReadMesh( const wstring & InFileName  )
 	BinReader->Open(FullPath);
 
 	ModelBone::ReadModelFile(BinReader, this->Bones);
-	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable);
-	
-// #ifdef DO_DEBUG
-// 	printf("Model : %s -> Bone Count : %d\n", ModelName.c_str(), Bones.size());
-// 	printf("Model : %s -> Mesh Count : %d\n", ModelName.c_str(), Meshes.size());
-// #endif
+	const UINT BoneCount = this->Bones.size();
+	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable, BoneCount > 0);
 	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 
-	const UINT BoneCount = this->Bones.size();
 	if (BoneCount == 0)
 		return ;
 	this->CachedBoneTable = new CachedBoneTableType(); // 애니메이션 다 읽으면 지워진다.
@@ -202,9 +198,12 @@ void Model::ReadMesh( const wstring & InFileName  )
 		this->BoneTransforms[i] = Matrix::Invert(TargetBone->Transform);
 		for (const UINT number : TargetBone->MeshIndices)
 		{
-			Meshes[number]->SetBoneIndex(TargetBone->Index);
-			Meshes[number]->Bone = TargetBone;
-			Meshes[number]->SetBoneTransforms(this->BoneTransforms);
+			SkeletalMesh * SkMesh = dynamic_cast<SkeletalMesh*>(this->Meshes[number]);
+			if (SkMesh == nullptr)
+				continue;
+			SkMesh->SetBoneIndex(TargetBone->Index);
+			SkMesh->Bone = TargetBone;
+			SkMesh->SetBoneTransforms(this->BoneTransforms);
 		}
 		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
 	}
@@ -238,7 +237,7 @@ void Model::CreateAnimationTexture()
 		constexpr UINT PixelChannel = 4; // 그래서 Format == DXGI_FORMAT_R32G32B32A32_FLOAT이다.
 		D3D11_TEXTURE2D_DESC TextureDesc;
 		ZeroMemory(&TextureDesc, sizeof(TextureDesc));
-		TextureDesc.Width = Model::MaxBoneCount * PixelChannel;
+		TextureDesc.Width = SkeletalMesh::MaxBoneCount * PixelChannel;
 		TextureDesc.Height = ModelAnimation::MaxFrameLength;
 		TextureDesc.ArraySize = Animations.size();
 		TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; //16Byte * 4 = 64 Byte
@@ -248,7 +247,7 @@ void Model::CreateAnimationTexture()
 		TextureDesc.SampleDesc.Count = 1;
 
 		// 가상 메모리 예약
-		constexpr UINT PageSize = ModelAnimation::MaxFrameLength * Model::MaxBoneCount * sizeof(Matrix);
+		constexpr UINT PageSize = ModelAnimation::MaxFrameLength * SkeletalMesh::MaxBoneCount * sizeof(Matrix);
 		void * ReservedVirtualMemory  = VirtualAlloc(nullptr, PageSize * AnimationCount, MEM_RESERVE, PAGE_READWRITE);
 
 #ifdef DO_DEBUG
@@ -271,10 +270,10 @@ void Model::CreateAnimationTexture()
 			BYTE * AnimationPageAddress = static_cast<BYTE *>(ReservedVirtualMemory) + PageIndex * PageSize; // Animation 지금은 하나라 PageIndex우선 0이다.
 			for (UINT FrameIndex = 0; FrameIndex < ModelAnimation::MaxFrameLength ; FrameIndex++)
 			{
-				void * CurrentFrameAddressInPage = AnimationPageAddress + sizeof(Matrix) * Model::MaxBoneCount * FrameIndex;
+				void * CurrentFrameAddressInPage = AnimationPageAddress + sizeof(Matrix) * SkeletalMesh::MaxBoneCount * FrameIndex;
 				// 페이지 메모리 할당 및 데이터 복사
-				VirtualAlloc(CurrentFrameAddressInPage, Model::MaxBoneCount * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
-				memcpy(CurrentFrameAddressInPage, ClipTFTables[PageIndex]->TransformMats[FrameIndex], Model::MaxBoneCount * sizeof(Matrix));
+				VirtualAlloc(CurrentFrameAddressInPage, SkeletalMesh::MaxBoneCount * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
+				memcpy(CurrentFrameAddressInPage, ClipTFTables[PageIndex]->TransformMats[FrameIndex], SkeletalMesh::MaxBoneCount * sizeof(Matrix));
 			}
 		}
 
@@ -285,7 +284,7 @@ void Model::CreateAnimationTexture()
 		{
 			void * AnimationPageAddress = static_cast<BYTE *>(ReservedVirtualMemory) + AnimationIndex * PageSize;
 			SubResources[AnimationIndex].pSysMem = AnimationPageAddress;
-			SubResources[AnimationIndex].SysMemPitch = Model::MaxBoneCount * sizeof(Matrix); // 가로 길이
+			SubResources[AnimationIndex].SysMemPitch = SkeletalMesh::MaxBoneCount * sizeof(Matrix); // 가로 길이
 			SubResources[AnimationIndex].SysMemSlicePitch = PageSize;						// 전체 배열 크기
 		}
 		CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
