@@ -7,16 +7,17 @@ class ModelMesh
 {
 public:
 	static constexpr UINT MaxBoneCount = 256;
-private:
 	using ThisClass = ModelMesh;
 	using ThisClassPtr = ThisClass*;
-	using VertexType = ModelVertex;
 	friend class Model;
+protected:
+	using VertexType = ModelVertex;
 	
 	static void ReadMeshFile(
 		const BinaryReader * InReader,
 		vector<ThisClassPtr> & OutMeshes,
-		const map<string, Material*> & InMaterialTable
+		const map<string, Material*> & InMaterialTable,
+		bool bIsSkeletal = false
 	);
 
 #ifdef DO_DEBUG
@@ -25,40 +26,22 @@ private:
 #else
 	ModelMesh();
 #endif
-	~ModelMesh();
-	void Tick();
-	void Render();
-private :
+	virtual ~ModelMesh();
+	virtual void Tick();
+	virtual void Render();
+	virtual void CreateBuffers();
+	
+	void SetWorldTransform( const Transform * InTransform ) const;
+protected :
 	Shader * CachedShader = nullptr;
 	int Pass = 0;
-	
-	void CreateBuffers();
 
 	string MeshName;
 
-	void SetWorldTransform( const Transform * InTransform ) const;
 	Transform * WorldTransform = nullptr;
 	
 	Material * MaterialData = nullptr;
-	
-	// Mode::ReadMesh에서 값을 넣어준다.
-	int GetBoneIndex() const { return BoneIndex; }
-	void SetBoneIndex(int InBoneIndex)
-	{
-		BoneIndex = InBoneIndex;
-		BoneData.BoneIndex = InBoneIndex;
-		bBoneIndexChanged = true;
-	}
-	void SetBoneTransforms(Matrix * const Transforms)
-	{
-		this->Transforms = Transforms;
-		memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneCount);
-	}
-	int BoneIndex = 0;
-	bool bBoneIndexChanged = false;
-	ModelBone * Bone = nullptr;
-	Matrix * Transforms;
-	
+
 	UINT VerticesCount = 0;
 	VertexType * Vertices = nullptr;
 	
@@ -69,22 +52,8 @@ private :
 	IndexBuffer * IBuffer = nullptr;
 	ConstantDataBinder * GlobalMatrixCBBinder = nullptr;
 
-	/*
-	 * TODO : Mesh가 되게 많은데, Bone정보를 갖는건 이해하겠음.
-	 * 그런데 BoneDesc가 모든 Mesh들에 대해서 다 있어야하나?
-	 * GPU에 넘겨줘야하는 정보라 일단 다 가지고 있어야 하긴 함.
-	 * 최적화 할 수 있는 방법이 있을거임.
-	 */
-	struct BoneDesc
-	{
-		Matrix BoneTransforms[MaxBoneCount];
-		UINT BoneIndex;
-		float Padding[3];
-	};
-	BoneDesc BoneData;
-	ConstantBuffer * BoneDescBuffer;
-	IECB_t * ECB_BoneDescBuffer;
-	
+
+#pragma region Animation
 private:
 	struct FrameDesc
 	{
@@ -93,12 +62,7 @@ private:
 		int		CurrentFrame;
 		int		NextFrame;
 	};
-	// FrameDesc FrameData;
-
-	/**
-	 * <b>TakeTime</b> : 애니메이션이 걸리는 시간 (기본값 1.0초)<br/>
-	 * <b>ChangingTime</b> : 애니메이션이 변경될 때 걸리는 시간 (기본값 0.0초)
-	 */
+	
 	struct AnimationBlendingDesc
 	{
 		float BlendingDuration = 0.1f;
@@ -108,6 +72,7 @@ private:
 		FrameDesc Current;
 		FrameDesc Next;
 	};
+
 	AnimationBlendingDesc BlendingData;
 	
 	ConstantBuffer * FrameCBuffer;
@@ -118,4 +83,6 @@ private :
 	ID3D11ShaderResourceView * ClipsSRV = nullptr;
 	ID3D11Texture2D * ClipsTexture = nullptr;
 	IESRV_t * ClipsSRVVar = nullptr;
+	
+#pragma endregion Animation
 };

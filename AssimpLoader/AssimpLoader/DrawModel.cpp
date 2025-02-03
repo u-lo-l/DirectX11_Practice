@@ -14,7 +14,9 @@ namespace Sdt
 		MainCamera->SetPosition(0, 150, -250);
 
 		// const vector<wstring> ModelNames = {L"XYBot", L"Shannon", L"Airplane", L"Mousey"};
-		const vector<wstring> ModelNames = {L"Adam"};
+		// const vector<wstring> ModelNames = {L"Adam"};
+		// const vector<wstring> ModelNames = {L"Airplane"};
+		const vector<wstring> ModelNames = {L"Cube"};
 
 		for (const wstring & ModelName : ModelNames)
 		{

@@ -3,10 +3,6 @@
 #include <fstream>
 #include <iomanip>
 
-UINT Model::GetFrameCount( UINT InClipIndex ) const
-{
-	return 0;
-}
 
 void Model::SetClipIndex( UINT InClipIndex )
 {
@@ -61,11 +57,11 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	Json::Value::Members Members = Root.getMemberNames();
 	
-	Json::Value material = Root["File"]["Material"];
-	Json::Value Mesh = Root["File"]["Mesh"];
-	Json::Value Position = Root["Transform"]["Position"];
-	Json::Value Rotation = Root["Transform"]["Rotation"];
-	Json::Value Scale = Root["Transform"]["Scale"];
+	Json::Value material	= Root["File"]["Material"];
+	Json::Value Mesh		= Root["File"]["Mesh"];
+	Json::Value Position	= Root["Transform"]["Position"];
+	Json::Value Rotation	= Root["Transform"]["Rotation"];
+	Json::Value Scale		= Root["Transform"]["Scale"];
 
 	wstring MaterialName = String::ToWString(material.asString());
 	wstring MeshName = String::ToWString(Mesh.asString());
@@ -73,6 +69,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	ReadMaterial(MaterialName);
 	ReadMesh(MeshName + L"/" + MeshName);
 
+	// World Transform
 	ASSERT(WorldTransform != nullptr, "WorldTransform Not Valid");
 	vector<string> pString;
 	String::SplitString(&pString, Position.asString(), ",");
@@ -83,7 +80,8 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	String::SplitString(&pString, Scale.asString(), ",");
 	WorldTransform->SetScale({stof(pString[0]), stof(pString[1]), stof(pString[2])});
-	
+
+	// Animation
 	Json::Value Animations = Root["Animations"];
 	const UINT AnimationCount = Animations.size();
 	for (UINT i = 0; i < AnimationCount; i++)
@@ -98,9 +96,12 @@ void Model::ReadFile( const wstring & InFileFullPath )
 		{
 			M->ClipsTexture = ClipTexture;
 			M->ClipsSRV = ClipSRV;
+			M->BlendingData.Current.Clip = 0;
 		}
 	}
 	SAFE_DELETE(CachedBoneTable);
+	for (ModelMesh * M : this->Meshes)
+		M->CreateBuffers();
 }
 
 void Model::ReadMaterial( const wstring & InFileName)
@@ -182,17 +183,12 @@ void Model::ReadMesh( const wstring & InFileName  )
 	BinReader->Open(FullPath);
 
 	ModelBone::ReadModelFile(BinReader, this->Bones);
-	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable);
-	
-// #ifdef DO_DEBUG
-// 	printf("Model : %s -> Bone Count : %d\n", ModelName.c_str(), Bones.size());
-// 	printf("Model : %s -> Mesh Count : %d\n", ModelName.c_str(), Meshes.size());
-// #endif
+	const UINT BoneCount = this->Bones.size();
+	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable, BoneCount > 0);
 	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 
-	const UINT BoneCount = this->Bones.size();
 	if (BoneCount == 0)
 		return ;
 	this->CachedBoneTable = new CachedBoneTableType(); // 애니메이션 다 읽으면 지워진다.
@@ -202,9 +198,12 @@ void Model::ReadMesh( const wstring & InFileName  )
 		this->BoneTransforms[i] = Matrix::Invert(TargetBone->Transform);
 		for (const UINT number : TargetBone->MeshIndices)
 		{
-			Meshes[number]->SetBoneIndex(TargetBone->Index);
-			Meshes[number]->Bone = TargetBone;
-			Meshes[number]->SetBoneTransforms(this->BoneTransforms);
+			SkeletalMesh * SkMesh = dynamic_cast<SkeletalMesh*>(this->Meshes[number]);
+			if (SkMesh == nullptr)
+				continue;
+			SkMesh->SetBoneIndex(TargetBone->Index);
+			SkMesh->Bone = TargetBone;
+			SkMesh->SetBoneTransforms(this->BoneTransforms);
 		}
 		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
 	}

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <unordered_map>
-#include "ModelMesh.h"
+#include "SkeletalMesh.h"
 
 class ModelBone;
 class ModelMesh;
@@ -77,13 +77,13 @@ private:
 public:
 	UINT GetClipIndex() const { return ClipIndex; }
 	UINT GetClipCount() const { return Animations.size(); }
-	UINT GetFrameCount(UINT InClipIndex) const;
 
 	void SetClipIndex(UINT InClipIndex);
 	void SetAnimationTime(float InAnimationTime);
 	void SetAnimationSpeed(float InAnimationSpeed);
 private:
-	void CalculateAnimationTime(ModelMesh::FrameDesc & FrameData) const;
+	void CalculateAnimationTime(SkeletalMesh::FrameDesc & FrameData) const;
+	
 private:
 	UINT ClipIndex = 0; // 몇 번째 애니메이션의
 	UINT Frame; // 몇 frame의 동작인지

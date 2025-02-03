@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "SkeletalMesh.h"
+
 Model::Model(const wstring & ModelFileName)
  : RootBone(nullptr)
 {
@@ -68,7 +70,10 @@ void Model::Tick()
 	
 	for (ModelMesh * const M : Meshes)
 	{
-		ModelMesh::AnimationBlendingDesc & BlendingData = M->BlendingData; 
+		SkeletalMesh * const Skm = dynamic_cast<SkeletalMesh * const>(M);
+		if (Skm == nullptr)
+			continue;
+		SkeletalMesh::AnimationBlendingDesc & BlendingData = Skm->BlendingData; 
 		
 		CalculateAnimationTime(BlendingData.Current);
 		
@@ -90,16 +95,16 @@ void Model::Tick()
 			}
 		}
 
-		M->SetWorldTransform(this->WorldTransform);
-		M->Tick();
+		Skm->SetWorldTransform(this->WorldTransform);
+		Skm->Tick();
 	}
 }
 
 void Model::Render()
 {
-	for (ModelMesh * mesh : Meshes)
+	for (ModelMesh * const M : Meshes)
 	{
-		mesh->Render();
+		M->Render();
 	}
 }
 
@@ -120,7 +125,7 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 	return Color(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
 }
 
-void Model::CalculateAnimationTime( ModelMesh::FrameDesc & FrameData ) const
+void Model::CalculateAnimationTime( SkeletalMesh::FrameDesc & FrameData ) const
 {
 	const UINT ClipIndex = GetClipIndex();
 	const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];

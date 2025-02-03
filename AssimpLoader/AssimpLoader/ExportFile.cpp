@@ -10,8 +10,9 @@ namespace Sdt
 	
 	void ExportFile::Initialize()
 	{
-		MakeModel(L"Shannon", {L"Idle"});
-		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
+		MakeModel(L"Cube");
+		// MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
+		// MakeModel(L"Airplane");
 	}
 
 	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)
