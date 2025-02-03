@@ -1,5 +1,6 @@
 ﻿#include "Framework.h"
 #include "Math.h"
+#include <cstdlib>
 
 const float Math::E = 2.71828175f;
 const float Math::Log2E = 1.442695f;
@@ -232,4 +233,18 @@ float Math::Gauss(float amplitude, float x, float y, float centerX, float center
 	float componentY = (cy * cy) / (2 * sigmaY * sigmaY);
 
 	return amplitude * expf(-(componentX + componentY));
+}
+
+int Math::Random( int min, int max )
+{
+	return min + rand() % (max - min + 1);
+}
+
+float Math::Random( float min, float max )
+{
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = max - min;
+	float val = random * diff;
+
+	return min + val;
 }

@@ -15,5 +15,11 @@ namespace Sdt
 	private:
 		Shader * Drawer = nullptr;
 
+		Model * Plane = nullptr;
+		Model * Cube = nullptr;
+		vector<Vector> Positions = {};
+
+		Model * Adam1 = nullptr;
+		Model * Adam2 = nullptr;
 	};
 }

@@ -35,6 +35,8 @@ public:
 
 	static float Gauss(float amplitude, float x, float y, float centerX, float centerY, float sigmaX, float sigmaY);
 
+	static int Random(int min, int max);
+	static float Random(float min, float max);
 public:
 	const static float E;///< 자연로그의 밑수
 	const static float Log2E;///< 자연로그의 밑수 2

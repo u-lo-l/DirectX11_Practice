@@ -31,8 +31,6 @@ Shader::~Shader()
 	SAFE_RELEASE(Effect);
 }
 
-
-
 void Shader::CreateEffect()
 {
 	ID3DBlob * fxBlob = nullptr;

@@ -6,6 +6,8 @@ IExecutable * Window::Main = nullptr;
 
 WPARAM Window::Run(IExecutable * InMain)
 {
+	srand(static_cast<UINT>(time(nullptr)));
+
 	Create();
 	D3D::Create();
 	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
