@@ -138,8 +138,8 @@ void ModelMesh::CreateBuffers()
 	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
 	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
 	
-	FrameCBuffer = new ConstantBuffer(&this->BlendingData.Current, "Current Animation Frame Description", sizeof(FrameDesc));
-	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationFrame");
+	FrameCBuffer = new ConstantBuffer(&this->BlendingData, "Current Animation Blending Description", sizeof(FrameDesc));
+	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationBlending");
 
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
 }

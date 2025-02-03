@@ -1,5 +1,4 @@
 ﻿#include "Pch.h"
-
 #include <fstream>
 #include "ExportFile.h"
 #include "Converter/Converter.h"
@@ -7,9 +6,11 @@
 namespace Sdt
 {
 	const string ShaderForAnimation = "23_AnimationTwinning.fx";
+	const string ShaderForTPose = "20_ModelVertex2.fx";
 	
 	void ExportFile::Initialize()
 	{
+		MakeModel(L"Shannon", {L"Idle"});
 		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
 	}
 
@@ -17,7 +18,10 @@ namespace Sdt
 	{
 		Converter * converter = new Converter();
 		converter->ReadAiSceneFromFile(InModelName + L"/" + InModelName + L".fbx");
-		converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForAnimation, true);
+		if (InAnimationNames.empty())
+			converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForTPose, true);
+		else
+			converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForAnimation, true);
 		converter->ExportMesh(InModelName + L"/" + InModelName);
 		
 		MakeModelInfoFile(InModelName, InAnimationNames, InScale);

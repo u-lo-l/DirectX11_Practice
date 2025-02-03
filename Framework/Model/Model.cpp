@@ -50,37 +50,42 @@ Model::~Model()
 void Model::Tick()
 {
 	if (this->Animations.empty() == true)
+	{
+		for (ModelMesh * M : Meshes)
+		{
+			M->SetWorldTransform(this->WorldTransform);
+			M->Tick();
+		}
 		return;
+	}
 	
 	int clip = static_cast<int>(GetClipIndex());
 	ImGui::SliderInt("Animation Clip #", &clip, 0, static_cast<int>(GetClipCount()) - 1);
+
 	if (clip != static_cast<int>(GetClipIndex()))
 		SetClipIndex(clip);
 	
-	const ModelAnimation * const TargetAnimation = this->Animations[clip];
-	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
-	const UINT AnimationLength = static_cast<UINT>(TargetAnimation->GetAnimationLength());
-	
-	for (ModelMesh * M : Meshes)
+	for (ModelMesh * const M : Meshes)
 	{
 		ModelMesh::AnimationBlendingDesc & BlendingData = M->BlendingData; 
-		BlendingData.Current.CurrentTime += DeltaTime * TargetAnimation->GetPlayRate();
-		BlendingData.Current.CurrentTime = fmod(BlendingData.Current.CurrentTime, AnimationLength);
-		BlendingData.Current.CurrentFrame = static_cast<int>(BlendingData.Current.CurrentTime);
-		BlendingData.Current.NextFrame = (BlendingData.Current.CurrentFrame + 1) % AnimationLength;
-
+		
+		CalculateAnimationTime(BlendingData.Current);
+		
 		if (BlendingData.Next.Clip > -1)
 		{
-			BlendingData.ChangingTime += DeltaTime;
-			BlendingData.ChangingTime /= BlendingData.TakeTime;
-			
 			if (BlendingData.ChangingTime >= 1.0f) // Blending완료
 			{
+				BlendingData.Current = BlendingData.Next;
 				BlendingData.Next.Clip = -1;
+				BlendingData.ChangingTime = 0.0f;
 			}
-			else // Blending 끝
+			else // Blending 중
 			{
-				// Do Nothing
+				CalculateAnimationTime(BlendingData.Next);
+				const UINT ClipIndex = GetClipIndex();
+				const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];
+				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
+				BlendingData.ChangingTime += DeltaTime;
 			}
 		}
 
@@ -112,4 +117,17 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 	String::SplitString(&v, InJson, ",");
 
 	return Color(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
+}
+
+void Model::CalculateAnimationTime( ModelMesh::FrameDesc & FrameData ) const
+{
+	const UINT ClipIndex = GetClipIndex();
+	const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];
+	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
+	const UINT AnimationLength = static_cast<UINT>(TargetAnimation->GetAnimationLength());
+	
+	FrameData.CurrentTime += DeltaTime * TargetAnimation->GetPlayRate();
+	FrameData.CurrentTime = fmod(FrameData.CurrentTime, static_cast<float>(AnimationLength));
+	FrameData.CurrentFrame = static_cast<int>(FrameData.CurrentTime);
+	FrameData.NextFrame = (UINT)((1 + FrameData.CurrentFrame) % AnimationLength);
 }

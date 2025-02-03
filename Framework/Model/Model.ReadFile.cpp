@@ -12,7 +12,6 @@ void Model::SetClipIndex( UINT InClipIndex )
 {
 	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
 	ClipIndex = InClipIndex;
-	// const ModelAnimation * const TargetAnimation = Animations[InClipIndex];
 	for (ModelMesh * const TargetMesh : Meshes)
 	{
 		if (TargetMesh->BlendingData.Current.Clip < 0)
@@ -24,7 +23,7 @@ void Model::SetClipIndex( UINT InClipIndex )
 
 			TargetMesh->BlendingData.Next.Clip = -1;
 		}
-		else if (TargetMesh->BlendingData.Next.Clip >= 0 && TargetMesh->BlendingData.Next.Clip != TargetMesh->BlendingData.Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
+		else if (InClipIndex != TargetMesh->BlendingData.Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
 		{
 			TargetMesh->BlendingData.TakeTime = 1.f;
 			TargetMesh->BlendingData.ChangingTime = 0.0f;

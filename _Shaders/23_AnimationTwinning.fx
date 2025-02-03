@@ -34,9 +34,24 @@ struct AnimationFrame
     int     NextFrame;
 };
 
-cbuffer CB_AnimationFrame
+struct BlendingFrame
 {
-    AnimationFrame KeyFrameData;
+    float TakeTime;
+    float ChangingTime;
+    float2 Padding;
+
+    AnimationFrame Current;
+    AnimationFrame Next;
+};
+
+// cbuffer CB_AnimationFrame
+// {
+//     AnimationFrame KeyFrameData;
+// };
+
+cbuffer CB_AnimationBlending
+{
+    BlendingFrame AnimationBlending;
 };
 
 Texture2DArray<float4> ClipsTFMap;
@@ -55,9 +70,10 @@ float4 SetAnimatedBoneToWorldTF(VertexInput input)
     float Time;
 
 
-    AnimationIndex = KeyFrameData.Clip;
-    CurrentFrame = KeyFrameData.CurrentFrame;
-    NextFrame = KeyFrameData.NextFrame;
+    AnimationIndex = AnimationBlending.Current.Clip;
+    CurrentFrame = AnimationBlending.Current.CurrentFrame;
+    NextFrame = AnimationBlending.Current.NextFrame;
+    Time = frac(AnimationBlending.Current.CurrentTime);
 
     float4 ClipTransform[4];
 
@@ -92,7 +108,7 @@ float4 SetAnimatedBoneToWorldTF(VertexInput input)
         next = matrix(ClipTransform[0], ClipTransform[1], ClipTransform[2], ClipTransform[3]);
         next = mul(next, Weights[i]);
 
-        current = lerp(current, next, frac(KeyFrameData.CurrentTime));
+        current = lerp(current, next, Time);
 
         pos += mul(VertexPosInBoneSpace, current);
     }

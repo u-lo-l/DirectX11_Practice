@@ -30,13 +30,13 @@ VertexOutput VS(VertexInput input)
 {
     VertexOutput output;
 
-    World = mul(BoneTransforms[BoneIndex], World);
+    ModelWorldTF = mul(BoneTransforms[BoneIndex], ModelWorldTF);
 
-    output.Position = mul(input.Position, World);
+    output.Position = mul(input.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
-	output.Normal = mul(input.Normal, (float3x3)World);
+	output.Normal = mul(input.Normal, (float3x3)ModelWorldTF);
 
     output.Uv = input.Uv;
 

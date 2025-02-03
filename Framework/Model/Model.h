@@ -35,7 +35,10 @@ public:
 	__forceinline void SetScale(const Vector & InScale) const {	WorldTransform->SetScale(InScale); }
 #pragma endregion GettersSetters
 	
+/*====================================================================================*/
+
 private:
+	// TODO : 이거 있을 위치가 여기는 아닌 것 같은데...
 	static Color JsonStringToColor(const Json::String & InJson);
 
 	string ModelName;
@@ -80,6 +83,8 @@ public:
 	void SetAnimationTime(float InAnimationTime);
 	void SetAnimationSpeed(float InAnimationSpeed);
 private:
+	void CalculateAnimationTime(ModelMesh::FrameDesc & FrameData) const;
+private:
 	UINT ClipIndex = 0; // 몇 번째 애니메이션의
 	UINT Frame; // 몇 frame의 동작인지
 	vector<ModelAnimation *> Animations;
@@ -117,6 +122,9 @@ public:
 	#pragma endregion Read Animation Data
 	
 #pragma endregion ReadFile
+
+/*====================================================================================*/
+
 };
 
 

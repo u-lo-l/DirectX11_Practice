@@ -1,0 +1,12 @@
+{
+   "Animations" : [ "Shannon/Idle" ],
+   "File" : {
+      "Material" : "Shannon",
+      "Mesh" : "Shannon"
+   },
+   "Transform" : {
+      "Position" : "0,0,0",
+      "Rotation" : "0,0,0",
+      "Scale" : "1.000000,1.000000,1.000000"
+   }
+}
