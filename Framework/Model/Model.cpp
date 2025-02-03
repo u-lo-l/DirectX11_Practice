@@ -61,7 +61,8 @@ void Model::Tick()
 	
 	int clip = static_cast<int>(GetClipIndex());
 	ImGui::SliderInt("Animation Clip #", &clip, 0, static_cast<int>(GetClipCount()) - 1);
-
+	static float InterpSpeed = 1.0f;
+	ImGui::SliderFloat("InterpSpeed", &InterpSpeed, 1.0f, 5.0f);
 	if (clip != static_cast<int>(GetClipIndex()))
 		SetClipIndex(clip);
 	
@@ -84,8 +85,8 @@ void Model::Tick()
 				CalculateAnimationTime(BlendingData.Next);
 				const UINT ClipIndex = BlendingData.Next.Clip;
 				const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];
-				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime() * TargetAnimation->TicksPerSecond;
-				BlendingData.ChangingTime += DeltaTime / BlendingData.TakeTime;
+				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+				BlendingData.ChangingTime += DeltaTime / BlendingData.TakeTime * InterpSpeed;
 			}
 		}
 

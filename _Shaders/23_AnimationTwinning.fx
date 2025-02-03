@@ -58,22 +58,24 @@ cbuffer CB_AnimationBlending
 
 Texture2DArray<float4> ClipsTFMap;
 
-int BoneCountToFindWeight = 4;
-int MipMapLevel = 0;
+int g_BoneCountToFindWeight = 4;
+int g_MipMapLevel = 0;
 
 // Current = 0 , Next = 1
 matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params);
 
-float4 SetAnimatedBoneToWorldTF(VertexInput input)
+float4 SetAnimatedBoneToWorldTF(inout VertexInput input)
 {
     int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
     float Weights[4] = { input.Weight.x, input.Weight.y, input.Weight.z, input.Weight.w };
 
     float4 pos = 0;
-    InterploateKeyframeParams Params;
+    InterploateKeyframeParams ParamsCurrent;
+    InterploateKeyframeParams ParamsNext;
+
 
     // 4개의 Bone에 대해서 Weight를 탐색.
-    for(int i = 0 ; i < BoneCountToFindWeight ; i++)
+    for(int i = 0 ; i < g_BoneCountToFindWeight ; i++)
     {
         int targetBoneIndex = Indices[i];
         matrix TargetRootBoneInvMat = RootToBoneTF[targetBoneIndex];
@@ -81,16 +83,18 @@ float4 SetAnimatedBoneToWorldTF(VertexInput input)
         
         matrix currentAnim = 0;
         
-        Params.CurrentOrNext = 0;
-        Params.BoneIndex = targetBoneIndex;
-        Params.Weight = Weights[i];
-        currentAnim = InterpolateKeyFrameMatrix(Params);
+        ParamsCurrent.CurrentOrNext = 0;
+        ParamsCurrent.BoneIndex = targetBoneIndex;
+        ParamsCurrent.Weight = Weights[i];
+        currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent);
 
         [flatten] // https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/dx-graphics-hlsl-if
-        if (AnimationBlending.Next.Clip > -1)
+        if (AnimationBlending.Next.Clip >= 0)
         {
-            Params.CurrentOrNext = 1;
-            currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(Params), AnimationBlending.ChangingTime);
+            ParamsNext.CurrentOrNext = 1;
+            ParamsNext.BoneIndex = targetBoneIndex;
+            ParamsNext.Weight = Weights[i];
+            currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext), AnimationBlending.ChangingTime);
         }
 
         pos += mul(VertexPosInBoneSpace, currentAnim);
@@ -146,37 +150,39 @@ technique11 T0
 
 /*===========================================================================*/
 
+matrix ClipTransformMatrix(int BoneIndex, int TargetFrame, int ClipIndex);
 matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params)
 {
-    int AnimationIndex[2] = {AnimationBlending.Current.Clip, AnimationBlending.Next.Clip};
-    float CurrentFrame[2] = {AnimationBlending.Current.CurrentFrame, AnimationBlending.Next.CurrentFrame};
-    int NextFrame[2] = {AnimationBlending.Current.NextFrame, AnimationBlending.Next.NextFrame};
-    float Time[2] = {frac(AnimationBlending.Current.CurrentTime), frac(AnimationBlending.Next.CurrentTime)};
+    int     AnimationIndex[2]   = {AnimationBlending.Current.Clip,              AnimationBlending.Next.Clip};
+    int     CurrentFrame[2]     = {AnimationBlending.Current.CurrentFrame,      AnimationBlending.Next.CurrentFrame};
+    int     NextFrame[2]        = {AnimationBlending.Current.NextFrame,         AnimationBlending.Next.NextFrame};
+    float   Time[2]             = {frac(AnimationBlending.Current.CurrentTime), frac(AnimationBlending.Next.CurrentTime)};
 
-    const int TargetCurrentFrame = CurrentFrame[Params.CurrentOrNext];
     const int TargetAnimationIndex = AnimationIndex[Params.CurrentOrNext];
+    const int TargetCurrentFrame = CurrentFrame[Params.CurrentOrNext];
     const int TargetNextFrame = NextFrame[Params.CurrentOrNext];
     const int InterpRate = Time[Params.CurrentOrNext];
 
-    float4 ClipTransform[4];
-    matrix current = 0;
-    matrix next = 0;
-
-    ClipTransform[0] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 0, TargetCurrentFrame, TargetAnimationIndex, MipMapLevel));
-    ClipTransform[1] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 1, TargetCurrentFrame, TargetAnimationIndex, MipMapLevel));
-    ClipTransform[2] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 2, TargetCurrentFrame, TargetAnimationIndex, MipMapLevel));
-    ClipTransform[3] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 3, TargetCurrentFrame, TargetAnimationIndex, MipMapLevel));
-    //이렇게 접근하면 안 된다. 2차원 배열은 일반적으로 Arr[row][col]이지만 Texture는 Tex[col][row]
-    // ClipTransform[0] = ClipsTFMap.Load(int4(CurrentFrame, Indices[i] * 4 + 0, AnimationIndex, 0));
-    current = matrix(ClipTransform[0], ClipTransform[1], ClipTransform[2], ClipTransform[3]);
+    matrix current = ClipTransformMatrix(Params.BoneIndex, TargetCurrentFrame, TargetAnimationIndex);
     current = mul(current, Params.Weight);
 
-    ClipTransform[0] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 0, TargetNextFrame, TargetAnimationIndex, MipMapLevel));
-    ClipTransform[1] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 1, TargetNextFrame, TargetAnimationIndex, MipMapLevel));
-    ClipTransform[2] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 2, TargetNextFrame, TargetAnimationIndex, MipMapLevel));
-    ClipTransform[3] = ClipsTFMap.Load(int4(Params.BoneIndex * BoneCountToFindWeight + 3, TargetNextFrame, TargetAnimationIndex, MipMapLevel));
-    next = matrix(ClipTransform[0], ClipTransform[1], ClipTransform[2], ClipTransform[3]);
+    matrix next = ClipTransformMatrix(Params.BoneIndex, TargetNextFrame, TargetAnimationIndex);
     next = mul(next, Params.Weight);
 
     return lerp(current, next, InterpRate);
+}
+
+matrix ClipTransformMatrix(int BoneIndex, int TargetFrame, int ClipIndex)
+{
+    float4 ClipTransform[4];
+
+    ClipTransform[0] = ClipsTFMap.Load(int4(BoneIndex * g_BoneCountToFindWeight + 0, TargetFrame, ClipIndex, g_MipMapLevel));
+    ClipTransform[1] = ClipsTFMap.Load(int4(BoneIndex * g_BoneCountToFindWeight + 1, TargetFrame, ClipIndex, g_MipMapLevel));
+    ClipTransform[2] = ClipsTFMap.Load(int4(BoneIndex * g_BoneCountToFindWeight + 2, TargetFrame, ClipIndex, g_MipMapLevel));
+    ClipTransform[3] = ClipsTFMap.Load(int4(BoneIndex * g_BoneCountToFindWeight + 3, TargetFrame, ClipIndex, g_MipMapLevel));
+    
+    //이렇게 접근하면 안 된다. 2차원 배열은 일반적으로 Arr[row][col]이지만 Texture는 Tex[col][row]
+    // ClipTransform[0] = ClipsTFMap.Load(int4(CurrentFrame, Indices[i] * 4 + 0, AnimationIndex, 0));
+    matrix ret  = matrix(ClipTransform[0], ClipTransform[1], ClipTransform[2], ClipTransform[3]);
+    return ret;
 }

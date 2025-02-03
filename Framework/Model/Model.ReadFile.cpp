@@ -25,7 +25,7 @@ void Model::SetClipIndex( UINT InClipIndex )
 		}
 		else if (InClipIndex != TargetMesh->BlendingData.Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
 		{
-			TargetMesh->BlendingData.TakeTime = 1.f;
+			TargetMesh->BlendingData.TakeTime = 0.1f;
 			TargetMesh->BlendingData.ChangingTime = 0.0f;
 			
 			TargetMesh->BlendingData.Next.Clip = InClipIndex;
