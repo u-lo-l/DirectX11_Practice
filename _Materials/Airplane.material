@@ -1,0 +1,18 @@
+{
+   "DefaultMaterial" : {
+      "Ambient" : "0.000000,0.000000,0.000000,0.000000",
+      "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
+      "Emissive" : "0.800000,0.800000,0.800000,1.000000",
+      "ShaderName" : "20_ModelVertex2.fx",
+      "Specular" : "0.800000,0.800000,0.800000,1.000000"
+   },
+   "texture" : {
+      "Ambient" : "0.000000,0.000000,0.000000,1.000000",
+      "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
+      "DiffuseMap" : [ "../_Models/Airplane/texture.png" ],
+      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "ShaderName" : "20_ModelVertex2.fx",
+      "Specular" : "1.000000,1.000000,1.000000,1.000000",
+      "SpecularMap" : [ "../_Models/Airplane/texture_ref.png" ]
+   }
+}
