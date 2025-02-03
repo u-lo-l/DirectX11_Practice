@@ -11,7 +11,7 @@ namespace Sdt
 	void ExportFile::Initialize()
 	{
 		MakeModel(L"Cube");
-		// MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
+		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
 		// MakeModel(L"Airplane");
 	}
 

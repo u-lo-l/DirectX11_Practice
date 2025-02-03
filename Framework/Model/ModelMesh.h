@@ -6,7 +6,6 @@ struct MeshData;
 class ModelMesh
 {
 public:
-	static constexpr UINT MaxBoneCount = 256;
 	using ThisClass = ModelMesh;
 	using ThisClassPtr = ThisClass*;
 	friend class Model;
@@ -26,7 +25,7 @@ protected:
 #else
 	ModelMesh();
 #endif
-	virtual ~ModelMesh();
+	virtual ~ModelMesh() = 0;
 	virtual void Tick();
 	virtual void Render();
 	virtual void CreateBuffers();

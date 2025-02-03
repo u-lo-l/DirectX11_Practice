@@ -5,8 +5,10 @@
 class SkeletalMesh final : public ModelMesh 
 {
 public:
-	SkeletalMesh();
+	static constexpr UINT MaxBoneCount = 256;
 	friend class Model;
+public:
+	SkeletalMesh();
 private:
 	virtual ~SkeletalMesh() override;
 	void Tick() override;

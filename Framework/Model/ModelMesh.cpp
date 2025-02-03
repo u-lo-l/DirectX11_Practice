@@ -1,5 +1,6 @@
 ﻿#include "framework.h"
-#include "ModelMesh.h"
+#include "StaticMesh.h"
+#include "SkeletalMesh.h"
 
 #ifdef DO_DEBUG
 ModelMesh::ModelMesh( const string & MetaData )
@@ -91,7 +92,7 @@ void ModelMesh::ReadMeshFile(
 		OutMeshes[i] = new ThisClass("Mesh #" + to_string(i));
 #else
 		if (bIsSkeletal == false)
-			OutMeshes[i] = new ThisClass();
+			OutMeshes[i] = new StaticMesh();
 		else
 			OutMeshes[i] = new SkeletalMesh();
 #endif

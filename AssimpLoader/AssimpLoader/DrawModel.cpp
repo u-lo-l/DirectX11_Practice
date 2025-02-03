@@ -16,7 +16,7 @@ namespace Sdt
 		// const vector<wstring> ModelNames = {L"XYBot", L"Shannon", L"Airplane", L"Mousey"};
 		// const vector<wstring> ModelNames = {L"Adam"};
 		// const vector<wstring> ModelNames = {L"Airplane"};
-		const vector<wstring> ModelNames = {L"Cube"};
+		const vector<wstring> ModelNames = {L"Cube", L"Adam"};
 
 		for (const wstring & ModelName : ModelNames)
 		{

@@ -237,7 +237,7 @@ void Model::CreateAnimationTexture()
 		constexpr UINT PixelChannel = 4; // 그래서 Format == DXGI_FORMAT_R32G32B32A32_FLOAT이다.
 		D3D11_TEXTURE2D_DESC TextureDesc;
 		ZeroMemory(&TextureDesc, sizeof(TextureDesc));
-		TextureDesc.Width = Model::MaxBoneCount * PixelChannel;
+		TextureDesc.Width = SkeletalMesh::MaxBoneCount * PixelChannel;
 		TextureDesc.Height = ModelAnimation::MaxFrameLength;
 		TextureDesc.ArraySize = Animations.size();
 		TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; //16Byte * 4 = 64 Byte
@@ -247,7 +247,7 @@ void Model::CreateAnimationTexture()
 		TextureDesc.SampleDesc.Count = 1;
 
 		// 가상 메모리 예약
-		constexpr UINT PageSize = ModelAnimation::MaxFrameLength * Model::MaxBoneCount * sizeof(Matrix);
+		constexpr UINT PageSize = ModelAnimation::MaxFrameLength * SkeletalMesh::MaxBoneCount * sizeof(Matrix);
 		void * ReservedVirtualMemory  = VirtualAlloc(nullptr, PageSize * AnimationCount, MEM_RESERVE, PAGE_READWRITE);
 
 #ifdef DO_DEBUG
@@ -270,10 +270,10 @@ void Model::CreateAnimationTexture()
 			BYTE * AnimationPageAddress = static_cast<BYTE *>(ReservedVirtualMemory) + PageIndex * PageSize; // Animation 지금은 하나라 PageIndex우선 0이다.
 			for (UINT FrameIndex = 0; FrameIndex < ModelAnimation::MaxFrameLength ; FrameIndex++)
 			{
-				void * CurrentFrameAddressInPage = AnimationPageAddress + sizeof(Matrix) * Model::MaxBoneCount * FrameIndex;
+				void * CurrentFrameAddressInPage = AnimationPageAddress + sizeof(Matrix) * SkeletalMesh::MaxBoneCount * FrameIndex;
 				// 페이지 메모리 할당 및 데이터 복사
-				VirtualAlloc(CurrentFrameAddressInPage, Model::MaxBoneCount * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
-				memcpy(CurrentFrameAddressInPage, ClipTFTables[PageIndex]->TransformMats[FrameIndex], Model::MaxBoneCount * sizeof(Matrix));
+				VirtualAlloc(CurrentFrameAddressInPage, SkeletalMesh::MaxBoneCount * sizeof(Matrix), MEM_COMMIT, PAGE_READWRITE);
+				memcpy(CurrentFrameAddressInPage, ClipTFTables[PageIndex]->TransformMats[FrameIndex], SkeletalMesh::MaxBoneCount * sizeof(Matrix));
 			}
 		}
 
@@ -284,7 +284,7 @@ void Model::CreateAnimationTexture()
 		{
 			void * AnimationPageAddress = static_cast<BYTE *>(ReservedVirtualMemory) + AnimationIndex * PageSize;
 			SubResources[AnimationIndex].pSysMem = AnimationPageAddress;
-			SubResources[AnimationIndex].SysMemPitch = Model::MaxBoneCount * sizeof(Matrix); // 가로 길이
+			SubResources[AnimationIndex].SysMemPitch = SkeletalMesh::MaxBoneCount * sizeof(Matrix); // 가로 길이
 			SubResources[AnimationIndex].SysMemSlicePitch = PageSize;						// 전체 배열 크기
 		}
 		CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
