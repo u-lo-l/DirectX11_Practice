@@ -34,7 +34,7 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\AssimpLoader\assimp-vc143-mtd.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=0688b656_002D22de_002D41dd_002Daab9_002D301ceb139698_0023UnitTest/@EntryIndexedValue">True</s:Boolean>
+	
 	
 	
 	

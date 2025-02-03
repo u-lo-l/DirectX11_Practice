@@ -25,7 +25,7 @@ struct VertexOutput
 VertexOutput VS(VertexInput input)
 {
     VertexOutput output;
-    output.Position = mul(input.Position, World);
+    output.Position = mul(input.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
