@@ -3,3 +3,5 @@ Debug/
 Debug*/*
 */*.zip
 .vs/
+*/*.lib
+*/*.pdb
