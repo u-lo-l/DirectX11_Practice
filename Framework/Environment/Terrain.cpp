@@ -68,9 +68,9 @@ void Terrain::GetPositionY(Vector & InPosition ) const
 	
 	float SlopX, SlopZ, Distance;
 	Vector Result(-1, Math::FloatMinValue, -1);
-	if (D3D11_IntersectRayTriangle(V[0], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
+	if (IntersectRayTriangle(V[0], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
 		Result = V[0] + (V[1] - V[0]) * SlopX + (V[2] - V[0]) * SlopZ;
-	if (D3D11_IntersectRayTriangle(V[3], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
+	if (IntersectRayTriangle(V[3], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
 		Result = V[3] + (V[1] - V[3]) * SlopX + (V[2] - V[3]) * SlopZ;
 	InPosition.Y = Result.Y;
 	Gui::Get()->RenderText(5, 60, 1, 0, 0, String::ToString(Result.ToWString()));	
@@ -156,7 +156,7 @@ void Terrain::CreateBuffer()
 	IBuffer = new IndexBuffer(Indices, IndexCount);
 }
 
-static bool IntersectRayTriangle(
+bool Terrain::IntersectRayTriangle(
 	const DirectX::XMFLOAT3 & rayPos,  // 광선의 시작점
 	const DirectX::XMFLOAT3 & rayDir,  // 광선의 방향
 	const DirectX::XMFLOAT3 & v0,      // 삼각형의 첫 번째 정점

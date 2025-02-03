@@ -62,14 +62,14 @@ namespace Sdt
 	
 
 		if (Keyboard::Get()->IsPressed(VK_RIGHT))
-			Position.X += 20 * Timer::Get()->GetDeltaTime();
+			Position.X += 20 * SystemTimer::Get()->GetDeltaTime();
 		if (Keyboard::Get()->IsPressed(VK_LEFT))
-			Position.X -= 20 * Timer::Get()->GetDeltaTime();
+			Position.X -= 20 * SystemTimer::Get()->GetDeltaTime();
 
 		if (Keyboard::Get()->IsPressed(VK_UP))
-			Position.Z += 20 * Timer::Get()->GetDeltaTime();
+			Position.Z += 20 * SystemTimer::Get()->GetDeltaTime();
 		if (Keyboard::Get()->IsPressed(VK_DOWN))
-			Position.Z -= 20 * Timer::Get()->GetDeltaTime();
+			Position.Z -= 20 * SystemTimer::Get()->GetDeltaTime();
 
 	
 		Landscape->GetPositionY(Position);

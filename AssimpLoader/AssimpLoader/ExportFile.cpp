@@ -6,12 +6,18 @@
 namespace Sdt
 {
 	const string ShaderForAnimation = "23_AnimationTwinning.fx";
-	const string ShaderForTPose = "20_ModelVertex2.fx";
+	const string ShaderForStatic = "36_Instancing.fx";
 	
 	void ExportFile::Initialize()
 	{
-		MakeModel(L"Shannon", {L"Idle"});
-		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
+		// MakeModel(L"Shannon", {L"Idle"});
+		// MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
+		MakeModel(L"Airplane", {});
+		MakeModel(L"Cube", {});
+		MakeModel(L"Cylinder", {});
+		MakeModel(L"Sphere", {});
+		MakeModel(L"Cone", {});
+		MakeModel(L"Adam", {});
 	}
 
 	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)
@@ -19,7 +25,7 @@ namespace Sdt
 		Converter * converter = new Converter();
 		converter->ReadAiSceneFromFile(InModelName + L"/" + InModelName + L".fbx");
 		if (InAnimationNames.empty())
-			converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForTPose, true);
+			converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForStatic, true);
 		else
 			converter->ExportMaterial(InModelName + L"/" + InModelName, ShaderForAnimation, true);
 		converter->ExportMesh(InModelName + L"/" + InModelName);
