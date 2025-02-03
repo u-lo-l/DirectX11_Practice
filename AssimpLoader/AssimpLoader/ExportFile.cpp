@@ -13,10 +13,10 @@ namespace Sdt
 		// MakeModel(L"Shannon", {L"Idle"});
 		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
 		MakeModel(L"Airplane", {});
-		MakeModel(L"Cube", {}, 10.f);
-		MakeModel(L"Cylinder", {}, 10.f);
-		MakeModel(L"Sphere", {}, 10.f);
-		MakeModel(L"Cone", {}, 10.f);
+		MakeModel(L"Cube", {}, 1.f);
+		MakeModel(L"Cylinder", {}, 1.f);
+		MakeModel(L"Sphere", {}, 1.f);
+		MakeModel(L"Cone", {}, 1.f);
 		MakeModel(L"Plane", {}, 10.f);
 	}
 

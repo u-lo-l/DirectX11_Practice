@@ -10,7 +10,6 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Create();
 	D3D::Create();
-	// Gui::Create()에서 D3D가 쓰이기 떄문에, D3D가 생성되어야한다.
 	Gui::Create();
 	Keyboard::Create();
 	Sdt::Mouse::Create();
@@ -28,7 +27,7 @@ WPARAM Window::Run(IExecutable * InMain)
 		{
 			if (msg.message == WM_QUIT)
 				break;
-
+	
 			TranslateMessage(&msg); //WM_CHAR
 			DispatchMessage(&msg);
 		}
@@ -47,7 +46,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	D3D::Destroy();
 	Destroy();
 
-	return msg.wParam;
+	return 0;
 }
 
 void Window::Create()
