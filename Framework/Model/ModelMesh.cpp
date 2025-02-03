@@ -13,7 +13,7 @@ ModelMesh::ModelMesh( const string & MetaData )
 }
 #else
 ModelMesh::ModelMesh()
-	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), FrameData(), FrameCBuffer(nullptr),
+	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr), BlendingData(), FrameCBuffer(nullptr),
 	ECB_FrameBuffer(nullptr)
 {
 	#ifdef DO_DEBUG

@@ -36,8 +36,8 @@ struct AnimationFrame
 
 struct BlendingFrame
 {
-    float TakeTime;
-    float ChangingTime;
+    float BlendingDuration;
+    float ElapsedBlendTime;
     float2 Padding;
 
     AnimationFrame Current;
@@ -94,7 +94,7 @@ float4 SetAnimatedBoneToWorldTF(inout VertexInput input)
             ParamsNext.CurrentOrNext = 1;
             ParamsNext.BoneIndex = targetBoneIndex;
             ParamsNext.Weight = Weights[i];
-            currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext), AnimationBlending.ChangingTime);
+            currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext), AnimationBlending.ElapsedBlendTime);
         }
 
         pos += mul(VertexPosInBoneSpace, currentAnim);
