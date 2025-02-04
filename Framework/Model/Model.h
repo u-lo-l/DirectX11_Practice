@@ -69,7 +69,7 @@ public:
 private:
 	const ModelAnimation * GetCurrentAnimation() const;
 private:
-	UINT ClipIndex = 0; // 몇 번째 애니메이션의
+	UINT ClipIndex = 0; // 몇 번째 애니메이션의6
 	UINT Frame; // 몇 frame의 동작인지
 	vector<ModelAnimation *> Animations;
 

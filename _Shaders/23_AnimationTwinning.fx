@@ -4,7 +4,8 @@
 #define MAX_MODEL_TRANSFORM 256
 cbuffer CB_ModelBones
 {
-    matrix RootToBoneTF[MAX_MODEL_TRANSFORM]; // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
+    matrix OffsetMatrix[MAX_MODEL_TRANSFORM]; // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
+    matrix BoneTransforms[MAX_MODEL_TRANSFORM];
     uint BoneIndex;
 };
 
@@ -78,7 +79,7 @@ float4 SetAnimatedBoneToWorldTF(inout VertexInput input)
     for(int i = 0 ; i < g_BoneCountToFindWeight ; i++)
     {
         int targetBoneIndex = Indices[i];
-        matrix TargetRootBoneInvMat = RootToBoneTF[targetBoneIndex];
+        matrix TargetRootBoneInvMat = OffsetMatrix[targetBoneIndex];
         float4 VertexPosInBoneSpace = mul(input.Position, TargetRootBoneInvMat);
         
         matrix currentAnim = 0;
@@ -103,8 +104,10 @@ float4 SetAnimatedBoneToWorldTF(inout VertexInput input)
 }
 
 VertexOutput VS(VertexInput input)
-{    
+{
     VertexOutput output;
+    ModelWorldTF = mul(BoneTransforms[BoneIndex], ModelWorldTF);
+
     output.Position = SetAnimatedBoneToWorldTF(input); // Local_Space(Bone Root Space)
     output.Position = mul(output.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);

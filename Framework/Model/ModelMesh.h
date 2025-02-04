@@ -41,7 +41,7 @@ protected :
 	string MeshName;
 
 	Transform * WorldTransform = nullptr;
-	
+
 	Material * MaterialData = nullptr;
 
 	UINT VerticesCount = 0;

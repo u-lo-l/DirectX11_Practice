@@ -4,6 +4,7 @@
 #define MaxModelTransforms 256
 cbuffer CB_ModelBones
 {
+    matrix OffsetMatrix[MaxModelTransforms];
     matrix BoneTransforms[MaxModelTransforms];
     uint BoneIndex;
 }
