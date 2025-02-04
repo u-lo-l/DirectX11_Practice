@@ -47,7 +47,7 @@ void Model::SetAnimationSpeed( float InAnimationSpeed )
 
 const ModelAnimation * Model::GetCurrentAnimation() const
 {
-	if (Animations.empty() == false)
+	if (Animations.empty() == true)
 		return nullptr;
 	return Animations[ClipIndex];
 }
