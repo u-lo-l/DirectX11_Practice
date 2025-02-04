@@ -2,17 +2,15 @@
    "DefaultMaterial" : {
       "Ambient" : "0.000000,0.000000,0.000000,0.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
-      "DiffuseMap" : [ "../_Textures/Forest Floor.jpg" ],
       "Emissive" : "0.800000,0.800000,0.800000,1.000000",
-      "ShaderName" : "36_Instancing.fx",
+      "ShaderName" : "20_ModelVertex2.fx",
       "Specular" : "0.800000,0.800000,0.800000,1.000000"
    },
    "WorldGridMaterial" : {
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.215861,0.215861,0.215861,1.000000",
-      "DiffuseMap" : [ "../_Textures/Forest Floor.jpg" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
-      "ShaderName" : "36_Instancing.fx",
+      "ShaderName" : "20_ModelVertex2.fx",
       "Specular" : "0.200000,0.200000,0.200000,1.000000"
    }
 }
