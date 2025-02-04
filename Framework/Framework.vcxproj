@@ -30,6 +30,7 @@
     <ClCompile Include="Model\ModelBone.cpp" />
     <ClCompile Include="Model\ModelMesh.cpp" />
     <ClCompile Include="Model\SkeletalMesh.cpp" />
+    <ClCompile Include="Model\Skeleton.cpp" />
     <ClCompile Include="Model\StaticMesh.cpp" />
     <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Renders\Context.cpp" />
@@ -72,6 +73,7 @@
     <ClInclude Include="Model\ModelBone.h" />
     <ClInclude Include="Model\ModelMesh.h" />
     <ClInclude Include="Model\SkeletalMesh.h" />
+    <ClInclude Include="Model\Skeleton.h" />
     <ClInclude Include="Model\StaticMesh.h" />
     <ClInclude Include="Renders\Buffers.h" />
     <ClInclude Include="Renders\Context.h" />

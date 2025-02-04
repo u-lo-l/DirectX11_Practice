@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iomanip>
 
-
 void Model::SetClipIndex( UINT InClipIndex )
 {
 	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
@@ -99,7 +98,8 @@ void Model::ReadFile( const wstring & InFileFullPath )
 			M->BlendingData.Current.Clip = 0;
 		}
 	}
-	SAFE_DELETE(CachedBoneTable);
+	if (SkeletonData != nullptr)
+		SkeletonData->ClearBoneTable();
 	for (ModelMesh * M : this->Meshes)
 		M->CreateBuffers();
 }
@@ -182,38 +182,25 @@ void Model::ReadMesh( const wstring & InFileName  )
 	BinaryReader * BinReader = new BinaryReader();
 	BinReader->Open(FullPath);
 
-	ModelBone::ReadModelFile(BinReader, this->Bones);
-	const UINT BoneCount = this->Bones.size();
-	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable, BoneCount > 0);
+	ModelBone::ReadModelFile(BinReader, this->SkeletonData);
+	bool bIsSkeletal = this->SkeletonData != nullptr;
+	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable, bIsSkeletal);
 	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 
-	if (BoneCount == 0)
-		return ;
-	this->CachedBoneTable = new CachedBoneTableType(); // 애니메이션 다 읽으면 지워진다.
-	for (UINT i = 0; i < BoneCount; i++)
-	{
-		ModelBone * TargetBone = this->Bones[i];
-		this->BoneTransforms[i] = Matrix::Invert(TargetBone->Transform);
-		for (const UINT number : TargetBone->MeshIndices)
-		{
-			SkeletalMesh * SkMesh = dynamic_cast<SkeletalMesh*>(this->Meshes[number]);
-			if (SkMesh == nullptr)
-				continue;
-			SkMesh->SetBoneIndex(TargetBone->Index);
-			SkMesh->Bone = TargetBone;
-			SkMesh->SetBoneTransforms(this->BoneTransforms);
-		}
-		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
-	}
+	if (bIsSkeletal == true)
+		this->SkeletonData->SetUpBoneTable(this->Meshes);
 }
 
 void Model::ReadAnimation( const wstring & InFileName )
 {
 	BinaryReader * BinReader = new BinaryReader(W_MODEL_PATH + InFileName + L".animation");
 
-	ModelAnimation * Anim = ModelAnimation::ReadAnimationFile(BinReader, this->CachedBoneTable); 
+	const CachedBoneTableType * BoneTable = nullptr;
+	if (this->SkeletonData != nullptr)
+		BoneTable = this->SkeletonData->GetCachedBoneTable();
+	ModelAnimation * Anim = ModelAnimation::ReadAnimationFile(BinReader, BoneTable); 
 	Animations.push_back(Anim);
 	
 	SAFE_DELETE(BinReader);
@@ -223,15 +210,17 @@ void Model::ReadAnimation( const wstring & InFileName )
 
 void Model::CreateAnimationTexture()
 {
+	if (SkeletonData == nullptr)
+		return ;
+	
 	const UINT AnimationCount = Animations.size();
 	vector<ModelAnimation::KeyFrameTFTable *> ClipTFTables;
 	ClipTFTables.reserve(AnimationCount);
 	// 각 애니메이션의 Transform정보를 Table에 저장.
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
-		ClipTFTables.push_back (Animations[i]->CalcClipTransform(Bones));		
+		ClipTFTables.push_back (Animations[i]->CalcClipTransform(this->SkeletonData));		
 	}
-
 	
 	{
 		constexpr UINT PixelChannel = 4; // 그래서 Format == DXGI_FORMAT_R32G32B32A32_FLOAT이다.

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <unordered_map>
 #include "SkeletalMesh.h"
+#include "Skeleton.h"
 
 class ModelBone;
 class ModelMesh;
@@ -59,14 +60,8 @@ private :
 
 //TODO : Skeleton정보도 없을 수도 있는데.... BoneTransforms 너무 과한데
 #pragma region Bone Data
-// public:
-// 	const Matrix * GetBoneTransforms() const { return BoneTransforms; }
-// 	UINT GetBoneCount() const { return Bones.size(); }
 private:
-	ModelBone * RootBone;
-	vector<ModelBone *> Bones;
-	Matrix BoneTransforms[SkeletalMesh::MaxBoneCount];
-	CachedBoneTableType * CachedBoneTable = nullptr;
+	Skeleton * SkeletonData;
 #pragma endregion Bone Data
 
 /*====================================================================================*/
