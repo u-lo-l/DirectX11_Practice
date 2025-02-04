@@ -10,9 +10,6 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-	// 대부분의 모델에서 Bone 개수 250개면 충분하다.
-	// Shader에서는 동적할당이 안 돼서 정적 크기를 지정해준다.
-	// static constexpr UINT MaxBoneCount = 256;
 private:
 	using ThisClass = Model;
 
@@ -60,10 +57,11 @@ private :
 
 /*====================================================================================*/
 
+//TODO : Skeleton정보도 없을 수도 있는데.... BoneTransforms 너무 과한데
 #pragma region Bone Data
-public:
-	const Matrix * GetBoneTransforms() const { return BoneTransforms; }
-	UINT GetBoneCount() const { return Bones.size(); }
+// public:
+// 	const Matrix * GetBoneTransforms() const { return BoneTransforms; }
+// 	UINT GetBoneCount() const { return Bones.size(); }
 private:
 	ModelBone * RootBone;
 	vector<ModelBone *> Bones;
@@ -73,6 +71,7 @@ private:
 
 /*====================================================================================*/
 
+// TODO : Animation이 없을 수도 있는데...
 #pragma region Animation Data
 public:
 	UINT GetClipIndex() const { return ClipIndex; }
