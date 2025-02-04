@@ -538,3 +538,14 @@ Vector Vector::TransformCoord( const Vector & position, const Matrix & matrix)
 
 	return {(single1 / single4), (single2 / single4), (single3 / single4)};
 }
+
+Vector Vector::Random(float MinLength, float MaxLength)
+{
+	Vector V;
+	V.X = Math::Random(-1.f, 1.f);
+	V.Y = Math::Random(-1.f, 1.f);
+	V.Z = Math::Random(-1.f, 1.f);
+	V.Normalize();
+	float scaler = Math::Random(MinLength, MaxLength);
+	return V * scaler;
+}

@@ -38,6 +38,8 @@
 /// </remarks>
 class Shader // NOLINT(cppcoreguidelines-special-member-functions)
 {
+private:
+	constexpr static int InstancingSlot = 9;
 public:
 	friend struct Pass;
 
@@ -65,6 +67,10 @@ public:
 	ID3DX11EffectRasterizerVariable * AsRasterizer(const string & Name) const;
 	ID3DX11EffectSamplerVariable * AsSampler(const string & Name) const;
 
+	
+	void DrawInstanced(UINT TechniqueIndex, UINT PassIndex, UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
+	void DrawIndexedInstanced(UINT TechniqueIndex, UINT PassIndex, UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation = 0, INT baseVertexLocation = 0, UINT startInstanceLocation = 0);
+	
 private:
 	void CreateEffect();
 	/// <summary>
@@ -123,7 +129,9 @@ private:
 		void EndDraw() const;
 		void Dispatch(UINT X, UINT Y, UINT Z) const;
 		void CheckPassValid();
-		
+
+		void DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
+		void DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation = 0, INT baseVertexLocation = 0, UINT startInstanceLocation = 0);
 	};
 
 	struct Technique
@@ -137,6 +145,11 @@ private:
 		void Draw(UINT Pass, UINT VertexCount, UINT StartVertexLocation = 0);
 		void DrawIndexed(UINT Pass, UINT IndexCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0);
 		void Dispatch(UINT Pass, UINT X, UINT Y, UINT Z) const;
+
+		void DrawInstanced(UINT pass, UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation = 0, UINT startInstanceLocation = 0);
+		void DrawIndexedInstanced(UINT pass, UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation = 0, INT baseVertexLocation = 0, UINT startInstanceLocation = 0);
 	};
 	vector<Technique> Techniques;
 };
+
+

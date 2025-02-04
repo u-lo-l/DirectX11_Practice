@@ -9,22 +9,28 @@ namespace Sdt
 		Context::Get()->GetCamera()->SetPosition(0, 100, -200);
 
 		Plane = new Model(L"Plane");
-		Plane->GetWorldTransform()->SetScale({10,3,1});
+		Plane->GetWorldTransform()->SetScale({30,3,1});
 		Plane->GetWorldTransform()->SetRotation({0,90,0});
 
 		Cube = new Model(L"Cube");
 		Cube->GetWorldTransform()->SetScale({0.1f,0.1f,0.1f});
 		Cube->GetWorldTransform()->SetPosition({0, 5, 0});
 
-		Adam1 = new Model(L"Adam");
-		Adam1->GetWorldTransform()->SetPosition({100, 0, 0});
-		Adam2 = new Model(L"Adam");
-		Adam2->GetWorldTransform()->SetPosition({-100, 0, 0});
+		Adam = new Model(L"Adam");
+		Adam->GetWorldTransform()->SetScale({0.5f,0.5f,0.5f});
+		Adam->GetWorldTransform()->SetPosition({100, 0, 0});
+
+		for (float x = 0.0f; x <= 100.f ; x += 10.0f)
+		{
+			Positions.push_back({x, 0.5f, -5.0f});
+		}
 	}
 
 	void InstancingDemo::Destroy()
 	{
 		SAFE_DELETE(Plane);
+		SAFE_DELETE(Cube);
+		SAFE_DELETE(Adam);
 		SAFE_DELETE(Drawer);
 	}
 
@@ -32,15 +38,21 @@ namespace Sdt
 	{
 		Plane->Tick();
 		Cube->Tick();
-		Adam1->Tick();
-		Adam2->Tick();
+		Adam->Tick();
 	}
 
 	void InstancingDemo::Render()
 	{
 		Plane->Render();
-		Cube->Render();
-		Adam1->Render();
-		Adam2->Render();
+		for (UINT i = 0 ; i < Positions.size(); i++)
+		{
+			const Vector & v = Positions[i];
+
+			Cube->GetWorldTransform()->SetPosition(v);
+			Cube->Render();
+			Vector v2 = {v.X, v.Y, v.Z + 5.f};
+			Adam->GetWorldTransform()->SetPosition(v2);
+			Adam->Render();
+		}
 	}
 }

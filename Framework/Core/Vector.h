@@ -87,6 +87,7 @@ public:
 	static Vector TransformNormal( const Vector & normal, const Matrix & matrix);
 	static Vector TransformCoord( const Vector & position, const Matrix & matrix);
 
+	static Vector Random(float MinLength, float MaxLength);
 public:
 	const static Vector Zero;///< 0.0f, 0.0f, 0.0f
 	const static Vector One;///< 1.0f, 1.0f, 1.0f

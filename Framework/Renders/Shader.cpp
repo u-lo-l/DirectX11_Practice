@@ -216,7 +216,13 @@ ID3D11InputLayout * Shader::CreateInputLayout
 
 		if (name == "POSITION")
 			elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-
+		else if (name == "INSTANCE")
+		{
+			elementDesc.InputSlot = Shader::InstancingSlot;
+			elementDesc.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+			elementDesc.InstanceDataStepRate = 1;
+		}
+		
 		if ((name.substr(0, 3) == "SV_") == false)
 			inputLayoutDescs.push_back(elementDesc);
 	}
@@ -257,6 +263,27 @@ void Shader::Pass::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT Bas
 	EndDraw();
 }
 
+void Shader::Pass::DrawInstanced(UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation, UINT startInstanceLocation)
+{
+	BeginDraw();
+	{
+		D3D::Get()->GetDeviceContext()->DrawInstanced(vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation);
+	}
+	EndDraw();
+}
+
+void Shader::Pass::DrawIndexedInstanced(UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation)
+{
+	BeginDraw();
+	{
+		D3D::Get()->GetDeviceContext()->DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startIndexLocation);
+	}
+	EndDraw();
+}
+
+/**
+ * Drawing 할 때 마다 설정을 저장한다.
+ */
 void Shader::Pass::BeginDraw()
 {
 	CHECK(IPass->ComputeStateBlockMask(&StateBlockMask) >= 0);
@@ -264,6 +291,9 @@ void Shader::Pass::BeginDraw()
 	CHECK(IPass->Apply(0, D3D::Get()->GetDeviceContext()) >= 0);
 }
 
+/**
+ * EndDraw할 때 BeginDraw에서 저장한 설정을 복구한다.
+ */
 void Shader::Pass::EndDraw() const
 {
 	ID3D11DeviceContext* Context = D3D::Get()->GetDeviceContext();
@@ -321,6 +351,16 @@ void Shader::Technique::Dispatch(UINT Pass, UINT X, UINT Y, UINT Z) const
 	Passes[Pass].Dispatch(X, Y, Z);
 }
 
+void Shader::Technique::DrawInstanced(UINT pass, UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation, UINT startInstanceLocation)
+{
+	Passes[pass].DrawInstanced(vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation);
+}
+
+void Shader::Technique::DrawIndexedInstanced(UINT pass, UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation)
+{
+	Passes[pass].DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
+}
+
 void Shader::Draw(UINT TechniqueIndex, UINT PassIndex, UINT VertexCount, UINT StartVertexLocation)
 {
 	Techniques[TechniqueIndex].Draw(PassIndex, VertexCount, StartVertexLocation);
@@ -329,7 +369,6 @@ void Shader::Draw(UINT TechniqueIndex, UINT PassIndex, UINT VertexCount, UINT St
 void Shader::Dispatch(UINT TechniqueIndex, UINT PassIndex, UINT X, UINT Y, UINT Z) const
 {
 	Techniques[TechniqueIndex].Dispatch(PassIndex, X, Y, Z);
-
 }
 
 // BaseVertexLocation : StartIndexLocation이 BaseVertexLocation을 기준으로 한다.
@@ -337,6 +376,18 @@ void Shader::DrawIndexed(UINT TechniqueIndex, UINT Pass, UINT IndexCount, UINT S
 {
 	Techniques[TechniqueIndex].DrawIndexed(Pass, IndexCount, StartIndexLocation, BaseVertexLocation);
 }
+
+void Shader::DrawInstanced(UINT technique, UINT pass, UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation, UINT startInstanceLocation)
+{
+	Techniques[technique].Passes[pass].DrawInstanced(vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation);
+}
+
+void Shader::DrawIndexedInstanced(UINT technique, UINT pass, UINT indexCountPerInstance, UINT instanceCount, UINT startIndexLocation, INT baseVertexLocation, UINT startInstanceLocation)
+{
+	Techniques[technique].Passes[pass].DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
+}
+
+
 
 //ID3DX11EffectVariable* Shader::Variable(const string & Name)  const
 //{

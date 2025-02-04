@@ -67,6 +67,17 @@ struct VertexNormal
 	Vector Normal;
 };
 //---------------------------------------------------------------------------//
+struct VertexTextureNormal
+{
+	VertexTextureNormal()
+		: Position(0, 0, 0), UV(0, 0), Normal(0, 0, 0) {}
+	VertexTextureNormal(const Vector& Position, const Vector2D & Uv, const Vector& Normal)
+		: Position(Position), UV(Uv), Normal(Normal) {}
+	Vector Position;
+	Vector2D UV;
+	Vector Normal;
+};
+//---------------------------------------------------------------------------//
 typedef struct VertexTextureColorNormalTangentBlend
 {
 	Vector Position;

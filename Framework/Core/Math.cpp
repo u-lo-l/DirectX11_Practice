@@ -242,7 +242,7 @@ int Math::Random( int min, int max )
 
 float Math::Random( float min, float max )
 {
-	float random = ((float)rand()) / (float)RAND_MAX;
+	float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	float diff = max - min;
 	float val = random * diff;
 

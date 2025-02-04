@@ -4,14 +4,14 @@
 Texture::Texture( const wstring & FileName, const DirectX::TexMetadata * InLoadInfo, bool bDefaultPath )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
-	wstring FullPath = FileName;
+	this->FileName = FileName;
 	if ( bDefaultPath == true)
-		FullPath = W_TEXTURE_PATH + FileName;
+		this->FileName = W_TEXTURE_PATH + FileName;
 	
 	LoadMetadata(InLoadInfo);
 	LoadTexture();
 
-	FullPath = Path::GetFileName( FullPath );
+	this->FileName = Path::GetFileName( this->FileName );
 }
 
 Texture::~Texture()
