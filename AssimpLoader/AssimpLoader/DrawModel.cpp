@@ -33,10 +33,8 @@ namespace Sdt
 	void DrawModel::Tick()
 	{
 		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
-		ImGui::SliderInt("Pass", &Pass, 0, 1);
 		
 		Models[ModelIndex]->Tick();
-		Models[ModelIndex]->SetPass(Pass);
 	}
 
 	void DrawModel::Render()

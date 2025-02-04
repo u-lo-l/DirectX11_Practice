@@ -45,6 +45,13 @@ void Model::SetAnimationSpeed( float InAnimationSpeed )
 	Animations[ClipIndex]->SetPlayRate(InAnimationSpeed);
 }
 
+const ModelAnimation * Model::GetCurrentAnimation() const
+{
+	if (Animations.empty() == false)
+		return nullptr;
+	return Animations[ClipIndex];
+}
+
 void Model::ReadFile( const wstring & InFileFullPath )
 {
 	ifstream ifs;

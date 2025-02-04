@@ -49,16 +49,6 @@ private:
 	
 /*====================================================================================*/
 
-#pragma region Pass
-public:
-	void SetPass(int InPass);
-private :
-	int Pass;
-#pragma endregion
-
-/*====================================================================================*/
-
-//TODO : Skeleton정보도 없을 수도 있는데.... BoneTransforms 너무 과한데
 #pragma region Bone Data
 private:
 	Skeleton * SkeletonData;
@@ -75,7 +65,9 @@ public:
 	void SetClipIndex(UINT InClipIndex);
 	void SetAnimationTime(float InAnimationTime);
 	void SetAnimationSpeed(float InAnimationSpeed);
-	
+
+private:
+	const ModelAnimation * GetCurrentAnimation() const;
 private:
 	UINT ClipIndex = 0; // 몇 번째 애니메이션의
 	UINT Frame; // 몇 frame의 동작인지

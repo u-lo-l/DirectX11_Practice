@@ -61,10 +61,7 @@ void Model::Tick()
 	for (ModelMesh * M : Meshes)
 	{
 		M->SetWorldTransform(this->WorldTransform);
-		const ModelAnimation * CurrentAnimation = nullptr;
-		if (Animations.empty() == false)
-			CurrentAnimation = Animations[GetClipIndex()];
-		M->Tick(CurrentAnimation);
+		M->Tick(GetCurrentAnimation());
 	}
 }
 
@@ -73,15 +70,6 @@ void Model::Render()
 	for (ModelMesh * const M : Meshes)
 	{
 		M->Render();
-	}
-}
-
-void Model::SetPass( int InPass )
-{
-	Pass = InPass;
-	for (ModelMesh * TargetMesh : Meshes)
-	{
-		TargetMesh->Pass = this->Pass;
 	}
 }
 
