@@ -63,11 +63,13 @@ void Model::Tick()
 	
 	int clip = static_cast<int>(GetClipIndex());
 	ImGui::SliderInt("Animation Clip #", &clip, 0, static_cast<int>(GetClipCount()) - 1);
-	static float InterpSpeed = 1.0f;
-	ImGui::SliderFloat("InterpSpeed", &InterpSpeed, 0.1f, 5.0f);
 	if (clip != static_cast<int>(GetClipIndex()))
 		SetClipIndex(clip);
-	
+
+	/*
+	 * TODO : 이 부분 SkeletalMesh::Tick으로 옮기자
+	 * 지금은 CalculateAnimationTime()때문에 힘듦
+	 */
 	for (ModelMesh * const M : Meshes)
 	{
 		SkeletalMesh * const Skm = dynamic_cast<SkeletalMesh * const>(M);
@@ -91,7 +93,7 @@ void Model::Tick()
 				const UINT ClipIndex = BlendingData.Next.Clip;
 				const ModelAnimation * const TargetAnimation = this->Animations[ClipIndex];
 				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
-				BlendingData.ElapsedBlendTime += DeltaTime / BlendingData.BlendingDuration * InterpSpeed;
+				BlendingData.ElapsedBlendTime += DeltaTime / BlendingData.BlendingDuration;
 			}
 		}
 
@@ -125,6 +127,11 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 	return Color(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
 }
 
+/*
+ * 현재 애니메이션의 TicksPerFrame이 필요함.
+ * 현재 애니메이션의 Length가 필요함.
+ * 현재 애니메이션의 PlayRate()가 필요함
+ */
 void Model::CalculateAnimationTime( SkeletalMesh::FrameDesc & FrameData ) const
 {
 	const UINT ClipIndex = GetClipIndex();

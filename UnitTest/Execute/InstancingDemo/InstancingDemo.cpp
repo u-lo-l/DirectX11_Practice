@@ -13,8 +13,8 @@ namespace Sdt
 		Plane->GetWorldTransform()->SetRotation({0,90,0});
 
 		Cube = new Model(L"Cube");
-		Cube->GetWorldTransform()->SetScale({0.5f,0.5f,0.5f});
-		Cube->GetWorldTransform()->SetPosition({0, 25, 0});
+		Cube->GetWorldTransform()->SetScale({0.1f,0.1f,0.1f});
+		Cube->GetWorldTransform()->SetPosition({0, 5, 0});
 
 		Adam1 = new Model(L"Adam");
 		Adam1->GetWorldTransform()->SetPosition({100, 0, 0});
