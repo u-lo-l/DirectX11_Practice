@@ -156,15 +156,6 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const Skele
 		{
 			const ModelBone * const TargetBone = InSkeleton->Bones[BoneNum];
 
-			// N번 째 Bone인 TargetBone은 W_T_B이다. 즉 Bone-coordinate to world-coordinate로의 변환이다.
-			// World-coord to Bone-coord로 변환하는 변환이 필요하다. 우선 하나 만들어 놓는다.
-			Matrix InvGlobal = Matrix::Invert(TargetBone->Transform);
-			
-#ifdef DO_DEBUG
-			const int BoneIndex = TargetBone->Index; // BoneIndex == BoneNum 이다.
-			if (BoneIndex != BoneNum) printf("[!] BoneIndex != BoneNum %d, %d\n", BoneIndex, BoneNum);
-#endif
-
 			// 현재 Animation의 모든 NodeData에서 현재 Bone에 대한 NodeData를 찾는다.
 			const auto It = KeyFrameSearchTree.find(TargetBone->Name);
 			if (It == KeyFrameSearchTree.cend())

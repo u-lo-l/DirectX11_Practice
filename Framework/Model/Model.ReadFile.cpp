@@ -105,6 +105,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 			M->BlendingData.Current.Clip = 0;
 		}
 	}
+	
 	if (SkeletonData != nullptr)
 		SkeletonData->ClearBoneTable();
 	for (ModelMesh * M : this->Meshes)

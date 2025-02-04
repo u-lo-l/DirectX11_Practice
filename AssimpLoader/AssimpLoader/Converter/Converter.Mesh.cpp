@@ -87,6 +87,7 @@ namespace Sdt
 		Bone->MeshIndices.reserve(MeshCount);
 		for (UINT i	= 0 ; i < MeshCount ; i++)
 		{
+			// 이 Bone이 몇 번 째 Mesh에 영향을 주는가?
 			Bone->MeshIndices.push_back(InNode->mMeshes[i]);
 		}
 
@@ -105,7 +106,10 @@ namespace Sdt
 		{
 			Meshes[i] = new MeshData();
 			const aiMesh * const AiMesh = Scene->mMeshes[i];
-
+			const aiNode * MeshNode = Scene->mRootNode->FindNode(AiMesh->mName);
+			aiMatrix4x4 MeshTransform = aiMatrix4x4();
+			if (MeshNode != nullptr)
+				MeshTransform = MeshNode->mTransformation;
 			// Read Material Data
 			const UINT MatIndex = AiMesh->mMaterialIndex;
 			Meshes[i]->MaterialName = Scene->mMaterials[MatIndex]->GetName().C_Str();
@@ -115,7 +119,7 @@ namespace Sdt
 			Meshes[i]->Vertices.reserve(VerticesCount);
 			for (UINT v = 0; v < VerticesCount; v++)
 			{
-				Meshes[i]->Vertices.emplace_back(ThisClass::ReadSingleVertexDataFromAiMesh(AiMesh, v));
+				Meshes[i]->Vertices.emplace_back(ThisClass::ReadSingleVertexDataFromAiMesh(AiMesh, v, MeshTransform));
 			}
 
 			// Read Indices Data
@@ -132,10 +136,11 @@ namespace Sdt
 		}
 	}
 
-	MeshData::VertexType Converter::ReadSingleVertexDataFromAiMesh( const aiMesh * Mesh, UINT VertexIndex )
+	MeshData::VertexType Converter::ReadSingleVertexDataFromAiMesh( const aiMesh * Mesh, UINT VertexIndex, const aiMatrix4x4 & InMeshTransform )
 	{
 		MeshData::VertexType Vertex;
-		memcpy_s(&Vertex.Position, sizeof(Vector), Mesh->mVertices + VertexIndex, sizeof(Vector));
+		aiVector3D transformedVertex = InMeshTransform * Mesh->mVertices[VertexIndex];
+		memcpy_s(&Vertex.Position, sizeof(Vector), &transformedVertex, sizeof(Vector));
 
 		if (Mesh->HasTextureCoords(0) == true)
 		{

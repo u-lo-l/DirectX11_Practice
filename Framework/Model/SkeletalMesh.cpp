@@ -2,7 +2,7 @@
 #include "SkeletalMesh.h"
 
 SkeletalMesh::SkeletalMesh()
-	: Transforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr)
+	: OffsetMatrix(nullptr), BoneTransforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr)
 {
 }
 
@@ -44,8 +44,15 @@ void SkeletalMesh::SetBoneIndex(int InBoneIndex)
 {
 	BoneData.BoneIndex = InBoneIndex;
 }
-void SkeletalMesh::SetBoneTransforms(Matrix * const Transforms)
+
+void SkeletalMesh::SetBoneTransforms( Matrix * Transforms )
 {
-	this->Transforms = Transforms;
-	memcpy(BoneData.BoneTransforms, Transforms, sizeof(Matrix) * MaxBoneCount);
+	this->BoneTransforms = Transforms;
+	memcpy(BoneData.BoneTransform, Transforms, sizeof(Matrix) * MaxBoneCount);
+}
+
+void SkeletalMesh::SetOffsetMatrix(Matrix * const Transforms)
+{
+	this->OffsetMatrix = Transforms;
+	memcpy(BoneData.OffsetMatrix, Transforms, sizeof(Matrix) * MaxBoneCount);
 }

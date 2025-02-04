@@ -18,6 +18,7 @@ private:
 private:
 	ModelBone * RootBone;
 	vector<ModelBone *> Bones;
-	Matrix BoneTransforms[SkeletalMesh::MaxBoneCount];
+	Matrix BoneTransform[SkeletalMesh::MaxBoneCount];
+	Matrix OffsetMatrix[SkeletalMesh::MaxBoneCount];
 	CachedBoneTableType * CachedBoneTable = nullptr;
 };
