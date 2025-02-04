@@ -34,7 +34,7 @@ private:
 	vector<KeyFrameData *> KeyFrames;
 
 private :
-	KeyFrameTFTable *  CalcClipTransform( const vector<ModelBone *> & InBone) const;
+	KeyFrameTFTable *  CalcClipTransform( const Skeleton * InSkeleton ) const;
 	
 private:
 	// 어떤 특정 Bone에 연결된 Key 정보들?

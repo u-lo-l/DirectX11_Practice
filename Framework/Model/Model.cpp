@@ -6,7 +6,7 @@
 #include "SkeletalMesh.h"
 
 Model::Model(const wstring & ModelFileName)
- : RootBone(nullptr)
+ // : RootBone(nullptr)
 {
 #ifdef DO_DEBUG
 	WorldTransform = new Transform("Model WorldTransform of [" + String::ToString(ModelFileName) + "]");
@@ -19,7 +19,7 @@ Model::Model(const wstring & ModelFileName)
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
-	:RootBone(nullptr)
+	// :RootBone(nullptr)
 {
 #ifdef DO_DEBUG
 	WorldTransform = new Transform("Model WorldTransform of [" + String::ToString(ModelFileName) + "]");
@@ -37,8 +37,8 @@ Model::~Model()
 	SAFE_RELEASE(ClipTexture);
 	SAFE_RELEASE(ClipSRV);
 	
-	for (const ModelBone * Bone : Bones)
-		SAFE_DELETE(Bone);
+	// for (const ModelBone * Bone : Bones)
+	// 	SAFE_DELETE(Bone);
 	for (const ModelMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
 	for (pair<string, Material *> KeyVal : MaterialsTable)
@@ -61,10 +61,7 @@ void Model::Tick()
 	for (ModelMesh * M : Meshes)
 	{
 		M->SetWorldTransform(this->WorldTransform);
-		const ModelAnimation * CurrentAnimation = nullptr;
-		if (Animations.empty() == false)
-			CurrentAnimation = Animations[GetClipIndex()];
-		M->Tick(CurrentAnimation);
+		M->Tick(GetCurrentAnimation());
 	}
 }
 
@@ -73,15 +70,6 @@ void Model::Render()
 	for (ModelMesh * const M : Meshes)
 	{
 		M->Render();
-	}
-}
-
-void Model::SetPass( int InPass )
-{
-	Pass = InPass;
-	for (ModelMesh * TargetMesh : Meshes)
-	{
-		TargetMesh->Pass = this->Pass;
 	}
 }
 

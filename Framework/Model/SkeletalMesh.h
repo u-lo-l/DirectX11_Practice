@@ -7,6 +7,7 @@ class SkeletalMesh final : public ModelMesh
 public:
 	static constexpr UINT MaxBoneCount = 256;
 	friend class Model;
+	friend class Skeleton;
 public:
 	SkeletalMesh();
 private:

@@ -22,13 +22,15 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 	ModelAnimationToReturn->TicksPerSecond = InReader->ReadFloat();
 
 	const UINT KeyFrameCount = InReader->ReadUint();
-	// TODO : 왜 가지고 있지 않은 Bone에 대한 애니메이션 정보도 가지고 가는가? BoneIndex를 -1왜 가져가는가?
+	// TODO : InBoneTable이 Nullptr일 떄 다시 생각해보자. 지금은 그냥 넘어감.
 	ModelAnimationToReturn->KeyFrames.assign(KeyFrameCount, nullptr);
 	for (UINT i = 0; i < KeyFrameCount; i++)
 	{
 		ModelAnimationToReturn->KeyFrames[i] = new KeyFrameData();
 		KeyFrameData * &TargetData = ModelAnimationToReturn->KeyFrames[i];
 		const string BoneNameInAnimation = InReader->ReadString();
+		if (InCachedBoneTable == nullptr)
+			continue;
 		const auto Iterator = InCachedBoneTable->find(BoneNameInAnimation);
 		if (Iterator != InCachedBoneTable->cend())
 		{
@@ -92,7 +94,7 @@ std::pair<int, int> ModelAnimation::GetCurrentAndNextFrame( float CurrentTime ) 
 
 /**
  * @brief KeyFrame Animation 데이터를 배열로 표현한 구조.
- * @param InBone <code>Model</code> 클래스는 <code>vector<ModelBone *></code>를 갖고 있다.
+ * @param InSkeleton <code>Model</code> 클래스는 <code>Skeleton*</code>를 갖고 있다.
  * @param CachedBoneTable
  * 
  * @details 
@@ -127,8 +129,7 @@ std::pair<int, int> ModelAnimation::GetCurrentAndNextFrame( float CurrentTime ) 
  *   즉 <b>KeyFrame</b>에 작성된 <b>BoneB</b>의 <b>Local-Transform(A_T_B)</b>을 <b>World-Transform(W_T_B)</b>으로 변환하기 위해선, <b>BoneA</b>에 대한 <b>World-Transform(W_T_A)</b>이 필요해.<br/>
  *   <b>W_T_B = A_T_B * AtoWorld_Mat = A_T_B * W_T_A</b>가 된다.
  */
-
-ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vector<ModelBone *> & InBone) const
+ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const Skeleton * InSkeleton ) const
 {
 	vector<Matrix> TempHipAnimMatrix;
 	
@@ -150,10 +151,10 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const vecto
 		Matrix * const BoneMatrixUpdatingArr = TransformTableToReturn->TransformMats[CurrentFrame];
 
 		// Animation을 수행 할 Model에 속한 모든 Bone에 대해서 반복한다.
-		const UINT BoneCount = InBone.size();
+		const UINT BoneCount = InSkeleton->Bones.size();
 		for (UINT BoneNum = 0; BoneNum < BoneCount ; BoneNum++)
 		{
-			const ModelBone * const TargetBone = InBone[BoneNum];
+			const ModelBone * const TargetBone = InSkeleton->Bones[BoneNum];
 
 			// N번 째 Bone인 TargetBone은 W_T_B이다. 즉 Bone-coordinate to world-coordinate로의 변환이다.
 			// World-coord to Bone-coord로 변환하는 변환이 필요하다. 우선 하나 만들어 놓는다.

@@ -1,5 +1,6 @@
 ﻿#include "framework.h"
 #include "ModelBone.h"
+#include "Skeleton.h"
 
 ModelBone::ModelBone()
 {
@@ -9,23 +10,28 @@ ModelBone::~ModelBone()
 {
 }
 
-void ModelBone::ReadModelFile( const BinaryReader * InReader, vector<ThisClassPtr> & OutBones )
+void ModelBone::ReadModelFile( const BinaryReader * InReader, Skeleton* &OutSkeleton )
 {
+	OutSkeleton = nullptr;
 	const UINT BoneCount = InReader->ReadUint();
+	if (BoneCount == 0)
+		return ;
+	OutSkeleton = new Skeleton();
 #ifdef DO_DEBUG
 	printf("Bone Count : %d\n", BoneCount);
 #endif
-	OutBones.resize(BoneCount);
+	vector<ModelBone *> & TargetBones = OutSkeleton->Bones;
+	TargetBones.resize(BoneCount);
 	for (UINT i = 0; i < BoneCount; i++)
 	{
-		OutBones[i] = new ModelBone();
-		OutBones[i]->Index = InReader->ReadUint();
-		OutBones[i]->Name = InReader->ReadString();
-		OutBones[i]->ParentIndex = InReader->ReadInt();
-		OutBones[i]->Transform = InReader->ReadMatrix();
+		TargetBones[i] = new ModelBone();
+		TargetBones[i]->Index = InReader->ReadUint();
+		TargetBones[i]->Name = InReader->ReadString();
+		TargetBones[i]->ParentIndex = InReader->ReadInt();
+		TargetBones[i]->Transform = InReader->ReadMatrix();
 
 		const UINT MeshCount = InReader->ReadUint();
-		vector<UINT> & Numbers = OutBones[i]->MeshIndices;
+		vector<UINT> & Numbers = TargetBones[i]->MeshIndices;
 		Numbers.resize(MeshCount);
 
 		if (MeshCount > 0)
@@ -36,12 +42,12 @@ void ModelBone::ReadModelFile( const BinaryReader * InReader, vector<ThisClassPt
 		}
 	}
 
-	for (ThisClassPtr Bone : OutBones)
+	for (ThisClassPtr Bone : TargetBones)
 	{
 		if (Bone->IsRootBone() == true) // root bone-node
 			continue;;
 		
-		Bone->Parent = OutBones[Bone->ParentIndex];
+		Bone->Parent = TargetBones[Bone->ParentIndex];
 		Bone->Parent->Children.push_back(Bone);
 	}
 }
