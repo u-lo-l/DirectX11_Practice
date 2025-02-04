@@ -9,9 +9,9 @@ StaticMesh::~StaticMesh()
 {
 }
 
-void StaticMesh::Tick()
+void StaticMesh::Tick(const ModelAnimation * CurrentAnimation)
 {
-	ModelMesh::Tick();
+	ModelMesh::Tick(CurrentAnimation);
 }
 
 void StaticMesh::Render()

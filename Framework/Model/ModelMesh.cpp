@@ -35,11 +35,31 @@ ModelMesh::~ModelMesh()
 #pragma endregion Animation
 }
 
-void ModelMesh::Tick()
+void ModelMesh::Tick(const ModelAnimation * CurrentAnimation)
 {
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->Tick();
 	WorldTransform->Tick();
+
+	if (CurrentAnimation != nullptr)
+	{
+		UpdateCurrentFrameData(CurrentAnimation);
+		if (BlendingData.Next.Clip > -1)
+		{
+			if (BlendingData.ElapsedBlendTime >= 1.0f)
+			{
+				BlendingData.Current = BlendingData.Next;
+				BlendingData.Next.Clip = -1;
+				BlendingData.ElapsedBlendTime = 0.0f;
+			}
+			else
+			{
+				UpdateNextFrameData(CurrentAnimation);
+				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+				BlendingData.ElapsedBlendTime += DeltaTime / BlendingData.BlendingDuration;
+			}
+		}
+	}
 }
 
 void ModelMesh::Render()
@@ -148,4 +168,23 @@ void ModelMesh::CreateBuffers()
 	FrameCBuffer = new ConstantBuffer(&this->BlendingData, "Current Animation Blending Description", sizeof(AnimationBlendingDesc));
 	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationBlending");
 	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
+}
+
+void ModelMesh::UpdateCurrentFrameData(const ModelAnimation * InAnimation)
+{
+	UpdateFrameData(InAnimation, BlendingData.Current);	
+}
+
+void ModelMesh::UpdateNextFrameData(const ModelAnimation * InAnimation)
+{
+	UpdateFrameData(InAnimation, BlendingData.Next);	
+}
+
+void ModelMesh::UpdateFrameData(const ModelAnimation * InAnimation, FrameDesc & Frame )
+{
+	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+	Frame.CurrentTime = InAnimation->CalculateNextTime(Frame.CurrentTime, DeltaTime);
+	const pair<int, int> CurrAndNextFrame = InAnimation->GetCurrentAndNextFrame(Frame.CurrentTime);
+	Frame.CurrentFrame = CurrAndNextFrame.first;
+	Frame.NextFrame = CurrAndNextFrame.second;
 }

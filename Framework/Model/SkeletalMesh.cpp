@@ -14,9 +14,9 @@ SkeletalMesh::~SkeletalMesh()
 #pragma endregion Bone
 }
 
-void SkeletalMesh::Tick()
+void SkeletalMesh::Tick(const ModelAnimation * CurrentAnimation)
 {
-	ModelMesh::Tick();
+	ModelMesh::Tick(CurrentAnimation);
 }
 
 void SkeletalMesh::Render()

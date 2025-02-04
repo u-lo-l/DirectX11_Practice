@@ -11,7 +11,7 @@ public:
 	SkeletalMesh();
 private:
 	virtual ~SkeletalMesh() override;
-	void Tick() override;
+	void Tick(const ModelAnimation * CurrentAnimation = nullptr) override;
 	void Render() override;
 	void CreateBuffers() override;
 	

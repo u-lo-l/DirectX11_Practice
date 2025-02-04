@@ -81,8 +81,6 @@ public:
 	void SetClipIndex(UINT InClipIndex);
 	void SetAnimationTime(float InAnimationTime);
 	void SetAnimationSpeed(float InAnimationSpeed);
-private:
-	void CalculateAnimationTime(SkeletalMesh::FrameDesc & FrameData) const;
 	
 private:
 	UINT ClipIndex = 0; // 몇 번째 애니메이션의
