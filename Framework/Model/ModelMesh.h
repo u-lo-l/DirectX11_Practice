@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class ModelAnimation;
 class ModelBone;
 struct MeshData;
 
@@ -26,11 +27,13 @@ protected:
 	ModelMesh();
 #endif
 	virtual ~ModelMesh() = 0;
-	virtual void Tick();
+	virtual void Tick(const ModelAnimation * CurrentAnimation = nullptr);
 	virtual void Render();
 	virtual void CreateBuffers();
 	
 	void SetWorldTransform( const Transform * InTransform ) const;
+	
+//TODO : private으로 바꾸기
 protected :
 	Shader * CachedShader = nullptr;
 	int Pass = 0;
@@ -51,9 +54,8 @@ protected :
 	IndexBuffer * IBuffer = nullptr;
 	ConstantDataBinder * GlobalMatrixCBBinder = nullptr;
 
-
 #pragma region Animation
-private:
+protected:
 	struct FrameDesc
 	{
 		int		Clip = -1;
@@ -71,9 +73,13 @@ private:
 		FrameDesc Current;
 		FrameDesc Next;
 	};
-
+	void UpdateCurrentFrameData(const ModelAnimation * InAnimation);
+	void UpdateNextFrameData(const ModelAnimation * InAnimation);
+private:
+	static void UpdateFrameData(const ModelAnimation * InAnimation, FrameDesc & Frame);
+protected:
 	AnimationBlendingDesc BlendingData;
-	
+private:
 	ConstantBuffer * FrameCBuffer;
 	IECB_t * ECB_FrameBuffer;
 	

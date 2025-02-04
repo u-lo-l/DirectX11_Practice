@@ -73,6 +73,21 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 	return ModelAnimationToReturn;
 }
 
+float ModelAnimation::CalculateNextTime( float CurrentTime, float DeltaTime ) const
+{
+	DeltaTime *= TicksPerSecond * PlayRate;
+	CurrentTime += DeltaTime;
+	return fmod(CurrentTime, GetAnimationLength());
+}
+
+std::pair<int, int> ModelAnimation::GetCurrentAndNextFrame( float CurrentTime ) const
+{
+	const int Length = static_cast<int>(GetAnimationLength());
+	int CurrentFrame = static_cast<int>(CurrentTime);
+	int NextFrame = (1 + CurrentFrame) % Length;
+	return {CurrentFrame, NextFrame};
+}
+
 /*=================================================================================================*/
 
 /**

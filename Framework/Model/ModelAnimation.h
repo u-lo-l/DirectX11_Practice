@@ -19,6 +19,9 @@ private:
 		const BinaryReader * InReader,
 		const Model::CachedBoneTableType * InCachedBoneTable
 	);
+public:
+	float CalculateNextTime(float CurrentTime, float DeltaTime) const;
+	std::pair<int, int> GetCurrentAndNextFrame(float CurrentTime) const;
 private:
 	UINT GetKeyFrameCount() const { return KeyFrames.size(); }
 	float GetAnimationLength () const { return 1 + Duration; }

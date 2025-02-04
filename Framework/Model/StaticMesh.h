@@ -9,7 +9,7 @@ public:
 
 private:
 	~StaticMesh() override;
-	void Tick() override;
+	void Tick(const ModelAnimation * CurrentAnimation = nullptr) override;
 	void Render() override;
 	void CreateBuffers() override;
 };
