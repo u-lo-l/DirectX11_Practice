@@ -13,7 +13,7 @@ VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)
 {    
     VertexOutput output;
     
-    ModelWorldTF = input.Transform;
+    ModelWorldTF = mul(BoneTransforms[BoneIndex], input.Transform);
 
     output.Position = mul(input.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
@@ -26,7 +26,6 @@ VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)
     return output;
 }
 
-Texture2D Texture;
 SamplerState Samp
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -34,12 +33,20 @@ SamplerState Samp
     AddressV = Wrap;
 };
 
+
+// Texture2D Texture;
 float4 PS(VertexOutput input) : SV_Target
 {
-    float NdotL = dot((input.Normal), -LightDirection);
+    // float NdotL = dot((input.Normal), -float3(1,0,0));
 
-    float3 color = Texture.Sample(Samp, input.Uv).rgb * NdotL;
-    return float4(color.rgb, 1);
+    // float3 color = Texture.Sample(Samp, input.Uv).rgb * NdotL;
+    // return float4(color.rgb, 1);
+
+    float3 normal = normalize(input.Normal);
+	float Light = dot(-LightDirection, normal);
+    float3 color = MaterialMaps[0].Sample(Samp, input.Uv).rgb;
+    color *= Light;
+    return float4(color, 1);
 }
 
 

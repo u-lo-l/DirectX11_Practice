@@ -5,7 +5,7 @@
       "DiffuseMap" : [ "../_Models/Mousey/Ch14_1001_Diffuse.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "NormalMap" : [ "../_Models/Mousey/Ch14_1001_Normal.png" ],
-      "ShaderName" : "20_ModelVertex2.fx",
+      "ShaderName" : "38_Instancing_Model.fx",
       "Specular" : "0.500000,0.500000,0.500000,1.000000",
       "SpecularMap" : [ "../_Models/Mousey/Ch14_1001_Specular.png" ]
    }

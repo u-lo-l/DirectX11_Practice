@@ -16,7 +16,11 @@ namespace Sdt
 		Shader * Drawer = nullptr;
 
 		Model * Plane = nullptr;
-		Model * Cube = nullptr;
+		Model * Airplane = nullptr;
 		Model * Sphere = nullptr;
+
+		vector<Model *> Models;
+		vector<Vector> Scales;
+		vector<float> PosZ;
 	};
 }

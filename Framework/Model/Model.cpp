@@ -16,7 +16,8 @@ Model::Model(const wstring & ModelFileName)
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
 
-	InstanceBuffer = new VertexBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix), Shader::InstancingSlot, true);
+	if (Animations.size() == 0)
+		InstanceBuffer = new VertexBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix), Shader::InstancingSlot, true);
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
@@ -69,7 +70,8 @@ void Model::Tick()
 
 void Model::Render()
 {
-	InstanceBuffer->BindToGPU();
+	if (InstanceBuffer != nullptr)
+		InstanceBuffer->BindToGPU();
 	for (ModelMesh * const M : Meshes)
 	{
 		M->Render((InstanceBuffer != nullptr));
