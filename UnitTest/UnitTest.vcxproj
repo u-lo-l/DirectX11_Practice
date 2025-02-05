@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="Execute\InstancingDemo\InstancingDemo.cpp" />
     <ClCompile Include="Execute\InstancingDemo\Instancing_Vertex.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\NonInstancingDemo.cpp" />
     <ClCompile Include="Execute\InstancingDemo\NonInstancing_Vertex.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -31,7 +30,6 @@
   <ItemGroup>
     <ClInclude Include="Execute\InstancingDemo\InstancingDemo.h" />
     <ClInclude Include="Execute\InstancingDemo\Instancing_Vertex.h" />
-    <ClInclude Include="Execute\InstancingDemo\NonInstancingDemo.h" />
     <ClInclude Include="Execute\InstancingDemo\NonInstancing_Vertex.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
