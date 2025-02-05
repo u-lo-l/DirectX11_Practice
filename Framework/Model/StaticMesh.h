@@ -10,6 +10,6 @@ public:
 private:
 	~StaticMesh() override;
 	void Tick(const ModelAnimation * CurrentAnimation = nullptr) override;
-	void Render() override;
+	void Render(bool bInstancing = false) override;
 	void CreateBuffers() override;
 };

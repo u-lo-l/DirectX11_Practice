@@ -3,14 +3,14 @@
       "Ambient" : "0.000000,0.000000,0.000000,0.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "Emissive" : "0.800000,0.800000,0.800000,1.000000",
-      "ShaderName" : "20_ModelVertex2.fx",
+      "ShaderName" : "38_Instancing_Model.fx",
       "Specular" : "0.800000,0.800000,0.800000,1.000000"
    },
    "WorldGridMaterial" : {
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.215861,0.215861,0.215861,1.000000",
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
-      "ShaderName" : "20_ModelVertex2.fx",
+      "ShaderName" : "38_Instancing_Model.fx",
       "Specular" : "0.200000,0.200000,0.200000,1.000000"
    }
 }

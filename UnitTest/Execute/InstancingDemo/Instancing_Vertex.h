@@ -27,7 +27,6 @@ namespace Sdt
 		ConstantDataBinder * PerFrame = nullptr;
 
 		VertexBuffer * InstanceBuffer = nullptr;
-		int InstanceBufferSlot = 9;
 		
 		Texture * DiffuseMap = nullptr;
 		IESRV_t * sDiffuseMap = nullptr;

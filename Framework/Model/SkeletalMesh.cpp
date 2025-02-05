@@ -19,12 +19,12 @@ void SkeletalMesh::Tick(const ModelAnimation * CurrentAnimation)
 	ModelMesh::Tick(CurrentAnimation);
 }
 
-void SkeletalMesh::Render()
+void SkeletalMesh::Render(bool bInstancing)
 {
 	BoneDescBuffer->BindToGPU();
 	CHECK(ECB_BoneDescBuffer->SetConstantBuffer(*BoneDescBuffer) >= 0);
 
-	ModelMesh::Render();
+	ModelMesh::Render(bInstancing);
 }
 
 void SkeletalMesh::CreateBuffers()

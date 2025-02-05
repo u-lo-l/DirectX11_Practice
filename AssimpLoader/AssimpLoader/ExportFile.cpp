@@ -6,13 +6,13 @@
 namespace Sdt
 {
 	const string ShaderForAnim = "23_AnimationTwinning.fx";
-	const string ShaderForNonAnim = "20_ModelVertex2.fx";
+	const string ShaderForNonAnim = "38_Instancing_Model.fx";
 	
 	void ExportFile::Initialize()
 	{
-		// MakeModel(L"Shannon", {L"Idle"});
-		MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
-		MakeModel(L"Airplane", {});
+		MakeModel(L"Adam", {});
+		// MakeModel(L"Adam", {L"Idle", L"Dance01", L"Dance02", L"Dance03"}, 1.f);
+		MakeModel(L"Airplane", {}, 0.1f);
 		MakeModel(L"Cube", {}, 1.f);
 		MakeModel(L"Cylinder", {}, 1.f);
 		MakeModel(L"Sphere", {}, 1.f);

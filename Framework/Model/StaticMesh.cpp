@@ -14,9 +14,9 @@ void StaticMesh::Tick(const ModelAnimation * CurrentAnimation)
 	ModelMesh::Tick(CurrentAnimation);
 }
 
-void StaticMesh::Render()
+void StaticMesh::Render(bool bInstancing)
 {
-	ModelMesh::Render();
+	ModelMesh::Render(bInstancing);
 }
 
 void StaticMesh::CreateBuffers()

@@ -38,7 +38,7 @@
 /// </remarks>
 class Shader // NOLINT(cppcoreguidelines-special-member-functions)
 {
-private:
+public:
 	constexpr static int InstancingSlot = 9;
 public:
 	friend struct Pass;

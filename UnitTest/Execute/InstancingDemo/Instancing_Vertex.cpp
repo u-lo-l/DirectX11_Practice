@@ -30,7 +30,7 @@ namespace Sdt
 		}
 		CreateCube();
 
-		InstanceBuffer = new VertexBuffer(Worlds, MaxInstanceCount, sizeof(Matrix), InstanceBufferSlot);
+		InstanceBuffer = new VertexBuffer(Worlds, MaxInstanceCount, sizeof(Matrix), Shader::InstancingSlot);
 	}
 
 	void Instancing_Vertex::Destroy()

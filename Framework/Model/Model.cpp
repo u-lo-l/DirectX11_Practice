@@ -15,6 +15,8 @@ Model::Model(const wstring & ModelFileName)
 	const wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
+
+	InstanceBuffer = new VertexBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix), Shader::InstancingSlot, true);
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
@@ -28,10 +30,13 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 	const wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
+
+	InstanceBuffer = new VertexBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix), Shader::InstancingSlot);
 }
 
 Model::~Model()
 {
+	SAFE_DELETE(InstanceBuffer);
 	SAFE_RELEASE(ClipTexture);
 	SAFE_RELEASE(ClipSRV);
 	
@@ -41,8 +46,9 @@ Model::~Model()
 		SAFE_DELETE(KeyVal.second);
 	for (const ModelAnimation * Animation : Animations)
 		SAFE_DELETE(Animation);
-	
-	SAFE_DELETE(WorldTransform);
+
+	for (const Transform * Tf : WorldTransforms)
+		SAFE_DELETE(Tf);
 }
 
 void Model::Tick()
@@ -63,9 +69,10 @@ void Model::Tick()
 
 void Model::Render()
 {
+	InstanceBuffer->BindToGPU();
 	for (ModelMesh * const M : Meshes)
 	{
-		M->Render();
+		M->Render((InstanceBuffer != nullptr));
 	}
 }
 
@@ -75,5 +82,21 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 	String::SplitString(&v, InJson, ",");
 
 	return Color(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
+}
+
+Transform * Model::AddTransforms()
+{
+	int index = WorldTransforms.size();
+	Transform * NewTransform = new Transform(&WorldTFMatrix[index]);
+	WorldTransforms.push_back(NewTransform);
+	
+	return NewTransform;
+}
+
+const Transform * Model::GetTransforms( UINT Index ) const
+{
+	if (Index >= WorldTransforms.size())
+		return nullptr;
+	return WorldTransforms[Index];
 }
 

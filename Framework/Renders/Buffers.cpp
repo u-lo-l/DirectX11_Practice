@@ -112,7 +112,16 @@ void VertexBuffer::BindToGPU()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	constexpr UINT Offset = 0;
+
+	if (bCpwWrite == true)
+	{
+		D3D11_MAPPED_SUBRESOURCE Subresource;
+		DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource);
+		memcpy(Subresource.pData, Data, Stride * Count);
+		DeviceContext->Unmap(Buffer, 0);
+	}
 	DeviceContext->IASetVertexBuffers(Slot, 1, &Buffer, &Stride, &Offset);
+	
 }
 
 IndexBuffer::IndexBuffer(UINT * InData,	UINT InCount)

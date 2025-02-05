@@ -28,7 +28,7 @@ protected:
 #endif
 	virtual ~ModelMesh() = 0;
 	virtual void Tick(const ModelAnimation * CurrentAnimation = nullptr);
-	virtual void Render();
+	virtual void Render(bool bInstancing = false);
 	virtual void CreateBuffers();
 	
 	void SetWorldTransform( const Transform * InTransform ) const;
@@ -40,7 +40,7 @@ protected :
 
 	string MeshName;
 
-	Transform * WorldTransform = nullptr;
+	Transform * ref_ModelWorldTransform = nullptr;
 
 	Material * MaterialData = nullptr;
 
@@ -52,8 +52,10 @@ protected :
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
+	//View-Projection Matrix정보임.
 	ConstantDataBinder * GlobalMatrixCBBinder = nullptr;
 
+	
 #pragma region Animation
 protected:
 	struct FrameDesc

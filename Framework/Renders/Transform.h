@@ -13,6 +13,7 @@ public:
 	explicit Transform( const string & MetaData = "Transform Matrix");
 #else
 	Transform();
+	explicit Transform(const Matrix * InMatrix);
 #endif
 	~Transform();
 
@@ -57,4 +58,8 @@ private:
 	Vector EulerAngleInRadian;
 	Vector Scale;
 	CBufferDesc CBufferData;
+
+#pragma region Instancing
+	const Matrix * ref_WorldMatrix;
+#pragma endregion Instancing
 };

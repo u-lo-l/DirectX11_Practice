@@ -9,18 +9,17 @@ struct VertexOutput
     float3 Normal : Normal;
 };
 
-VertexOutput VS_Model(ModelVertexInput input)
+VertexOutput VS_Model(ModelInstanceVertexInput input)
 {    
     VertexOutput output;
     output.Position = input.Position;
-    // output.Position = SetAnimatedBoneToWorldTF(input); // Local_Space(Bone Root Space)
 
-    // SetModelWorld(ModelWorldTF, input);
+    ModelWorldTF = SetModelInstanceWorld(input);
     output.Position = mul(input.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
-    output.Normal = mul(input.Normal, ModelWorldTF);
+    output.Normal = mul(input.Normal, (float3x3)ModelWorldTF);
     output.Uv = input.Uv;
     
     return output;

@@ -13,6 +13,16 @@ Transform::Transform( const string & MetaData )
 Transform::Transform()
  : CBuffer(nullptr), ECB_CBuffer(nullptr)
  , Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
+ , ref_WorldMatrix(nullptr)
+{
+	CBufferData.World= Matrix::Identity;
+	CBuffer = new ConstantBuffer(&CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
+}
+
+Transform::Transform(const Matrix * InMatrix )
+	: CBuffer(nullptr), ECB_CBuffer(nullptr)
+	, Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
+	, ref_WorldMatrix(InMatrix)
 {
 	CBufferData.World= Matrix::Identity;
 	CBuffer = new ConstantBuffer(&CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
@@ -135,4 +145,7 @@ void Transform::UpdateWorldMatrix()
 
 	CBufferData.World = Scale * Rotation * Translation;
 	bTransformChanged = true;
+
+	if (ref_WorldMatrix != nullptr)
+		memcpy((void *)ref_WorldMatrix, &CBufferData.World, sizeof(Matrix));
 }

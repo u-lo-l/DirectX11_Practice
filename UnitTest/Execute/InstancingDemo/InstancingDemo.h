@@ -17,9 +17,6 @@ namespace Sdt
 
 		Model * Plane = nullptr;
 		Model * Cube = nullptr;
-		vector<Vector> Positions = {};
-		vector<Vector> Rotations = {};
-
-		Model * Adam = nullptr;
+		Model * Sphere = nullptr;
 	};
 }

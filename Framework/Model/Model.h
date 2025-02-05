@@ -11,6 +11,7 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
+	constexpr static int MaxModelInstanceCount = 500;
 private:
 	using ThisClass = Model;
 
@@ -26,11 +27,11 @@ public:
 
 #pragma region GettersSetters
 public:
-	Transform * GetWorldTransform() const { return WorldTransform; }
-	const string & GetModelName() const { return ModelName; }
-	__forceinline void SetWorldPosition(const Vector & InPos) const	{ WorldTransform->SetPosition(InPos); }
-	__forceinline void SetWorldRotation(const Vector & InEuler) const { WorldTransform->SetRotation(InEuler); }
-	__forceinline void SetScale(const Vector & InScale) const {	WorldTransform->SetScale(InScale); }
+	// Transform * GetWorldTransform() const { return WorldTransform; }
+	// const string & GetModelName() const { return ModelName; }
+	// __forceinline void SetWorldPosition(const Vector & InPos) const	{ WorldTransform->SetPosition(InPos); }
+	// __forceinline void SetWorldRotation(const Vector & InEuler) const { WorldTransform->SetRotation(InEuler); }
+	// __forceinline void SetScale(const Vector & InScale) const {	WorldTransform->SetScale(InScale); }
 #pragma endregion GettersSetters
 	
 /*====================================================================================*/
@@ -46,12 +47,27 @@ private:
 	vector<ModelMesh *> Meshes;
 
 	Transform * WorldTransform;
+
+#pragma region Instancing
+public:
+	Transform * AddTransforms();
+	const Transform * GetTransforms(UINT Index) const;
+private:
+	// 모델을 인스턴싱을 통해서 렌더링 할 때는 여러 WorldTransform이 필요하다.
+	// 그리고 WorldTFMatrix는 
+	vector<Transform*> WorldTransforms;
+	Matrix WorldTFMatrix[MaxModelInstanceCount];
+
+	VertexBuffer * InstanceBuffer;
+#pragma endregion Instancing
 	
 /*====================================================================================*/
 
 #pragma region Bone Data
 private:
-	Skeleton * SkeletonData;
+	// BoneTransform, OffsetMatrix는 여기 들어간다.
+	// 모든 동일한 Model에서 BoneTransform은 동일하다.
+	Skeleton * SkeletonData; 
 #pragma endregion Bone Data
 
 /*====================================================================================*/
@@ -110,5 +126,6 @@ public:
 /*====================================================================================*/
 
 };
+
 
 

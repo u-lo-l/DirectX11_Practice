@@ -1,5 +1,4 @@
 {
-   "Animations" : [ "Adam/Idle", "Adam/Dance01", "Adam/Dance02", "Adam/Dance03" ],
    "File" : {
       "Material" : "Adam",
       "Mesh" : "Adam"
