@@ -60,11 +60,9 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	if (Animations.empty() == false)
 	{
 		CreateAnimationTexture();
-		for (ModelMesh * M : this->Meshes)
+		for (const auto & Pair : MaterialsTable)
 		{
-			M->ClipsTexture = ClipTexture;
-			M->ClipsSRV = ClipSRV;
-			// M->BlendingData.Current.Clip = 0;
+			ClipSRVVariables.emplace_back(Pair.second->GetShader()->AsSRV("ClipsTFMap"));
 		}
 	}
 	
@@ -206,6 +204,7 @@ void Model::CreateAnimationTexture()
 		ZeroMemory(&TextureDesc, sizeof(TextureDesc));
 		TextureDesc.Width = SkeletalMesh::MaxBoneCount * PixelChannel;
 		TextureDesc.Height = ModelAnimation::MaxFrameLength;
+		// 전체 애니메이션 개수만큼 Texture가 몇 장 만들어질 지 결정된다.
 		TextureDesc.ArraySize = Animations.size();
 		TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; //16Byte * 4 = 64 Byte
 		TextureDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -254,6 +253,8 @@ void Model::CreateAnimationTexture()
 			SubResources[AnimationIndex].SysMemPitch = SkeletalMesh::MaxBoneCount * sizeof(Matrix); // 가로 길이
 			SubResources[AnimationIndex].SysMemSlicePitch = PageSize;						// 전체 배열 크기
 		}
+
+		ID3D11Texture2D * ClipTexture; // ShaderResourceView만들기 위한 임시 텍스쳐 생성
 		CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
 		SAFE_DELETE_ARR(SubResources);
 #pragma endregion
@@ -274,6 +275,7 @@ void Model::CreateAnimationTexture()
 		SRVDesc.Texture2DArray.ArraySize = AnimationCount;
 
 		CHECK(D3D::Get()->GetDevice()->CreateShaderResourceView(ClipTexture, &SRVDesc, &this->ClipSRV) >= 0);
+		SAFE_RELEASE(ClipTexture);
 #pragma endregion
 	}
 }

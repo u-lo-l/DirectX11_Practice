@@ -27,6 +27,14 @@ Model::Model(const wstring & ModelFileName)
 	
 	if (SkeletonData != nullptr)
 		SkeletonData->BindToGPU();
+	
+	if (ClipSRV != nullptr)
+	{
+		for (IESRV_t * ClipSRVVar : ClipSRVVariables)
+		{
+			CHECK(ClipSRVVar->SetResource(ClipSRV) >= 0);
+		}
+	}
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
@@ -51,13 +59,23 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 							Shader::InstancingSlot,
 							true
 						);
+
+	if (SkeletonData != nullptr)
+		SkeletonData->BindToGPU();
+	
+	if (ClipSRV != nullptr)
+	{
+		for (IESRV_t * ClipSRVVar : ClipSRVVariables)
+		{
+			CHECK(ClipSRVVar->SetResource(ClipSRV) >= 0);
+		}
+	}
 	
 }
 
 Model::~Model()
 {
 	SAFE_DELETE(InstanceBuffer);
-	SAFE_RELEASE(ClipTexture);
 	SAFE_RELEASE(ClipSRV);
 	
 	for (const ModelMesh * Mesh : Meshes)
@@ -85,8 +103,12 @@ void Model::Render()
 	// 여기서 Bind해주는 정보는 Model의 World기준 Transform Matrix이다.
 	if (InstanceBuffer != nullptr)
 		InstanceBuffer->BindToGPU();
-	// if (SkeletonData != nullptr)
-	// 	SkeletonData->BindToGPU();
+
+	// for (IESRV_t * ClipSRVVar : ClipSRVVariables)
+	// {
+	// 	CHECK(ClipSRVVar->SetResource(ClipSRV) >= 0);
+	// }
+	
 	for (ModelMesh * const M : Meshes)
 	{
 		M->Render((InstanceBuffer != nullptr));

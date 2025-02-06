@@ -29,9 +29,6 @@ ModelMesh::~ModelMesh()
 #pragma region Animation
 	SAFE_DELETE(FrameCBuffer);
 	SAFE_RELEASE(ECB_FrameBuffer);
-	SAFE_RELEASE(ClipsSRV);
-	SAFE_RELEASE(ClipsTexture);
-	SAFE_RELEASE(ClipsSRVVar);
 #pragma endregion Animation
 }
 
@@ -84,9 +81,6 @@ void ModelMesh::Render(bool bInstancing)
 		GlobalMatrixCBBinder->BindToGPU(); // FrameRenderer
 
 #pragma region Animation
-	
-	if (ClipsSRVVar != nullptr)
-		CHECK(ClipsSRVVar->SetResource(ClipsSRV) >= 0);
 	
 	if (FrameCBuffer != nullptr)
 	{
@@ -162,10 +156,14 @@ void ModelMesh::CreateBuffers()
 {
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
+
+	// 이거 왜 ModelMesh에 있는지 모르겠음. Material의 Shader마다 있어야하는데
+	// 일단 귀찮아서 여기다 넣어뒀나봄.
 	if (GlobalMatrixCBBinder == nullptr) // FrameRender in Course
 		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
-	
-	ClipsSRVVar = CachedShader->AsSRV("ClipsTFMap");
+
+	// 이거도 ModelMesh별이 아니라 Material의 Shader별로 생성되는게 맞음.
+	// ClipsSRVVar = CachedShader->AsSRV("ClipsTFMap");
 }
 
 void ModelMesh::CreateAnimationBuffers()
@@ -177,16 +175,6 @@ void ModelMesh::CreateAnimationBuffers()
 									  );
 	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationBlending");
 }
-
-// void ModelMesh::UpdateCurrentFrameData_NonInstancing(const ModelAnimation * InAnimation)
-// {
-// 	UpdateFrameData(InAnimation, BlendingData.Current);	
-// }
-//
-// void ModelMesh::UpdateNextFrameData_NonInstancing(const ModelAnimation * InAnimation)
-// {
-// 	UpdateFrameData(InAnimation, BlendingData.Next);	
-// }
 
 void ModelMesh::UpdateCurrentFrameData_Instancing( const ModelAnimation * InAnimation, int InstanceId )
 {

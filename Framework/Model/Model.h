@@ -25,15 +25,6 @@ public:
 	void Tick();
 	void Render();
 
-#pragma region GettersSetters
-public:
-	// Transform * GetWorldTransform() const { return WorldTransform; }
-	// const string & GetModelName() const { return ModelName; }
-	// __forceinline void SetWorldPosition(const Vector & InPos) const	{ WorldTransform->SetPosition(InPos); }
-	// __forceinline void SetWorldRotation(const Vector & InEuler) const { WorldTransform->SetRotation(InEuler); }
-	// __forceinline void SetScale(const Vector & InScale) const {	WorldTransform->SetScale(InScale); }
-#pragma endregion GettersSetters
-	
 /*====================================================================================*/
 
 private:
@@ -76,12 +67,13 @@ public:
 	UINT GetClipCount() const { return Animations.size(); }
 	void SetClipIndex(UINT InInstanceID, UINT InClipIndex);
 
+	
 private:
 	vector<ModelAnimation *> Animations;
 
-	// KeyFrameAnimation을 Texture로 Bake한 것.
-	ID3D11Texture2D * ClipTexture = nullptr;
 	ID3D11ShaderResourceView * ClipSRV = nullptr;
+	vector<IESRV_t *> ClipSRVVariables;
+	
 #pragma endregion Animation Data
 	
 /*====================================================================================*/
