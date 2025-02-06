@@ -17,7 +17,7 @@ public:
 #endif
 	~Transform();
 
-	void Tick();
+	// void Tick();
 	void BindCBufferToGPU(const Shader * InShader);
 public:
 	Vector GetForward() const;
@@ -39,9 +39,8 @@ public:
 public:
 	const Matrix & GetMatrix() const {return CBufferData.World; }
 	
-private:
+public:
 	void UpdateWorldMatrix();
-	bool bTransformChanged = true;
 	
 private :
 	struct CBufferDesc

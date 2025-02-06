@@ -25,13 +25,13 @@ namespace Sdt
 			tf->SetPosition(Pos);
 			tf->SetScale({0.005f,0.005f,0.005f});
 			tf->SetRotation({0, Math::Random(-180.f, 180.f), 0});
-			tf->Tick();
+			tf->UpdateWorldMatrix();;
 		
 			Pos.Z = 30.f;
 			tf = Sphere->AddTransforms();
 			tf->SetScale({0.075f,0.075f,0.075f});
 			tf->SetPosition(Pos);
-			tf->Tick();
+			tf->UpdateWorldMatrix();;
 		}
 
 		Models.insert(Models.end(), {
@@ -59,7 +59,7 @@ namespace Sdt
 				Pos.Z = PosZ[m];
 				tf->SetPosition(Pos);
 				tf->SetRotation({Math::Random(-180.f, 180.f), Math::Random(-180.f, 180.f), Math::Random(-180.f, 180.f)});
-				tf->Tick();
+				tf->UpdateWorldMatrix();;
 			}
 		}
 	}

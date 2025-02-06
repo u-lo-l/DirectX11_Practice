@@ -24,7 +24,7 @@ namespace Sdt
 			Transforms[i]->SetPosition(Vector::Random(20.f, 60.f));
 			const float Scale = Math::Random(1.f ,2.f);
 			Transforms[i]->SetScale({Scale, Scale, Scale});
-			Transforms[i]->Tick();
+			Transforms[i]->UpdateWorldMatrix();
 
 			Worlds[i] = Transforms[i]->GetMatrix();
 		}
@@ -54,11 +54,6 @@ namespace Sdt
 
 		D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// for (Transform * TF : Transforms)
-		// {
-		// 	TF->BindCBufferToGPU(Drawer);
-		// 	Drawer->DrawIndexed(0, 0, Indices.size());
-		// }
 		Drawer->DrawIndexedInstanced(0, 0, Indices.size(), MaxInstanceCount);
 	}
 

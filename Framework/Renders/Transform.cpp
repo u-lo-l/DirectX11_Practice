@@ -34,14 +34,14 @@ Transform::~Transform()
 	SAFE_DELETE(CBuffer);
 }
 
-void Transform::Tick()
-{
-	if (bTransformChanged == false)
-		return ;
-	UpdateWorldMatrix();
-	
-	bTransformChanged = false;
-}
+// void Transform::Tick()
+// {
+// 	if (bTransformChanged == false)
+// 		return ;
+// 	UpdateWorldMatrix();
+// 	
+// 	bTransformChanged = false;
+// }
 
 void Transform::BindCBufferToGPU( const Shader * InShader )
 {
@@ -93,20 +93,20 @@ const Vector & Transform::GetRotationInDegree() const
 void Transform::SetPosition( const Vector & InPosition )
 {
 	Position = InPosition;
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 }
 
 void Transform::SetRotation( const Vector & InEulerAngleInDegree )
 {
 	EulerAngleInDegree = InEulerAngleInDegree;
 	EulerAngleInRadian = {Math::ToRadians(EulerAngleInDegree.X), Math::ToRadians(EulerAngleInDegree.Y), Math::ToRadians(EulerAngleInDegree.Z)};
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 }
 
 void Transform::SetScale( const Vector & InScale )
 {
 	Scale = InScale;
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 }
 
 void Transform::SetTRS( const Transform & InTransform )
@@ -115,7 +115,7 @@ void Transform::SetTRS( const Transform & InTransform )
 	EulerAngleInDegree = InTransform.EulerAngleInDegree;
 	EulerAngleInRadian = InTransform.EulerAngleInRadian;
 	Scale = InTransform.Scale;
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 }
 
 
@@ -125,7 +125,7 @@ void Transform::SetTRS( const Transform * InTransform )
 	EulerAngleInDegree = InTransform->EulerAngleInDegree;
 	EulerAngleInRadian = InTransform->EulerAngleInRadian;
 	Scale = InTransform->Scale;
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 }
 
 void Transform::SetTRS( const Vector & InPosition, const Quaternion & InRotation, const Vector & InScale )
@@ -134,7 +134,7 @@ void Transform::SetTRS( const Vector & InPosition, const Quaternion & InRotation
 	Scale = InScale;
 	EulerAngleInRadian = InRotation.ToEulerAngles();
 	EulerAngleInDegree = { Math::ToDegrees(EulerAngleInRadian.X), Math::ToDegrees(EulerAngleInRadian.Y), Math::ToDegrees(EulerAngleInRadian.Z)};
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 }
 
 void Transform::UpdateWorldMatrix()
@@ -144,7 +144,7 @@ void Transform::UpdateWorldMatrix()
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
 	CBufferData.World = Scale * Rotation * Translation;
-	bTransformChanged = true;
+	UpdateWorldMatrix();
 
 	if (ref_WorldMatrix != nullptr)
 		memcpy((void *)ref_WorldMatrix, &CBufferData.World, sizeof(Matrix));
