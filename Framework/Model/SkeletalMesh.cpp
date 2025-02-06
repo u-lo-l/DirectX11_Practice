@@ -14,12 +14,12 @@ SkeletalMesh::~SkeletalMesh()
 #pragma endregion Bone
 }
 
-void SkeletalMesh::Render(bool bInstancing)
+void SkeletalMesh::Render(UINT InstanceCount) const
 {
 	BoneIndexBuffer->BindToGPU();
 	CHECK(ECB_BoneIndexBuffer->SetConstantBuffer(*BoneIndexBuffer) >= 0);
 
-	ModelMesh::Render(bInstancing);
+	ModelMesh::Render(InstanceCount);
 }
 
 void SkeletalMesh::CreateBuffers()

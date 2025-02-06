@@ -9,14 +9,15 @@ namespace Sdt
 		SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			// {new Model(L"Cube"),{0.075f,0.075f,0.075f}, 10.f},
-			// {new Model(L"Airplane"),{0.0025f,0.0025f,0.0025f}, 2.f},
-			{new Model(L"Adam"),{0.15f,0.15f,0.15f}, 15.f},
-			// {new Model(L"Kachujin"),{0.1f,0.1f,0.1f}, 15.f},
-			// {new Model(L"Sphere"),{0.075f,0.075f,0.075f}, 10.f},
+			// {new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
+			// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
+			// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
+			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
+			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
 		});
-		
-		SetModelsPosition(169, 35.f);
+		const UINT InstanceCount = 100;
+		const float Stride = 30.f;
+		SetModelsPosition(InstanceCount, Stride);
 	}
 
 	void InstancingDemo::Destroy()

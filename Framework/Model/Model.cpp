@@ -35,6 +35,7 @@ Model::Model(const wstring & ModelFileName)
 			CHECK(ClipSRVVar->SetResource(ClipSRV) >= 0);
 		}
 	}
+	
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
@@ -91,27 +92,68 @@ Model::~Model()
 
 void Model::Tick()
 {
+	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+	// for (Transform * Tf : WorldTransforms)
+	// {
+	// 	Tf->SetRotation({0, 0, Tf->GetRotationInDegree().Z + 60 * DeltaTime});
+	// }
+	
+	if (Animations.empty() == false)
+	{
+		if (ImGui::Button("Change", ImVec2(200, 30)))
+		{
+			for (int InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
+			{
+				SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
+				WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
+			}
+		}
+		for (int InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
+		{
+			AnimationBlendingDesc & TargetBlending = BlendingDatas[InstanceId];
+
+			UpdateCurrentFrameData(InstanceId);
+
+			if (TargetBlending.Next.Clip < 0)
+				continue;
+			if (TargetBlending.ElapsedBlendTime >= 1.0f)
+			{
+				TargetBlending.Current = TargetBlending.Next;
+				TargetBlending.Next.Clip = -1;
+				TargetBlending.ElapsedBlendTime = 0.0f;
+			}
+			else
+			{
+				UpdateNextFrameData(InstanceId);
+				TargetBlending.ElapsedBlendTime += DeltaTime / TargetBlending.BlendingDuration;
+			}
+		}
+	}
+	
 	for (ModelMesh * M : Meshes)
 	{
-		M->Tick(WorldTransforms.size(), Animations);
+		M->Tick();
 	}
 }
 
-void Model::Render()
+void Model::Render() const
 {
 	// Model에서 InstanceBuffer를 Bind해주면 Mesh들에서 갖다 쓴다.
 	// 여기서 Bind해주는 정보는 Model의 World기준 Transform Matrix이다.
+	// 각 Model들의 위치정보가 바뀔 수 있기에 Render에서 처리해준다.
 	if (InstanceBuffer != nullptr)
 		InstanceBuffer->BindToGPU();
 
-	// for (IESRV_t * ClipSRVVar : ClipSRVVariables)
-	// {
-	// 	CHECK(ClipSRVVar->SetResource(ClipSRV) >= 0);
-	// }
+	if (FrameCBuffer != nullptr)
+	{
+		FrameCBuffer->BindToGPU();
+		for (IECB_t * ECB_FrameBuffer : ECB_FrameBuffers)
+			CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
+	}
 	
 	for (ModelMesh * const M : Meshes)
 	{
-		M->Render((InstanceBuffer != nullptr));
+		M->Render(WorldTransforms.size());
 	}
 }
 
@@ -139,42 +181,62 @@ const Transform * Model::GetTransforms( UINT Index ) const
 	return WorldTransforms[Index];
 }
 
-void Model::SetClipIndex(UINT InInstanceID, UINT InClipIndex )
+void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 {
 	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
-	for (ModelMesh * const TargetMesh : Meshes)
+	AnimationBlendingDesc & TargetBlendingData = BlendingDatas[InInstanceID];
+	if(TargetBlendingData.Current.Clip < 0)
 	{
-		if (TargetMesh->BlendingDatas[InInstanceID].Current.Clip < 0) // 처음 초기화 될 때.
-		{
-			TargetMesh->BlendingDatas[InInstanceID].Current.Clip = InClipIndex;
-			TargetMesh->BlendingDatas[InInstanceID].Current.CurrentTime = 0;
-			TargetMesh->BlendingDatas[InInstanceID].Current.CurrentFrame = 0;
-			TargetMesh->BlendingDatas[InInstanceID].Current.NextFrame = 0;
+		TargetBlendingData.Current.Clip = InClipIndex;
+		TargetBlendingData.Current.CurrentTime = 0;
+		TargetBlendingData.Current.CurrentFrame = 0;
+		TargetBlendingData.Current.NextFrame = 0;
 
-			TargetMesh->BlendingDatas[InInstanceID].Next.Clip = -1;
-		}
-		else if (InClipIndex != TargetMesh->BlendingDatas[InInstanceID].Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
-		{
-			TargetMesh->BlendingDatas[InInstanceID].BlendingDuration = 0.1f;
-			TargetMesh->BlendingDatas[InInstanceID].ElapsedBlendTime = 0.0f;
+		TargetBlendingData.Next.Clip = -1;
+	}
+	else if (InClipIndex != TargetBlendingData.Current.Clip)
+	{
+		TargetBlendingData.BlendingDuration = 0.1f;
+		TargetBlendingData.ElapsedBlendTime = 0.0f;
 			
-			TargetMesh->BlendingDatas[InInstanceID].Next.Clip = InClipIndex;
-			TargetMesh->BlendingDatas[InInstanceID].Next.CurrentTime = 0;
-			TargetMesh->BlendingDatas[InInstanceID].Next.CurrentFrame = 0;
-			TargetMesh->BlendingDatas[InInstanceID].Next.NextFrame = 0;
-		}
+		TargetBlendingData.Next.Clip = InClipIndex;
+		TargetBlendingData.Next.CurrentTime = 0;
+		TargetBlendingData.Next.CurrentFrame = 0;
+		TargetBlendingData.Next.NextFrame = 0;
 	}
 }
-//
-// void Model::SetAnimationSpeed( float InAnimationSpeed )
-// {
-// 	for (ModelAnimation * Anim : Animations)
-// 		Anim->SetPlayRate(InAnimationSpeed);
-// }
 
-// const ModelAnimation * Model::GetCurrentAnimation() const
-// {
-// 	if (Animations.empty() == true)
-// 		return nullptr;
-// 	return Animations[ClipIndex];
-// }
+void Model::CreateAnimationBuffers()
+{
+	FrameCBuffer = new ConstantBuffer(
+		&this->BlendingDatas,
+		"Instancing Animation Blending Description",
+		sizeof(AnimationBlendingDesc) * MaxModelInstanceCount
+	);
+	for (const auto & pair : MaterialsTable)
+	{
+		ECB_FrameBuffers.emplace_back(pair.second->GetShader()->AsConstantBuffer(CBufferName));
+	}
+}
+
+void Model::UpdateCurrentFrameData( int InstanceId )
+{
+	UpdateFrameData(BlendingDatas[InstanceId].Current);
+}
+
+void Model::UpdateNextFrameData( int InstanceId )
+{
+	UpdateFrameData(BlendingDatas[InstanceId].Next);
+}
+
+void Model::UpdateFrameData(FrameDesc & FrameData) const
+{
+	const ModelAnimation * TargetAnimation = Animations[FrameData.Clip];
+	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+	
+	FrameData.CurrentTime = TargetAnimation->CalculateNextTime(FrameData.CurrentTime, DeltaTime);
+	const pair<int, int> CurrAndNextFrame = TargetAnimation->GetCurrentAndNextFrame(FrameData.CurrentTime);
+
+	FrameData.CurrentFrame = CurrAndNextFrame.first;
+	FrameData.NextFrame = CurrAndNextFrame.second;
+}

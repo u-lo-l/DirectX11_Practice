@@ -1,4 +1,5 @@
 {
+   "Animations" : [ "Kachujin/Idle" ],
    "File" : {
       "Material" : "Kachujin",
       "Mesh" : "Kachujin"

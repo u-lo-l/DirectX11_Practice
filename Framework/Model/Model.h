@@ -11,7 +11,7 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-	constexpr static int MaxModelInstanceCount = 200;
+	constexpr static int MaxModelInstanceCount = 500;
 private:
 	using ThisClass = Model;
 
@@ -23,7 +23,7 @@ public:
 	~Model();
 
 	void Tick();
-	void Render();
+	void Render() const;
 
 /*====================================================================================*/
 
@@ -45,9 +45,9 @@ public:
 	const Transform * GetTransforms(UINT Index) const;
 private:
 	// 모델을 인스턴싱을 통해서 렌더링 할 때는 여러 WorldTransform이 필요하다.
-	// 그리고 WorldTFMatrix는 
-	vector<Transform*> WorldTransforms;
-	Matrix WorldTFMatrix[MaxModelInstanceCount];
+	// 한 모델의 여러 인스턴스들이 각각의 WorldTFMatrix에 매칭된다.
+	vector<Transform*> WorldTransforms; // 실제 인스턴스의 Transform
+	Matrix WorldTFMatrix[MaxModelInstanceCount]; // Shader(InstanceBuffer)에 넘겨줄 배열
 
 	VertexBuffer * InstanceBuffer;
 #pragma endregion Instancing
@@ -65,14 +65,42 @@ private:
 #pragma region Animation Data
 public:
 	UINT GetClipCount() const { return Animations.size(); }
-	void SetClipIndex(UINT InInstanceID, UINT InClipIndex);
-
+	void SetClipIndex(UINT InInstanceID, int InClipIndex);
 	
 private:
 	vector<ModelAnimation *> Animations;
 
 	ID3D11ShaderResourceView * ClipSRV = nullptr;
+	// 최초 시작 한 번만 그냥 SetResource해주면 됨. 애니메이션이 동적으로 추가되거나 하지 않음.
 	vector<IESRV_t *> ClipSRVVariables;
+	
+	/*--------------------------------------------*/
+
+	struct FrameDesc
+	{
+		int		Clip = -1;
+		float	CurrentTime = 0;
+		int		CurrentFrame;
+		int		NextFrame;
+	};
+	struct AnimationBlendingDesc
+	{
+		float BlendingDuration = 0.1f;
+		float ElapsedBlendTime = 0.0f;
+		float Padding[2];
+
+		FrameDesc Current;
+		FrameDesc Next;
+	};
+	void CreateAnimationBuffers();
+	void UpdateCurrentFrameData(int InstanceId);
+	void UpdateNextFrameData(int InstanceId);
+	void UpdateFrameData(FrameDesc & FrameData) const;
+
+	AnimationBlendingDesc BlendingDatas[MaxModelInstanceCount];
+	ConstantBuffer * FrameCBuffer;
+	string CBufferName = "CB_AnimationBlending";
+	vector<IECB_t *> ECB_FrameBuffers;
 	
 #pragma endregion Animation Data
 	

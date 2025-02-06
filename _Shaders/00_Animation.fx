@@ -21,6 +21,7 @@ struct ModelInstanceVertexInput
     float4 Weight : BlendWeights;
 
     matrix Transform : INSTANCE;
+    // InstanceID : GPU가 자동으로 생성하며, 쉐이더로 전달됩니다. C++ 코드에서 직접 설정할 필요가 없음
     uint InstanceID : SV_InstanceID;
 };
 struct AnimationFrame

@@ -22,7 +22,7 @@ namespace Sdt
 		// MakeModel(L"Mousey", {}, 1.f);
 		// MakeModel(L"XYBot", {}, 1.f);
 		// MakeModel(L"Shannon", {}, 1.f);
-		MakeModel(L"Kachujin", {}, 1.f);
+		// MakeModel(L"Kachujin", {L"Idle"}, 1.f);
 	}
 
 	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)

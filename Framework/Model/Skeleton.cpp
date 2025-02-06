@@ -54,7 +54,6 @@ void Skeleton::CreateBuffer( const map<string, Material *> & MaterialsInModel)
 	}
 }
 
-// TODO : Render마다 말고 최초 한 번만 Bind해도 되지 않나?
 void Skeleton::BindToGPU() const
 {
 	BoneDescBuffer->BindToGPU();

@@ -12,7 +12,7 @@ ModelMesh::ModelMesh( const string & MetaData )
 }
 #else
 ModelMesh::ModelMesh()
-	: ref_ModelWorldTransform(new Transform()), BlendingDatas{}, FrameCBuffer(nullptr), ECB_FrameBuffer(nullptr)
+	: ref_ModelWorldTransform(new Transform())//, BlendingDatas{}, FrameCBuffer(nullptr), ECB_FrameBuffer(nullptr)
 {
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -25,54 +25,20 @@ ModelMesh::~ModelMesh()
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE(GlobalMatrixCBBinder);
-
-#pragma region Animation
-	SAFE_DELETE(FrameCBuffer);
-	SAFE_RELEASE(ECB_FrameBuffer);
-#pragma endregion Animation
 }
 
 // InstanceSize는 Model의 Transforms의 size()
 // BlendingDesc의 Current의 Clip정보는 일단 랜덤으로 줬다고 가정하자.
-void ModelMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations )
+void ModelMesh::Tick()
 {
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->Tick(); // FrameRenderer in Course
-#pragma region Animation
-	if (InAnimations.empty() == true)
-		return ;
-
-	for (int InstanceId = 0; InstanceId < InInstanceSize; InstanceId++)
-	{
-		AnimationBlendingDesc & TargetBlendingData = BlendingDatas[InstanceId]; 
-		const int AnimationClip = TargetBlendingData.Current.Clip;
-		const ModelAnimation * const CurrentAnimation = InAnimations[AnimationClip];
-		
-		UpdateCurrentFrameData_Instancing(CurrentAnimation, InstanceId);
-
-		if (TargetBlendingData.Next.Clip < 0)
-			continue;
-		
-		if (TargetBlendingData.ElapsedBlendTime >= 1.0f)
-		{
-			TargetBlendingData.Current = TargetBlendingData.Next;
-			TargetBlendingData.Next.Clip = -1;
-			TargetBlendingData.ElapsedBlendTime = 0.0f;
-		}
-		else
-		{
-			UpdateNextFrameData_Instancing(CurrentAnimation, InstanceId);
-			const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
-			TargetBlendingData.ElapsedBlendTime += DeltaTime / TargetBlendingData.BlendingDuration;
-		}
-	}
-#pragma endregion Animation
 }
 
-void ModelMesh::Render(bool bInstancing)
+void ModelMesh::Render(UINT InstanceCount) const
 {
-	if (CachedShader == nullptr)
-		CachedShader = MaterialData->GetShader();
+	// if (CachedShader == nullptr)
+	// 	CachedShader = MaterialData->GetShader();
 	
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
@@ -80,20 +46,11 @@ void ModelMesh::Render(bool bInstancing)
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->BindToGPU(); // FrameRenderer
 
-#pragma region Animation
-	
-	if (FrameCBuffer != nullptr)
-	{
-		FrameCBuffer->BindToGPU();
-		CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
-	}
-#pragma endregion Animation
-
 	CachedShader->DrawIndexedInstanced(
 		0,
 		Pass,
 		IndicesCount,
-		Model::MaxModelInstanceCount
+		InstanceCount
 	);
 }
 
@@ -161,38 +118,4 @@ void ModelMesh::CreateBuffers()
 	// 일단 귀찮아서 여기다 넣어뒀나봄.
 	if (GlobalMatrixCBBinder == nullptr) // FrameRender in Course
 		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
-
-	// 이거도 ModelMesh별이 아니라 Material의 Shader별로 생성되는게 맞음.
-	// ClipsSRVVar = CachedShader->AsSRV("ClipsTFMap");
-}
-
-void ModelMesh::CreateAnimationBuffers()
-{
-	FrameCBuffer = new ConstantBuffer(
-										&this->BlendingDatas,
-										"Instancing Animation Blending Description",
-										sizeof(AnimationBlendingDesc) * Model::MaxModelInstanceCount
-									  );
-	ECB_FrameBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_AnimationBlending");
-}
-
-void ModelMesh::UpdateCurrentFrameData_Instancing( const ModelAnimation * InAnimation, int InstanceId )
-{
-	UpdateFrameData(InAnimation, BlendingDatas[InstanceId].Current);	
-}
-
-void ModelMesh::UpdateNextFrameData_Instancing( const ModelAnimation * InAnimation, int InstanceId )
-{
-	UpdateFrameData(InAnimation, BlendingDatas[InstanceId].Next);	
-}
-
-void ModelMesh::UpdateFrameData(const ModelAnimation * InAnimation, FrameDesc & Frame )
-{
-	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
-
-	Frame.CurrentTime = InAnimation->CalculateNextTime(Frame.CurrentTime, DeltaTime);
-	const pair<int, int> CurrAndNextFrame = InAnimation->GetCurrentAndNextFrame(Frame.CurrentTime);
-
-	Frame.CurrentFrame = CurrAndNextFrame.first;
-	Frame.NextFrame = CurrAndNextFrame.second;
 }

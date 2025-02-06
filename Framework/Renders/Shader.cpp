@@ -1,8 +1,18 @@
 ﻿#include "Framework.h"
 #include "Shader.h"
-
 #include <d3dcompiler.h>
 #include <fstream>
+
+
+/*
+ * 생성자 : InitialStateBlock을 저장하고 Effect 생성
+ * 소멸자 : Effect 해제
+ * CreateEffect : HLSL 파일을 컴파일하고 Effect 객체를 생성.
+ * CreateInputLayout : 셰이더의 입력 레이아웃을 생성.
+ * Shader 클래스 : 여러 Technique 클래스를 관리
+ * Technique 클래스 : 여러 Pass 클래스를 관리
+ * Pass 클래스 : Draw, DrawIndexed, DrawInstanced, Dispatch 등의 API 제공
+ */
 
 Shader::Shader(const wstring& File)
 	: FileName(W_SHADER_PATH + File)
@@ -218,8 +228,17 @@ ID3D11InputLayout * Shader::CreateInputLayout
 			elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
 		else if (name == "INSTANCE")
 		{
+			// 몇 번째 슬롯에 들어갈 인풋인지.
+			/*
+			 * DX에선 여러 VertexBuffer를 사용할 수 있다.
+			 * 이 떄 각각의 VertexBuffer가 각자의 Slot을 사용한다.
+			 *
+			 * 위치랑 색상을 다른 버퍼에 저장할 수도 있다.
+			 */
 			elementDesc.InputSlot = Shader::InstancingSlot;
+			// 이 값이 정점입력인지 인스턴스입력인지 결정
 			elementDesc.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+			// 각각의 Instance가 하나의(독립적인) 값을 가짐
 			elementDesc.InstanceDataStepRate = 1;
 		}
 		

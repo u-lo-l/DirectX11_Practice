@@ -85,6 +85,6 @@ typedef struct VertexTextureColorNormalTangentBlend
 	Color Color;
 	Vector Normal;
 	Vector Tangent;
-	Vector4 Indices {0, }; // The BoneIndex to assign a weight to. This vertex is influenced by the Bone at Indices[i] by Weight[i].
+	Vector4 Indices {0, };
 	Vector4 Weights {0, };
 } ModelVertex;

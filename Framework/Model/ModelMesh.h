@@ -27,14 +27,12 @@ protected:
 	ModelMesh();
 #endif
 	virtual ~ModelMesh() = 0;
-	void Tick(UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations);
-	virtual void Render(bool bInstancing = false);
+	void Tick();
+	virtual void Render(UINT InstanceCount) const;
 	virtual void CreateBuffers();
-	virtual void CreateAnimationBuffers();
 	
 	void SetWorldTransform( const Transform * InTransform ) const;
 	
-//TODO : private으로 바꾸기
 protected :
 	Shader * CachedShader = nullptr;
 	int Pass = 0;
@@ -56,43 +54,8 @@ protected:
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-	//View-Projection Matrix정보임.
+	
+	// View-Projection Matrix정보임. 굳이 왜 여기에 또... 이거도 Shader마다인데...
+	// 이게 Global에 생성해놓고 가져다 써야겠다.
 	ConstantDataBinder * GlobalMatrixCBBinder = nullptr;
-
-	
-#pragma region Animation
-protected:
-	struct FrameDesc
-	{
-		int		Clip = -1;
-		float	CurrentTime = 0;
-		int		CurrentFrame;
-		int		NextFrame;
-	};
-	
-	struct AnimationBlendingDesc
-	{
-		float BlendingDuration = 0.1f;
-		float ElapsedBlendTime = 0.0f;
-		float Padding[2];
-
-		FrameDesc Current;
-		FrameDesc Next;
-	};
-	// void UpdateCurrentFrameData_NonInstancing(const ModelAnimation * InAnimation);
-	// void UpdateNextFrameData_NonInstancing(const ModelAnimation * InAnimation);
-
-	void UpdateCurrentFrameData_Instancing(const ModelAnimation * InAnimation, int InstanceId);
-	void UpdateNextFrameData_Instancing(const ModelAnimation * InAnimation, int InstanceId);
-	
-private:
-	static void UpdateFrameData(const ModelAnimation * InAnimation, FrameDesc & Frame);
-protected:
-	// AnimationBlendingDesc BlendingData;
-	AnimationBlendingDesc BlendingDatas[200];
-protected:
-	ConstantBuffer * FrameCBuffer;
-	IECB_t * ECB_FrameBuffer;
-	
-#pragma endregion Animation
 };

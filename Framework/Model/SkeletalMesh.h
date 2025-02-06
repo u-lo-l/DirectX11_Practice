@@ -12,7 +12,7 @@ public:
 	SkeletalMesh();
 private:
 	~SkeletalMesh() override;
-	void Render(bool bInstancing = false) override;
+	void Render(UINT InstanceCount) const override;
 	void CreateBuffers() override;
 	
 	int GetBoneIndex() const;

@@ -3,16 +3,6 @@
 #include <fstream>
 #include <iomanip>
 
-
-// void Model::SetAnimationTime(float InAnimationTime)
-// {
-// 	ASSERT(InAnimationTime < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
-// 	for (ModelMesh * const TargetMesh : Meshes)
-// 	{
-// 		TargetMesh->BlendingData.Current.CurrentTime = InAnimationTime;
-// 	}
-// }
-
 void Model::ReadFile( const wstring & InFileFullPath )
 {
 	ifstream ifs;
@@ -68,15 +58,14 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	
 	if (SkeletonData != nullptr)
 	{
-		// TODO : nullptr대신 Shader넣어줘야한다.
 		SkeletonData->CreateBuffer(this->MaterialsTable);
 		SkeletonData->ClearBoneTable();
 	}
-	
+
+	CreateAnimationBuffers();
 	for (ModelMesh * M : this->Meshes)
 	{
 		M->CreateBuffers();
-		M->CreateAnimationBuffers();
 	}
 }
 
