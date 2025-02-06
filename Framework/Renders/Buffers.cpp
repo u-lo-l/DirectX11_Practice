@@ -158,6 +158,8 @@ void IndexBuffer::BindToGPU()
 ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize)
  : DataSize(InDataSize), DataName(move(InDataName))
 {
+	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16");
+
 	Data = InData;
 #ifdef DO_DEBUG
 	BufferType = "Constant";
@@ -174,9 +176,13 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
 	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-	CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &this->Buffer) >= 0);
+	/*
+	 * you must set the ByteWidth value of D3D11_BUFFER_DESC in multiples of 16
+	 * https://learn.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-id3d11device-createbuffer
+	 * https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-resources-buffers-constant-how-to
+	 */
+	CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &Buffer) >= 0);
 }
-
 
 
 /**

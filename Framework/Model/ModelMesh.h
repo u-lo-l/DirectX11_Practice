@@ -27,8 +27,7 @@ protected:
 	ModelMesh();
 #endif
 	virtual ~ModelMesh() = 0;
-	// virtual void Tick(const ModelAnimation * CurrentAnimation = nullptr);
-	virtual void Tick(UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations);
+	void Tick(UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations);
 	virtual void Render(bool bInstancing = false);
 	virtual void CreateBuffers();
 	virtual void CreateAnimationBuffers();
@@ -44,6 +43,9 @@ protected :
 
 	Transform * ref_ModelWorldTransform = nullptr;
 
+public:
+	void SetMaterialData(Material * InMaterial);
+protected:
 	Material * MaterialData = nullptr;
 
 	UINT VerticesCount = 0;
@@ -87,7 +89,7 @@ private:
 	static void UpdateFrameData(const ModelAnimation * InAnimation, FrameDesc & Frame);
 protected:
 	// AnimationBlendingDesc BlendingData;
-	AnimationBlendingDesc BlendingDatas[25];
+	AnimationBlendingDesc BlendingDatas[200];
 protected:
 	ConstantBuffer * FrameCBuffer;
 	IECB_t * ECB_FrameBuffer;

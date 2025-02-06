@@ -24,6 +24,9 @@ Model::Model(const wstring & ModelFileName)
 							Shader::InstancingSlot,
 							true
 						);
+	
+	if (SkeletonData != nullptr)
+		SkeletonData->BindToGPU();
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
@@ -48,6 +51,7 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 							Shader::InstancingSlot,
 							true
 						);
+	
 }
 
 Model::~Model()
@@ -81,6 +85,8 @@ void Model::Render()
 	// 여기서 Bind해주는 정보는 Model의 World기준 Transform Matrix이다.
 	if (InstanceBuffer != nullptr)
 		InstanceBuffer->BindToGPU();
+	// if (SkeletonData != nullptr)
+	// 	SkeletonData->BindToGPU();
 	for (ModelMesh * const M : Meshes)
 	{
 		M->Render((InstanceBuffer != nullptr));
@@ -100,11 +106,6 @@ Transform * Model::AddTransforms()
 	const int Index = WorldTransforms.size();
 	Transform * NewTransform = new Transform(&WorldTFMatrix[Index]);
 	WorldTransforms.push_back(NewTransform);
-
-	// if (Animations.empty() == false)
-	// {
-	// 	SetClipIndex(Index, 0);
-	// }
 	
 	return NewTransform;
 }

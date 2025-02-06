@@ -2,79 +2,52 @@
 #include "SkeletalMesh.h"
 
 SkeletalMesh::SkeletalMesh()
-	: OffsetMatrix(nullptr), BoneTransforms(nullptr), BoneData(), BoneDescBuffer(nullptr), ECB_BoneDescBuffer(nullptr)
+	: BoneIndexData(), BoneIndexBuffer(nullptr), ECB_BoneIndexBuffer(nullptr)
 {
 }
 
 SkeletalMesh::~SkeletalMesh()
 {
 #pragma region Bone
-	SAFE_DELETE(BoneDescBuffer);
-	SAFE_RELEASE(ECB_BoneDescBuffer);
+	SAFE_DELETE(BoneIndexBuffer);
+	SAFE_RELEASE(ECB_BoneIndexBuffer);
 #pragma endregion Bone
-}
-
-void SkeletalMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations )
-{
-	ModelMesh::Tick(InInstanceSize, InAnimations);
 }
 
 void SkeletalMesh::Render(bool bInstancing)
 {
-	if (CachedShader == nullptr)
-		CachedShader = MaterialData->GetShader();
-	
-	VBuffer->BindToGPU();
-	IBuffer->BindToGPU();
-	MaterialData->Render();
-	if (GlobalMatrixCBBinder != nullptr)
-		GlobalMatrixCBBinder->BindToGPU(); // FrameRenderer
-	
-	BoneDescBuffer->BindToGPU();
-	CHECK(ECB_BoneDescBuffer->SetConstantBuffer(*BoneDescBuffer) >= 0);
-	
-	if (ClipsSRVVar != nullptr)
-		CHECK(ClipsSRVVar->SetResource(ClipsSRV) >= 0);
-	
-	if (FrameCBuffer != nullptr)
-	{
-		FrameCBuffer->BindToGPU();
-		CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
-	}
-	CachedShader->DrawIndexedInstanced(
-		0,
-		Pass,
-		IndicesCount,
-		Model::MaxModelInstanceCount
-	);
+	BoneIndexBuffer->BindToGPU();
+	CHECK(ECB_BoneIndexBuffer->SetConstantBuffer(*BoneIndexBuffer) >= 0);
+
+	ModelMesh::Render(bInstancing);
 }
 
 void SkeletalMesh::CreateBuffers()
 {
 	ModelMesh::CreateBuffers();
 	
-	const string CBufferInfo = MeshName + " : Every Bone TF Matrix and Current Bone Index for this Mesh";
-	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
-	ECB_BoneDescBuffer = MaterialData->GetShader()->AsConstantBuffer("CB_ModelBones");
+	const string CBufferInfo = MeshName + " : Base Bone Index for this Mesh";
+	BoneIndexBuffer = new ConstantBuffer(&BoneIndexData, CBufferInfo, sizeof(BoneIndexDesc));
+	ECB_BoneIndexBuffer = CachedShader->AsConstantBuffer(CBufferName);
 }
 
 int SkeletalMesh::GetBoneIndex() const
 {
-	return static_cast<int>(BoneData.BoneIndex);
+	return BoneIndexData.BaseBoneIndex;
 }
 void SkeletalMesh::SetBoneIndex(int InBoneIndex)
 {
-	BoneData.BoneIndex = InBoneIndex;
+	BoneIndexData.BaseBoneIndex = InBoneIndex;
 }
 
-void SkeletalMesh::SetBoneTransforms( Matrix * Transforms )
-{
-	this->BoneTransforms = Transforms;
-	memcpy(BoneData.BoneTransform, Transforms, sizeof(Matrix) * MaxBoneCount);
-}
-
-void SkeletalMesh::SetOffsetMatrix(Matrix * const Transforms)
-{
-	this->OffsetMatrix = Transforms;
-	memcpy(BoneData.OffsetMatrix, Transforms, sizeof(Matrix) * MaxBoneCount);
-}
+// void SkeletalMesh::SetBoneTransforms( Matrix * Transforms )
+// {
+// 	this->BoneTransforms = Transforms;
+// 	memcpy(BoneData.BoneTransform, Transforms, sizeof(Matrix) * MaxBoneCount);
+// }
+//
+// void SkeletalMesh::SetOffsetMatrix(Matrix * const Transforms)
+// {
+// 	this->OffsetMatrix = Transforms;
+// 	memcpy(BoneData.OffsetMatrix, Transforms, sizeof(Matrix) * MaxBoneCount);
+// }

@@ -2,7 +2,7 @@
 #include "Skeleton.h"
 
 Skeleton::Skeleton()
-	: RootBone(nullptr)
+	: BoneDescBuffer(nullptr)
 {
 }
 
@@ -25,23 +25,41 @@ void Skeleton::SetUpBoneTable(const vector<ModelMesh *> & Meshes)
 		 * 여기서 문제는 하나의 mMesh가 여러 aiNode로부터 참조될 수 있기에 그냥 초기에 변환해버리면 안된다는 것이다.
 		 * 최종적인 Root기준의 mVertex는 
 		 */
-		this->OffsetMatrix[i] = Matrix::Invert(TargetBone->Transform);
-		this->BoneTransform[i] = TargetBone->Transform;
+		this->BoneData.OffsetMatrix[i] = Matrix::Invert(TargetBone->Transform);
+		this->BoneData.BoneTransform[i] = TargetBone->Transform;
 		for (const UINT number : TargetBone->MeshIndices)
 		{
 			SkeletalMesh * SkMesh = dynamic_cast<SkeletalMesh*>(Meshes[number]);
 			if (SkMesh == nullptr)
 				continue;
 			SkMesh->SetBoneIndex(TargetBone->Index);
-			SkMesh->Bone = TargetBone;
-			SkMesh->SetOffsetMatrix(this->OffsetMatrix);
-			SkMesh->SetBoneTransforms(this->BoneTransform);
 		}
 		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
 	}
+	// 이것 이후에 CreateBuffer 해야함.
 }
 
 void Skeleton::ClearBoneTable()
 {
 	SAFE_DELETE(CachedBoneTable);
+}
+
+void Skeleton::CreateBuffer( const map<string, Material *> & MaterialsInModel)
+{
+	const string CBufferInfo = "Bone Transform Data";
+	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
+	for (const auto & Pair : MaterialsInModel)
+	{
+		ECB_BoneDescBuffers.emplace_back(Pair.second->GetShader()->AsConstantBuffer(CBufferName));
+	}
+}
+
+// TODO : Render마다 말고 최초 한 번만 Bind해도 되지 않나?
+void Skeleton::BindToGPU() const
+{
+	BoneDescBuffer->BindToGPU();
+	for (IECB_t * CBufferHandle : ECB_BoneDescBuffers)
+	{
+		CHECK(CBufferHandle->SetConstantBuffer(*BoneDescBuffer) >= 0);
+	}
 }

@@ -11,7 +11,7 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-	constexpr static int MaxModelInstanceCount = 25;
+	constexpr static int MaxModelInstanceCount = 200;
 private:
 	using ThisClass = Model;
 
@@ -65,9 +65,7 @@ private:
 
 #pragma region Bone Data
 private:
-	// BoneTransform, OffsetMatrix는 여기 들어간다.
-	// 모든 동일한 Model에서 BoneTransform은 동일하다.
-	Skeleton * SkeletonData; 
+	Skeleton * SkeletonData = nullptr; 
 #pragma endregion Bone Data
 
 /*====================================================================================*/
@@ -75,18 +73,10 @@ private:
 // TODO : Animation이 없을 수도 있는데...
 #pragma region Animation Data
 public:
-	// UINT GetClipIndex() const { return ClipIndex; }
 	UINT GetClipCount() const { return Animations.size(); }
-
 	void SetClipIndex(UINT InInstanceID, UINT InClipIndex);
-	// void SetAnimationTime(float InAnimationTime);
-	// void SetAnimationSpeed(float InAnimationSpeed);
 
-// private:
-// 	const ModelAnimation * GetCurrentAnimation() const;
 private:
-	// UINT ClipIndex = 0; // 몇 번째 애니메이션의
-	// UINT Frame; // 몇 frame의 동작인지
 	vector<ModelAnimation *> Animations;
 
 	// KeyFrameAnimation을 Texture로 Bake한 것.

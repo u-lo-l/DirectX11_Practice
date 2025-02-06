@@ -1,11 +1,15 @@
 #define MAX_MODEL_TRANSFORM 256
-#define MAX_INSTANCE_COUNT 25
+#define MAX_INSTANCE_COUNT 200
 cbuffer CB_ModelBones
 {
     matrix OffsetMatrix[MAX_MODEL_TRANSFORM]; // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
     matrix BoneTransforms[MAX_MODEL_TRANSFORM];
-    uint BoneIndex;
 };
+cbuffer CB_BoneIndex
+{
+    uint BoneIndex;
+    float3 Padding;
+}
 struct ModelInstanceVertexInput
 {
     float4 Position : Position;

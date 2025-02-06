@@ -16,7 +16,7 @@ namespace Sdt
 			// {new Model(L"Sphere"),{0.075f,0.075f,0.075f}, 10.f},
 		});
 		
-		SetModelsPosition(16, 35.f);
+		SetModelsPosition(169, 35.f);
 	}
 
 	void InstancingDemo::Destroy()
@@ -31,14 +31,16 @@ namespace Sdt
 
 	void InstancingDemo::Tick()
 	{
-		Plane->Tick();
+		if (!!Plane)
+			Plane->Tick();
 		for (const ModelInstanceData & P : ModelInstances)
 			P.Object->Tick();
 	}
 
 	void InstancingDemo::Render()
 	{
-		Plane->Render();
+		if (!!Plane)
+			Plane->Render();
 		for (const ModelInstanceData & P : ModelInstances)
 			P.Object->Render();
 	}

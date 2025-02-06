@@ -35,35 +35,6 @@ ModelMesh::~ModelMesh()
 #pragma endregion Animation
 }
 
-// void ModelMesh::Tick(const ModelAnimation * CurrentAnimation)
-// {
-// 	if (GlobalMatrixCBBinder != nullptr)
-// 		GlobalMatrixCBBinder->Tick();
-// 	
-// 	// ref_ModelWorldTransform->Tick();
-// #pragma region Animation
-// 	if (CurrentAnimation != nullptr)
-// 	{
-// 		UpdateCurrentFrameData_NonInstancing(CurrentAnimation);
-// 		if (BlendingData.Next.Clip > -1)
-// 		{
-// 			if (BlendingData.ElapsedBlendTime >= 1.0f)
-// 			{
-// 				BlendingData.Current = BlendingData.Next;
-// 				BlendingData.Next.Clip = -1;
-// 				BlendingData.ElapsedBlendTime = 0.0f;
-// 			}
-// 			else
-// 			{
-// 				UpdateNextFrameData_NonInstancing(CurrentAnimation);
-// 				const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
-// 				BlendingData.ElapsedBlendTime += DeltaTime / BlendingData.BlendingDuration;
-// 			}
-// 		}
-// 	}
-// #pragma endregion Animation
-// }
-
 // InstanceSize는 Model의 Transforms의 size()
 // BlendingDesc의 Current의 Clip정보는 일단 랜덤으로 줬다고 가정하자.
 void ModelMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations )
@@ -74,13 +45,13 @@ void ModelMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAn
 	if (InAnimations.empty() == true)
 		return ;
 
-	for (int i = 0; i < InInstanceSize; i++)
+	for (int InstanceId = 0; InstanceId < InInstanceSize; InstanceId++)
 	{
-		AnimationBlendingDesc & TargetBlendingData = BlendingDatas[i]; 
+		AnimationBlendingDesc & TargetBlendingData = BlendingDatas[InstanceId]; 
 		const int AnimationClip = TargetBlendingData.Current.Clip;
 		const ModelAnimation * const CurrentAnimation = InAnimations[AnimationClip];
 		
-		UpdateCurrentFrameData_Instancing(CurrentAnimation, i);
+		UpdateCurrentFrameData_Instancing(CurrentAnimation, InstanceId);
 
 		if (TargetBlendingData.Next.Clip < 0)
 			continue;
@@ -93,7 +64,7 @@ void ModelMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAn
 		}
 		else
 		{
-			UpdateNextFrameData_Instancing(CurrentAnimation, i);
+			UpdateNextFrameData_Instancing(CurrentAnimation, InstanceId);
 			const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
 			TargetBlendingData.ElapsedBlendTime += DeltaTime / TargetBlendingData.BlendingDuration;
 		}
@@ -138,6 +109,12 @@ void ModelMesh::SetWorldTransform( const Transform * InTransform) const
 	ref_ModelWorldTransform->SetTRS(InTransform);
 }
 
+void ModelMesh::SetMaterialData( Material * InMaterial )
+{
+	MaterialData = InMaterial;
+	CachedShader = InMaterial->GetShader();
+}
+
 void ModelMesh::ReadMeshFile(
 	const BinaryReader * InReader,
 	vector<ThisClassPtr> & OutMeshes,
@@ -161,7 +138,7 @@ void ModelMesh::ReadMeshFile(
 		{
 			OutMeshes[i]->MeshName = "Mesh #" + to_string(i) + " for " + MaterialName;
 		}
-		OutMeshes[i]->MaterialData = InMaterialTable.at(MaterialName);
+		OutMeshes[i]->SetMaterialData(InMaterialTable.at(MaterialName));
 
 		OutMeshes[i]->VerticesCount = InReader->ReadUint();
 		OutMeshes[i]->Vertices = new VertexType[OutMeshes[i]->VerticesCount];
@@ -183,13 +160,12 @@ void ModelMesh::ReadMeshFile(
 
 void ModelMesh::CreateBuffers()
 {
-	
 	VBuffer = new VertexBuffer(Vertices, VerticesCount, sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices, IndicesCount);
 	if (GlobalMatrixCBBinder == nullptr) // FrameRender in Course
 		GlobalMatrixCBBinder = new ConstantDataBinder(MaterialData->GetShader());
 	
-	ClipsSRVVar = MaterialData->GetShader()->AsSRV("ClipsTFMap");
+	ClipsSRVVar = CachedShader->AsSRV("ClipsTFMap");
 }
 
 void ModelMesh::CreateAnimationBuffers()

@@ -11,34 +11,25 @@ public:
 public:
 	SkeletalMesh();
 private:
-	virtual ~SkeletalMesh() override;
-	// void Tick(const ModelAnimation * CurrentAnimation = nullptr) override;
-	void Tick(UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations) override;
+	~SkeletalMesh() override;
 	void Render(bool bInstancing = false) override;
 	void CreateBuffers() override;
 	
 	int GetBoneIndex() const;
 	void SetBoneIndex( int InBoneIndex );
-	void SetBoneTransforms( Matrix * Transforms );
-	void SetOffsetMatrix( Matrix * Transforms );
 
 #pragma region Bone
 private:
-	Matrix * OffsetMatrix;
-	Matrix * BoneTransforms;
-	ModelBone * Bone = nullptr;
-
-	struct BoneDesc
+	struct BoneIndexDesc
 	{
-		Matrix OffsetMatrix[MaxBoneCount];
-		Matrix BoneTransform[MaxBoneCount];
-		UINT BoneIndex;
+		UINT BaseBoneIndex;
 		float Padding[3];
 	};
-	// TODO : 얘도 Skeleton으로 옮길 수 있을 거 같은데,,,,
-	BoneDesc BoneData;
-	ConstantBuffer * BoneDescBuffer;
-	IECB_t * ECB_BoneDescBuffer;
+	BoneIndexDesc BoneIndexData;
+	ConstantBuffer * BoneIndexBuffer;
+	string CBufferName = "CB_BoneIndex";
+	IECB_t * ECB_BoneIndexBuffer;
+
 #pragma endregion Bone
 
 };

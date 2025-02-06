@@ -34,6 +34,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	wstring MeshName = String::ToWString(Mesh.asString());
 	
 	ReadMaterial(MaterialName);
+	// ReadMesh안에서 Skeleton::SetupBoneTable()호출
 	ReadMesh(MeshName + L"/" + MeshName);
 
 	// World Transform
@@ -68,7 +69,11 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	}
 	
 	if (SkeletonData != nullptr)
+	{
+		// TODO : nullptr대신 Shader넣어줘야한다.
+		SkeletonData->CreateBuffer(this->MaterialsTable);
 		SkeletonData->ClearBoneTable();
+	}
 	
 	for (ModelMesh * M : this->Meshes)
 	{
