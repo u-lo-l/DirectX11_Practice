@@ -9,22 +9,6 @@ struct VertexOutput
     float3 Normal : Normal;
 };
 
-VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)
-{    
-    VertexOutput output;
-    
-    ModelWorldTF = mul(BoneTransforms[BoneIndex], input.Transform);
-
-    output.Position = mul(input.Position, ModelWorldTF);
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
-           
-    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
-    
-    output.Uv = input.Uv;
-    
-    return output;
-}
 
 VertexOutput VS_ModelAnim_Instancing(ModelInstanceVertexInput input)
 {    
@@ -64,11 +48,6 @@ float4 PS(VertexOutput input) : SV_Target
 technique11 T0
 {
     pass P0
-    {
-        SetVertexShader(CompileShader(vs_5_0, VS_Model_Instancing()));
-        SetPixelShader(CompileShader(ps_5_0, PS()));
-    }
-    pass P1
     {
         SetVertexShader(CompileShader(vs_5_0, VS_ModelAnim_Instancing()));
         SetPixelShader(CompileShader(ps_5_0, PS()));

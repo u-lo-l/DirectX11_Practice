@@ -6,17 +6,6 @@ cbuffer CB_ModelBones
     matrix BoneTransforms[MAX_MODEL_TRANSFORM];
     uint BoneIndex;
 };
-
-// struct ModelVertexInput
-// {
-//     float4 Position : Position;
-//     float2 Uv : Uv;
-//     float4 Color : Color;
-//     float3 Normal : Normal;
-//     float3 Tangent : Tangent;
-//     float4 Indices : BlendIndices;
-//     float4 Weight : BlendWeights;
-// };
 struct ModelInstanceVertexInput
 {
     float4 Position : Position;
@@ -73,7 +62,6 @@ matrix SetModelInstanceWorld(ModelInstanceVertexInput input)
 
 /*======================================================================================================*/
 
-
 Texture2DArray<float4> ClipsTFMap;
 
 int g_BoneCountToFindWeight = 4;
@@ -81,44 +69,6 @@ int g_MipMapLevel = 0;
 
 // Current = 0 , Next = 1
 matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params, int InstanceID = 0);
-
-// float4 SetAnimatedBoneToWorldTF(inout ModelVertexInput input)
-// {
-//     int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
-//     float Weights[4] = { input.Weight.x, input.Weight.y, input.Weight.z, input.Weight.w };
-
-//     float4 pos = 0;
-//     InterploateKeyframeParams ParamsCurrent;
-//     InterploateKeyframeParams ParamsNext;
-
-
-//     // 4개의 Bone에 대해서 Weight를 탐색.
-//     for(int i = 0 ; i < g_BoneCountToFindWeight ; i++)
-//     {
-//         int targetBoneIndex = Indices[i];
-//         matrix TargetRootBoneInvMat = OffsetMatrix[targetBoneIndex];
-//         float4 VertexPosInBoneSpace = mul(input.Position, TargetRootBoneInvMat);
-        
-//         matrix currentAnim = 0;
-        
-//         ParamsCurrent.CurrentOrNext = 0;
-//         ParamsCurrent.BoneIndex = targetBoneIndex;
-//         ParamsCurrent.Weight = Weights[i];
-//         currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent);
-
-//         [flatten] // https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/dx-graphics-hlsl-if
-//         if (AnimationBlending[0].Next.Clip >= 0)
-//         {
-//             ParamsNext.CurrentOrNext = 1;
-//             ParamsNext.BoneIndex = targetBoneIndex;
-//             ParamsNext.Weight = Weights[i];
-//             currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext), AnimationBlending[0].ElapsedBlendTime);
-//         }
-
-//         pos += mul(VertexPosInBoneSpace, currentAnim);
-//     }
-//     return pos;
-// }
 
 float4 SetAnimatedBoneToWorldTF_Instancing(inout ModelInstanceVertexInput input)
 {

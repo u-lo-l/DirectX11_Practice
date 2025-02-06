@@ -9,11 +9,11 @@ namespace Sdt
 		SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			{new Model(L"Cube"),{0.075f,0.075f,0.075f}, 10.f},
-			{new Model(L"Airplane"),{0.0025f,0.0025f,0.0025f}, 2.f},
+			// {new Model(L"Cube"),{0.075f,0.075f,0.075f}, 10.f},
+			// {new Model(L"Airplane"),{0.0025f,0.0025f,0.0025f}, 2.f},
 			{new Model(L"Adam"),{0.15f,0.15f,0.15f}, 15.f},
-			{new Model(L"Kachujin"),{0.1f,0.1f,0.1f}, 15.f},
-			{new Model(L"Sphere"),{0.075f,0.075f,0.075f}, 10.f},
+			// {new Model(L"Kachujin"),{0.1f,0.1f,0.1f}, 15.f},
+			// {new Model(L"Sphere"),{0.075f,0.075f,0.075f}, 10.f},
 		});
 		
 		SetModelsPosition(16, 35.f);

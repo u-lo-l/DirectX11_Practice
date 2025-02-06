@@ -1,56 +1,12 @@
 #include "00_Context.fx"
 #include "00_Material.fx"
+#include "00_Animation.fx"
 
-#define MAX_MODEL_TRANSFORM 256
-#define MAX_INSTANCE_COUNT 25
-
-cbuffer CB_ModelBones
-{
-    matrix OffsetMatrix[MAX_MODEL_TRANSFORM]; // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
-    matrix BoneTransforms[MAX_MODEL_TRANSFORM];
-    uint BoneIndex;
-};
-
-struct ModelInstanceVertexInput
-{
-    float4 Position : Position;
-    float2 Uv : Uv;
-    float4 Color : Color;
-    float3 Normal : Normal;
-    float3 Tangent : Tangent;
-    float4 Indices : BlendIndices;
-    float4 Weight : BlendWeights;
-
-    matrix Transform : INSTANCE;
-};
 struct VertexOutput
 {
     float4 Position : SV_Position;
     float2 Uv : Uv;
     float3 Normal : Normal;
-};
-
-Texture2DArray<float4> ClipsTFMap;
-
-struct AnimationFrame
-{
-    uint    Clip;           // 몇 번 째 Clip인지
-    float   CurrentTime;
-    int     CurrentFrame;   // 그 clip에서 몇 번째 Frame인지
-    int     NextFrame;
-};
-struct BlendingFrame
-{
-    float BlendingDuration;
-    float ElapsedBlendTime;
-    float2 Padding;
-
-    AnimationFrame Current;
-    AnimationFrame Next;
-};
-cbuffer CB_AnimationBlending
-{
-    BlendingFrame AnimationBlending[MAX_INSTANCE_COUNT];
 };
 
 VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)

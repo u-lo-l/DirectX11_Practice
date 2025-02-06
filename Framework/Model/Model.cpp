@@ -15,7 +15,7 @@ Model::Model(const wstring & ModelFileName)
 	ReadFile(FullFilePath);
 
 	for (ModelMesh * M : Meshes)
-		M->Pass = (Animations.empty() == true) ? 0 : 1;
+		M->Pass = 0;
 	
 	InstanceBuffer = new VertexBuffer(
 							WorldTFMatrix,
