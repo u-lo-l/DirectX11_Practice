@@ -33,22 +33,14 @@ SamplerState Samp
     AddressV = Wrap;
 };
 
-
-// Texture2D Texture;
 float4 PS(VertexOutput input) : SV_Target
 {
-    // float NdotL = dot((input.Normal), -float3(1,0,0));
-
-    // float3 color = Texture.Sample(Samp, input.Uv).rgb * NdotL;
-    // return float4(color.rgb, 1);
-
     float3 normal = normalize(input.Normal);
-	float Light = dot(-LightDirection, normal);
+	float Light = dot(LightDirection, normal);
     float3 color = MaterialMaps[0].Sample(Samp, input.Uv).rgb;
     color *= Light;
     return float4(color, 1);
 }
-
 
 technique11 T0
 {

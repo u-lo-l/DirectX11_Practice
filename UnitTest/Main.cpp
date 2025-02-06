@@ -5,9 +5,6 @@
 #include "Execute/InstancingDemo/InstancingDemo.h"
 #include "Systems/Window.h"
 
-#include "Execute/InstancingDemo/Instancing_Vertex.h"
-#include "Execute/InstancingDemo/NonInstancing_Vertex.h"
-
 void Main::Initialize()
 {
 	PUSH_MAIN(Sdt::InstancingDemo);

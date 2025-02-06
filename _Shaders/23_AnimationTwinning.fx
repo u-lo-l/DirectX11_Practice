@@ -12,7 +12,6 @@ struct VertexOutput
 VertexOutput VS_Model(ModelVertexInput input)
 {
     VertexOutput output;
-    // SetModelWorld(ModelWorldTF);
     ModelWorldTF = mul(BoneTransforms[BoneIndex], ModelWorldTF);
 
     output.Position = SetAnimatedBoneToWorldTF(input); // Local_Space(Bone Root Space)
@@ -20,7 +19,7 @@ VertexOutput VS_Model(ModelVertexInput input)
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     
-    output.Normal = input.Normal;
+    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
     output.Uv = input.Uv;
     
     return output;

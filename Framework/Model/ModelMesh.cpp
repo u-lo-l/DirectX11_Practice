@@ -40,8 +40,7 @@ void ModelMesh::Tick(const ModelAnimation * CurrentAnimation)
 	if (GlobalMatrixCBBinder != nullptr)
 		GlobalMatrixCBBinder->Tick();
 	
-	ref_ModelWorldTransform->Tick();
-
+	// ref_ModelWorldTransform->Tick();
 #pragma region Animation
 	if (CurrentAnimation != nullptr)
 	{
@@ -69,8 +68,6 @@ void ModelMesh::Render(bool bInstancing)
 {
 	if (CachedShader == nullptr)
 		CachedShader = MaterialData->GetShader();
-
-	ref_ModelWorldTransform->BindCBufferToGPU(CachedShader);
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	MaterialData->Render();
@@ -88,10 +85,13 @@ void ModelMesh::Render(bool bInstancing)
 		CHECK(ClipsSRVVar->SetResource(ClipsSRV) >= 0);
 #pragma endregion Animation
 
-	if (bInstancing == true)
+	if (bInstancing == true) // 만약 인스턴싱 할거라면 
 		CachedShader->DrawIndexedInstanced(0, Pass, IndicesCount, Model::MaxModelInstanceCount);
 	else
+	{
+		ref_ModelWorldTransform->BindCBufferToGPU(CachedShader);
 		CachedShader->DrawIndexed(0, Pass, IndicesCount);
+	}
 }
 
 // 매 Tick마다 Model::Tick에서 호출되어서 Mesh의 WorldTransform을 넣어준다.

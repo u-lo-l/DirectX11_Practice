@@ -1,0 +1,12 @@
+{
+   "kachujin_MAT" : {
+      "Ambient" : "0.000000,0.000000,0.000000,1.000000",
+      "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
+      "DiffuseMap" : [ "../_Models/Kachujin/Kachujin_diffuse.png" ],
+      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "NormalMap" : [ "../_Models/Kachujin/Kachujin_normal.png" ],
+      "ShaderName" : "38_Instancing_Model.fx",
+      "Specular" : "0.500000,0.500000,0.500000,1.000000",
+      "SpecularMap" : [ "../_Models/Kachujin/Kachujin_specular.png" ]
+   }
+}

@@ -144,7 +144,6 @@ void Transform::UpdateWorldMatrix()
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
 	CBufferData.World = Scale * Rotation * Translation;
-	UpdateWorldMatrix();
 
 	if (ref_WorldMatrix != nullptr)
 		memcpy((void *)ref_WorldMatrix, &CBufferData.World, sizeof(Matrix));

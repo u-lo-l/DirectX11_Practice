@@ -3,8 +3,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "SkeletalMesh.h"
-
 Model::Model(const wstring & ModelFileName)
 {
 #ifdef DO_DEBUG
@@ -70,6 +68,8 @@ void Model::Tick()
 
 void Model::Render()
 {
+	// Model에서 InstanceBuffer를 Bind해주면 Mesh들에서 갖다 쓴다.
+	// 여기서 Bind해주는 정보는 Model의 World기준 Transform Matrix이다.
 	if (InstanceBuffer != nullptr)
 		InstanceBuffer->BindToGPU();
 	for (ModelMesh * const M : Meshes)

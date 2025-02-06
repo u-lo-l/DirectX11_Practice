@@ -9,16 +9,17 @@ namespace Sdt
 		Context::Get()->GetCamera()->SetPosition(0, 150, -250);
 
 		Transform * tf = nullptr;
-		// Plane = new Model(L"Plane");
-		// tf = Plane->AddTransforms();
-		// tf->SetScale({10,1,10});
-		// tf->SetRotation({0,90,0});
-		// tf->Tick();
+		Plane = new Model(L"Plane");
+		tf = Plane->AddTransforms();
+		tf->SetPosition({0,-5,0});
+		tf->SetScale({1,1,10});
+		tf->SetRotation({0,0,90});
+		tf->UpdateWorldMatrix();;
 		
 		Airplane = new Model(L"Airplane");
 		Sphere = new Model(L"Sphere");
 		
-		for (int x = -250 ; x <= 250; x += 25.f)
+		for (int x = -250 ; x <= 250; x += 25)
 		{
 			Vector Pos {static_cast<float>(x), 0.5f, -10.f };
 			tf = Airplane->AddTransforms();
@@ -35,13 +36,13 @@ namespace Sdt
 		}
 
 		Models.insert(Models.end(), {
-			new Model(L"Mousey"),
+			// new Model(L"Mousey"),
 			new Model(L"Cube"),
 			new Model(L"Airplane"),
 			new Model(L"Sphere"),
 		});
 		Scales.insert(Scales.end(), {
-			{0.05f,0.05f,0.05f},
+			// {0.05f,0.05f,0.05f},
 			{0.025f,0.025f,0.025f},
 			{0.0025f,0.0025f,0.0025f},
 			{0.075f,0.075f,0.075f},
@@ -49,7 +50,7 @@ namespace Sdt
 		PosZ.insert(PosZ.end(), {-30, -15, 0, 15} );
 
 		const int ModelCount = Models.size();
-		for (int x = -500 ; x <= 500; x += 40.f)
+		for (int x = -500 ; x <= 500; x += 40)
 		{
 			Vector Pos {static_cast<float>(x), 0, 0 };
 			for (int m = 0; m < ModelCount; m++)
@@ -74,14 +75,14 @@ namespace Sdt
 
 	void InstancingDemo::Tick()
 	{
-		// Plane->Tick();
+		Plane->Tick();
 		for ( Model * m : Models)
 			m->Tick();
 	}
 
 	void InstancingDemo::Render()
 	{
-		// Plane->Render();
+		Plane->Render();
 		for ( Model * m : Models)
 			m->Render();
 	}

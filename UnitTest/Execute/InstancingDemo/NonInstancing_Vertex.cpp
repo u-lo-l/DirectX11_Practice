@@ -24,7 +24,7 @@ namespace Sdt
 			Transforms[i]->SetPosition(Vector::Random(-300, 300));
 			Transforms[i]->SetScale(Vector::Random(1, 2));
 			Transforms[i]->SetRotation(Vector::Random(-180, 180));
-			Transforms[i]->Tick();
+			Transforms[i]->UpdateWorldMatrix();
 		}
 		CreateCube();
 	}
