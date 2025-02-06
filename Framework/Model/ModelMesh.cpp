@@ -74,15 +74,11 @@ void ModelMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAn
 	if (InAnimations.empty() == true)
 		return ;
 
-	for (UINT i = 0; i < InInstanceSize; i++)
+	for (int i = 0; i < InInstanceSize; i++)
 	{
 		AnimationBlendingDesc & TargetBlendingData = BlendingDatas[i]; 
 		const int AnimationClip = TargetBlendingData.Current.Clip;
-		if (AnimationClip < 0 || AnimationClip >= InAnimations.size())
-		{
-			int a = 1;
-		}
-		const ModelAnimation * const CurrentAnimation = InAnimations[0];
+		const ModelAnimation * const CurrentAnimation = InAnimations[AnimationClip];
 		
 		UpdateCurrentFrameData_Instancing(CurrentAnimation, i);
 

@@ -39,7 +39,7 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 	ReadFile(FullFilePath);
 
 	for (ModelMesh * M : Meshes)
-		M->Pass = (Animations.empty() == true) ? 0 : 1;
+		M->Pass = 0;
 	
 	InstanceBuffer = new VertexBuffer(
 							WorldTFMatrix,
@@ -101,10 +101,10 @@ Transform * Model::AddTransforms()
 	Transform * NewTransform = new Transform(&WorldTFMatrix[Index]);
 	WorldTransforms.push_back(NewTransform);
 
-	if (Animations.empty() == false)
-	{
-		SetClipIndex(Index, 0);
-	}
+	// if (Animations.empty() == false)
+	// {
+	// 	SetClipIndex(Index, 0);
+	// }
 	
 	return NewTransform;
 }
