@@ -14,8 +14,16 @@ Model::Model(const wstring & ModelFileName)
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
 
-	if (Animations.size() == 0)
-		InstanceBuffer = new VertexBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix), Shader::InstancingSlot, true);
+	for (ModelMesh * M : Meshes)
+		M->Pass = (Animations.empty() == true) ? 0 : 1;
+	
+	InstanceBuffer = new VertexBuffer(
+							WorldTFMatrix,
+							MaxModelInstanceCount,
+							sizeof(Matrix),
+							Shader::InstancingSlot,
+							true
+						);
 }
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
@@ -30,7 +38,16 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
 
-	InstanceBuffer = new VertexBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix), Shader::InstancingSlot);
+	for (ModelMesh * M : Meshes)
+		M->Pass = (Animations.empty() == true) ? 0 : 1;
+	
+	InstanceBuffer = new VertexBuffer(
+							WorldTFMatrix,
+							MaxModelInstanceCount,
+							sizeof(Matrix),
+							Shader::InstancingSlot,
+							true
+						);
 }
 
 Model::~Model()
@@ -52,17 +69,9 @@ Model::~Model()
 
 void Model::Tick()
 {
-	if (Animations.empty() == false)
-	{
-		int clip = static_cast<int>(GetClipIndex());
-		ImGui::SliderInt("Animation Clip #", &clip, 0, static_cast<int>(GetClipCount()) - 1);
-		if (clip != static_cast<int>(GetClipIndex()))
-			SetClipIndex(clip);
-	}
 	for (ModelMesh * M : Meshes)
 	{
-		M->SetWorldTransform(this->WorldTransform);
-		M->Tick(GetCurrentAnimation());
+		M->Tick(WorldTransforms.size(), Animations);
 	}
 }
 
@@ -88,9 +97,14 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 
 Transform * Model::AddTransforms()
 {
-	int index = WorldTransforms.size();
-	Transform * NewTransform = new Transform(&WorldTFMatrix[index]);
+	const int Index = WorldTransforms.size();
+	Transform * NewTransform = new Transform(&WorldTFMatrix[Index]);
 	WorldTransforms.push_back(NewTransform);
+
+	if (Animations.empty() == false)
+	{
+		SetClipIndex(Index, 0);
+	}
 	
 	return NewTransform;
 }
@@ -102,3 +116,42 @@ const Transform * Model::GetTransforms( UINT Index ) const
 	return WorldTransforms[Index];
 }
 
+void Model::SetClipIndex(UINT InInstanceID, UINT InClipIndex )
+{
+	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
+	for (ModelMesh * const TargetMesh : Meshes)
+	{
+		if (TargetMesh->BlendingDatas[InInstanceID].Current.Clip < 0) // 처음 초기화 될 때.
+		{
+			TargetMesh->BlendingDatas[InInstanceID].Current.Clip = InClipIndex;
+			TargetMesh->BlendingDatas[InInstanceID].Current.CurrentTime = 0;
+			TargetMesh->BlendingDatas[InInstanceID].Current.CurrentFrame = 0;
+			TargetMesh->BlendingDatas[InInstanceID].Current.NextFrame = 0;
+
+			TargetMesh->BlendingDatas[InInstanceID].Next.Clip = -1;
+		}
+		else if (InClipIndex != TargetMesh->BlendingDatas[InInstanceID].Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
+		{
+			TargetMesh->BlendingDatas[InInstanceID].BlendingDuration = 0.1f;
+			TargetMesh->BlendingDatas[InInstanceID].ElapsedBlendTime = 0.0f;
+			
+			TargetMesh->BlendingDatas[InInstanceID].Next.Clip = InClipIndex;
+			TargetMesh->BlendingDatas[InInstanceID].Next.CurrentTime = 0;
+			TargetMesh->BlendingDatas[InInstanceID].Next.CurrentFrame = 0;
+			TargetMesh->BlendingDatas[InInstanceID].Next.NextFrame = 0;
+		}
+	}
+}
+//
+// void Model::SetAnimationSpeed( float InAnimationSpeed )
+// {
+// 	for (ModelAnimation * Anim : Animations)
+// 		Anim->SetPlayRate(InAnimationSpeed);
+// }
+
+// const ModelAnimation * Model::GetCurrentAnimation() const
+// {
+// 	if (Animations.empty() == true)
+// 		return nullptr;
+// 	return Animations[ClipIndex];
+// }

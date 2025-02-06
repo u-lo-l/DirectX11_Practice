@@ -1,56 +1,12 @@
 #include "00_Context.fx"
 #include "00_Material.fx"
+#include "00_Animation.fx"
 
-#define MAX_MODEL_TRANSFORM 256
-#define MAX_INSTANCE_COUNT 25
-
-cbuffer CB_ModelBones
-{
-    matrix OffsetMatrix[MAX_MODEL_TRANSFORM]; // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
-    matrix BoneTransforms[MAX_MODEL_TRANSFORM];
-    uint BoneIndex;
-};
-
-struct ModelInstanceVertexInput
-{
-    float4 Position : Position;
-    float2 Uv : Uv;
-    float4 Color : Color;
-    float3 Normal : Normal;
-    float3 Tangent : Tangent;
-    float4 Indices : BlendIndices;
-    float4 Weight : BlendWeights;
-
-    matrix Transform : INSTANCE;
-};
 struct VertexOutput
 {
     float4 Position : SV_Position;
     float2 Uv : Uv;
     float3 Normal : Normal;
-};
-
-Texture2DArray<float4> ClipsTFMap;
-
-struct AnimationFrame
-{
-    uint    Clip;           // 몇 번 째 Clip인지
-    float   CurrentTime;
-    int     CurrentFrame;   // 그 clip에서 몇 번째 Frame인지
-    int     NextFrame;
-};
-struct BlendingFrame
-{
-    float BlendingDuration;
-    float ElapsedBlendTime;
-    float2 Padding;
-
-    AnimationFrame Current;
-    AnimationFrame Next;
-};
-cbuffer CB_AnimationBlending
-{
-    BlendingFrame AnimationBlending[MAX_INSTANCE_COUNT];
 };
 
 VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)
@@ -60,6 +16,25 @@ VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)
     ModelWorldTF = mul(BoneTransforms[BoneIndex], input.Transform);
 
     output.Position = mul(input.Position, ModelWorldTF);
+    output.Position = mul(output.Position, View);
+    output.Position = mul(output.Position, Projection);
+           
+    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
+    
+    output.Uv = input.Uv;
+    
+    return output;
+}
+
+VertexOutput VS_ModelAnim_Instancing(ModelInstanceVertexInput input)
+{    
+    VertexOutput output;
+    
+    ModelWorldTF = mul(BoneTransforms[BoneIndex], input.Transform);
+
+    output.Position = SetAnimatedBoneToWorldTF_Instancing(input); // Local_Space(Bone Root Space)
+    
+    output.Position = mul(output.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
            
@@ -91,6 +66,11 @@ technique11 T0
     pass P0
     {
         SetVertexShader(CompileShader(vs_5_0, VS_Model_Instancing()));
+        SetPixelShader(CompileShader(ps_5_0, PS()));
+    }
+    pass P1
+    {
+        SetVertexShader(CompileShader(vs_5_0, VS_ModelAnim_Instancing()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }
 }

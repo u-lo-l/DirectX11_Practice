@@ -9,10 +9,15 @@ StaticMesh::~StaticMesh()
 {
 }
 
-void StaticMesh::Tick(const ModelAnimation * CurrentAnimation)
+void StaticMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations )
 {
-	ModelMesh::Tick(CurrentAnimation);
+	ModelMesh::Tick(InInstanceSize, InAnimations);
 }
+
+// void StaticMesh::Tick(const ModelAnimation * CurrentAnimation)
+// {
+// 	ModelMesh::Tick(CurrentAnimation);
+// }
 
 void StaticMesh::Render(bool bInstancing)
 {

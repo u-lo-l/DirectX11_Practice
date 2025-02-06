@@ -5,85 +5,87 @@ namespace Sdt
 {
 	void InstancingDemo::Initialize()
 	{
-		// Context::Get()->GetCamera()->SetRotation(-10, 0, 0);
-		Context::Get()->GetCamera()->SetPosition(0, 150, -250);
-
-		Transform * tf = nullptr;
-		Plane = new Model(L"Plane");
-		tf = Plane->AddTransforms();
-		tf->SetPosition({0,-5,0});
-		tf->SetScale({1,1,10});
-		tf->SetRotation({0,0,90});
-		tf->UpdateWorldMatrix();;
+		Context::Get()->GetCamera()->SetPosition(0, 50, -250);
+		SetPlane();
 		
-		Airplane = new Model(L"Airplane");
-		Sphere = new Model(L"Sphere");
-		
-		for (int x = -250 ; x <= 250; x += 25)
-		{
-			Vector Pos {static_cast<float>(x), 0.5f, -10.f };
-			tf = Airplane->AddTransforms();
-			tf->SetPosition(Pos);
-			tf->SetScale({0.005f,0.005f,0.005f});
-			tf->SetRotation({0, Math::Random(-180.f, 180.f), 0});
-			tf->UpdateWorldMatrix();;
-		
-			Pos.Z = 30.f;
-			tf = Sphere->AddTransforms();
-			tf->SetScale({0.075f,0.075f,0.075f});
-			tf->SetPosition(Pos);
-			tf->UpdateWorldMatrix();;
-		}
-
-		Models.insert(Models.end(), {
-			// new Model(L"Mousey"),
-			new Model(L"Cube"),
-			new Model(L"Airplane"),
-			new Model(L"Sphere"),
+		ModelInstances.insert(ModelInstances.end(), {
+			{new Model(L"Cube"),{0.075f,0.075f,0.075f}, 10.f},
+			{new Model(L"Airplane"),{0.0025f,0.0025f,0.0025f}, 2.f},
+			{new Model(L"Adam"),{0.15f,0.15f,0.15f}, 15.f},
+			{new Model(L"Kachujin"),{0.1f,0.1f,0.1f}, 15.f},
+			{new Model(L"Sphere"),{0.075f,0.075f,0.075f}, 10.f},
 		});
-		Scales.insert(Scales.end(), {
-			// {0.05f,0.05f,0.05f},
-			{0.025f,0.025f,0.025f},
-			{0.0025f,0.0025f,0.0025f},
-			{0.075f,0.075f,0.075f},
-		});
-		PosZ.insert(PosZ.end(), {-30, -15, 0, 15} );
-
-		const int ModelCount = Models.size();
-		for (int x = -500 ; x <= 500; x += 40)
-		{
-			Vector Pos {static_cast<float>(x), 0, 0 };
-			for (int m = 0; m < ModelCount; m++)
-			{
-				tf = Models[m]->AddTransforms();
-				tf->SetScale(Scales[m]);
-				Pos.Z = PosZ[m];
-				tf->SetPosition(Pos);
-				tf->SetRotation({Math::Random(-180.f, 180.f), Math::Random(-180.f, 180.f), Math::Random(-180.f, 180.f)});
-				tf->UpdateWorldMatrix();;
-			}
-		}
+		
+		SetModelsPosition(16, 35.f);
 	}
 
 	void InstancingDemo::Destroy()
 	{
-		SAFE_DELETE(Sphere);
-		SAFE_DELETE(Airplane);
 		SAFE_DELETE(Plane);
 		SAFE_DELETE(Drawer);
+		for (ModelInstanceData ModelAndScale : ModelInstances)
+		{
+			SAFE_DELETE(ModelAndScale.Object);
+		}
 	}
 
 	void InstancingDemo::Tick()
 	{
 		Plane->Tick();
-		for ( Model * m : Models)
-			m->Tick();
+		for (const ModelInstanceData & P : ModelInstances)
+			P.Object->Tick();
 	}
 
 	void InstancingDemo::Render()
 	{
 		Plane->Render();
-		for ( Model * m : Models)
-			m->Render();
+		for (const ModelInstanceData & P : ModelInstances)
+			P.Object->Render();
+	}
+
+	void InstancingDemo::SetPlane()
+	{
+		Plane = new Model(L"Plane");
+		Transform * tf = Plane->AddTransforms();
+		tf->SetPosition({0,-10,0});
+		tf->SetScale({10,1,10});
+		tf->SetRotation({0,0,90});
+		tf->UpdateWorldMatrix();;
+	}
+
+	void InstancingDemo::SetModelsPosition( int MaxInstanceCount, float Stride )
+	{
+		Transform * tf = nullptr;
+		int Width = sqrt(MaxInstanceCount);
+		int Height = (MaxInstanceCount + Width - 1) / Width;
+		const int Depth = ModelInstances.size();
+		
+		for (int ModelIndex = 0 ; ModelIndex < Depth ; ModelIndex++)
+		{
+			Vector InstancePosition;
+			InstancePosition.Y = static_cast<float>(ModelIndex) * Stride;
+			for (int i = 0 ; i < Height ; i++)
+			{
+				InstancePosition.Z = static_cast<float>(i) * Stride - static_cast<float>(Height) * Stride / 2;
+				for (int j = 0 ; j < Width ; j++)
+				{
+					const int InstanceIndex = i * Width + j;
+					if (InstanceIndex >= MaxInstanceCount)
+						break;
+					InstancePosition.X = static_cast<float>(j) * Stride - static_cast<float>(Width) * Stride / 2;
+					tf = ModelInstances[ModelIndex].Object->AddTransforms();
+					tf->SetScale(ModelInstances[ModelIndex].Scale);
+					tf->SetPosition(InstancePosition);
+					tf->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
+					tf->UpdateWorldMatrix();
+
+					int AnimationNum = ModelInstances[ModelIndex].Object->GetClipCount();
+					if (AnimationNum > 0)
+					{
+						ModelInstances[ModelIndex].Object->SetClipIndex(InstanceIndex, Math::Random(0, AnimationNum));
+					}
+				}
+			}
+		}
 	}
 }

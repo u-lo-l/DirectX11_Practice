@@ -5,7 +5,8 @@
 
 namespace Sdt
 {
-	const string ShaderForAnim = "23_AnimationTwinning.fx";
+	// const string ShaderForAnim = "23_AnimationTwinning.fx";
+	const string ShaderForAnim = "38_Instancing_Model_Animation.fx";
 	const string ShaderForNonAnim = "38_Instancing_Model.fx";
 	
 	void ExportFile::Initialize()
@@ -18,9 +19,9 @@ namespace Sdt
 		// MakeModel(L"Sphere", {}, 1.f);
 		// MakeModel(L"Cone", {}, 1.f);
 		// MakeModel(L"Plane", {}, 10.f);
-		MakeModel(L"Mousey", {}, 1.f);
-		MakeModel(L"XYBot", {}, 1.f);
-		MakeModel(L"Shannon", {}, 1.f);
+		// MakeModel(L"Mousey", {}, 1.f);
+		// MakeModel(L"XYBot", {}, 1.f);
+		// MakeModel(L"Shannon", {}, 1.f);
 		MakeModel(L"Kachujin", {}, 1.f);
 	}
 

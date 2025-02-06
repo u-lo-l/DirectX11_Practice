@@ -237,7 +237,7 @@ float Math::Gauss(float amplitude, float x, float y, float centerX, float center
 
 int Math::Random( int min, int max )
 {
-	return min + rand() % (max - min + 1);
+	return min + rand() % (max - min);
 }
 
 float Math::Random( float min, float max )

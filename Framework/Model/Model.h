@@ -11,7 +11,7 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-	constexpr static int MaxModelInstanceCount = 500;
+	constexpr static int MaxModelInstanceCount = 25;
 private:
 	using ThisClass = Model;
 
@@ -75,18 +75,18 @@ private:
 // TODO : Animation이 없을 수도 있는데...
 #pragma region Animation Data
 public:
-	UINT GetClipIndex() const { return ClipIndex; }
+	// UINT GetClipIndex() const { return ClipIndex; }
 	UINT GetClipCount() const { return Animations.size(); }
 
-	void SetClipIndex(UINT InClipIndex);
-	void SetAnimationTime(float InAnimationTime);
-	void SetAnimationSpeed(float InAnimationSpeed);
+	void SetClipIndex(UINT InInstanceID, UINT InClipIndex);
+	// void SetAnimationTime(float InAnimationTime);
+	// void SetAnimationSpeed(float InAnimationSpeed);
 
+// private:
+// 	const ModelAnimation * GetCurrentAnimation() const;
 private:
-	const ModelAnimation * GetCurrentAnimation() const;
-private:
-	UINT ClipIndex = 0; // 몇 번째 애니메이션의6
-	UINT Frame; // 몇 frame의 동작인지
+	// UINT ClipIndex = 0; // 몇 번째 애니메이션의
+	// UINT Frame; // 몇 frame의 동작인지
 	vector<ModelAnimation *> Animations;
 
 	// KeyFrameAnimation을 Texture로 Bake한 것.

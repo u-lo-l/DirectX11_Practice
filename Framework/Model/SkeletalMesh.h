@@ -12,7 +12,8 @@ public:
 	SkeletalMesh();
 private:
 	virtual ~SkeletalMesh() override;
-	void Tick(const ModelAnimation * CurrentAnimation = nullptr) override;
+	// void Tick(const ModelAnimation * CurrentAnimation = nullptr) override;
+	void Tick(UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations) override;
 	void Render(bool bInstancing = false) override;
 	void CreateBuffers() override;
 	

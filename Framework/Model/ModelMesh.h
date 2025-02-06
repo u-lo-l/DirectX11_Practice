@@ -27,9 +27,11 @@ protected:
 	ModelMesh();
 #endif
 	virtual ~ModelMesh() = 0;
-	virtual void Tick(const ModelAnimation * CurrentAnimation = nullptr);
+	// virtual void Tick(const ModelAnimation * CurrentAnimation = nullptr);
+	virtual void Tick(UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations);
 	virtual void Render(bool bInstancing = false);
 	virtual void CreateBuffers();
+	virtual void CreateAnimationBuffers();
 	
 	void SetWorldTransform( const Transform * InTransform ) const;
 	
@@ -75,17 +77,22 @@ protected:
 		FrameDesc Current;
 		FrameDesc Next;
 	};
-	void UpdateCurrentFrameData(const ModelAnimation * InAnimation);
-	void UpdateNextFrameData(const ModelAnimation * InAnimation);
+	// void UpdateCurrentFrameData_NonInstancing(const ModelAnimation * InAnimation);
+	// void UpdateNextFrameData_NonInstancing(const ModelAnimation * InAnimation);
+
+	void UpdateCurrentFrameData_Instancing(const ModelAnimation * InAnimation, int InstanceId);
+	void UpdateNextFrameData_Instancing(const ModelAnimation * InAnimation, int InstanceId);
+	
 private:
 	static void UpdateFrameData(const ModelAnimation * InAnimation, FrameDesc & Frame);
 protected:
-	AnimationBlendingDesc BlendingData;
-private:
+	// AnimationBlendingDesc BlendingData;
+	AnimationBlendingDesc BlendingDatas[25];
+protected:
 	ConstantBuffer * FrameCBuffer;
 	IECB_t * ECB_FrameBuffer;
 	
-private :
+protected :
 	// 애니메이션 정보가 담긴 SRV
 	ID3D11ShaderResourceView * ClipsSRV = nullptr;
 	ID3D11Texture2D * ClipsTexture = nullptr;

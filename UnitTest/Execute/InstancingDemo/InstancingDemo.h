@@ -6,6 +6,13 @@ namespace Sdt
 {
 	class InstancingDemo final : public IExecutable
 	{
+	private:
+		struct ModelInstanceData
+		{
+			Model* Object;
+			Vector Scale;
+			float Height;
+		};
 	public:
 		void Initialize() override;
 		void Destroy() override;
@@ -13,14 +20,13 @@ namespace Sdt
 		void Tick() override;
 		void Render() override;
 	private:
+		void SetPlane();
+		void SetModelsPosition(int MaxInstanceCount = 10, float Stride = 20);
+		
+	private:
 		Shader * Drawer = nullptr;
-
 		Model * Plane = nullptr;
-		Model * Airplane = nullptr;
-		Model * Sphere = nullptr;
+		vector<ModelInstanceData> ModelInstances;
 
-		vector<Model *> Models;
-		vector<Vector> Scales;
-		vector<float> PosZ;
 	};
 }

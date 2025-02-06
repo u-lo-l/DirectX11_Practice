@@ -14,17 +14,39 @@ SkeletalMesh::~SkeletalMesh()
 #pragma endregion Bone
 }
 
-void SkeletalMesh::Tick(const ModelAnimation * CurrentAnimation)
+void SkeletalMesh::Tick( UINT InInstanceSize, const vector<ModelAnimation *> & InAnimations )
 {
-	ModelMesh::Tick(CurrentAnimation);
+	ModelMesh::Tick(InInstanceSize, InAnimations);
 }
 
 void SkeletalMesh::Render(bool bInstancing)
 {
+	if (CachedShader == nullptr)
+		CachedShader = MaterialData->GetShader();
+	
+	VBuffer->BindToGPU();
+	IBuffer->BindToGPU();
+	MaterialData->Render();
+	if (GlobalMatrixCBBinder != nullptr)
+		GlobalMatrixCBBinder->BindToGPU(); // FrameRenderer
+	
 	BoneDescBuffer->BindToGPU();
 	CHECK(ECB_BoneDescBuffer->SetConstantBuffer(*BoneDescBuffer) >= 0);
-
-	ModelMesh::Render(bInstancing);
+	
+	if (ClipsSRVVar != nullptr)
+		CHECK(ClipsSRVVar->SetResource(ClipsSRV) >= 0);
+	
+	if (FrameCBuffer != nullptr)
+	{
+		FrameCBuffer->BindToGPU();
+		CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
+	}
+	CachedShader->DrawIndexedInstanced(
+		0,
+		Pass,
+		IndicesCount,
+		Model::MaxModelInstanceCount
+	);
 }
 
 void SkeletalMesh::CreateBuffers()

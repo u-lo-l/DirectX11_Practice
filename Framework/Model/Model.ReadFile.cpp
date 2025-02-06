@@ -3,54 +3,15 @@
 #include <fstream>
 #include <iomanip>
 
-void Model::SetClipIndex( UINT InClipIndex )
-{
-	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
-	ClipIndex = InClipIndex;
-	for (ModelMesh * const TargetMesh : Meshes)
-	{
-		if (TargetMesh->BlendingData.Current.Clip < 0)
-		{
-			TargetMesh->BlendingData.Current.Clip = InClipIndex;
-			TargetMesh->BlendingData.Current.CurrentTime = 0;
-			TargetMesh->BlendingData.Current.CurrentFrame = 0;
-			TargetMesh->BlendingData.Current.NextFrame = 0;
 
-			TargetMesh->BlendingData.Next.Clip = -1;
-		}
-		else if (InClipIndex != TargetMesh->BlendingData.Current.Clip)// Current에서 Next로 애니메이션이 바뀜.
-		{
-			TargetMesh->BlendingData.BlendingDuration = 0.1f;
-			TargetMesh->BlendingData.ElapsedBlendTime = 0.0f;
-			
-			TargetMesh->BlendingData.Next.Clip = InClipIndex;
-			TargetMesh->BlendingData.Next.CurrentTime = 0;
-			TargetMesh->BlendingData.Next.CurrentFrame = 0;
-			TargetMesh->BlendingData.Next.NextFrame = 0;
-		}
-	}
-}
-
-void Model::SetAnimationTime(float InAnimationTime)
-{
-	ASSERT(InAnimationTime < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
-	for (ModelMesh * const TargetMesh : Meshes)
-	{
-		TargetMesh->BlendingData.Current.CurrentTime = InAnimationTime;
-	}
-}
-
-void Model::SetAnimationSpeed( float InAnimationSpeed )
-{
-	Animations[ClipIndex]->SetPlayRate(InAnimationSpeed);
-}
-
-const ModelAnimation * Model::GetCurrentAnimation() const
-{
-	if (Animations.empty() == true)
-		return nullptr;
-	return Animations[ClipIndex];
-}
+// void Model::SetAnimationTime(float InAnimationTime)
+// {
+// 	ASSERT(InAnimationTime < Animations[ClipIndex]->GetAnimationLength(), "Animation Index Not Valid");
+// 	for (ModelMesh * const TargetMesh : Meshes)
+// 	{
+// 		TargetMesh->BlendingData.Current.CurrentTime = InAnimationTime;
+// 	}
+// }
 
 void Model::ReadFile( const wstring & InFileFullPath )
 {
@@ -102,14 +63,18 @@ void Model::ReadFile( const wstring & InFileFullPath )
 		{
 			M->ClipsTexture = ClipTexture;
 			M->ClipsSRV = ClipSRV;
-			M->BlendingData.Current.Clip = 0;
+			// M->BlendingData.Current.Clip = 0;
 		}
 	}
 	
 	if (SkeletonData != nullptr)
 		SkeletonData->ClearBoneTable();
+	
 	for (ModelMesh * M : this->Meshes)
+	{
 		M->CreateBuffers();
+		M->CreateAnimationBuffers();
+	}
 }
 
 void Model::ReadMaterial( const wstring & InFileName)
@@ -213,7 +178,7 @@ void Model::ReadAnimation( const wstring & InFileName )
 	
 	SAFE_DELETE(BinReader);
 	if (Animations.size() > 0)
-		SetClipIndex(0);
+		SetClipIndex(0, 0);
 }
 
 void Model::CreateAnimationTexture()
