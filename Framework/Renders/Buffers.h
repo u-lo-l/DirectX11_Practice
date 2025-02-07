@@ -75,3 +75,84 @@ private:
 	UINT DataSize = 0;
 	string DataName;
 };
+
+/*=============================================================================*/
+
+/*
+ * RAM에서 VRAM으로 Input이 넘어가고 GPU가 ComputeShade를 수행한다.
+ * 그리고 Output이 나온다. 그런데 이 Output은 ReadOnly라서 사본을 만들어야한다.
+ *
+ * Input는 SRV로 넘어간다. (Resource를 Shader에 넘겨주는 방식이다.)
+ * Output은 UAV(Unordered Access View)
+ * - SRV : Shader에서 읽을 수 있는 자원을 지정하는 view
+ * - UAV : 자원을 읽고 쓰기 위한 view
+ *
+ * Result :
+ *  - Usage : Staging
+ */
+class ComputeShaderResource
+{
+public:
+	ComputeShaderResource() = default;
+	virtual ~ComputeShaderResource();
+	ComputeShaderResource(const ComputeShaderResource &) = delete;
+	ComputeShaderResource(ComputeShaderResource &&) = delete;
+	ComputeShaderResource & operator=(const ComputeShaderResource &) = delete;
+	ComputeShaderResource & operator=(ComputeShaderResource &&) = delete;
+
+protected:
+	virtual void CreateInput() = 0;
+	virtual void CreateSRV() = 0;
+	virtual void CreateOutput() = 0;
+	virtual void CreateUAV() = 0;
+	virtual void CreateResult() = 0;
+
+	void CreateBuffer();
+protected:
+	ID3D11Resource * Input = nullptr; // GPU의 input으로 들어가는 Resource
+	ID3D11ShaderResourceView * SRV = nullptr;
+
+	ID3D11Resource * Output = nullptr; // GPU에서 CPU로 나오는 Resource
+	ID3D11UnorderedAccessView * UAV = nullptr;
+	
+	ID3D11Resource * Result;
+};
+
+class RawBuffer : public BufferBase, public ComputeShaderResource
+{
+public:
+	explicit RawBuffer(
+		void * InData = nullptr,
+		string InDataName = "",
+		UINT InDataSize = 0,
+		UINT InOutputSize = 0
+	);
+	~RawBuffer() override = default;
+
+// ~ Begin BufferBase
+	operator ID3D11Buffer *() { return Buffer; }
+	operator ID3D11Buffer *() const { return Buffer; }
+	operator const ID3D11Buffer *() const { return Buffer; }
+	operator const ID3D11Buffer *() { return Buffer; }
+	
+	void BindToGPU() override;
+private:
+	UINT DataSize = 0; // InputSize
+	string DataName;
+// ~ End BufferBase
+
+public :
+	void SetInputData( const void * InData) const;
+	void GetOutputData(void * OutData) const;
+// ~Begin ComputeShaderResource
+protected:
+	void CreateInput() override;
+	void CreateSRV() override;
+	void CreateOutput() override;
+	void CreateUAV() override;
+	void CreateResult() override;
+private:
+	void * OutputData = nullptr;
+	UINT OutputSize = 0;
+// ~End ComputeShaderResource
+};
