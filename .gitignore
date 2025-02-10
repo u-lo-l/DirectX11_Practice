@@ -3,6 +3,8 @@ Debug/
 Debug*/*
 */*.zip
 .vs/
+!_Libraries/*/*.lib
+!_Libraries/*/*.pdb
 */*.lib
 */*.pdb
 *.lib
