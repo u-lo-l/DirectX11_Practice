@@ -1,5 +1,10 @@
 {
-   "Animations" : [ "Kachujin/Idle" ],
+   "Animations" : [
+      "Kachujin/Idle",
+      "Kachujin/Run",
+      "Kachujin/Walk",
+      "Kachujin/Salsa Dancing"
+   ],
    "File" : {
       "Material" : "Kachujin",
       "Mesh" : "Kachujin"

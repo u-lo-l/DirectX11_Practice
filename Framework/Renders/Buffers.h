@@ -89,6 +89,13 @@ private:
  *
  * Result :
  *  - Usage : Staging
+ *
+ *  다시~
+ *  RAM에서 vRAM으로 데이터를 넘길 때 GPU가 읽을 수 있게 하는 것은 SRV이다.
+ *	SRV는 GPU가 읽기만 가능하지만, UAV는 읽기와 쓰기 모두 가능하다.
+ *	그래서 Compute Shader의 결과를 UAV에 쓴다.
+ *
+ *	
  */
 class ComputeShaderResource
 {
@@ -100,6 +107,12 @@ public:
 	ComputeShaderResource & operator=(const ComputeShaderResource &) = delete;
 	ComputeShaderResource & operator=(ComputeShaderResource &&) = delete;
 
+public:
+	operator ID3D11UnorderedAccessView* () { return UAV; }
+	operator ID3D11UnorderedAccessView* () const { return UAV; }
+	operator const ID3D11UnorderedAccessView* () { return UAV; }
+	operator const ID3D11UnorderedAccessView* () const { return UAV; }
+	
 protected:
 	virtual void CreateInput() = 0;
 	virtual void CreateSRV() = 0;
@@ -115,7 +128,7 @@ protected:
 	ID3D11Resource * Output = nullptr; // GPU에서 CPU로 나오는 Resource
 	ID3D11UnorderedAccessView * UAV = nullptr;
 	
-	ID3D11Resource * Result;
+	ID3D11Resource * Result = nullptr;
 };
 
 class RawBuffer : public BufferBase, public ComputeShaderResource
@@ -135,15 +148,15 @@ public:
 	operator const ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() { return Buffer; }
 	
-	void BindToGPU() override;
+	void BindToGPU() override {};
 private:
 	UINT DataSize = 0; // InputSize
 	string DataName;
 // ~ End BufferBase
 
 public :
-	void SetInputData( const void * InData) const;
-	void GetOutputData(void * OutData) const;
+	void SetInputData( const void * InData);
+	void GetOutputData(void * OutData);
 // ~Begin ComputeShaderResource
 protected:
 	void CreateInput() override;
