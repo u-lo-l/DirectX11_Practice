@@ -7,3 +7,5 @@ Debug*/*
 */*.pdb
 *.lib
 *.pdb
+*/*.csv
+*.csv
