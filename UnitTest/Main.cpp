@@ -2,12 +2,12 @@
 #include "Pch.h"
 #include "Main.h"
 
-#include "Execute/InstancingDemo/InstancingDemo.h"
+#include "Execute/RawBufferDemo/RawBufferDemo.h"
 #include "Systems/Window.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::InstancingDemo);
+	PUSH_MAIN(Sdt::RawBufferDemo);
 }
 
 void Main::Destroy()

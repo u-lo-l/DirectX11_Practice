@@ -19,18 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Execute\InstancingDemo\InstancingDemo.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\Instancing_Vertex.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\NonInstancing_Vertex.cpp" />
+    <ClCompile Include="Execute\RawBufferDemo\RawBufferDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Execute\InstancingDemo\InstancingDemo.h" />
-    <ClInclude Include="Execute\InstancingDemo\Instancing_Vertex.h" />
-    <ClInclude Include="Execute\InstancingDemo\NonInstancing_Vertex.h" />
+    <ClInclude Include="Execute\RawBufferDemo\RawBufferDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

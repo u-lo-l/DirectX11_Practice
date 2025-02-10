@@ -15,8 +15,8 @@ namespace Sdt
 			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
 			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
 		});
-		const UINT InstanceCount = 100;
-		const float Stride = 30.f;
+		constexpr UINT InstanceCount = 144;
+		constexpr float Stride = 25.f;
 		SetModelsPosition(InstanceCount, Stride);
 	}
 
@@ -58,31 +58,30 @@ namespace Sdt
 
 	void InstancingDemo::SetModelsPosition( int MaxInstanceCount, float Stride )
 	{
-		Transform * tf = nullptr;
-		int Width = sqrt(MaxInstanceCount);
-		int Height = (MaxInstanceCount + Width - 1) / Width;
+		const int Width = sqrt(MaxInstanceCount);
+		const int Height = (MaxInstanceCount + Width - 1) / Width;
 		const int Depth = ModelInstances.size();
 		
 		for (int ModelIndex = 0 ; ModelIndex < Depth ; ModelIndex++)
 		{
 			Vector InstancePosition;
 			InstancePosition.Y = static_cast<float>(ModelIndex) * Stride;
-			for (int i = 0 ; i < Height ; i++)
+			for (int H = 0 ; H < Height ; H++)
 			{
-				InstancePosition.Z = static_cast<float>(i) * Stride - static_cast<float>(Height) * Stride / 2;
-				for (int j = 0 ; j < Width ; j++)
+				InstancePosition.Z = static_cast<float>(H) * Stride - static_cast<float>(Height) * Stride / 2;
+				for (int W  = 0 ; W < Width ; W++)
 				{
-					const int InstanceIndex = i * Width + j;
+					const int InstanceIndex = H * Width + W;
 					if (InstanceIndex >= MaxInstanceCount)
 						break;
-					InstancePosition.X = static_cast<float>(j) * Stride - static_cast<float>(Width) * Stride / 2;
-					tf = ModelInstances[ModelIndex].Object->AddTransforms();
-					tf->SetScale(ModelInstances[ModelIndex].Scale);
-					tf->SetPosition(InstancePosition);
-					tf->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
-					tf->UpdateWorldMatrix();
+					InstancePosition.X = static_cast<float>(W) * Stride - static_cast<float>(Width) * Stride / 2;
+					Transform * TF = ModelInstances[ModelIndex].Object->AddTransforms();
+					TF->SetScale(ModelInstances[ModelIndex].Scale);
+					TF->SetPosition(InstancePosition);
+					TF->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
+					TF->UpdateWorldMatrix();
 
-					int AnimationNum = ModelInstances[ModelIndex].Object->GetClipCount();
+					const int AnimationNum = ModelInstances[ModelIndex].Object->GetClipCount();
 					if (AnimationNum > 0)
 					{
 						ModelInstances[ModelIndex].Object->SetClipIndex(InstanceIndex, Math::Random(0, AnimationNum));

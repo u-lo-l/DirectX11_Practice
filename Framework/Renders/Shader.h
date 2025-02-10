@@ -97,6 +97,15 @@ private:
 	D3DX11_EFFECT_DESC EffectDesc;
 
 private:
+	/*
+	 * 렌더링 상태를 저장하는 Block
+	 * RSRasterizerState : RS상태 (Wireframe mode, ccw mode ...)
+	 * OMBlendState : Blending 상태
+	 * OMBlendFactor : 
+	 * OMSampleMask : 
+	 * OMDepthStencilState : 깊이 테스트 활성화 여부, 스텔실 값 등
+	 * OMStencilRef : 
+	 */
 	struct StateBlock
 	{
 		ID3D11RasterizerState* RSRasterizerState;

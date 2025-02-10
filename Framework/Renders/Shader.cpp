@@ -109,20 +109,28 @@ void Shader::CreateEffect()
 		};
 		EffectDesc구조체는 다음 값들을 갖는다. 여기서 Technique, ConstantBuffer, GlobalVariable만 확인하는거다.
 	 */
-	Techniques.reserve(EffectDesc.Techniques);
-	for (UINT t = 0; t < EffectDesc.Techniques; t++)
+	
+	// ~ [Begin] Technique 저장
+	const size_t TechniqueCount = EffectDesc.Techniques;
+	Techniques.reserve(TechniqueCount);
+	for (UINT t = 0; t < TechniqueCount; t++)
 	{
 		Technique technique;
 		technique.ITechnique = Effect->GetTechniqueByIndex(t);
 		CHECK(technique.ITechnique->GetDesc(&technique.Desc) >= 0);
+		// ~ [End] Technique 저장
 
-		technique.Passes.reserve(technique.Desc.Passes);
-		for (UINT p = 0; p < technique.Desc.Passes; p++)
+		// ~ [Begin] Pass 저장
+		const size_t PassCountInThisTechnique = technique.Desc.Passes; 
+		technique.Passes.reserve(PassCountInThisTechnique);
+		for (UINT p = 0; p < PassCountInThisTechnique; p++)
 		{
 			Pass pass;
 			pass.IPass = technique.ITechnique->GetPassByIndex(p);
 			pass.CheckPassValid();
+			// ~ [End] Pass 저장
 
+			// ~ [Begin] Input Layout 정보 저장
 			pass.SignatureDescs.reserve(pass.EffectVsDesc.NumInputSignatureEntries);
 			for (UINT s = 0; s < pass.EffectVsDesc.NumInputSignatureEntries; s++)
 			{
@@ -133,9 +141,12 @@ void Shader::CreateEffect()
 
 				pass.SignatureDescs.emplace_back(desc);
 			}
+			// ~ [End] Input Layout 정보 저장
 
+			// ~ [Begin] Input Layout 생성
 			pass.InputLayout = Shader::CreateInputLayout(fxBlob, &pass.EffectVsDesc, pass.SignatureDescs);
 			pass.StateBlock = InitialStateBlock;
+			// ~ [End] Input Layout 생성
 
 			technique.Passes.emplace_back(pass);
 		}
@@ -184,7 +195,7 @@ ID3D11InputLayout * Shader::CreateInputLayout
 		elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		elementDesc.InstanceDataStepRate = 0;
 
-		if (paramDesc.Mask == 1)
+		if (paramDesc.Mask == 1) // Mask : 0b0001 : x 사용
 		{
 			if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 				elementDesc.Format = DXGI_FORMAT_R32_UINT;
@@ -193,7 +204,7 @@ ID3D11InputLayout * Shader::CreateInputLayout
 			else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 				elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
 		}
-		else if (paramDesc.Mask <= 3)
+		else if (paramDesc.Mask <= 3) // Mask : 0b0011 : x, y사용
 		{
 			if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 				elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
@@ -202,7 +213,7 @@ ID3D11InputLayout * Shader::CreateInputLayout
 			else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 				elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 		}
-		else if (paramDesc.Mask <= 7)
+		else if (paramDesc.Mask <= 7) // Mask : 0b0111 : x,y,z 사용
 		{
 			if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 				elementDesc.Format = DXGI_FORMAT_R32G32B32_UINT;
@@ -211,7 +222,7 @@ ID3D11InputLayout * Shader::CreateInputLayout
 			else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 				elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
 		}
-		else if (paramDesc.Mask <= 15)
+		else if (paramDesc.Mask <= 15) // Mask : 0b1111 : x,y,z,w 다 사용
 		{
 			if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 				elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
@@ -267,6 +278,8 @@ ID3D11InputLayout * Shader::CreateInputLayout
 
 	return inputLayout;
 }
+
+#pragma region Draw_Dispatch
 
 void Shader::Pass::Draw(UINT VertexCount, UINT StartVertexLocation)
 {
@@ -348,13 +361,6 @@ void Shader::Pass::Dispatch(UINT X, UINT Y, UINT Z) const
 	Context->CSSetShader(nullptr, nullptr, 0);
 }
 
-void Shader::Pass::CheckPassValid()
-{
-	CHECK(IPass->GetDesc(&Desc) >= 0);
-	CHECK(IPass->GetVertexShaderDesc(&PassVsDesc) >= 0);
-	CHECK(PassVsDesc.pShaderVariable->GetShaderDesc(PassVsDesc.ShaderIndex, &EffectVsDesc) >= 0);
-}
-
 void Shader::Technique::Draw(UINT Pass, UINT VertexCount, UINT StartVertexLocation)
 {
 	Passes[Pass].Draw(VertexCount, StartVertexLocation);
@@ -405,8 +411,9 @@ void Shader::DrawIndexedInstanced(UINT technique, UINT pass, UINT indexCountPerI
 {
 	Techniques[technique].Passes[pass].DrawIndexedInstanced(indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation);
 }
+#pragma endregion Draw_Dispatch
 
-
+#pragma region AsSth
 
 //ID3DX11EffectVariable* Shader::Variable(const string & Name)  const
 //{
@@ -481,4 +488,12 @@ ID3DX11EffectSamplerVariable* Shader::AsSampler(const string & Name) const
 ID3DX11EffectUnorderedAccessViewVariable* Shader::AsUAV(const string & Name) const
 {
 	return Effect->GetVariableByName(Name.c_str())->AsUnorderedAccessView();
+}
+#pragma endregion AsSth
+
+void Shader::Pass::CheckPassValid()
+{
+	CHECK(IPass->GetDesc(&Desc) >= 0);
+	CHECK(IPass->GetVertexShaderDesc(&PassVsDesc) >= 0);
+	CHECK(PassVsDesc.pShaderVariable->GetShaderDesc(PassVsDesc.ShaderIndex, &EffectVsDesc) >= 0);
 }
