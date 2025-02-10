@@ -15,7 +15,6 @@ namespace Sdt
 			UINT ThreadId[3];
 			UINT DispatchThreadId[3];
 			UINT GroupIndex;
-			float Result;
 		};
 
 		RawBuffer * RBuffer = new RawBuffer(nullptr, "Raw Buffer Test", 0, sizeof(Output) * ThreadCount);
