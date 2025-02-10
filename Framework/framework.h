@@ -93,3 +93,5 @@ using namespace std;
 	#include "Core/Color.h"
 	#include "Core/Math.h"
 #pragma endregion
+
+string GetD3D11ReturnMessage(HRESULT Hr);

@@ -35,6 +35,7 @@
     <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\ConstantDataBinder.cpp" />
+    <ClCompile Include="Renders\HlslShader.cpp" />
     <ClCompile Include="Renders\Material.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
     <ClCompile Include="Renders\Texture.cpp" />
@@ -78,6 +79,7 @@
     <ClInclude Include="Renders\Buffers.h" />
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\ConstantDataBinder.h" />
+    <ClInclude Include="Renders\HlslShader.h" />
     <ClInclude Include="Renders\Material.h" />
     <ClInclude Include="Renders\Shader.h" />
     <ClInclude Include="Renders\Texture.h" />
