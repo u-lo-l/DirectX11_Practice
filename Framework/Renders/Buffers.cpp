@@ -158,7 +158,7 @@ void IndexBuffer::BindToGPU()
 ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize)
  : DataSize(InDataSize), DataName(move(InDataName))
 {
-	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16");
+	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
 
 	Data = InData;
 #ifdef DO_DEBUG
@@ -303,7 +303,7 @@ void RawBuffer::CreateSRV()
 
 void RawBuffer::CreateOutput()
 {
-	ASSERT(OutputSize > 0, "Invalid OutputSize");
+	ASSERT(OutputSize > 0, "Invalid OutputSize")
 	
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	
@@ -324,7 +324,7 @@ void RawBuffer::CreateOutput()
 
 void RawBuffer::CreateUAV()
 {
-	ASSERT(OutputSize > 0, "Invalid OutputSize");
+	ASSERT(OutputSize > 0, "Invalid OutputSize")
 
 	// ID3D11Buffer * OutBuffer = dynamic_cast<ID3D11Buffer *>(Output);
 	ID3D11Buffer * OutBuffer = static_cast<ID3D11Buffer *>(Output);
@@ -343,7 +343,7 @@ void RawBuffer::CreateUAV()
 
 void RawBuffer::CreateResult()
 {
-	ASSERT(OutputSize > 0, "Invalid OutputSize");
+	ASSERT(OutputSize > 0, "Invalid OutputSize")
 	
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 

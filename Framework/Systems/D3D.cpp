@@ -178,7 +178,7 @@ void D3D::CreateDeviceAndContext()
 			&FeatureLevels,
 			&DeviceContext
 		);
-		ASSERT(hr >= 0, "Device Failed");
+		ASSERT(hr >= 0, "Device Failed")
 	}
 }
 
@@ -186,10 +186,10 @@ void D3D::CreateRTV()
 {
 	ID3D11Texture2D * BackBuffer;
 	HRESULT Hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&BackBuffer));
-	ASSERT(Hr >= 0, "Back Buffer Failed");
+	ASSERT(Hr >= 0, "Back Buffer Failed")
 
 	Hr = Device->CreateRenderTargetView(BackBuffer, nullptr, &RenderTargetView);
-	ASSERT(Hr >= 0, "RTV Failed");
+	ASSERT(Hr >= 0, "RTV Failed")
 
 	SAFE_RELEASE(BackBuffer);
 }

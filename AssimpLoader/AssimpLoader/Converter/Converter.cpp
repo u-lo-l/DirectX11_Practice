@@ -35,7 +35,7 @@ namespace Sdt
 			| aiProcess_GenBoundingBoxes
 		);
 
-		ASSERT(Scene != nullptr, Loader->GetErrorString());
+		ASSERT(Scene != nullptr, Loader->GetErrorString())
 	}
 
 	string Converter::ColorToJson( const Color & InColor )

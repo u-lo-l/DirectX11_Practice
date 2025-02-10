@@ -102,13 +102,13 @@ void Model::Tick()
 	{
 		if (ImGui::Button("Change", ImVec2(200, 30)))
 		{
-			for (int InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
+			for (UINT InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
 			{
 				SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
 				WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
 			}
 		}
-		for (int InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
+		for (UINT InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
 		{
 			AnimationBlendingDesc & TargetBlending = BlendingDatas[InstanceId];
 
@@ -183,7 +183,7 @@ const Transform * Model::GetTransforms( UINT Index ) const
 
 void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 {
-	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid");
+	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid")
 	AnimationBlendingDesc & TargetBlendingData = BlendingDatas[InInstanceID];
 	if(TargetBlendingData.Current.Clip < 0)
 	{

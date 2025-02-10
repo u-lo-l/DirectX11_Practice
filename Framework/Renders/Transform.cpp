@@ -45,8 +45,8 @@ Transform::~Transform()
 
 void Transform::BindCBufferToGPU( const Shader * InShader )
 {
-	ASSERT(CBuffer != nullptr, "CBuffer Not Valid");
-	ASSERT(InShader != nullptr, "Shader Not Valid");
+	ASSERT(CBuffer != nullptr, "CBuffer Not Valid")
+	ASSERT(InShader != nullptr, "Shader Not Valid")
 
 	if (ECB_CBuffer == nullptr)
 		ECB_CBuffer = InShader->AsConstantBuffer("CB_World");

@@ -7,21 +7,21 @@ namespace Sdt
 
 	void Mouse::Create()
 	{
-		ASSERT(Instance == nullptr, "Mouse Instance must null on Create()");
+		ASSERT(Instance == nullptr, "Mouse Instance must null on Create()")
 
 		Instance = new Mouse();
 	}
 
 	void Mouse::Destroy()
 	{
-		ASSERT(Instance != nullptr, "Mouse Instance must not null on Destroy()");
+		ASSERT(Instance != nullptr, "Mouse Instance must not null on Destroy()")
 
 		SAFE_DELETE(Instance);
 	}
 
 	Mouse* Mouse::Get()
 	{
-		//ASSERT(Instance != nullptr, "Mouse Instance must not null on Get()");
+		//ASSERT(Instance != nullptr, "Mouse Instance must not null on Get()")
 
 		return Instance;
 	}

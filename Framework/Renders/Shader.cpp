@@ -75,7 +75,7 @@ void Shader::CreateEffect()
 			MessageBoxA(nullptr, str, "Shader Error", MB_OK);
 		}
 
-		ASSERT(false, "Fx File not found");
+		ASSERT(false, "Fx File not found")
 	}
 
 //https://learn.microsoft.com/en-us/windows/win32/direct3d11/d3dx11createeffectfrommemory
@@ -338,6 +338,7 @@ void Shader::Pass::EndDraw() const
 
 	if (StateBlockMask.OMBlendState == 1)
 		Context->OMSetBlendState(StateBlock->OMBlendState, StateBlock->OMBlendFactor, StateBlock->OMSampleMask);
+
 
 	Context->HSSetShader(nullptr, nullptr, 0);
 	Context->DSSetShader(nullptr, nullptr, 0);

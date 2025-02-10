@@ -5,21 +5,21 @@ Context * Context::Instance = nullptr;
 
 void Context::Create()
 {
-	ASSERT(Instance == nullptr, "Context Instance must null on Create()");
+	ASSERT(Instance == nullptr, "Context Instance must null on Create()")
 
 	Instance = new Context();
 }
 
 void Context::Destroy()
 {
-	ASSERT(Instance != nullptr, "Context Instance must not null on Destroy()");
+	ASSERT(Instance != nullptr, "Context Instance must not null on Destroy()")
 
 	SAFE_DELETE(Instance);
 }
 
 Context * Context::Get()
 {
-	ASSERT(Instance != nullptr, "Context Instance must not null on Get()");
+	ASSERT(Instance != nullptr, "Context Instance must not null on Get()")
 
 	return Instance;
 }

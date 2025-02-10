@@ -5,21 +5,21 @@ Gui * Gui::Instance = nullptr;
 
 void Gui::Create()
 {
-	ASSERT(Instance == nullptr, "GUI Instance must null on Create()");
+	ASSERT(Instance == nullptr, "GUI Instance must null on Create()")
 
 	Instance = new Gui();
 }
 
 void Gui::Destroy()
 {
-	ASSERT(Instance != nullptr, "GUI Instance must not null on Destroy()");
+	ASSERT(Instance != nullptr, "GUI Instance must not null on Destroy()")
 
 	SAFE_DELETE(Instance);
 }
 
 Gui* Gui::Get()
 {
-	//ASSERT(Instance != nullptr, "GUI Instance must not null on Get()");
+	//ASSERT(Instance != nullptr, "GUI Instance must not null on Get()")
 	return Instance;
 }
 

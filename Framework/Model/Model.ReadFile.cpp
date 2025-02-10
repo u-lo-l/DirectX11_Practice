@@ -28,7 +28,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	ReadMesh(MeshName + L"/" + MeshName);
 
 	// World Transform
-	ASSERT(WorldTransform != nullptr, "WorldTransform Not Valid");
+	ASSERT(WorldTransform != nullptr, "WorldTransform Not Valid")
 	vector<string> pString;
 	String::SplitString(&pString, Position.asString(), ",");
 	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});

@@ -7,21 +7,21 @@ namespace Sdt
 
 	void SystemTimer::Create()
 	{
-		ASSERT(Instance == nullptr, "Timer Instance must null on Create()");
+		ASSERT(Instance == nullptr, "Timer Instance must null on Create()")
 
 		Instance = new SystemTimer();
 	}
 
 	void SystemTimer::Destroy()
 	{
-		ASSERT(Instance != nullptr, "Timer Instance must not null on Destroy()");
+		ASSERT(Instance != nullptr, "Timer Instance must not null on Destroy()")
 
 		SAFE_DELETE(Instance);
 	}
 
 	SystemTimer * SystemTimer::Get()
 	{
-		ASSERT(Instance != nullptr, "Timer Instance must not null on Get()");
+		ASSERT(Instance != nullptr, "Timer Instance must not null on Get()")
 
 		return Instance;
 	}
