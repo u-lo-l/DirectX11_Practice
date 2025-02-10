@@ -35,11 +35,12 @@
     <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\ConstantDataBinder.cpp" />
-    <ClCompile Include="Renders\HlslShader.cpp" />
+    <ClCompile Include="Renders\HlslShader.hpp" />
     <ClCompile Include="Renders\Material.cpp" />
     <ClCompile Include="Renders\Shader.cpp" />
     <ClCompile Include="Renders\Texture.cpp" />
     <ClCompile Include="Renders\Transform.cpp" />
+    <ClCompile Include="Renders\VertexLayout.cpp" />
     <ClCompile Include="Systems\D3D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>

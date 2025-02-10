@@ -12,13 +12,13 @@ cbuffer CB_BoneIndex
 }
 struct ModelInstanceVertexInput
 {
-    float4 Position : Position;
+    float4 Position : POSITION;
     float2 Uv : Uv;
-    float4 Color : Color;
-    float3 Normal : Normal;
-    float3 Tangent : Tangent;
-    float4 Indices : BlendIndices;
-    float4 Weight : BlendWeights;
+    float4 Color : COLOR;
+    float3 Normal : NORMAL;
+    float3 Tangent : TANGENT;
+    float4 Indices : BLENDINDICES;
+    float4 Weight : BLENDWEIGHTS;
 
     matrix Transform : INSTANCE;
     // InstanceID : GPU가 자동으로 생성하며, 쉐이더로 전달됩니다. C++ 코드에서 직접 설정할 필요가 없음
