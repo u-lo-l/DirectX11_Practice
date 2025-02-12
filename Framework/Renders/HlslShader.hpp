@@ -31,19 +31,19 @@ constexpr string HlslShader<T, E0>::GetEntryPoint( D3D11_SHADER_VERSION_TYPE Typ
 }
 
 template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-HlslShader<T, E0>::HlslShader(const wstring & VsFileName, const wstring & PsFileName, const wstring & CsFileName)
+HlslShader<T, E0>::HlslShader(const wstring & ShaderFileName)
 	: DeviceContext(D3D::Get()->GetDeviceContext())
 	, VertexShader(nullptr)
 	, PixelShader(nullptr)
 	, ComputeShader(nullptr)
 	, InputLayout(nullptr)
 {
-	if (VsFileName.empty() == false)
-		CompileShader(D3D11_SHVER_VERTEX_SHADER, VsFileName);
-	if (PsFileName.empty() == false)
-		CompileShader(D3D11_SHVER_PIXEL_SHADER, PsFileName);
-	if (CsFileName.empty() == false)
-		CompileShader(D3D11_SHVER_COMPUTE_SHADER, CsFileName);
+	if (ShaderFileName.empty() == false)
+	{
+		CompileShader(D3D11_SHVER_VERTEX_SHADER, ShaderFileName);
+		CompileShader(D3D11_SHVER_PIXEL_SHADER, ShaderFileName);
+		CompileShader(D3D11_SHVER_COMPUTE_SHADER, ShaderFileName);
+	}
 }
 
 template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
@@ -53,6 +53,12 @@ HlslShader<T, E0>::~HlslShader()
 	SAFE_RELEASE(PixelShader);
 	SAFE_RELEASE(ComputeShader);
 	SAFE_RELEASE(InputLayout);
+	for (auto & Buffer : ConstantBufferMap)
+		SAFE_RELEASE(Buffer.second);
+	for (auto & SRV : SRVMap)
+		SAFE_RELEASE(SRV.second);
+	for (auto & UAV : UAVMap)
+		SAFE_RELEASE(UAV.second);
 }
 
 template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
@@ -112,6 +118,64 @@ void HlslShader<T, E0>::Dispatch( UINT X, UINT Y, UINT Z ) const
 	ID3D11UnorderedAccessView * NullUAV = nullptr;
 	DeviceContext->CSSetUnorderedAccessViews(0,1, &NullUAV, nullptr);
 	DeviceContext->CSSetShader(nullptr, nullptr, 0);
+}
+
+template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
+void HlslShader<T, E0>::CreateConstantBuffer( const string & Name, UINT BufferSize ) const
+{
+	D3D11_BUFFER_DESC ConstantBufferDesc = {};
+	ConstantBufferDesc.ByteWidth = BufferSize;
+	ConstantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	ID3D11Buffer * ConstantBuffer = nullptr;
+	HRESULT Hr = D3D::Get()->GetDevice()->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
+	ASSERT(SUCCEEDED(Hr), "IConstantBuffer Creation Fail");
+	this->ConstantBufferMap[Name] = ConstantBuffer;
+}
+
+template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
+ID3D11Buffer * HlslShader<T, E0>::GetConstantBuffer(const string & InBufferName) const
+{
+	const auto It = ConstantBufferMap.find(InBufferName);
+	if (It != ConstantBufferMap.cend())
+	{
+		return It->second;
+	}
+	return nullptr;
+}
+
+template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
+void HlslShader<T, E0>::CreateSRV( const string & Name, ID3D11ShaderResourceView ** SRV ) const
+{
+}
+
+template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
+ID3D11ShaderResourceView * HlslShader<T, E0>::GetSRV( const string & InSRVName ) const
+{
+	const auto It = SRVMap.find(InSRVName);
+	if (It != SRVMap.cend())
+	{
+		return It->second;
+	}
+	return nullptr;
+}
+
+template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
+void HlslShader<T, E0>::CreateUAV( const string & Name, ID3D11UnorderedAccessView ** UAV ) const
+{
+}
+
+template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
+ID3D11UnorderedAccessView * HlslShader<T, E0>::GetUAV( const string & InUAVName ) const
+{
+	const auto It = UAVMap.find(InUAVName);
+	if (It != UAVMap.cend())
+	{
+		return It->second;
+	}
+	return nullptr;
 }
 
 template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>

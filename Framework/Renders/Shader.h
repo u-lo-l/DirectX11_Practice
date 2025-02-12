@@ -52,20 +52,20 @@ public:
 	void DrawIndexed(UINT TechniqueIndex, UINT Pass, UINT IndexCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0);
 
 	//ID3DX11EffectVariable * Variable(const string & Name) const;
-	ID3DX11EffectScalarVariable * AsScalar(const string & Name) const;
-	ID3DX11EffectVectorVariable * AsVector(const string & Name) const;
+	// ID3DX11EffectScalarVariable * AsScalar(const string & Name) const;
+	// ID3DX11EffectVectorVariable * AsVector(const string & Name) const;
 	ID3DX11EffectMatrixVariable * AsMatrix(const string & Name) const;
-	ID3DX11EffectStringVariable * AsString(const string & Name) const;
+	// ID3DX11EffectStringVariable * AsString(const string & Name) const;
 	ID3DX11EffectShaderResourceVariable * AsSRV(const string & Name) const;
-	ID3DX11EffectRenderTargetViewVariable * AsRTV(const string & Name) const;
-	ID3DX11EffectDepthStencilViewVariable * AsDSV(const string & Name) const;
+	// ID3DX11EffectRenderTargetViewVariable * AsRTV(const string & Name) const;
+	// ID3DX11EffectDepthStencilViewVariable * AsDSV(const string & Name) const;
 	ID3DX11EffectUnorderedAccessViewVariable * AsUAV(const string & Name) const;
 	ID3DX11EffectConstantBuffer * AsConstantBuffer(const string & Name) const;
-	ID3DX11EffectShaderVariable * AsShader(const string & Name) const;
-	ID3DX11EffectBlendVariable * AsBlend(const string & Name) const;
-	ID3DX11EffectDepthStencilVariable * AsDepthStencil(const string & Name) const;
-	ID3DX11EffectRasterizerVariable * AsRasterizer(const string & Name) const;
-	ID3DX11EffectSamplerVariable * AsSampler(const string & Name) const;
+	// ID3DX11EffectShaderVariable * AsShader(const string & Name) const;
+	// ID3DX11EffectBlendVariable * AsBlend(const string & Name) const;
+	// ID3DX11EffectDepthStencilVariable * AsDepthStencil(const string & Name) const;
+	// ID3DX11EffectRasterizerVariable * AsRasterizer(const string & Name) const;
+	// ID3DX11EffectSamplerVariable * AsSampler(const string & Name) const;
 
 	
 	void DrawInstanced(UINT TechniqueIndex, UINT PassIndex, UINT vertexCountPerInstance, UINT instanceCount, UINT startVertexLocation = 0, UINT startInstanceLocation = 0);

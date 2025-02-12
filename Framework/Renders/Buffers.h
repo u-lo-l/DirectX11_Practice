@@ -69,7 +69,17 @@ public:
 	operator ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() { return Buffer; }
-	
+
+	/**
+	 * <code>D3D11_MAPPED_SUBRESOURCE</code> : DirectX에서 버퍼에 접근하기 위한 매핑 정보를 저장하는 구조체
+	 * 
+	 * Map : GPU 리소스를 CPU가 수정할 수 있도록 매핑.
+	 *       - <code>BufferDesc.Usage = D3D11_USAGE_DYNAMIC</code>로 설정된 리소스에만 사용 가능.
+	 *       - <code>D3D11_MAP_WRITE_DISCARD</code>: 기존 데이터를 버리고 새 데이터를 쓰는 방식. 동기화를 방지하여 성능 최적화.
+	 * 
+	 * Unmap : GPU가 다시 리소스를 사용할 수 있도록 매핑을 해제.
+	 *         - 반드시 Unmap을 호출해야 GPU가 데이터를 정상적으로 읽을 수 있음.
+	 */
 	void BindToGPU() override;
 private:
 	UINT DataSize = 0;

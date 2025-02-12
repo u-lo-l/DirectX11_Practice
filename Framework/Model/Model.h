@@ -100,7 +100,7 @@ private:
 	AnimationBlendingDesc BlendingDatas[MaxModelInstanceCount];
 	ConstantBuffer * FrameCBuffer;
 	string CBufferName = "CB_AnimationBlending";
-	vector<IECB_t *> ECB_FrameBuffers;
+	vector<IECB_t *> ECB_FrameBuffers; // 쉐이더 별 ID3DX11EffectConstantBuffer
 	
 #pragma endregion Animation Data
 	

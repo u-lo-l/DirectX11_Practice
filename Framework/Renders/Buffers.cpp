@@ -84,19 +84,26 @@ VertexBuffer::VertexBuffer(
 
 	if (bCpwWrite == false && bGpuWrite == false)
 	{
+		// 초기 생성 이후 절대 변경 불가
 		BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	}
 	else if (bCpwWrite == true && bGpuWrite == false)
 	{
+		// 매 프레임 갱신 되는 데이터
 		BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	}
 	else if (bCpwWrite == false && bGpuWrite == true)
 	{
+		// UpdateSubresource로 데이터를 갱신할 수 있음
 		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	}
-	else
+	else // bCpwWrite == true && bCpuRead == true
 	{
+		// GPU에선 접근 불가하다. CPU에서 데이터를 읽고쓸 수 있다.
+		// 그럼 얘는 어디 씀?
+		// - CPU에서 텍스쳐를 준비하고 CopyResource로 GPU로 전달 할 수 있다
+		// - GPU에서 처리한 데이터를 GPU에서 CPU로 D3D11_USAGE_STAGING으로 복사한 후 Map()으로 읽을 수 있다.
 		BufferDesc.Usage = D3D11_USAGE_STAGING;
 		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
 	}
@@ -167,12 +174,20 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
 	printf("%s Buffer size %d for %s Created [%s]\n", BufferType.c_str(), InDataSize, DataName.c_str(), BufferInfo.c_str());
 #endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
+	
+	/*  ConstantBuffer 만들기 :
+	 * 1. Vertex Shader Constant Data를 기술할 구조체 정의. 이건 BaseBuffer에 있음.
+	 * 2. D3D11_BUFFER_DECS 구조체 만들기.
+	 * 2-1. BindFlag에는 D3D11_BIND_CONSTANT_BUFFER, ByteWidth 에는 구조체의 크기를 넣어주면 된다.
+	 * 3. SubResourceData를 만들기 <- Data가 불변하는 경우는 여기서 해도 된다.
+	 * 3-1. D3D11_SUBRESOURCE_DATA구조체의 pSysMem이 ConstantData가 들어있는 구조체의 주소를 가리켜야한다.
+	 * 3-2. 불변하는 데이터라면 Usage가 D3D11_USAGE_DEFAULT 또는 D3D11_USAGE_IMMUTABLE기 될 수 있다.
+	*/
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
 	
 	BufferDesc.ByteWidth = DataSize;
 	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	
 	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -180,23 +195,20 @@ ConstantBuffer::ConstantBuffer(void * InData, string InDataName, UINT InDataSize
 	 * you must set the ByteWidth value of D3D11_BUFFER_DESC in multiples of 16
 	 * https://learn.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-id3d11device-createbuffer
 	 * https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-resources-buffers-constant-how-to
+	 * https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-packing-rules
 	 */
 	CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &Buffer) >= 0);
 }
 
-
-/**
- * <code>D3D11_MAPPED_SUBRESOURCE</code> : DirectX에서 버퍼에 접근하기 위한 매핑 정보를 저장하는 구조체
- * 
- * Map : GPU 리소스를 CPU가 수정할 수 있도록 매핑.
- *       - <code>BufferDesc.Usage = D3D11_USAGE_DYNAMIC</code>로 설정된 리소스에만 사용 가능.
- *       - <code>D3D11_MAP_WRITE_DISCARD</code>: 기존 데이터를 버리고 새 데이터를 쓰는 방식. 동기화를 방지하여 성능 최적화.
- * 
- * Unmap : GPU가 다시 리소스를 사용할 수 있도록 매핑을 해제.
- *         - 반드시 Unmap을 호출해야 GPU가 데이터를 정상적으로 읽을 수 있음.
- */
 void ConstantBuffer::BindToGPU()
 {
+	/*
+	 * Data가 변하는 경우는 변할 때 마다 Map / Unmap 해주어야한다.
+	 * [!] Data가 변하기 떄문에 BufferDesc.Usage는 D3D11_USAGE_DYNAMIC 여야 하며
+	 * [!] Data가 변하기 떄문에 MapType은 D3D11_MAP_WRITE_DISCARD여야 한다.
+	 *
+	 * TODO : DynamicConstantBuffer인지 StaticConstantBuffer인지 구분하자.
+	 */
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
 	D3D11_MAPPED_SUBRESOURCE Subresource;
@@ -205,7 +217,6 @@ void ConstantBuffer::BindToGPU()
 	memcpy(Subresource.pData, this->Data, this->DataSize);
 	DeviceContext->Unmap(Buffer, 0);
 }
-
 
 /*=============================================================================*/
 

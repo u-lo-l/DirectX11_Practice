@@ -135,6 +135,8 @@ matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params, int Instan
     return lerp(current, next, InterpRate);
 }
 
+// Load : Texel Data를 Filtering이나 Sampling 없이 읽는다.
+// https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/dx-graphics-hlsl-to-load
 matrix ClipTransformMatrix(int BoneIndex, int TargetFrame, int ClipIndex)
 {
     float4 ClipTransform[4];

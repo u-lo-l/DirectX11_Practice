@@ -108,7 +108,7 @@ void Model::Tick()
 				WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
 			}
 		}
-		for (UINT InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
+		for (int InstanceId = 0; InstanceId < static_cast<int>(WorldTransforms.size()) ; InstanceId++)
 		{
 			AnimationBlendingDesc & TargetBlending = BlendingDatas[InstanceId];
 
@@ -149,6 +149,14 @@ void Model::Render() const
 		FrameCBuffer->BindToGPU();
 		for (IECB_t * ECB_FrameBuffer : ECB_FrameBuffers)
 			CHECK(ECB_FrameBuffer->SetConstantBuffer(*FrameCBuffer) >= 0);
+		/*
+		 * HLSHShader로 변경하면
+		 * for (ID3D11Buffer * Buffer : FrameBuffers) 
+		 *	D3D::Get()->DeviceContext()->VSSetConstantBuffer(0,1,&Frame)
+		 *	FrameBuffer는 Model의 각 Material이 하나씩 물고있는 HLSLShader의 ConstantBufferMap에 있는 ID3D11Buffer*
+		 *	FrameCBuffer는 실제로 데이터가 들어있는 ConstantBuffer 클래스
+		 *	
+		 */
 	}
 	
 	for (ModelMesh * const M : Meshes)
@@ -183,7 +191,7 @@ const Transform * Model::GetTransforms( UINT Index ) const
 
 void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 {
-	ASSERT(InClipIndex < Animations.size(), "Animation Index Not Valid")
+	ASSERT(InClipIndex < (int)Animations.size(), "Animation Index Not Valid")
 	AnimationBlendingDesc & TargetBlendingData = BlendingDatas[InInstanceID];
 	if(TargetBlendingData.Current.Clip < 0)
 	{

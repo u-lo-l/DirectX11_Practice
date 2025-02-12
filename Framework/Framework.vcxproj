@@ -11,15 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Color.cpp" />
-    <ClCompile Include="Core\Math.cpp" />
-    <ClCompile Include="Core\Matrix.cpp" />
-    <ClCompile Include="Core\Plane.cpp" />
-    <ClCompile Include="Core\Point.cpp" />
-    <ClCompile Include="Core\Quaternion.cpp" />
-    <ClCompile Include="Core\Vector.cpp" />
-    <ClCompile Include="Core\Vector2D.cpp" />
-    <ClCompile Include="Core\Vector4.cpp" />
+    <ClCompile Include="Math\Color.cpp" />
+    <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\Plane.cpp" />
+    <ClCompile Include="Math\Point.cpp" />
+    <ClCompile Include="Math\Quaternion.cpp" />
+    <ClCompile Include="Math\Vector.cpp" />
+    <ClCompile Include="Math\Vector2D.cpp" />
+    <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Environment\Terrain.cpp" />
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -58,15 +58,15 @@
     <ClCompile Include="Viewer\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Color.h" />
-    <ClInclude Include="Core\Math.h" />
-    <ClInclude Include="Core\Matrix.h" />
-    <ClInclude Include="Core\Plane.h" />
-    <ClInclude Include="Core\Point.h" />
-    <ClInclude Include="Core\Quaternion.h" />
-    <ClInclude Include="Core\Vector.h" />
-    <ClInclude Include="Core\Vector2D.h" />
-    <ClInclude Include="Core\Vector4.h" />
+    <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Plane.h" />
+    <ClInclude Include="Math\Point.h" />
+    <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Math\Vector2D.h" />
+    <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Environment\Terrain.h" />
     <ClInclude Include="Framework.h" />
@@ -146,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>./;../_Libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

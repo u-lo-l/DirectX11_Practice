@@ -13,7 +13,7 @@ private:
 	// ! 그건 나중에 처리하자.
 	static constexpr string GetEntryPoint(D3D11_SHADER_VERSION_TYPE Type);
 public:
-	HlslShader(const wstring & VsFileName, const wstring & PsFileName, const wstring & CsFileName = L"");
+	explicit HlslShader(const wstring & ShaderFileName);
 	~HlslShader();
 public:
 	void Draw(UINT VertexCount, UINT StartVertexLocation = 0) const;
@@ -21,6 +21,17 @@ public:
 	void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation = 0, UINT StartInstanceLocation = 0) const;
 	void DrawIndexedInstanced(UINT IndexCountPreInstance, UINT InstanceCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0, UINT StartInstanceLocation = 0) const;
 	void Dispatch(UINT X, UINT Y, UINT Z) const;
+
+public:
+	void CreateConstantBuffer(const string & Name, UINT BufferSize) const;
+	ID3D11Buffer * GetConstantBuffer(const string & InBufferName) const;
+	void UpdateConstantBuffer(UINT SlotIndex, ID3D11Buffer * InConstantBuffer) const;
+
+	void CreateSRV(const string & Name, ID3D11ShaderResourceView** SRV) const;
+	ID3D11ShaderResourceView * GetSRV(const string & InSRVName) const;
+
+	void CreateUAV(const string & Name, ID3D11UnorderedAccessView** UAV) const;
+	ID3D11UnorderedAccessView * GetUAV(const string & InUAVName) const;
 	
 private:
 	HlslShader(const HlslShader&) = delete;
@@ -40,4 +51,13 @@ private:
 	ID3D11PixelShader * PixelShader;
 	ID3D11ComputeShader * ComputeShader;
 	ID3D11InputLayout * InputLayout;
+
+	//Effect 사용 시 ConstantBuffer같은거 쉐이더에 있었는데...
+	/*
+	 * 예를 들어 ID3DX11EffectConstantBuffer타입의
+	 */
+	map<string, ID3D11Buffer*> ConstantBufferMap;
+	map<string, UINT> CBufferSlotMap;
+	map<string, ID3D11ShaderResourceView*> SRVMap;
+	map<string, ID3D11UnorderedAccessView*> UAVMap;
 };
