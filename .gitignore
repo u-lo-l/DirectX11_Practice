@@ -3,7 +3,6 @@ Debug/
 Debug*/*
 */*.zip
 .vs/
-*/*.lib
-*/*.pdb
-*.lib
-*.pdb
+**/Framework.lib
+**/Framework.pdb
+
