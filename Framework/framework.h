@@ -83,15 +83,15 @@ using namespace std;
 #pragma endregion
 
 #pragma region  SDT_Math
-	#include "Core/Vector2D.h"
-	#include "Core/Vector.h"
-	#include "Core/Vector4.h"
-	#include "Core/Quaternion.h"
-	#include "Core/Matrix.h"
-	#include "Core/Plane.h"
-	#include "Core/Point.h"
-	#include "Core/Color.h"
-	#include "Core/Math.h"
+	#include "Math/Vector2D.h"
+#include "Math/Vector.h"
+#include "Math/Vector4.h"
+#include "Math/Quaternion.h"
+#include "Math/Matrix.h"
+#include "Math/Plane.h"
+#include "Math/Point.h"
+#include "Math/Color.h"
+#include "Math/Math.h"
 #pragma endregion
 
 string GetD3D11ReturnMessage(HRESULT Hr);
