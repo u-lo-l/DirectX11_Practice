@@ -1,8 +1,6 @@
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
 #pragma once
-
-#include "framework.h"
 #include "Math/Vector4.h"
-#include "Math/Vector2D.h"
 
 struct ShaderInputType
 {
@@ -10,7 +8,7 @@ struct ShaderInputType
 };
 
 //---------------------------------------------------------------------------//
-struct Vertex : ShaderInputType
+struct Vertex final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -20,7 +18,7 @@ struct Vertex : ShaderInputType
 	Vector Position;
 };
 //---------------------------------------------------------------------------//
-struct VertexColor : ShaderInputType
+struct VertexColor final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -35,7 +33,7 @@ struct VertexColor : ShaderInputType
 	Color Color;
 };
 //---------------------------------------------------------------------------//
-struct VertexTexture : ShaderInputType
+struct VertexTexture final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -51,7 +49,7 @@ struct VertexTexture : ShaderInputType
 };
 
 //---------------------------------------------------------------------------//
-struct VertexTextureColor : ShaderInputType
+struct VertexTextureColor final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -71,7 +69,7 @@ struct VertexTextureColor : ShaderInputType
 	Color Color;
 };
 //---------------------------------------------------------------------------//
-struct VertexNormal : ShaderInputType
+struct VertexNormal final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -84,7 +82,7 @@ struct VertexNormal : ShaderInputType
 	Vector Normal;
 };
 //---------------------------------------------------------------------------//
-struct VertexTextureNormal : ShaderInputType
+struct VertexTextureNormal final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -100,7 +98,7 @@ struct VertexTextureNormal : ShaderInputType
 
 //---------------------------------------------------------------------------//
 
-typedef struct VertexTextureColorNormalTangentBlend : ShaderInputType
+typedef struct VertexTextureColorNormalTangentBlend final : ShaderInputType
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 

@@ -26,7 +26,6 @@ using namespace std;
 	#pragma comment(lib, "D3DCompiler.lib")
 #pragma endregion
 
-
 #pragma region Effect
 	#include "Effect/d3dx11effect.h"
 	#pragma comment(lib, "Effect/Effects11d.lib")
