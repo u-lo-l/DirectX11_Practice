@@ -1,8 +1,8 @@
 #pragma once
 
 #include "framework.h"
-#include "Core/Vector4.h"
-#include "Core/Vector2D.h"
+#include "Math/Vector4.h"
+#include "Math/Vector2D.h"
 
 struct ShaderInputType
 {

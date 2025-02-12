@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Core/Quaternion.h"
+#include "Math/Quaternion.h"
 
 typedef struct ModelAnimationFrameVector FrameDataVec;
 typedef struct ModelAnimationFrameQuat FrameDataQuat;
