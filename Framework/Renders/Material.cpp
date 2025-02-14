@@ -1,7 +1,6 @@
 ﻿// ReSharper disable All
 #include "framework.h"
 #include "Material.h"
-#include "Buffers.h"
 
 #ifdef DO_DEBUG
 Material::Material( const string & MetaData )
@@ -25,19 +24,19 @@ Material::Material( const wstring & InShaderFileName, const string & MetaData )
 Material::Material()
  : Drawer(nullptr), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
-	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CBuffer = new ConstantBuffer(ShaderType::PixelShader, &ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
 
 Material::Material(Shader * InDrawer )
  : Drawer(InDrawer), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CBuffer = new ConstantBuffer(ShaderType::PixelShader, &ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
 
 Material::Material( const wstring & InShaderFileName )
  : Drawer(new Shader(InShaderFileName)), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CBuffer = new ConstantBuffer(ShaderType::PixelShader, &ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
 }
 #endif
 

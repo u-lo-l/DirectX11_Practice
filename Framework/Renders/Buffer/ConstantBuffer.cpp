@@ -1,0 +1,51 @@
+﻿#include "framework.h"
+#include "ConstantBuffer.h"
+
+ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, void * InData, string InDataName, UINT InDataSize, bool bStatic)
+ : DataSize(InDataSize), DataName(move(InDataName)), TargetShaderType(TargetShaderType), bIsStatic(bStatic)
+{
+	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
+
+	Data = InData;
+#ifdef DO_DEBUG
+	BufferType = "Constant";
+	BufferInfo = move(DataName);
+	printf("%s Buffer size %d for %s Created [%s]\n", BufferType.c_str(), InDataSize, DataName.c_str(), BufferInfo.c_str());
+#endif
+	ID3D11Device * Device = D3D::Get()->GetDevice();
+	
+	
+	D3D11_BUFFER_DESC BufferDesc;
+	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+	
+	BufferDesc.ByteWidth = DataSize;
+	BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	if (bIsStatic == false)
+	{
+		BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &Buffer) >= 0);
+	}
+	else
+	{
+		BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		D3D11_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = this->Data;
+		InitData.SysMemPitch = 0;
+		InitData.SysMemSlicePitch = 0;
+		CHECK(Device->CreateBuffer(&BufferDesc, &InitData, &Buffer) >= 0);
+	}
+}
+
+void ConstantBuffer::BindToGPU()
+{
+	if (bIsStatic == true)
+		return ;
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	D3D11_MAPPED_SUBRESOURCE Subresource;
+	// D3D11_MAP_WRITE_DISCARD : 기존 데이터를 버리고 새 데이터를 쓸 때 사용. GPU와 CPU 간 동기화를 방지하고 성능을 최적화하기 위해 기존 데이터를 무시.
+	CHECK(DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource) >= 0);
+	memcpy(Subresource.pData, this->Data, this->DataSize);
+	DeviceContext->Unmap(Buffer, 0);
+}

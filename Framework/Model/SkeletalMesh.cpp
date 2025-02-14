@@ -27,7 +27,7 @@ void SkeletalMesh::CreateBuffers()
 	ModelMesh::CreateBuffers();
 	
 	const string CBufferInfo = MeshName + " : Base Bone Index for this Mesh";
-	BoneIndexBuffer = new ConstantBuffer(&BoneIndexData, CBufferInfo, sizeof(BoneIndexDesc));
+	BoneIndexBuffer = new ConstantBuffer(ShaderType::VertexShader, &BoneIndexData, CBufferInfo, sizeof(BoneIndexDesc));
 	ECB_BoneIndexBuffer = CachedShader->AsConstantBuffer(CBufferName);
 }
 

@@ -7,6 +7,16 @@ using std::map;
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+enum class ShaderType : uint8_t
+{
+	PixelShader		= 0b000001,
+	VertexShader	= 0b000010,
+	GeometryShader	= 0b000100,
+	HullShader		= 0b001000,
+	DomainShader	= 0b010000,
+	ComputeShader	= 0b100000
+};
+
 template <class T>
 class HlslShader
 {
@@ -14,11 +24,11 @@ public:
 	constexpr static int VertexSlot = 0;
 	constexpr static int InstanceSlot = 9;
 private:
-	static string GetShaderTarget( D3D11_SHADER_VERSION_TYPE Type );
+	static string GetShaderTarget( ShaderType Type );
 	// ! 우선 하나의 Shader에 하나의 entry_point만 있다고 가정하자.
 	// ! 물론 여러 함수를 하나의 hlsl에 작성하고 선택 할 수도 있겠지.
 	// ! 그건 나중에 처리하자.
-	static string GetEntryPoint( D3D11_SHADER_VERSION_TYPE Type );
+	static string GetEntryPoint( ShaderType Type );
 public:
 	explicit HlslShader(const wstring & ShaderFileName);
 	~HlslShader();
@@ -35,7 +45,7 @@ public:
 	int AddConstantBuffer(ID3D11Buffer * CBuffer);
 	
 private:
-	void CompileShader(D3D11_SHADER_VERSION_TYPE Type, const wstring & ShaderFileName);
+	void CompileShader(ShaderType Type, const wstring & ShaderFileName);
 	void InitializeInputLayout(ID3DBlob * VertexShaderBlob);
 
 	void BeginDraw() const;

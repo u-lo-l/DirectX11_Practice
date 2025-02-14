@@ -217,6 +217,7 @@ void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 void Model::CreateAnimationBuffers()
 {
 	FrameCBuffer = new ConstantBuffer(
+		ShaderType::VertexShader,
 		&this->BlendingDatas,
 		"Instancing Animation Blending Description",
 		sizeof(AnimationBlendingDesc) * MaxModelInstanceCount

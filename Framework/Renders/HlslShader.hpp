@@ -2,13 +2,13 @@
 #include "framework.h"
 
 template <class T>
-std::string HlslShader<T>::GetShaderTarget( D3D11_SHADER_VERSION_TYPE Type )
+std::string HlslShader<T>::GetShaderTarget( ShaderType Type )
 {
 	switch (Type)
 	{
-	case D3D11_SHVER_VERTEX_SHADER:		return "vs_5_0";
-	case D3D11_SHVER_PIXEL_SHADER:		return "ps_5_0";
-	case D3D11_SHVER_COMPUTE_SHADER:	return "cs_5_0";
+	case ShaderType::VertexShader:	return "vs_5_0";
+	case ShaderType::PixelShader:	return "ps_5_0";
+	case ShaderType::ComputeShader:	return "cs_5_0";
 	default:
 		ASSERT(false, "Unknown Shader Type")
 		return "";
@@ -16,13 +16,13 @@ std::string HlslShader<T>::GetShaderTarget( D3D11_SHADER_VERSION_TYPE Type )
 }
 
 template <class T>
-std::string HlslShader<T>::GetEntryPoint( D3D11_SHADER_VERSION_TYPE Type )
+std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 {
 	switch (Type)
 	{
-	case D3D11_SHVER_VERTEX_SHADER:		return "VSMain";
-	case D3D11_SHVER_PIXEL_SHADER:		return "PSMain";
-	case D3D11_SHVER_COMPUTE_SHADER:	return "CSMain";
+	case ShaderType::VertexShader:		return "VSMain";
+	case ShaderType::PixelShader:		return "PSMain";
+	case ShaderType::ComputeShader:	return "CSMain";
 	default :
 		ASSERT(false, "Unknown Shader Type")
 		return "";
@@ -40,9 +40,9 @@ HlslShader<T>::HlslShader(const wstring & ShaderFileName)
 	if (ShaderFileName.empty() == false)
 	{
 		FileName = W_SHADER_PATH + ShaderFileName;
-		CompileShader(D3D11_SHVER_VERTEX_SHADER, FileName);
-		CompileShader(D3D11_SHVER_PIXEL_SHADER, FileName);
-		// CompileShader(D3D11_SHVER_COMPUTE_SHADER, FileName);
+		CompileShader(ShaderType::VertexShader, FileName);
+		CompileShader(ShaderType::PixelShader, FileName);
+		// CompileShader(ShaderType::ComputeShader, FileName);
 	}
 }
 
@@ -125,7 +125,7 @@ int HlslShader<T>::AddConstantBuffer( ID3D11Buffer * CBuffer )
 }
 
 template <class T>
-void HlslShader<T>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wstring & ShaderFileName )
+void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileName )
 {
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
@@ -163,16 +163,16 @@ void HlslShader<T>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wstring
 	HRESULT Hr = 0;
 	const void * BufferAddr = ShaderBlob->GetBufferPointer();
 	const UINT BufferSize = ShaderBlob->GetBufferSize();
-	if (Type == D3D11_SHVER_VERTEX_SHADER)
+	if (Type == ShaderType::VertexShader)
 	{
 		Hr = Device->CreateVertexShader(BufferAddr, BufferSize, nullptr, &VertexShader);
 		InitializeInputLayout(ShaderBlob);
 	}
-	else if (Type == D3D11_SHVER_PIXEL_SHADER)
+	else if (Type == ShaderType::PixelShader)
 	{
 		Hr = Device->CreatePixelShader(BufferAddr, BufferSize, nullptr, &PixelShader);
 	}
-	else if (Type == D3D11_SHVER_COMPUTE_SHADER)
+	else if (Type == ShaderType::ComputeShader)
 	{
 		Hr = Device->CreateComputeShader(BufferAddr, BufferSize, nullptr, &ComputeShader);
 	}

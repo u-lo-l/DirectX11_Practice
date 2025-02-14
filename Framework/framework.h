@@ -67,8 +67,8 @@ using namespace std;
 	#include "Renders/Texture.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"
-	#include "Renders/Buffers.h"
-	#include "Renders/ConstantDataBinder.h"
+	#include "Renders/Buffer/Buffers.h"
+#include "Renders/ConstantDataBinder.h"
 	#include "Renders/Transform.h"
 
 	#include "Utilites/Path.h"
