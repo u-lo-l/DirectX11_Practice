@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <assimp/vector3.h>
+#include <DirectXMath.h>
 
 class Matrix;
 class Quaternion;

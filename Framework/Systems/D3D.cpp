@@ -44,7 +44,8 @@ void D3D::ClearDepthStencilView() const
 
 void D3D::Present() const
 {
-	CHECK(SwapChain->Present(0, 0) >= 0);
+	HRESULT hr = SwapChain->Present(0, 0);
+	CHECK(hr >= 0);
 }
 
 void D3D::ResizeScreen( float InWidth, float InHeight )

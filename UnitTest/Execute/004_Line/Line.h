@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 class Line : public IExecutable
 {
@@ -13,7 +14,8 @@ public:
 
 private:
 	Shader* shader;
+	HlslShader<Vertex> * Drawer;
 	
-	Vector Vertices[2];
-	ID3D11Buffer* VertexBuffer;
+	Vertex Vertices[2];
+	ID3D11Buffer* VertexBuffer = nullptr;
 };

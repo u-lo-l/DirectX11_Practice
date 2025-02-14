@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Execute\004_Line\Line.cpp" />
+    <ClCompile Include="Execute\004_Line\Line2.cpp" />
+    <ClCompile Include="Execute\004_Line\Line_Circle.cpp" />
+    <ClCompile Include="Execute\005_Triangle\Triangle_List.cpp" />
+    <ClCompile Include="Execute\010_IndexBuffer\IndexBufferDemo.cpp" />
     <ClCompile Include="Execute\RawBufferDemo\RawBufferDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -26,6 +31,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Execute\004_Line\Line.h" />
+    <ClInclude Include="Execute\004_Line\Line2.h" />
+    <ClInclude Include="Execute\004_Line\Line_Circle.h" />
+    <ClInclude Include="Execute\005_Triangle\Triangle_List.h" />
+    <ClInclude Include="Execute\010_IndexBuffer\IndexBufferDemo.h" />
     <ClInclude Include="Execute\RawBufferDemo\RawBufferDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />

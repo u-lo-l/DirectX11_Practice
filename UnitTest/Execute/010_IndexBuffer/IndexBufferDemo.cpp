@@ -34,7 +34,7 @@ namespace Sdt
 
 		ID3D11Device* Device = D3D::Get()->GetDevice();
 		HRESULT hr = Device->CreateBuffer(&BufferDesc, &InitData, &VertexBuffer);
-		CHECK(hr);
+		CHECK(hr >= 0);
 
 		// Index Buffer
 		Indices = new UINT[INDEX_COUNT]
@@ -54,20 +54,21 @@ namespace Sdt
 		InitData.SysMemSlicePitch = 0;
 
 		hr = Device->CreateBuffer(&BufferDesc, &InitData, &IndexBuffer);
-		CHECK(hr);
+		CHECK(hr >= 0);
 
-
-
-		D3DXMatrixIdentity(&WorldMat);
+		WorldMat = Matrix::Identity;
+		// D3DXMatrixIdentity(&WorldMat);
 
 		Vector CameraLocation{ 0, 0, -10 };
 		Vector CameraForward{ 0, 0, 1 };
 		Vector CameraUp{ 0, 1, 0 };
 		Vector CameraAt = CameraLocation + CameraForward;
-		D3DXMatrixLookAtLH(&ViewMat, &CameraLocation, &CameraAt, &CameraUp);
+		ViewMat = Matrix::CreateLookAt(CameraLocation, CameraForward, CameraUp);
+		// D3DXMatrixLookAtLH(&ViewMat, &CameraLocation, &CameraAt, &CameraUp);
 
 		float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-		D3DXMatrixPerspectiveFovLH(&ProjectionMat, Math::PI * 0.25f, Aspect, 0.1f, 1000);
+		ProjectionMat = Matrix::CreatePerspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.01f, 100.0f);
+		// D3DXMatrixPerspectiveFovLH(&ProjectionMat, Math::PI * 0.25f, Aspect, 0.1f, 1000);
 	}
 
 	void IndexBufferDemo::Destroy()

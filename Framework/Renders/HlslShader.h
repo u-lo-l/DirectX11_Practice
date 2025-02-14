@@ -1,20 +1,29 @@
 ﻿#pragma once
+#include <string>
+#include <map>
+using std::string;
+using std::wstring;
+using std::map;
+#include <d3d11.h>
+#include <d3dcompiler.h>
 
-template <class T,  enable_if_t<is_base_of_v<ShaderInputType, T>, int> = 0>
+template <class T>
 class HlslShader
 {
 public:
 	constexpr static int VertexSlot = 0;
 	constexpr static int InstanceSlot = 9;
 private:
-	static constexpr string GetShaderTarget(D3D11_SHADER_VERSION_TYPE Type);
+	static string GetShaderTarget( D3D11_SHADER_VERSION_TYPE Type );
 	// ! 우선 하나의 Shader에 하나의 entry_point만 있다고 가정하자.
 	// ! 물론 여러 함수를 하나의 hlsl에 작성하고 선택 할 수도 있겠지.
 	// ! 그건 나중에 처리하자.
-	static constexpr string GetEntryPoint(D3D11_SHADER_VERSION_TYPE Type);
+	static string GetEntryPoint( D3D11_SHADER_VERSION_TYPE Type );
 public:
 	explicit HlslShader(const wstring & ShaderFileName);
 	~HlslShader();
+private:
+	wstring FileName;
 public:
 	void Draw(UINT VertexCount, UINT StartVertexLocation = 0) const;
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0) const;
@@ -23,22 +32,16 @@ public:
 	void Dispatch(UINT X, UINT Y, UINT Z) const;
 
 public:
-	void CreateConstantBuffer(const string & Name, UINT BufferSize) const;
+	void CreateConstantBuffer(const string & Name, UINT BufferSize);
 	ID3D11Buffer * GetConstantBuffer(const string & InBufferName) const;
-	void UpdateConstantBuffer(UINT SlotIndex, ID3D11Buffer * InConstantBuffer) const;
+	// void UpdateConstantBuffer(UINT SlotIndex, ID3D11Buffer * InConstantBuffer) const;
 
-	void CreateSRV(const string & Name, ID3D11ShaderResourceView** SRV) const;
+	void CreateSRV(const string & Name, ID3D11ShaderResourceView** SRV);
 	ID3D11ShaderResourceView * GetSRV(const string & InSRVName) const;
 
-	void CreateUAV(const string & Name, ID3D11UnorderedAccessView** UAV) const;
+	void CreateUAV(const string & Name, ID3D11UnorderedAccessView** UAV);
 	ID3D11UnorderedAccessView * GetUAV(const string & InUAVName) const;
 	
-private:
-	HlslShader(const HlslShader&) = delete;
-	HlslShader& operator=(const HlslShader&) = delete;
-	HlslShader(HlslShader&&) = delete;
-	HlslShader& operator=(HlslShader&&) = delete;
-
 private:
 	void CompileShader(D3D11_SHADER_VERSION_TYPE Type, const wstring & ShaderFileName);
 	void InitializeInputLayout(ID3DBlob * VertexShaderBlob);
@@ -61,3 +64,4 @@ private:
 	map<string, ID3D11ShaderResourceView*> SRVMap;
 	map<string, ID3D11UnorderedAccessView*> UAVMap;
 };
+

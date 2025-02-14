@@ -30,9 +30,9 @@ void Vertex::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs
 // float3 Position, float4 Color
 void VertexColor::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs )
 {
-	OutLayoutDescs.resize(3);
+	OutLayoutDescs.resize(2);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		OutLayoutDescs[i].SemanticIndex = 0;
 		OutLayoutDescs[i].InputSlot = HlslShader<Vertex>::VertexSlot;
@@ -47,13 +47,13 @@ void VertexColor::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayout
 	OutLayoutDescs[1].SemanticName = "COLOR";
 	OutLayoutDescs[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
-	OutLayoutDescs[3].SemanticName = "INSTANCE";
-	OutLayoutDescs[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	OutLayoutDescs[3].SemanticIndex = 0;
-	OutLayoutDescs[3].InputSlot = HlslShader<VertexColor>::InstanceSlot;
-	OutLayoutDescs[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	OutLayoutDescs[3].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-	OutLayoutDescs[3].InstanceDataStepRate = 1;
+	// OutLayoutDescs[2].SemanticName = "INSTANCE";
+	// OutLayoutDescs[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	// OutLayoutDescs[2].SemanticIndex = 0;
+	// OutLayoutDescs[2].InputSlot = HlslShader<VertexColor>::InstanceSlot;
+	// OutLayoutDescs[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	// OutLayoutDescs[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	// OutLayoutDescs[2].InstanceDataStepRate = 1;
 }
 
 // float3 Position, float2 UV
@@ -76,13 +76,13 @@ void VertexTexture::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayo
 	OutLayoutDescs[1].SemanticName = "UV";
 	OutLayoutDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 
-	OutLayoutDescs[3].SemanticName = "INSTANCE";
-	OutLayoutDescs[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	OutLayoutDescs[3].SemanticIndex = 0;
-	OutLayoutDescs[3].InputSlot = HlslShader<VertexTexture>::InstanceSlot;
-	OutLayoutDescs[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	OutLayoutDescs[3].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-	OutLayoutDescs[3].InstanceDataStepRate = 1;
+	OutLayoutDescs[2].SemanticName = "INSTANCE";
+	OutLayoutDescs[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	OutLayoutDescs[2].SemanticIndex = 0;
+	OutLayoutDescs[2].InputSlot = HlslShader<VertexTexture>::InstanceSlot;
+	OutLayoutDescs[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	OutLayoutDescs[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	OutLayoutDescs[2].InstanceDataStepRate = 1;
 }
 
 // float3 position, float2 UV, float4 Color

@@ -62,6 +62,8 @@ using namespace std;
 
 	#include "Renders/Shader.h"
 	#include "Renders/VertexLayout.h"
+	#include "Renders/HlslShader.h"
+	// #include "Renders/HlslShader.hpp"
 	#include "Renders/Texture.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"

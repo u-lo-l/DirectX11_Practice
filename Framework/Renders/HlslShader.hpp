@@ -1,9 +1,8 @@
 ﻿#pragma once
 #include "framework.h"
-#include "HlslShader.h"
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-constexpr string HlslShader<T, E0>::GetShaderTarget( D3D11_SHADER_VERSION_TYPE Type )
+template <class T>
+std::string HlslShader<T>::GetShaderTarget( D3D11_SHADER_VERSION_TYPE Type )
 {
 	switch (Type)
 	{
@@ -16,8 +15,8 @@ constexpr string HlslShader<T, E0>::GetShaderTarget( D3D11_SHADER_VERSION_TYPE T
 	}
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-constexpr string HlslShader<T, E0>::GetEntryPoint( D3D11_SHADER_VERSION_TYPE Type )
+template <class T>
+std::string HlslShader<T>::GetEntryPoint( D3D11_SHADER_VERSION_TYPE Type )
 {
 	switch (Type)
 	{
@@ -30,8 +29,8 @@ constexpr string HlslShader<T, E0>::GetEntryPoint( D3D11_SHADER_VERSION_TYPE Typ
 	}
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-HlslShader<T, E0>::HlslShader(const wstring & ShaderFileName)
+template <class T>
+HlslShader<T>::HlslShader(const wstring & ShaderFileName)
 	: DeviceContext(D3D::Get()->GetDeviceContext())
 	, VertexShader(nullptr)
 	, PixelShader(nullptr)
@@ -40,14 +39,15 @@ HlslShader<T, E0>::HlslShader(const wstring & ShaderFileName)
 {
 	if (ShaderFileName.empty() == false)
 	{
-		CompileShader(D3D11_SHVER_VERTEX_SHADER, ShaderFileName);
-		CompileShader(D3D11_SHVER_PIXEL_SHADER, ShaderFileName);
-		CompileShader(D3D11_SHVER_COMPUTE_SHADER, ShaderFileName);
+		FileName = W_SHADER_PATH + ShaderFileName;
+		CompileShader(D3D11_SHVER_VERTEX_SHADER, FileName);
+		CompileShader(D3D11_SHVER_PIXEL_SHADER, FileName);
+		// CompileShader(D3D11_SHVER_COMPUTE_SHADER, FileName);
 	}
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-HlslShader<T, E0>::~HlslShader()
+template <class T>
+HlslShader<T>::~HlslShader()
 {
 	SAFE_RELEASE(VertexShader);
 	SAFE_RELEASE(PixelShader);
@@ -61,32 +61,32 @@ HlslShader<T, E0>::~HlslShader()
 		SAFE_RELEASE(UAV.second);
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::Draw( UINT VertexCount, UINT StartVertexLocation ) const
+template <class T>
+void HlslShader<T>::Draw( UINT VertexCount, UINT StartVertexLocation ) const
 {
 	BeginDraw();
 	DeviceContext->Draw(VertexCount, StartVertexLocation);
 	EndDraw();
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::DrawIndexed( UINT IndexCount, UINT StartIndexLocation, UINT BaseVertexLocation ) const
+template <class T>
+void HlslShader<T>::DrawIndexed( UINT IndexCount, UINT StartIndexLocation, UINT BaseVertexLocation ) const
 {
 	BeginDraw();
 	DeviceContext->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
 	EndDraw();
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::DrawInstanced( UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation) const
+template <class T>
+void HlslShader<T>::DrawInstanced( UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation) const
 {
 	BeginDraw();
 	DeviceContext->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
 	EndDraw();
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::DrawIndexedInstanced
+template <class T>
+void HlslShader<T>::DrawIndexedInstanced
 (
 	UINT IndexCountPreInstance,
 	UINT InstanceCount,
@@ -106,8 +106,8 @@ void HlslShader<T, E0>::DrawIndexedInstanced
 	EndDraw();
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::Dispatch( UINT X, UINT Y, UINT Z ) const
+template <class T>
+void HlslShader<T>::Dispatch( UINT X, UINT Y, UINT Z ) const
 {
 	DeviceContext->Dispatch(X, Y, Z);
 
@@ -120,8 +120,8 @@ void HlslShader<T, E0>::Dispatch( UINT X, UINT Y, UINT Z ) const
 	DeviceContext->CSSetShader(nullptr, nullptr, 0);
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::CreateConstantBuffer( const string & Name, UINT BufferSize ) const
+template <class T>
+void HlslShader<T>::CreateConstantBuffer( const string & Name, UINT BufferSize )
 {
 	D3D11_BUFFER_DESC ConstantBufferDesc = {};
 	ConstantBufferDesc.ByteWidth = BufferSize;
@@ -132,11 +132,11 @@ void HlslShader<T, E0>::CreateConstantBuffer( const string & Name, UINT BufferSi
 	ID3D11Buffer * ConstantBuffer = nullptr;
 	HRESULT Hr = D3D::Get()->GetDevice()->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
 	ASSERT(SUCCEEDED(Hr), "IConstantBuffer Creation Fail");
-	this->ConstantBufferMap[Name] = ConstantBuffer;
+	(this->ConstantBufferMap)[Name] = ConstantBuffer;
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-ID3D11Buffer * HlslShader<T, E0>::GetConstantBuffer(const string & InBufferName) const
+template <class T>
+ID3D11Buffer * HlslShader<T>::GetConstantBuffer(const string & InBufferName) const
 {
 	const auto It = ConstantBufferMap.find(InBufferName);
 	if (It != ConstantBufferMap.cend())
@@ -146,13 +146,13 @@ ID3D11Buffer * HlslShader<T, E0>::GetConstantBuffer(const string & InBufferName)
 	return nullptr;
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::CreateSRV( const string & Name, ID3D11ShaderResourceView ** SRV ) const
+template <class T>
+void HlslShader<T>::CreateSRV( const string & Name, ID3D11ShaderResourceView ** SRV )
 {
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-ID3D11ShaderResourceView * HlslShader<T, E0>::GetSRV( const string & InSRVName ) const
+template <class T>
+ID3D11ShaderResourceView * HlslShader<T>::GetSRV( const string & InSRVName ) const
 {
 	const auto It = SRVMap.find(InSRVName);
 	if (It != SRVMap.cend())
@@ -162,13 +162,13 @@ ID3D11ShaderResourceView * HlslShader<T, E0>::GetSRV( const string & InSRVName )
 	return nullptr;
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::CreateUAV( const string & Name, ID3D11UnorderedAccessView ** UAV ) const
+template <class T>
+void HlslShader<T>::CreateUAV( const string & Name, ID3D11UnorderedAccessView ** UAV )
 {
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-ID3D11UnorderedAccessView * HlslShader<T, E0>::GetUAV( const string & InUAVName ) const
+template <class T>
+ID3D11UnorderedAccessView * HlslShader<T>::GetUAV( const string & InUAVName ) const
 {
 	const auto It = UAVMap.find(InUAVName);
 	if (It != UAVMap.cend())
@@ -178,8 +178,8 @@ ID3D11UnorderedAccessView * HlslShader<T, E0>::GetUAV( const string & InUAVName 
 	return nullptr;
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wstring & ShaderFileName )
+template <class T>
+void HlslShader<T>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wstring & ShaderFileName )
 {
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
@@ -205,9 +205,10 @@ void HlslShader<T, E0>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wst
 		&ErrorBlob
 	);
 	if (FAILED(hr) && ErrorBlob != nullptr)
-		ASSERT(false, (String::ToString(ShaderFileName) + ::GetD3D11ReturnMessage(hr)).c_str());
+		CHECK(false);
 	if (FAILED(hr) && ErrorBlob == nullptr)
-		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile").c_str())
+		CHECK(false);
+		//ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile").c_str())
 	SAFE_RELEASE(ErrorBlob);
 	
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
@@ -236,8 +237,8 @@ void HlslShader<T, E0>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wst
 	ASSERT(Hr >= 0, "Failed to create shader")
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::InitializeInputLayout( ID3DBlob * VertexShaderBlob )
+template <class T>
+void HlslShader<T>::InitializeInputLayout( ID3DBlob * VertexShaderBlob )
 {
 	vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutDescs;
 	T::CreatInputLayout(InputLayoutDescs);
@@ -254,18 +255,22 @@ void HlslShader<T, E0>::InitializeInputLayout( ID3DBlob * VertexShaderBlob )
 	ASSERT((Hr >= 0), "Failed to create input layout")
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::BeginDraw() const
+template <class T>
+void HlslShader<T>::BeginDraw() const
 {
 	DeviceContext->IASetInputLayout(InputLayout);
+
+	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+	DeviceContext->PSSetShader(PixelShader, nullptr, 0);
+	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
 }
 
-template <class T, enable_if_t<is_base_of_v<ShaderInputType, T>, int> E0>
-void HlslShader<T, E0>::EndDraw() const
+template <class T>
+void HlslShader<T>::EndDraw() const
 {
 	// 일단 전체 파이프라인에서 HS, DS, GS를 사용하지 않으니 굳이 필요한 코드는 아님.
 	// 추후에 다른 RenderPass에서 건드리면 그 때 주석 해제하도록 하자.
-	DeviceContext->HSSetShader(nullptr, nullptr, 0);
-	DeviceContext->DSSetShader(nullptr, nullptr, 0);
-	DeviceContext->GSSetShader(nullptr, nullptr, 0);
+	// DeviceContext->HSSetShader(nullptr, nullptr, 0);
+	// DeviceContext->DSSetShader(nullptr, nullptr, 0);
+	// DeviceContext->GSSetShader(nullptr, nullptr, 0);
 }

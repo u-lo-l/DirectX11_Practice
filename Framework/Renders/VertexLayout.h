@@ -1,24 +1,22 @@
 // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
 #pragma once
+#include "Math/Vector.h"
+#include "Math/Vector2D.h"
 #include "Math/Vector4.h"
 
-struct ShaderInputType
-{
-	virtual ~ShaderInputType() = 0;
-};
+struct ShaderInputType { };
 
 //---------------------------------------------------------------------------//
-struct Vertex final : ShaderInputType
+struct Vertex
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
 	Vertex()
 	: Position(0, 0, 0) {}
-	~Vertex() override = default;
 	Vector Position;
 };
 //---------------------------------------------------------------------------//
-struct VertexColor final : ShaderInputType
+struct VertexColor
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -28,12 +26,11 @@ struct VertexColor final : ShaderInputType
 	VertexColor(const Vector & Position, const Color & Color)
 	: Position(Position.X, Position.Y, Position.Z)
 	, Color(Color.R, Color.G, Color.B, Color.A) {}
-	~VertexColor() override = default;
 	Vector Position;
 	Color Color;
 };
 //---------------------------------------------------------------------------//
-struct VertexTexture final : ShaderInputType
+struct VertexTexture
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -43,13 +40,12 @@ struct VertexTexture final : ShaderInputType
 	VertexTexture(const Vector& Position, const Vector2D& UV)
 		: Position(Position)
 		, UV(UV) {}
-	~VertexTexture() override = default;
 	Vector Position;
 	Vector2D UV;
 };
 
 //---------------------------------------------------------------------------//
-struct VertexTextureColor final : ShaderInputType
+struct VertexTextureColor
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -63,13 +59,12 @@ struct VertexTextureColor final : ShaderInputType
 		, UV(UV)
 		, Color(Color)
 	{}
-	~VertexTextureColor() override = default;
 	Vector Position;
 	Vector2D UV;
 	Color Color;
 };
 //---------------------------------------------------------------------------//
-struct VertexNormal final : ShaderInputType
+struct VertexNormal
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -77,12 +72,11 @@ struct VertexNormal final : ShaderInputType
 		: Position(0, 0, 0), Normal(0, 0, 0) {}
 	VertexNormal(const Vector& Position, const Vector& Normal)
 		: Position(Position), Normal(Normal) {}
-	~VertexNormal() override = default;
 	Vector Position;
 	Vector Normal;
 };
 //---------------------------------------------------------------------------//
-struct VertexTextureNormal final : ShaderInputType
+struct VertexTextureNormal
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
@@ -90,7 +84,6 @@ struct VertexTextureNormal final : ShaderInputType
 		: Position(0, 0, 0), UV(0, 0), Normal(0, 0, 0) {}
 	VertexTextureNormal(const Vector& Position, const Vector2D & Uv, const Vector& Normal)
 		: Position(Position), UV(Uv), Normal(Normal) {}
-	~VertexTextureNormal() override = default;
 	Vector Position;
 	Vector2D UV;
 	Vector Normal;
@@ -98,11 +91,10 @@ struct VertexTextureNormal final : ShaderInputType
 
 //---------------------------------------------------------------------------//
 
-typedef struct VertexTextureColorNormalTangentBlend final : ShaderInputType
+typedef struct VertexTextureColorNormalTangentBlend
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
-	~VertexTextureColorNormalTangentBlend() override = default;
 	Vector Position;
 	Vector2D UV;
 	Color Color;

@@ -58,6 +58,8 @@ void Window::Create()
 		WNDCLASSEX wndClass;
 		wndClass.cbSize = sizeof(WNDCLASSEX);
 		wndClass.style = CS_HREDRAW | CS_VREDRAW;
+		// 윈도우가 메시지를 받을 때 호출되는 콜백함수
+		// DispatchMessage가 호출될 떄 실행됨
 		wndClass.lpfnWndProc = WndProc;
 		wndClass.cbClsExtra = 0;
 		wndClass.cbWndExtra = 0;
@@ -116,7 +118,7 @@ void Window::Destroy()
 	UnregisterClass(desc.AppName.c_str(), desc.Instance);
 }
 
-LRESULT Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam)
+LRESULT CALLBACK Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam)
 {
 	Sdt::Mouse::Get()->WndProc(InMessage, InwParam, InlParam);
 

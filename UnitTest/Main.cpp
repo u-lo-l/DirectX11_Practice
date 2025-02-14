@@ -3,11 +3,19 @@
 #include "Main.h"
 
 #include "Execute/RawBufferDemo/RawBufferDemo.h"
+// #include "Execute/004_Line/Line.h"
+// #include "Execute/004_Line/Line2.h"
+// #include "Execute/004_Line/Line_Circle.h"
+#include "Execute/005_Triangle/Triangle_List.h"
 #include "Systems/Window.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::RawBufferDemo);
+	// PUSH_MAIN(Sdt::RawBufferDemo);
+	// PUSH_MAIN(Line);
+	// PUSH_MAIN(Line2);
+	// PUSH_MAIN(Line_Circle);
+	PUSH_MAIN(Triangle_List);
 }
 
 void Main::Destroy()

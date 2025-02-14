@@ -1,4 +1,5 @@
 #pragma once
+#include <assert.h>
 
 #define CHECK(x) assert((x) == true)
 #define ASSERT(x, message) \
@@ -46,5 +47,5 @@
 #define W_TEXTURE_PATH	L"../_Textures/"
 #define W_ASSET_PATH	L"../_Assets/"
 
-typedef ID3DX11EffectConstantBuffer IECB_t;
-typedef ID3DX11EffectShaderResourceVariable IESRV_t;
+typedef struct ID3DX11EffectConstantBuffer IECB_t;
+typedef struct ID3DX11EffectShaderResourceVariable IESRV_t;
