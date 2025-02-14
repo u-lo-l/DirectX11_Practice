@@ -53,12 +53,6 @@ HlslShader<T>::~HlslShader()
 	SAFE_RELEASE(PixelShader);
 	SAFE_RELEASE(ComputeShader);
 	SAFE_RELEASE(InputLayout);
-	for (auto & Buffer : ConstantBufferMap)
-		SAFE_RELEASE(Buffer.second);
-	for (auto & SRV : SRVMap)
-		SAFE_RELEASE(SRV.second);
-	for (auto & UAV : UAVMap)
-		SAFE_RELEASE(UAV.second);
 }
 
 template <class T>
@@ -120,62 +114,14 @@ void HlslShader<T>::Dispatch( UINT X, UINT Y, UINT Z ) const
 	DeviceContext->CSSetShader(nullptr, nullptr, 0);
 }
 
-template <class T>
-void HlslShader<T>::CreateConstantBuffer( const string & Name, UINT BufferSize )
-{
-	D3D11_BUFFER_DESC ConstantBufferDesc = {};
-	ConstantBufferDesc.ByteWidth = BufferSize;
-	ConstantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	ID3D11Buffer * ConstantBuffer = nullptr;
-	HRESULT Hr = D3D::Get()->GetDevice()->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
-	ASSERT(SUCCEEDED(Hr), "IConstantBuffer Creation Fail");
-	(this->ConstantBufferMap)[Name] = ConstantBuffer;
-}
 
 template <class T>
-ID3D11Buffer * HlslShader<T>::GetConstantBuffer(const string & InBufferName) const
+int HlslShader<T>::AddConstantBuffer( ID3D11Buffer * CBuffer )
 {
-	const auto It = ConstantBufferMap.find(InBufferName);
-	if (It != ConstantBufferMap.cend())
-	{
-		return It->second;
-	}
-	return nullptr;
-}
-
-template <class T>
-void HlslShader<T>::CreateSRV( const string & Name, ID3D11ShaderResourceView ** SRV )
-{
-}
-
-template <class T>
-ID3D11ShaderResourceView * HlslShader<T>::GetSRV( const string & InSRVName ) const
-{
-	const auto It = SRVMap.find(InSRVName);
-	if (It != SRVMap.cend())
-	{
-		return It->second;
-	}
-	return nullptr;
-}
-
-template <class T>
-void HlslShader<T>::CreateUAV( const string & Name, ID3D11UnorderedAccessView ** UAV )
-{
-}
-
-template <class T>
-ID3D11UnorderedAccessView * HlslShader<T>::GetUAV( const string & InUAVName ) const
-{
-	const auto It = UAVMap.find(InUAVName);
-	if (It != UAVMap.cend())
-	{
-		return It->second;
-	}
-	return nullptr;
+	const int index = ConstantBuffers.size();
+	ConstantBuffers.push_back(CBuffer);
+	DeviceContext->VSSetConstantBuffers(index, 1, &CBuffer);
+	return index;	
 }
 
 template <class T>
@@ -205,10 +151,12 @@ void HlslShader<T>::CompileShader( D3D11_SHADER_VERSION_TYPE Type, const wstring
 		&ErrorBlob
 	);
 	if (FAILED(hr) && ErrorBlob != nullptr)
-		CHECK(false);
+	{
+		const char * const ErrMsg = static_cast<char *>(ErrorBlob->GetBufferPointer());
+		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
+	}
 	if (FAILED(hr) && ErrorBlob == nullptr)
-		CHECK(false);
-		//ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile").c_str())
+		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
 	SAFE_RELEASE(ErrorBlob);
 	
 	ID3D11Device * const Device = D3D::Get()->GetDevice();

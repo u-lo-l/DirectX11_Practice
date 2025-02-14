@@ -32,15 +32,7 @@ public:
 	void Dispatch(UINT X, UINT Y, UINT Z) const;
 
 public:
-	void CreateConstantBuffer(const string & Name, UINT BufferSize);
-	ID3D11Buffer * GetConstantBuffer(const string & InBufferName) const;
-	// void UpdateConstantBuffer(UINT SlotIndex, ID3D11Buffer * InConstantBuffer) const;
-
-	void CreateSRV(const string & Name, ID3D11ShaderResourceView** SRV);
-	ID3D11ShaderResourceView * GetSRV(const string & InSRVName) const;
-
-	void CreateUAV(const string & Name, ID3D11UnorderedAccessView** UAV);
-	ID3D11UnorderedAccessView * GetUAV(const string & InUAVName) const;
+	int AddConstantBuffer(ID3D11Buffer * CBuffer);
 	
 private:
 	void CompileShader(D3D11_SHADER_VERSION_TYPE Type, const wstring & ShaderFileName);
@@ -55,13 +47,7 @@ private:
 	ID3D11ComputeShader * ComputeShader;
 	ID3D11InputLayout * InputLayout;
 
-	//Effect 사용 시 ConstantBuffer같은거 쉐이더에 있었는데...
-	/*
-	 * 예를 들어 ID3DX11EffectConstantBuffer타입의
-	 */
-	map<string, ID3D11Buffer*> ConstantBufferMap;
-	map<string, UINT> CBufferSlotMap;
-	map<string, ID3D11ShaderResourceView*> SRVMap;
-	map<string, ID3D11UnorderedAccessView*> UAVMap;
+	// 이거 weak_ptr로 수정해야함. 해제는 CBuffer클래스 몫
+	vector<ID3D11Buffer*> ConstantBuffers;
 };
 

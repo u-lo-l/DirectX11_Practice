@@ -31,7 +31,7 @@ float4 PS(VertexOutput input) : SV_Target
     else if (Index == 1)
         return float4(0, 1, 0, 1);
     else if (Index == 2)
-        return float4(0,0,1,1); // r,g,b,a
+        return float4(0, 0, 1, 1); // r,g,b,a
     return float4(0, 0, 0, 1);
 }
 

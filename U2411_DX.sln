@@ -36,6 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{47
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{0688B656-22DE-41DD-AAB9-301CEB139698}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C} = {F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
