@@ -781,43 +781,45 @@ Matrix Matrix::CreateFromAxisAngle(Vector axis, float angle)
 	return matrix;
 }
 
-Matrix Matrix::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
-{
-	assert(nearPlaneDistance > 0.0);
-	assert(farPlaneDistance > 0.0);
-	assert(nearPlaneDistance < farPlaneDistance);
-
-	Matrix matrix;
-	matrix.M11 = 2.0f * nearPlaneDistance / width;
-	matrix.M12 = 0.0f;
-	matrix.M13 = 0.0f;
-	matrix.M14 = 0.0f;
-
-	matrix.M21 = 0.0f;
-	matrix.M22 = 2.0f * nearPlaneDistance / height;
-	matrix.M23 = 0.0f;
-	matrix.M24 = 0.0f;
-
-	matrix.M31 = 0.0f;
-	matrix.M32 = 0.0f;
-	matrix.M33 = farPlaneDistance / (farPlaneDistance - nearPlaneDistance);
-	matrix.M34 = 1.0f;
-
-	matrix.M41 = 0.0f;
-	matrix.M42 = 0.0f;
-	matrix.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-	matrix.M44 = 0.0f;
-
-	return matrix;
-}
+// TODO : 문제있음 뭔가 이상함.
+// Matrix Matrix::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
+// {
+// 	assert(nearPlaneDistance > 0.0);
+// 	assert(farPlaneDistance > 0.0);
+// 	assert(nearPlaneDistance < farPlaneDistance);
+//
+// 	Matrix matrix;
+// 	matrix.M11 = 2.0f * nearPlaneDistance / width;
+// 	matrix.M12 = 0.0f;
+// 	matrix.M13 = 0.0f;
+// 	matrix.M14 = 0.0f;
+//
+// 	matrix.M21 = 0.0f;
+// 	matrix.M22 = 2.0f * nearPlaneDistance / height;
+// 	matrix.M23 = 0.0f;
+// 	matrix.M24 = 0.0f;
+//
+// 	matrix.M31 = 0.0f;
+// 	matrix.M32 = 0.0f;
+// 	matrix.M33 = farPlaneDistance / (farPlaneDistance - nearPlaneDistance);
+// 	matrix.M34 = 1.0f;
+//
+// 	matrix.M41 = 0.0f;
+// 	matrix.M42 = 0.0f;
+// 	matrix.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+// 	matrix.M44 = 0.0f;
+//
+// 	return matrix;
+// }
 
 Matrix Matrix::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
 {
-	assert(fieldOfView > 0.0 || fieldOfView < 3.14159274101257);
+	assert(fieldOfView > 0.0);
 	assert(nearPlaneDistance > 0.0);
 	assert(farPlaneDistance > 0.0);
 	assert(nearPlaneDistance < farPlaneDistance);
-
+	if (fieldOfView > 3.14159274101257)
+		fieldOfView *= Math::ToRadians( fieldOfView); 
 	float yScale = 1.0f / (float)tan(fieldOfView * 0.5); //cot
 	float xScale = yScale / aspectRatio;
 

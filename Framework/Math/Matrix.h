@@ -81,7 +81,7 @@ public:
 	static Matrix CreateRotationZ(float radians);
 	static void CreateFromEulerAngle( Matrix & OutMat, const Vector & EulerInRad );
 	static Matrix CreateFromAxisAngle(Vector axis, float angle);
-	static Matrix CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
+	// static Matrix CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreateLookAt(Vector cameraPosition, Vector cameraTarget, Vector cameraUpVector);
