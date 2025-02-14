@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 namespace Sdt
 {
@@ -12,8 +13,8 @@ namespace Sdt
 		UINT Width = 4;
 		UINT Height = 4;
 	public:
-		using InnerVertexType = Vertex;
-		using InnerIndexType = UINT;
+		using VertexType = Vertex;
+		using IndexType = UINT;
 
 	public:
 		void Initialize() override;
@@ -23,10 +24,11 @@ namespace Sdt
 		void Render() override;
 
 	private:
-		Shader* shader = nullptr;
+		// Shader* shader = nullptr;
+		HlslShader<VertexType> * Drawer = nullptr;
 
 		UINT VertexCount = 0;
-		InnerVertexType* Vertices = nullptr;
+		VertexType* Vertices = nullptr;
 		ID3D11Buffer* VertexBuffer = nullptr;
 
 		UINT IndexCount = 0;
@@ -36,6 +38,7 @@ namespace Sdt
 		Matrix WorldMat;
 		Matrix ViewMat;
 		Matrix ProjectionMat;
-	private:
+		
+		ID3D11Buffer * WVPCBuffer = nullptr;
 	};
 }

@@ -43,6 +43,7 @@ public:
 
 public:
 	int AddConstantBuffer(ID3D11Buffer * CBuffer);
+	HRESULT SetRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 	
 private:
 	void CompileShader(ShaderType Type, const wstring & ShaderFileName);
@@ -52,10 +53,14 @@ private:
 	void EndDraw() const;
 private:
 	ID3D11DeviceContext * const DeviceContext;
+	
+	ID3D11InputLayout * InputLayout;
+
 	ID3D11VertexShader * VertexShader;
 	ID3D11PixelShader * PixelShader;
 	ID3D11ComputeShader * ComputeShader;
-	ID3D11InputLayout * InputLayout;
+
+	ID3D11RasterizerState * RasterizerState;
 
 	// 이거 weak_ptr로 수정해야함. 해제는 CBuffer클래스 몫
 	vector<ID3D11Buffer*> ConstantBuffers;

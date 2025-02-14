@@ -1,15 +1,9 @@
 // ReSharper disable CppInconsistentNaming
 #include "Pch.h"
 #include "Main.h"
-
-#include "Execute/RawBufferDemo/RawBufferDemo.h"
-// #include "Execute/004_Line/Line.h"
-// #include "Execute/004_Line/Line2.h"
-// #include "Execute/004_Line/Line_Circle.h"
-#include "Execute/005_Triangle/Triangle_List.h"
-#include "Execute/009_World/WorldDemo.h"
-#include "Execute/009_World/WorldDemo2.h"
 #include "Systems/Window.h"
+
+#include "Execute/011_Grid/Grid.h"
 
 void Main::Initialize()
 {
@@ -19,7 +13,8 @@ void Main::Initialize()
 	// PUSH_MAIN(Line_Circle);
 	// PUSH_MAIN(Triangle_List);
 	// PUSH_MAIN(Sdt::WorldDemo);
-	PUSH_MAIN(Sdt::WorldDemo2);
+	// PUSH_MAIN(Sdt::WorldDemo2);
+	PUSH_MAIN(Sdt::Grid);
 }
 
 void Main::Destroy()

@@ -32,10 +32,11 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 template <class T>
 HlslShader<T>::HlslShader(const wstring & ShaderFileName)
 	: DeviceContext(D3D::Get()->GetDeviceContext())
+	, InputLayout(nullptr)
 	, VertexShader(nullptr)
 	, PixelShader(nullptr)
 	, ComputeShader(nullptr)
-	, InputLayout(nullptr)
+	, RasterizerState(nullptr)
 {
 	if (ShaderFileName.empty() == false)
 	{
@@ -49,10 +50,11 @@ HlslShader<T>::HlslShader(const wstring & ShaderFileName)
 template <class T>
 HlslShader<T>::~HlslShader()
 {
+	SAFE_RELEASE(InputLayout);
 	SAFE_RELEASE(VertexShader);
 	SAFE_RELEASE(PixelShader);
 	SAFE_RELEASE(ComputeShader);
-	SAFE_RELEASE(InputLayout);
+	SAFE_RELEASE(RasterizerState);
 }
 
 template <class T>
@@ -122,6 +124,12 @@ int HlslShader<T>::AddConstantBuffer( ID3D11Buffer * CBuffer )
 	ConstantBuffers.push_back(CBuffer);
 	DeviceContext->VSSetConstantBuffers(index, 1, &CBuffer);
 	return index;	
+}
+
+template <class T>
+HRESULT HlslShader<T>::SetRasterizerState( const D3D11_RASTERIZER_DESC * RSDesc )
+{
+	return D3D::Get()->GetDevice()->CreateRasterizerState( RSDesc, &this->RasterizerState );
 }
 
 template <class T>
@@ -208,9 +216,10 @@ void HlslShader<T>::BeginDraw() const
 {
 	DeviceContext->IASetInputLayout(InputLayout);
 
-	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
-	DeviceContext->PSSetShader(PixelShader, nullptr, 0);
 	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
+	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+	DeviceContext->RSSetState(RasterizerState);
+	DeviceContext->PSSetShader(PixelShader, nullptr, 0);
 }
 
 template <class T>
