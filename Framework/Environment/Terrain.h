@@ -1,14 +1,17 @@
 ﻿#pragma once
+#include "Interface/IPlaceable.h"
+#include "Interface/IRenderable.h"
+#include "Renders/HlslShader.hpp"
 
-class Terrain
+class Terrain : public IRenderable
 {
 public:
 	using TerrainVertexType = VertexNormal;
 	Terrain(const wstring & InShaderFileName, const wstring& InHeightMapFileName);
-	~Terrain();
+	~Terrain() override;
 
-	void Tick();
-	void Render() const;
+	void Tick() override;
+	void Render() const override;
 
 	void SetPass( const int InPass ) { Pass = InPass; }
 	TerrainVertexType* GetVertice() const { return Vertices; }
@@ -23,7 +26,8 @@ private:
 	void CreateBuffer();
 private:
 	int Pass = 0;
-	Shader * Drawer = nullptr;
+	// Shader * Drawer = nullptr;
+	HlslShader<TerrainVertexType> * Shader = nullptr;
 	Texture* HeightMap;
 
 	UINT Width, Height;
@@ -36,7 +40,7 @@ private:
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
 
-	Matrix WorldMatrix;
+	// Matrix WorldMatrix;
 
 private :
 	static bool IntersectRayTriangle(

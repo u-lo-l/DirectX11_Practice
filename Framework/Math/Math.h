@@ -46,7 +46,9 @@ public:
 	const static float PiOver2;///< PI / 2
 	const static float PiOver4;///< PI / 4
 	const static float Epsilon;///< 0.000001f
-
+	const static float DegToRadian;
+	const static float RadianToDeg;
+	
 	const static int IntMinValue;///< Int형의 최소값
 	const static int IntMaxValue;///< Int형의 최대값
 	const static float FloatMinValue;///< Flaot형의 최소값

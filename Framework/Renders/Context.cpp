@@ -26,7 +26,8 @@ Context * Context::Get()
 
 void Context::Tick()
 {
-	MainCamera->Tick();
+	if (!!MainCamera)
+		MainCamera->Tick();
 	// ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 

@@ -12,8 +12,7 @@ public:
 #ifdef DO_DEBUG
 	explicit Transform( const string & MetaData = "Transform Matrix");
 #else
-	Transform();
-	explicit Transform(const Matrix * InMatrix);
+	explicit Transform(const Matrix * InMatrix = nullptr);
 #endif
 	~Transform();
 

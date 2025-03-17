@@ -45,7 +45,5 @@ float4 PSMain(VertexOutput input) : SV_Target
 {
     float4 Color1 = input.Color;
     float4 Color2 = Map.Sample(Sampler, input.UV);
-    // float4 Color1 = float4(1,0,0,1);
-    // float4 Color2 = float4(0,1,0,1);
     return lerp(Color1, Color2, LerpRate);
 }

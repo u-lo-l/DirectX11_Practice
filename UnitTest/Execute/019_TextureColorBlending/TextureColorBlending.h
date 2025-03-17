@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
-#include "Renders/HlslShader.hpp"
 
 namespace Sdt
 {
@@ -39,9 +38,8 @@ namespace Sdt
 		Matrix ViewMat;
 		Matrix ProjectionMat;
 
+		Texture * SampleTexture = nullptr;
 		ID3D11SamplerState * SamplerState = nullptr;
-		ID3D11Resource * Texture = nullptr;
-		ID3D11ShaderResourceView * Srv = nullptr;
 		// World-View-Projection Constant Buffer
 		ID3D11Buffer * WVPCBuffer = nullptr;
 		ID3D11Buffer * LerpRateCBuffer = nullptr;

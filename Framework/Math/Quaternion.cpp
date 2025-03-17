@@ -226,7 +226,7 @@ float Quaternion::LengthSquared() const
 }
 
 // Radian
-Vector Quaternion::ToEulerAngles() const
+Vector Quaternion::ToEulerAnglesInRadian() const
 {
 	Vector angles;
 
@@ -247,6 +247,31 @@ Vector Quaternion::ToEulerAngles() const
 	float cosy_cosp = 1 - 2 * (this->Y * this->Y + this->Z * this->Z);
 	angles.Z = atan2f(siny_cosp, cosy_cosp);
 
+	return angles;
+}
+
+Vector Quaternion::ToEulerAnglesInDegrees() const
+{
+	Vector angles;
+
+	// Roll (X-axis rotation)
+	float sinr_cosp = 2 * (this->W * this->X + this->Y * this->Z);
+	float cosr_cosp = 1 - 2 * (this->X * this->X + this->Y * this->Y);
+	angles.X = atan2f(sinr_cosp, cosr_cosp);
+
+	// Pitch (Y-axis rotation)
+	float sinp = 2 * (this->W * this->Y - this->Z * this->X);
+	if (fabsf(sinp) >= 1)
+		angles.Y = std::copysignf(Math::Pi / 2, sinp); // Use 90 degrees if out of range
+	else
+		angles.Y = asinf(sinp);
+
+	// Yaw (Z-axis rotation)
+	float siny_cosp = 2 * (this->W * this->Z + this->X * this->Y);
+	float cosy_cosp = 1 - 2 * (this->Y * this->Y + this->Z * this->Z);
+	angles.Z = atan2f(siny_cosp, cosy_cosp);
+
+	angles *= Math::RadianToDeg;
 	return angles;
 }
 

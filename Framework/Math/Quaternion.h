@@ -59,7 +59,8 @@ public:
 	float Length() const;
 	float LengthSquared() const;
 
-	Vector ToEulerAngles() const;
+	Vector ToEulerAnglesInRadian() const;
+	Vector ToEulerAnglesInDegrees() const;
 
 	void Normalize();
 	static Quaternion Normalize( const Quaternion & quaternion);

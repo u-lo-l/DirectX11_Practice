@@ -1,10 +1,11 @@
 ﻿#pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 namespace Sdt
 {
-	class TerrainDemo final : public IExecutable
+	class TerrainDemo_Hlsl final : public IExecutable
 	{
 	public:
 		using VertexType = VertexColor;
@@ -19,14 +20,16 @@ namespace Sdt
 		Matrix WorldMatrix;
 		Vector Position = Vector::Zero;
 
-	// // for drawing normal vectors
-	// 	Shader * Drawer = nullptr;
-	// 	VertexBuffer * VBuffer = nullptr;
-	// 	vector<VertexType> Vertice;
-	//
-	// // for drawing Y
-	// 	Shader * Drawer2 = nullptr;
-	// 	VertexBuffer * VBuffer2 = nullptr;
-	// 	vector<VertexType> Vertice2;
+	// for drawing normal vectors
+		Shader * Drawer = nullptr;
+		VertexBuffer * VBuffer = nullptr;
+		vector<VertexType> Vertice;
+
+	// for drawing Y
+		Shader * Drawer2 = nullptr;
+		VertexBuffer * VBuffer2 = nullptr;
+		vector<VertexType> Vertice2;
+
+		
 	};
 }

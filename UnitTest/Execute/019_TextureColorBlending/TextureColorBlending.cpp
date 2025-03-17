@@ -107,37 +107,7 @@ namespace Sdt
 		}
 
 		{
-			DirectX::TexMetadata metadata;
-			DirectX::ScratchImage image;
-			const wstring TextureFilePath = wstring(W_TEXTURE_PATH) + L"ChromeIcon.png"; 
-			Hr = LoadFromWICFile(
-				TextureFilePath.c_str(),
-				DirectX::WIC_FLAGS_FORCE_RGB,
-				&metadata,
-				image,
-				nullptr
-			);
-			CHECK(Hr >= 0);
-
-			// Hr = CreateTexture(
-			// 	D3D::Get()->GetDevice(),
-			// 	image.GetImages(),
-			// 	image.GetImageCount(),
-			// 	image.GetMetadata(),
-			// 	&Texture	
-			// );
-			// CHECK(Hr >= 0); 생략 가능.
-			
-			Hr = CreateShaderResourceView(
-				D3D::Get()->GetDevice(),
-				image.GetImages(),
-				image.GetImageCount(),
-				image.GetMetadata(),
-				&this->Srv
-			);
-			CHECK(Hr >= 0);
-			
-			D3D::Get()->GetDeviceContext()->PSSetShaderResources(0, 1, &this->Srv);
+			SampleTexture = new Texture(wstring(W_TEXTURE_PATH) + L"ChromeIcon.png");
 		}
 		
 		{
@@ -154,7 +124,6 @@ namespace Sdt
 			RasterizerDesc.AntialiasedLineEnable = false;
 			CHECK(Drawer->SetRasterizerState(&RasterizerDesc) >= 0);
 		}
-
 
 		//Sampler
 		{
@@ -187,8 +156,7 @@ namespace Sdt
 		SAFE_RELEASE(SamplerState);
 		SAFE_RELEASE(WVPCBuffer);
 		SAFE_RELEASE(LerpRateCBuffer);
-		SAFE_RELEASE(Srv);
-		SAFE_RELEASE(Texture);
+		SAFE_DELETE(SampleTexture);
 	}
 
 	void TextureColorBlending::Tick()

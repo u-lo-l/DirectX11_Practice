@@ -2,9 +2,14 @@
 #include "Terrain.h"
 
 Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFileName)
+	: IRenderable(Context::Get()->GetCamera())
 {
-	Drawer = new Shader(InShaderFileName);
-	HeightMap = new Texture(InHeightMapFileName);
+	if (InShaderFileName.length() == 0)
+		Shader = new HlslShader<TerrainVertexType>(L"17_TerrainNormal.hlsl");
+	else
+		Shader = new HlslShader<TerrainVertexType>(InShaderFileName);
+	
+	HeightMap = new Texture(InHeightMapFileName, true);
 	Width = HeightMap->GetWidth();
 	Height = HeightMap->GetHeight();
 	
@@ -13,12 +18,11 @@ Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFile
 	this->CreateNormalData();
 	this->CreateBuffer();
 
-	
-	WorldMatrix = Matrix::Identity;
+	// WorldMatrix = Matrix::Identity;
 
-	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
-	
-	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
+	//
+	// DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 Terrain::~Terrain()
@@ -27,23 +31,22 @@ Terrain::~Terrain()
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE_ARR(Vertices);
 	SAFE_DELETE_ARR(Indices);
-	SAFE_DELETE(Drawer);
+	SAFE_DELETE(Shader);
 	SAFE_DELETE(HeightMap);
 }
 
 void Terrain::Tick()
 {
-	const Context * Ctxt = Context::Get();
-	
-	CHECK(Drawer->AsMatrix("World")->SetMatrix(WorldMatrix) >= 0);
+	IRenderable::Tick();
 }
 
 void Terrain::Render() const
 {
+	IRenderable::Render();
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	
-	Drawer->DrawIndexed(0, Pass, IndexCount);
+	Shader->DrawIndexed(IndexCount);
 }
 
 void Terrain::GetPositionY(Vector & InPosition ) const
@@ -79,8 +82,8 @@ void Terrain::GetPositionY(Vector & InPosition ) const
 void Terrain::CreateVertexData()
 {
 	vector<Color> Pixels;
-	HeightMap->ReadPixels(Pixels);
-
+	HeightMap->ExtractTextureColors(Pixels);
+	
 	VertexCount = Width * Height;
 	Vertices = new TerrainVertexType[VertexCount];
 	for (UINT Z = 0 ; Z < Height ; Z++)
@@ -152,7 +155,6 @@ void Terrain::CreateBuffer()
 #else
 	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType));
 #endif
-	
 	IBuffer = new IndexBuffer(Indices, IndexCount);
 }
 

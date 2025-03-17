@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Interface\IPlaceable.cpp" />
+    <ClCompile Include="Interface\IRenderable.cpp" />
     <ClCompile Include="Math\Color.cpp" />
     <ClCompile Include="Math\Math.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
@@ -366,6 +368,8 @@
     <ClCompile Include="Viewer\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interface\IPlaceable.h" />
+    <ClInclude Include="Interface\IRenderable.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix.h" />

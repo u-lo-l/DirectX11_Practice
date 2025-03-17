@@ -9,6 +9,8 @@ const float Math::Pi = 3.14159274f;
 const float Math::TwoPi = 6.28318548f;
 const float Math::PiOver2 = 1.57079637f;
 const float Math::PiOver4 = 0.7853982f;
+const float Math::DegToRadian = 0.0174533f;
+const float Math::RadianToDeg = 57.2957764f;
 
 #pragma warning( disable : 4146)
 const int Math::IntMinValue = -2147483648;

@@ -26,7 +26,7 @@ VertexOutput VS(VertexInput input)
     return output;
 }
 
-float4 LightDirection = float4(-1,-1,1,0);
+float3 LightDirection = float3(-1,-1,1);
 float4 PS(VertexOutput input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
