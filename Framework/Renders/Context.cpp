@@ -38,14 +38,14 @@ void Context::Tick()
  */
 void Context::Render() const
 {
-	// Gui * const GuiInst = Gui::Get();
-	// GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(static_cast<int>(ImGui::GetIO().Framerate)));
-	//
-	// const Vector & CamPos = MainCamera->GetPosition();
-	// const Vector & CamRot = MainCamera->GetEulerAngle();
-	//
-	// Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
-	// Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X, CamPos.Y, CamPos.Z));
+	Gui * const GuiInst = Gui::Get();
+	GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(static_cast<int>(ImGui::GetIO().Framerate)));
+	
+	const Vector & CamPos = MainCamera->GetPosition();
+	const Vector & CamRot = MainCamera->GetEulerAngle();
+	
+	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X* Math::RadianToDeg, CamRot.Y* Math::RadianToDeg, CamRot.Z* Math::RadianToDeg));
+	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
 }
 
 void Context::ResizeScreen()
@@ -68,7 +68,8 @@ Context::Context()
 {
 	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
 	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 10000.f);
-	MainCamera->SetPosition(0, 0, -5);
+	MainCamera->SetPosition(0, 0, 10);
+	MainCamera->SetRotation(180, 0, 0);
 
 	this->Viewport = new D3D11_VIEWPORT();
 	this->Viewport->TopLeftX = 0;

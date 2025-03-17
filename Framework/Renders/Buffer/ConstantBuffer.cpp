@@ -1,8 +1,8 @@
 ﻿#include "framework.h"
 #include "ConstantBuffer.h"
 
-ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, void * InData, string InDataName, UINT InDataSize, bool bStatic)
- : DataSize(InDataSize), DataName(move(InDataName)), TargetShaderType(TargetShaderType), bIsStatic(bStatic)
+ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, void * InData, string InDataName, UINT InDataSize, bool bStatic)
+ : RegisterIndex(RegisterIndex), DataSize(InDataSize), DataName(move(InDataName)), bIsStatic(bStatic), TargetShaderType(TargetShaderType)
 {
 	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
 
@@ -37,6 +37,13 @@ ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, void * InData, strin
 	}
 }
 
+void ConstantBuffer::UpdateData( void * InData, UINT InDataSize )
+{
+	if (DataSize != InDataSize)
+		return;
+	Data = InData;
+}
+
 void ConstantBuffer::BindToGPU()
 {
 	if (bIsStatic == true)
@@ -48,4 +55,12 @@ void ConstantBuffer::BindToGPU()
 	CHECK(DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource) >= 0);
 	memcpy(Subresource.pData, this->Data, this->DataSize);
 	DeviceContext->Unmap(Buffer, 0);
+	switch (TargetShaderType)
+	{
+	case ShaderType::VertexShader:
+		DeviceContext->VSSetConstantBuffers(RegisterIndex, 1, &Buffer);
+		break;
+	default:
+		break;
+	}
 }

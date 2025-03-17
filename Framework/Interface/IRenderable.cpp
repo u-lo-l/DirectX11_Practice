@@ -8,7 +8,7 @@ IRenderable::IRenderable(Camera * InCamera)
 		TargetCamera = Context::Get()->GetCamera();
 	UpdateCameraMatrix();
 	string DataInfo = "WVP Matrix ";
-	WVP_CBuffer = new ConstantBuffer(ShaderType::VertexShader, &WVP_Matrix, DataInfo, sizeof(WVPDesc));
+	WVP_CBuffer = new ConstantBuffer(ShaderType::VertexShader, 1, &WVP_Matrix, DataInfo, sizeof(WVPDesc));
 }
 
 IRenderable::~IRenderable()
@@ -24,6 +24,10 @@ void IRenderable::SetCamera( Camera * InCamera )
 void IRenderable::Tick()
 {
 	UpdateCameraMatrix();
+	if (!!WVP_CBuffer)
+	{
+		WVP_CBuffer->UpdateData(&WVP_Matrix, sizeof(WVP_Matrix));
+	}
 }
 
 void IRenderable::Render() const

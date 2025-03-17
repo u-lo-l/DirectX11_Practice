@@ -47,7 +47,7 @@ void Skeleton::ClearBoneTable()
 void Skeleton::CreateBuffer( const map<string, Material *> & MaterialsInModel)
 {
 	const string CBufferInfo = "Bone Transform Data";
-	BoneDescBuffer = new ConstantBuffer(ShaderType::VertexShader, &BoneData, CBufferInfo, sizeof(BoneDesc));
+	BoneDescBuffer = new ConstantBuffer(ShaderType::VertexShader,0, &BoneData, CBufferInfo, sizeof(BoneDesc));
 	for (const auto & Pair : MaterialsInModel)
 	{
 		ECB_BoneDescBuffers.emplace_back(Pair.second->GetShader()->AsConstantBuffer(CBufferName));

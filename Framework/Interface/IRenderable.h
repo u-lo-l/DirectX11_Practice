@@ -14,6 +14,7 @@ protected:
 	void SetCamera(Camera * InCamera);
 	virtual void Tick();
 	virtual void Render() const;
+
 private:
 	void UpdateCameraMatrix();
 	WVPDesc WVP_Matrix;;

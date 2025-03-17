@@ -1,9 +1,13 @@
-cbuffer WorldViewProjection : register(b0)
+cbuffer CB_World : register(b0)
 {
     matrix WorldMat;
     matrix ViewMat;
     matrix ProjectionMat;
-};
+}
+
+// cbuffer CB_ViewProjection : register(b1)
+// {
+// };
 
 struct VertexInput
 {

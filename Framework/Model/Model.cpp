@@ -218,6 +218,7 @@ void Model::CreateAnimationBuffers()
 {
 	FrameCBuffer = new ConstantBuffer(
 		ShaderType::VertexShader,
+		0,
 		&this->BlendingDatas,
 		"Instancing Animation Blending Description",
 		sizeof(AnimationBlendingDesc) * MaxModelInstanceCount

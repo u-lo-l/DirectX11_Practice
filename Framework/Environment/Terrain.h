@@ -3,18 +3,17 @@
 #include "Interface/IRenderable.h"
 #include "Renders/HlslShader.hpp"
 
-class Terrain : public IRenderable
+class Terrain
 {
 public:
 	using TerrainVertexType = VertexNormal;
 	Terrain(const wstring & InShaderFileName, const wstring& InHeightMapFileName);
-	~Terrain() override;
+	~Terrain();
 
-	void Tick() override;
-	void Render() const override;
+	void Tick();
+	void Render() const;
 
 	void SetPass( const int InPass ) { Pass = InPass; }
-	TerrainVertexType* GetVertice() const { return Vertices; }
 	UINT GetWidth() const { return Width; }
 	UINT GetHeight() const { return Height; }
 	void GetPositionY(Vector& InPosition) const;
@@ -22,7 +21,7 @@ public:
 private:
 	void CreateVertexData();
 	void CreateIndexData();
-	void CreateNormalData() const;
+	void CreateNormalData();
 	void CreateBuffer();
 private:
 	int Pass = 0;
@@ -32,16 +31,17 @@ private:
 
 	UINT Width, Height;
 	UINT VertexCount;
-	TerrainVertexType * Vertices = nullptr;
+	vector<TerrainVertexType> Vertices;
 	
 	UINT IndexCount;
-	UINT * Indices = nullptr;
+	vector<UINT> Indices;
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
 
-	// Matrix WorldMatrix;
-
+	Matrix WorldMat;
+	ID3D11Buffer * WVPCBuffer = nullptr;
+	
 private :
 	static bool IntersectRayTriangle(
 		const DirectX::XMFLOAT3& rayPos,  // 광선의 시작점

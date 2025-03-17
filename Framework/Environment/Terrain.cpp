@@ -2,7 +2,6 @@
 #include "Terrain.h"
 
 Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFileName)
-	: IRenderable(Context::Get()->GetCamera())
 {
 	if (InShaderFileName.length() == 0)
 		Shader = new HlslShader<TerrainVertexType>(L"17_TerrainNormal.hlsl");
@@ -18,34 +17,63 @@ Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFile
 	this->CreateNormalData();
 	this->CreateBuffer();
 
-	// WorldMatrix = Matrix::Identity;
+	WorldMat = Matrix::Identity;
 
 	// ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
 	//
 	// DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	{
+		D3D11_RASTERIZER_DESC RasterizerDesc;
+		RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
+		RasterizerDesc.FrontCounterClockwise = true;
+		RasterizerDesc.DepthBias = 0;
+		RasterizerDesc.DepthBiasClamp = 0.0f;
+		RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+		RasterizerDesc.DepthClipEnable = true;
+		RasterizerDesc.ScissorEnable = false;
+		RasterizerDesc.MultisampleEnable = false;
+		RasterizerDesc.AntialiasedLineEnable = false;
+		CHECK(Shader->SetRasterizerState(&RasterizerDesc) >= 0);
+	}
 }
 
 Terrain::~Terrain()
 {
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
-	SAFE_DELETE_ARR(Vertices);
-	SAFE_DELETE_ARR(Indices);
 	SAFE_DELETE(Shader);
 	SAFE_DELETE(HeightMap);
 }
 
 void Terrain::Tick()
 {
-	IRenderable::Tick();
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	if (SUCCEEDED(DeviceContext->Map(WVPCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource)))
+	{
+		struct Temp
+		{
+			Matrix World;
+			Matrix View;
+			Matrix Projection;
+		} BufferData = {
+			WorldMat,
+			Context::Get()->GetViewMatrix(),
+			Context::Get()->GetProjectionMatrix()
+		};
+		memcpy(MappedResource.pData, &BufferData, sizeof(Temp));
+		DeviceContext->Unmap(WVPCBuffer, 0);
+	}
 }
 
 void Terrain::Render() const
 {
-	IRenderable::Render();
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
-	
+	DeviceContext->VSSetConstantBuffers(0, 1, &WVPCBuffer);
 	Shader->DrawIndexed(IndexCount);
 }
 
@@ -85,7 +113,7 @@ void Terrain::CreateVertexData()
 	HeightMap->ExtractTextureColors(Pixels);
 	
 	VertexCount = Width * Height;
-	Vertices = new TerrainVertexType[VertexCount];
+	Vertices.resize(VertexCount);
 	for (UINT Z = 0 ; Z < Height ; Z++)
 	{
 		for (UINT X = 0 ; X < Width ; X++)
@@ -102,7 +130,7 @@ void Terrain::CreateVertexData()
 void Terrain::CreateIndexData()
 {
 	IndexCount = (Width - 1) * (Height - 1) * 6;
-	Indices = new UINT[IndexCount];
+	Indices.resize(IndexCount);
 
 	UINT Index = 0;
 	for (UINT Z = 0 ; Z < Height - 1 ; Z++)
@@ -120,7 +148,7 @@ void Terrain::CreateIndexData()
 	}
 }
 
-void Terrain::CreateNormalData() const
+void Terrain::CreateNormalData()
 {
 	for (UINT i = 0 ; i < IndexCount / 3; i++)
 	{
@@ -153,9 +181,17 @@ void Terrain::CreateBuffer()
 #ifdef DO_DEBUG
 	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType), "Terrain");
 #else
-	VBuffer = new VertexBuffer(Vertices, VertexCount, sizeof(TerrainVertexType));
+	VBuffer = new VertexBuffer(Vertices.data(), VertexCount, sizeof(TerrainVertexType));
 #endif
-	IBuffer = new IndexBuffer(Indices, IndexCount);
+	IBuffer = new IndexBuffer(Indices.data(), IndexCount);
+
+	ID3D11Device* Device = D3D::Get()->GetDevice();
+	D3D11_BUFFER_DESC ConstantBufferDesc = {};
+	ConstantBufferDesc.ByteWidth = sizeof(Matrix) * 3;
+	ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	CHECK(Device->CreateBuffer(&ConstantBufferDesc, nullptr, &WVPCBuffer) >= 0);
 }
 
 bool Terrain::IntersectRayTriangle(

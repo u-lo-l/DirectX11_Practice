@@ -5,11 +5,16 @@ namespace Sdt
 {
 	void TerrainDemo::Initialize()
 	{
+		Context::Get()->GetCamera()->SetPosition( 0, 0, 2 );
+		Context::Get()->GetCamera()->SetRotation( 180, 0, 180);
+		
 		const wstring HeightMap = L"Terrain/Gray256.png";
 		const wstring TerrainShader = L"17_TerrainNormal.hlsl"; 
 		Camera * MainCamera = Context::Get()->GetCamera();
-		MainCamera->SetPosition(15, 10, -30);
-		MainCamera->SetRotation(0, 0, 0);
+		 
+		MainCamera->SetPosition( 100, 100, 100 );
+		MainCamera->SetRotation( 210, 135, 180);
+		
 		Landscape = new Terrain(TerrainShader, HeightMap);
 
 		// Drawer = new Shader(L"18_TerrainNormalVector.fx");
@@ -45,6 +50,7 @@ namespace Sdt
 		// copy(Vertice2.begin(), Vertice2.end(), TempVertice2);
 		//
 		// VBuffer2 = new VertexBuffer(TempVertice2, Vertice2.size(), sizeof(VertexType));
+
 	}
 
 	void TerrainDemo::Destroy()
@@ -59,27 +65,27 @@ namespace Sdt
 	void TerrainDemo::Tick()
 	{
 		Landscape->Tick();
-
-		Matrix rotation = Matrix::CreateRotationX(Math::ToRadians(180));
-	
-
-		if (Keyboard::Get()->IsPressed(VK_RIGHT))
-			Position.X += 20 * SystemTimer::Get()->GetDeltaTime();
-		if (Keyboard::Get()->IsPressed(VK_LEFT))
-			Position.X -= 20 * SystemTimer::Get()->GetDeltaTime();
-
-		if (Keyboard::Get()->IsPressed(VK_UP))
-			Position.Z += 20 * SystemTimer::Get()->GetDeltaTime();
-		if (Keyboard::Get()->IsPressed(VK_DOWN))
-			Position.Z -= 20 * SystemTimer::Get()->GetDeltaTime();
-
-	
-		Landscape->GetPositionY(Position);
-		Position.Y += 1.0f;
-
-		Matrix translation = Matrix::CreateTranslation(Position);
-
-		WorldMatrix = rotation * translation;
+		//
+		// Matrix rotation = Matrix::CreateRotationX(Math::ToRadians(180));
+		//
+		//
+		// if (Keyboard::Get()->IsPressed(VK_RIGHT))
+		// 	Position.X += 20 * SystemTimer::Get()->GetDeltaTime();
+		// if (Keyboard::Get()->IsPressed(VK_LEFT))
+		// 	Position.X -= 20 * SystemTimer::Get()->GetDeltaTime();
+		//
+		// if (Keyboard::Get()->IsPressed(VK_UP))
+		// 	Position.Z += 20 * SystemTimer::Get()->GetDeltaTime();
+		// if (Keyboard::Get()->IsPressed(VK_DOWN))
+		// 	Position.Z -= 20 * SystemTimer::Get()->GetDeltaTime();
+		//
+		//
+		// Landscape->GetPositionY(Position);
+		// Position.Y += 1.0f;
+		//
+		// Matrix translation = Matrix::CreateTranslation(Position);
+		//
+		// WorldMatrix = rotation * translation;
 		// Drawer->AsMatrix("World")->SetMatrix(Matrix::Identity);
 		// Drawer->AsMatrix("View")->SetMatrix(Context::Get()->GetViewMatrix());
 		// Drawer->AsMatrix("Projection")->SetMatrix(Context::Get()->GetProjectionMatrix());
@@ -91,7 +97,7 @@ namespace Sdt
 
 	void TerrainDemo::Render()
 	{
-		Landscape->SetPass(0);
+		// Landscape->SetPass(0);
 		Landscape->Render();
 
 		// D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);

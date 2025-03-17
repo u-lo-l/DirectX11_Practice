@@ -78,16 +78,9 @@ namespace Sdt
 
 		{
 			WorldMat = Matrix::Identity;
-
-			const Vector CameraLocation{ 0, 0, 2 };
-			const Vector CameraForward{ 0, 0, -1 };
-			const Vector CameraUp{ 0, 1, 0 };
-			const Vector CameraAt = CameraLocation + CameraForward;
-			ViewMat = Matrix::CreateLookAt(CameraLocation, CameraAt, CameraUp);
-
-			const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-			ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.01f, 100.0f);
-
+			Context::Get()->GetCamera()->SetPosition( 0, 0, 2 );
+			Context::Get()->GetCamera()->SetRotation( 180, 0, 180);
+			
 			D3D11_BUFFER_DESC ConstantBufferDesc = {};
 			ConstantBufferDesc.ByteWidth = sizeof(Matrix) * 3;
 			ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -113,7 +106,7 @@ namespace Sdt
 		{
 			D3D11_RASTERIZER_DESC RasterizerDesc;
 			RasterizerDesc.FillMode = D3D11_FILL_SOLID;
-			RasterizerDesc.CullMode = D3D11_CULL_BACK;
+			RasterizerDesc.CullMode = D3D11_CULL_NONE;
 			RasterizerDesc.FrontCounterClockwise = true;
 			RasterizerDesc.DepthBias = 0;
 			RasterizerDesc.DepthBiasClamp = 0.0f;
@@ -163,6 +156,9 @@ namespace Sdt
 	{
 		ImGui::SliderFloat("LerpRate", &LerpRate, 0, 1);
 		ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+		
+
+			
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		if (SUCCEEDED(DeviceContext->Map(WVPCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource)))
 		{
@@ -173,8 +169,8 @@ namespace Sdt
 				Matrix Projection;
 			} BufferData = {
 				WorldMat,
-				ViewMat,
-				ProjectionMat
+				Context::Get()->GetViewMatrix(),
+				Context::Get()->GetProjectionMatrix()
 			};
 			memcpy(MappedResource.pData, &BufferData, sizeof(Temp));
 			DeviceContext->Unmap(WVPCBuffer, 0);

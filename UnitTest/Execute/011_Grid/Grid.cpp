@@ -82,15 +82,6 @@ namespace Sdt
 
 		WorldMat = Matrix::Identity;
 
-		const Vector CameraLocation{ 0, 0, 10 };
-		const Vector CameraForward{ 0, 0, -1 };
-		const Vector CameraUp{ 0, 1, 0 };
-		const Vector CameraAt = CameraLocation + CameraForward;
-		ViewMat = Matrix::CreateLookAt(CameraLocation, CameraAt, CameraUp);
-
-		const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-		ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.01f, 100.0f);
-
 		D3D11_BUFFER_DESC ConstantBufferDesc = {};
 		ConstantBufferDesc.ByteWidth = sizeof(Matrix) * 3;
 		ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -133,8 +124,8 @@ namespace Sdt
 				Matrix Projection;
 			} BufferData = {
 				WorldMat,
-				ViewMat,
-				ProjectionMat
+				Context::Get()->GetViewMatrix(),
+				Context::Get()->GetProjectionMatrix()
 			};
 			memcpy(MappedResource.pData, &BufferData, sizeof(Temp));
 			DeviceContext->Unmap(WVPCBuffer, 0);

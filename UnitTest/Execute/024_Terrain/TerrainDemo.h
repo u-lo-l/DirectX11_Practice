@@ -16,7 +16,6 @@ namespace Sdt
 		void Render() override;
 	private:
 		Terrain * Landscape = nullptr;
-		Matrix WorldMatrix;
 		Vector Position = Vector::Zero;
 
 	// // for drawing normal vectors

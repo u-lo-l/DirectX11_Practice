@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Execute\006_Rectangle\Rectangle.cpp" />
+    <ClCompile Include="Execute\009_World\WorldDemo.cpp" />
+    <ClCompile Include="Execute\009_World\WorldDemo2.cpp" />
+    <ClCompile Include="Execute\011_Grid\Grid.cpp" />
     <ClCompile Include="Execute\019_TextureColorBlending\TextureColorBlending.cpp" />
     <ClCompile Include="Execute\020_TextureLayering\HeightMap.cpp" />
     <ClCompile Include="Execute\024_Terrain\TerrainDemo.cpp" />
@@ -31,6 +35,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Execute\006_Rectangle\Rectangle.h" />
+    <ClInclude Include="Execute\009_World\WorldDemo.h" />
+    <ClInclude Include="Execute\009_World\WorldDemo2.h" />
+    <ClInclude Include="Execute\011_Grid\Grid.h" />
     <ClInclude Include="Execute\019_TextureColorBlending\TextureColorBlending.h" />
     <ClInclude Include="Execute\020_TextureLayering\HeightMap.h" />
     <ClInclude Include="Execute\024_Terrain\TerrainDemo.h" />

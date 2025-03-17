@@ -17,7 +17,7 @@ Transform::Transform(const Matrix * InMatrix )
 	, ref_WorldMatrix(InMatrix)
 {
 	CBufferData.World = InMatrix == nullptr ? Matrix::Identity : *InMatrix;
-	CBuffer = new ConstantBuffer(ShaderType::VertexShader, &CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
+	CBuffer = new ConstantBuffer(ShaderType::VertexShader,0, &CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
 }
 #endif
 
