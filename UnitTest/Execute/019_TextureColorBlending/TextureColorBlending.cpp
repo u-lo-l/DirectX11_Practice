@@ -1,127 +1,242 @@
 #include "Pch.h"
 #include "TextureColorBlending.h"
 
-
 namespace Sdt
 {
+	const UINT TextureColorBlending::VertexCount = 4;
+	const UINT TextureColorBlending::IndexCount = 6;
+
 	void TextureColorBlending::Initialize()
 	{
-		shader = new Shader(L"15_ColorBlending.fx");
-		MainCamera = new Camera();
+		ID3D11Device* Device = D3D::Get()->GetDevice();
+		HRESULT Hr;
+		Drawer = new HlslShader<VertexType>(L"12_Texture.hlsl");
 
 		// Vertex Buffer
-		Vertices = new InnerVertexType[VertexCount];
-		Vertices[0].Position = { -0.5f, -0.5f, +0.0f };
-		Vertices[1].Position = { -0.5f, +0.5f, +0.0f };
-		Vertices[2].Position = { +0.5f, -0.5f, +0.0f };
-		Vertices[3].Position = { +0.5f, +0.5f, +0.0f };
+		{
+			Vertices.resize(VertexCount);
+			Vertices[0].Position = { -0.5f, -0.5f, +0.0f };
+			Vertices[1].Position = { -0.5f, +0.5f, +0.0f };
+			Vertices[2].Position = { +0.5f, -0.5f, +0.0f };
+			Vertices[3].Position = { +0.5f, +0.5f, +0.0f };
 
-		Vertices[0].UV = { 0, 1 };
-		Vertices[1].UV = { 0, 0 };
-		Vertices[2].UV = { 1, 1 };
-		Vertices[3].UV = { 1, 0 };
+			Vertices[0].UV = { -1, +2 };
+			Vertices[1].UV = { -1, -1 };
+			Vertices[2].UV = { +2, +2 };
+			Vertices[3].UV = { +2, -1 };
 
-		Vertices[0].Color = Color::Red;
-		Vertices[1].Color = Color::Red;
-		Vertices[2].Color = Color::Red;
-		Vertices[3].Color = Color::Red;
+			Vertices[0].Color = Color::Blue;
+			Vertices[1].Color = Color::Blue;
+			Vertices[2].Color = Color::Blue;
+			Vertices[3].Color = Color::Blue;
 
-		D3D11_BUFFER_DESC BufferDesc;
-		ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
-		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		BufferDesc.ByteWidth = sizeof(InnerVertexType) * VertexCount;
-		BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		BufferDesc.CPUAccessFlags = 0;
-		BufferDesc.MiscFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA InitData;
-		ZeroMemory(&InitData, sizeof(D3D11_SUBRESOURCE_DATA));
-		InitData.pSysMem = Vertices;
-		InitData.SysMemPitch = 0;
-		InitData.SysMemSlicePitch = 0;
-
-		ID3D11Device* Device = D3D::Get()->GetDevice();
-		HRESULT Hr = Device->CreateBuffer(&BufferDesc, &InitData, &VertexBuffer);
-		CHECK(Hr >= 0);
+			D3D11_BUFFER_DESC BufferDesc;
+			ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+			BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			BufferDesc.ByteWidth = sizeof(VertexType) * VertexCount;
+			BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			BufferDesc.CPUAccessFlags = 0;
+			BufferDesc.MiscFlags = 0;
+			
+			D3D11_SUBRESOURCE_DATA InitData;
+			ZeroMemory(&InitData, sizeof(D3D11_SUBRESOURCE_DATA));
+			InitData.pSysMem = Vertices.data();
+			InitData.SysMemPitch = 0;
+			InitData.SysMemSlicePitch = 0;
+			
+			Hr = Device->CreateBuffer(&BufferDesc, &InitData, &VertexBuffer);
+			CHECK(Hr >= 0);
+		}
 		// Vertex Buffer End
 
 		// Index Buffer
-		Indices = new UINT[IndexCount];
-
-		Indices = new UINT[IndexCount]
 		{
-			0, 1, 2, 2, 1, 3
-		};
+			D3D11_BUFFER_DESC BufferDesc;
+			Indices =
+			{
+				0, 1, 2, 2, 1, 3
+			};
 
-		ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
-		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		BufferDesc.ByteWidth = sizeof(InnerIndexType) * IndexCount;
-		BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+			BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			BufferDesc.ByteWidth = sizeof(IndexType) * IndexCount;
+			BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
+			D3D11_SUBRESOURCE_DATA InitData;
+			ZeroMemory(&InitData, sizeof(D3D11_SUBRESOURCE_DATA));
+			InitData.pSysMem = Indices.data();
+			InitData.SysMemPitch = 0;
+			InitData.SysMemSlicePitch = 0;
 
-		ZeroMemory(&InitData, sizeof(D3D11_SUBRESOURCE_DATA));
-		InitData.pSysMem = Indices;
-		InitData.SysMemPitch = 0;
-		InitData.SysMemSlicePitch = 0;
-
-		Hr = Device->CreateBuffer(&BufferDesc, &InitData, &IndexBuffer);
-		CHECK(Hr >= 0);
+			Hr = Device->CreateBuffer(&BufferDesc, &InitData, &IndexBuffer);
+			CHECK(Hr >= 0);
+		}
 		// Index Buffer End
 
-		SAFE_DELETE_ARR(Indices)
-			SAFE_DELETE_ARR(Vertices)
+		// SAFE_DELETE_ARR(Indices)
+		// SAFE_DELETE_ARR(Vertices)
 
+		{
 			WorldMat = Matrix::Identity;
 
-		const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
+			const Vector CameraLocation{ 0, 0, 2 };
+			const Vector CameraForward{ 0, 0, -1 };
+			const Vector CameraUp{ 0, 1, 0 };
+			const Vector CameraAt = CameraLocation + CameraForward;
+			ViewMat = Matrix::CreateLookAt(CameraLocation, CameraAt, CameraUp);
 
-		ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
-		MainCamera->SetPosition(0, 0, -5);
+			const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
+			ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.01f, 100.0f);
 
-		Hr = D3DX11CreateShaderResourceViewFromFile(
-			D3D::Get()->GetDevice(),
-			L"../../_Textures/Box/Box.png",
-			nullptr,
-			nullptr,
-			&Srv,
-			nullptr
-		);
-		CHECK(Hr >= 0);
+			D3D11_BUFFER_DESC ConstantBufferDesc = {};
+			ConstantBufferDesc.ByteWidth = sizeof(Matrix) * 3;
+			ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			CHECK(Device->CreateBuffer(&ConstantBufferDesc, nullptr, &WVPCBuffer) >= 0);
+		}
 
 
+		{
+			D3D11_BUFFER_DESC LerpRateConstantBufferDesc = {};
+			LerpRateConstantBufferDesc.ByteWidth = sizeof(float) * 4;
+			LerpRateConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			LerpRateConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			LerpRateConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			CHECK(Device->CreateBuffer(&LerpRateConstantBufferDesc, nullptr, &LerpRateCBuffer) >= 0);
+		}
+
+		{
+			DirectX::TexMetadata metadata;
+			DirectX::ScratchImage image;
+			const wstring TextureFilePath = wstring(W_TEXTURE_PATH) + L"ChromeIcon.png"; 
+			Hr = LoadFromWICFile(
+				TextureFilePath.c_str(),
+				DirectX::WIC_FLAGS_FORCE_RGB,
+				&metadata,
+				image,
+				nullptr
+			);
+			CHECK(Hr >= 0);
+
+			// Hr = CreateTexture(
+			// 	D3D::Get()->GetDevice(),
+			// 	image.GetImages(),
+			// 	image.GetImageCount(),
+			// 	image.GetMetadata(),
+			// 	&Texture	
+			// );
+			// CHECK(Hr >= 0); 생략 가능.
+			
+			Hr = CreateShaderResourceView(
+				D3D::Get()->GetDevice(),
+				image.GetImages(),
+				image.GetImageCount(),
+				image.GetMetadata(),
+				&this->Srv
+			);
+			CHECK(Hr >= 0);
+			
+			D3D::Get()->GetDeviceContext()->PSSetShaderResources(0, 1, &this->Srv);
+		}
+		
+		{
+			D3D11_RASTERIZER_DESC RasterizerDesc;
+			RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+			RasterizerDesc.CullMode = D3D11_CULL_BACK;
+			RasterizerDesc.FrontCounterClockwise = true;
+			RasterizerDesc.DepthBias = 0;
+			RasterizerDesc.DepthBiasClamp = 0.0f;
+			RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+			RasterizerDesc.DepthClipEnable = true;
+			RasterizerDesc.ScissorEnable = false;
+			RasterizerDesc.MultisampleEnable = false;
+			RasterizerDesc.AntialiasedLineEnable = false;
+			CHECK(Drawer->SetRasterizerState(&RasterizerDesc) >= 0);
+		}
+
+
+		//Sampler
+		{
+			D3D11_SAMPLER_DESC SamplerDesc = {};
+			SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+			
+			SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
+			SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+			SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+			
+			SamplerDesc.BorderColor[0] = 1.f;
+			SamplerDesc.BorderColor[1] = 1.f;
+			SamplerDesc.BorderColor[2] = 1.f;
+			SamplerDesc.BorderColor[3] = 1.f;
+			
+			SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+			SamplerDesc.MinLOD = 0;
+			SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+			CHECK(D3D::Get()->GetDevice()->CreateSamplerState(&SamplerDesc, &SamplerState) >= 0);
+			D3D::Get()->GetDeviceContext()->PSSetSamplers(0, 1, &SamplerState);
+		}
 	}
 
 	void TextureColorBlending::Destroy()
 	{
 		SAFE_RELEASE(IndexBuffer)
 		SAFE_RELEASE(VertexBuffer)
-		SAFE_DELETE(shader)
-		SAFE_DELETE(MainCamera)
+		SAFE_DELETE(Drawer)
+		SAFE_RELEASE(SamplerState);
+		SAFE_RELEASE(WVPCBuffer);
+		SAFE_RELEASE(LerpRateCBuffer);
+		SAFE_RELEASE(Srv);
+		SAFE_RELEASE(Texture);
 	}
 
 	void TextureColorBlending::Tick()
 	{
-		MainCamera->Tick();
-
 		ImGui::SliderFloat("LerpRate", &LerpRate, 0, 1);
+		ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+		D3D11_MAPPED_SUBRESOURCE MappedResource;
+		if (SUCCEEDED(DeviceContext->Map(WVPCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource)))
+		{
+			struct Temp
+			{
+				Matrix World;
+				Matrix View;
+				Matrix Projection;
+			} BufferData = {
+				WorldMat,
+				ViewMat,
+				ProjectionMat
+			};
+			memcpy(MappedResource.pData, &BufferData, sizeof(Temp));
+			DeviceContext->Unmap(WVPCBuffer, 0);
+		}
+		D3D11_MAPPED_SUBRESOURCE MappedResource2;
+		if (SUCCEEDED(DeviceContext->Map(LerpRateCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource2)))
+		{
+			struct Temp
+			{
+				float Rate;
+				float Padding[3];
+			} LerpBuffer { LerpRate, {} };
+			memcpy(MappedResource2.pData, &LerpBuffer, sizeof(Temp));
+			DeviceContext->Unmap(LerpRateCBuffer, 0);			
+		}
 	}
 
 	void TextureColorBlending::Render()
 	{
-		CHECK(shader->AsMatrix("World")->SetMatrix(WorldMat.ToDX()) >= 0);
-		CHECK(shader->AsMatrix("View")->SetMatrix(MainCamera->GetViewMatrix().ToDX()) >= 0);
-		CHECK(shader->AsMatrix("Projection")->SetMatrix(ProjectionMat.ToDX()) >= 0);
-		CHECK(shader->AsSRV("Map")->SetResource(Srv) >= 0);
-		CHECK(shader->AsScalar("LerpRate")->SetFloat(LerpRate) >= 0);
-
-		constexpr UINT Stride = sizeof(InnerVertexType);
+		ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+		constexpr UINT stride = sizeof(VertexType);
 		constexpr UINT offset = 0;
 
-		ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
 		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &offset);
+		DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &stride, &offset);
 		DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		shader->DrawIndexed(0, 0, IndexCount);
+		DeviceContext->VSSetConstantBuffers(0, 1, &WVPCBuffer);
+		DeviceContext->PSSetConstantBuffers(1, 1, &LerpRateCBuffer);
+		// DeviceContext->PSSetShaderResources(0, 1, &this->Srv);
+		Drawer->DrawIndexed(IndexCount);
 	}
 }

@@ -4,17 +4,19 @@
 #include "Systems/Window.h"
 
 #include "Execute/011_Grid/Grid.h"
+#include "Execute/019_TextureColorBlending/TextureColorBlending.h"
 
 void Main::Initialize()
 {
 	// PUSH_MAIN(Sdt::RawBufferDemo);
 	// PUSH_MAIN(Line);
-	// PUSH_MAIN(Line2);
+	// PUSH_MAIN(Sdt::Line2);
 	// PUSH_MAIN(Line_Circle);
 	// PUSH_MAIN(Triangle_List);
 	// PUSH_MAIN(Sdt::WorldDemo);
 	// PUSH_MAIN(Sdt::WorldDemo2);
-	PUSH_MAIN(Sdt::Grid);
+	// PUSH_MAIN(Sdt::Grid);
+	PUSH_MAIN(Sdt::TextureColorBlending);
 }
 
 void Main::Destroy()

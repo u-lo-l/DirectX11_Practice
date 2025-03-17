@@ -98,7 +98,7 @@ namespace Sdt
 		ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		CHECK(Device->CreateBuffer(&ConstantBufferDesc, nullptr, &WVPCBuffer) >= 0);
 
-		D3D11_RASTERIZER_DESC RasterizerDesc = {};
+		D3D11_RASTERIZER_DESC RasterizerDesc;
 		RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 		RasterizerDesc.CullMode = D3D11_CULL_BACK;
 		RasterizerDesc.FrontCounterClockwise = true;

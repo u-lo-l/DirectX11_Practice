@@ -73,6 +73,7 @@ D3D::D3D()
 	CreateRTV();
 	CreateDSV();
 	SetRenderTargets();
+	// DeviceContext->OMSetBlendState( nullptr, nullptr, 0xFFFFFFFF );
 }
 
 D3D::~D3D()

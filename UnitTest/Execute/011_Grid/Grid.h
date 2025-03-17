@@ -38,7 +38,8 @@ namespace Sdt
 		Matrix WorldMat;
 		Matrix ViewMat;
 		Matrix ProjectionMat;
-		
+
+		// World-View-Projection Constant Buffer
 		ID3D11Buffer * WVPCBuffer = nullptr;
 	};
 }
