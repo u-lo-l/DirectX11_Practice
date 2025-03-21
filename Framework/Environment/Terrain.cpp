@@ -19,14 +19,11 @@ Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFile
 
 	WorldMat = Matrix::Identity;
 
-	// ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
-	//
-	// DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	{
 		D3D11_RASTERIZER_DESC RasterizerDesc;
 		RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
-		RasterizerDesc.FrontCounterClockwise = true;
+		RasterizerDesc.CullMode = D3D11_CULL_BACK;
+		RasterizerDesc.FrontCounterClockwise = false;
 		RasterizerDesc.DepthBias = 0;
 		RasterizerDesc.DepthBiasClamp = 0.0f;
 		RasterizerDesc.SlopeScaledDepthBias = 0.0f;
@@ -99,9 +96,9 @@ void Terrain::GetPositionY(Vector & InPosition ) const
 	
 	float SlopX, SlopZ, Distance;
 	Vector Result(-1, Math::FloatMinValue, -1);
-	if (IntersectRayTriangle(V[0], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
+	if (Math::IntersectRayTriangle(V[0], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
 		Result = V[0] + (V[1] - V[0]) * SlopX + (V[2] - V[0]) * SlopZ;
-	if (IntersectRayTriangle(V[3], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
+	if (Math::IntersectRayTriangle(V[3], V[1], V[2], Start, Direction, &SlopX, &SlopZ, &Distance) == TRUE)
 		Result = V[3] + (V[1] - V[3]) * SlopX + (V[2] - V[3]) * SlopZ;
 	InPosition.Y = Result.Y;
 	Gui::Get()->RenderText(5, 60, 1, 0, 0, String::ToString(Result.ToWString()));	
@@ -192,69 +189,4 @@ void Terrain::CreateBuffer()
 	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	CHECK(Device->CreateBuffer(&ConstantBufferDesc, nullptr, &WVPCBuffer) >= 0);
-}
-
-bool Terrain::IntersectRayTriangle(
-	const DirectX::XMFLOAT3 & rayPos,  // 광선의 시작점
-	const DirectX::XMFLOAT3 & rayDir,  // 광선의 방향
-	const DirectX::XMFLOAT3 & v0,      // 삼각형의 첫 번째 정점
-	const DirectX::XMFLOAT3 & v1,      // 삼각형의 두 번째 정점
-	const DirectX::XMFLOAT3 & v2,      // 삼각형의 세 번째 정점
-	float* u,                // 교차 지점의 Barycentric 좌표 u
-	float* v,                // 교차 지점의 Barycentric 좌표 v
-	float* dist              // 교차 지점까지의 거리
-) {
-	using DirectX::XMFLOAT3;
-	// DirectXMath를 사용하여 XMFLOAT3로 벡터 연산을 구현
-	XMFLOAT3 edge1, edge2, pvec, tvec, qvec;
-	float det, invDet;
-
-	// 삼각형의 두 변
-	edge1 = XMFLOAT3(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
-	edge2 = XMFLOAT3(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
-
-	// P 벡터: 광선 방향과 edge2의 외적
-	pvec = XMFLOAT3(rayDir.y * edge2.z - rayDir.z * edge2.y, 
-					rayDir.z * edge2.x - rayDir.x * edge2.z, 
-					rayDir.x * edge2.y - rayDir.y * edge2.x);
-
-	// 행렬식 계산
-	det = edge1.x * pvec.x + edge1.y * pvec.y + edge1.z * pvec.z;
-
-	// 광선이 삼각형과 평행한 경우
-	const float EPSILON = 1e-8f;
-	if (fabs(det) < EPSILON) {
-		return false;
-	}
-
-	// 역행렬식 계산
-	invDet = 1.0f / det;
-
-	// T 벡터: 광선 시작점과 삼각형 정점 v0의 차
-	tvec = XMFLOAT3(rayPos.x - v0.x, rayPos.y - v0.y, rayPos.z - v0.z);
-
-	// u 파라미터 계산
-	*u = (tvec.x * pvec.x + tvec.y * pvec.y + tvec.z * pvec.z) * invDet;
-	if (*u < 0.0f || *u > 1.0f) {
-		return false;
-	}
-
-	// Q 벡터: tvec과 edge1의 외적
-	qvec = XMFLOAT3(tvec.y * edge1.z - tvec.z * edge1.y,
-					tvec.z * edge1.x - tvec.x * edge1.z,
-					tvec.x * edge1.y - tvec.y * edge1.x);
-
-	// v 파라미터 계산
-	*v = (rayDir.x * qvec.x + rayDir.y * qvec.y + rayDir.z * qvec.z) * invDet;
-	if (*v < 0.0f || (*u + *v) > 1.0f) {
-		return false;
-	}
-
-	// 거리 계산
-	*dist = (edge2.x * qvec.x + edge2.y * qvec.y + edge2.z * qvec.z) * invDet;
-	if (*dist < 0.0f) {
-		return false;
-	}
-
-	return true;
 }

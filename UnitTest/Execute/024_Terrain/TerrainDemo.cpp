@@ -5,16 +5,13 @@ namespace Sdt
 {
 	void TerrainDemo::Initialize()
 	{
-		Context::Get()->GetCamera()->SetPosition( 0, 0, 2 );
-		Context::Get()->GetCamera()->SetRotation( 180, 0, 180);
-		
-		const wstring HeightMap = L"Terrain/Gray256.png";
-		const wstring TerrainShader = L"17_TerrainNormal.hlsl"; 
-		Camera * MainCamera = Context::Get()->GetCamera();
+		Camera * const MainCamera = Context::Get()->GetCamera();
 		 
 		MainCamera->SetPosition( 100, 100, 100 );
 		MainCamera->SetRotation( 210, 135, 180);
 		
+		const wstring HeightMap = L"Terrain/Gray256.png";
+		const wstring TerrainShader = L"17_TerrainNormal.hlsl"; 
 		Landscape = new Terrain(TerrainShader, HeightMap);
 
 		// Drawer = new Shader(L"18_TerrainNormalVector.fx");
@@ -92,7 +89,6 @@ namespace Sdt
 		// Drawer2->AsMatrix("World")->SetMatrix(WorldMatrix);
 		// Drawer2->AsMatrix("View")->SetMatrix(Context::Get()->GetViewMatrix());
 		// Drawer2->AsMatrix("Projection")->SetMatrix(Context::Get()->GetProjectionMatrix());
-		
 	}
 
 	void TerrainDemo::Render()

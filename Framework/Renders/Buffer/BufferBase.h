@@ -1,9 +1,9 @@
 #pragma once
 
+
 class BufferBase
 {
 protected:
-	// BufferBase(void * InData, UINT InCount, UINT InStride);
 	virtual ~BufferBase();
 public:
 	virtual void BindToGPU() = 0;

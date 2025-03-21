@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include <string>
 #include <map>
 using std::string;
@@ -9,12 +10,12 @@ using std::map;
 
 enum class ShaderType : uint8_t
 {
-	PixelShader		= 0b000001,
-	VertexShader	= 0b000010,
-	GeometryShader	= 0b000100,
-	HullShader		= 0b001000,
-	DomainShader	= 0b010000,
-	ComputeShader	= 0b100000
+	PixelShader		= 1 << 0,
+	VertexShader	= 1 << 1,
+	GeometryShader	= 1 << 2,
+	HullShader		= 1 << 3,
+	DomainShader	= 1 << 4,
+	ComputeShader	= 1 << 5, 
 };
 
 template <class T>

@@ -20,8 +20,8 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 {
 	switch (Type)
 	{
-	case ShaderType::VertexShader:		return "VSMain";
-	case ShaderType::PixelShader:		return "PSMain";
+	case ShaderType::VertexShader:	return "VSMain";
+	case ShaderType::PixelShader:	return "PSMain";
 	case ShaderType::ComputeShader:	return "CSMain";
 	default :
 		ASSERT(false, "Unknown Shader Type")

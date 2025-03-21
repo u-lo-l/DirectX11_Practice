@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
-#include "Renders/HlslShader.hpp"
+#include "Renders/Shader/HlslShader.hpp"
 
 namespace Sdt
 {

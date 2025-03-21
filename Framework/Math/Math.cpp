@@ -250,3 +250,70 @@ float Math::Random( float min, float max )
 
 	return min + val;
 }
+
+bool Math::IntersectRayTriangle
+(
+	const DirectX::XMFLOAT3 & RayPos,  // 광선의 시작점
+	const DirectX::XMFLOAT3 & RayDir,  // 광선의 방향
+	const DirectX::XMFLOAT3 & V0,      // 삼각형의 첫 번째 정점
+	const DirectX::XMFLOAT3 & V1,      // 삼각형의 두 번째 정점
+	const DirectX::XMFLOAT3 & V2,      // 삼각형의 세 번째 정점
+	float* U,                // 교차 지점의 Barycentric 좌표 u
+	float* V,                // 교차 지점의 Barycentric 좌표 v
+	float* Dist              // 교차 지점까지의 거리
+)
+{
+	using DirectX::XMFLOAT3;
+
+	// 삼각형의 두 변
+	const XMFLOAT3 Edge1 = XMFLOAT3(V1.x - V0.x, V1.y - V0.y, V1.z - V0.z);
+	const XMFLOAT3 Edge2 = XMFLOAT3(V2.x - V0.x, V2.y - V0.y, V2.z - V0.z);
+
+	// P 벡터: 광선 방향과 edge2의 외적
+	const XMFLOAT3 Pvec = XMFLOAT3(RayDir.y * Edge2.z - RayDir.z * Edge2.y,
+							RayDir.z * Edge2.x - RayDir.x * Edge2.z,
+							RayDir.x * Edge2.y - RayDir.y * Edge2.x);
+
+	// 행렬식 계산
+	const float Det = Edge1.x * Pvec.x + Edge1.y * Pvec.y + Edge1.z * Pvec.z;
+
+	// 광선이 삼각형과 평행한 경우
+	constexpr float EPSILON = 1e-8f;
+	if (fabs(Det) < EPSILON)
+	{
+		return false;
+	}
+
+	// 역행렬식 계산
+	const float InvDet = 1.0f / Det;
+
+	// T 벡터: 광선 시작점과 삼각형 정점 v0의 차
+	const XMFLOAT3 Tvec = XMFLOAT3(RayPos.x - V0.x, RayPos.y - V0.y, RayPos.z - V0.z);
+
+	// u 파라미터 계산
+	*U = (Tvec.x * Pvec.x + Tvec.y * Pvec.y + Tvec.z * Pvec.z) * InvDet;
+	if (*U < 0.0f || *U > 1.0f) {
+		return false;
+	}
+
+	// Q 벡터: tvec과 edge1의 외적
+	const XMFLOAT3 Qvec = XMFLOAT3(Tvec.y * Edge1.z - Tvec.z * Edge1.y,
+							Tvec.z * Edge1.x - Tvec.x * Edge1.z,
+							Tvec.x * Edge1.y - Tvec.y * Edge1.x);
+
+	// v 파라미터 계산
+	*V = (RayDir.x * Qvec.x + RayDir.y * Qvec.y + RayDir.z * Qvec.z) * InvDet;
+	if (*V < 0.0f || (*U + *V) > 1.0f)
+	{
+		return false;
+	}
+
+	// 거리 계산
+	*Dist = (Edge2.x * Qvec.x + Edge2.y * Qvec.y + Edge2.z * Qvec.z) * InvDet;
+	if (*Dist < 0.0f)
+	{
+		return false;
+	}
+
+	return true;
+}

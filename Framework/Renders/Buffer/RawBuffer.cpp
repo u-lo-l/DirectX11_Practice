@@ -1,36 +1,14 @@
 #include "framework.h"
 #include "Buffers.h"
 
-ComputeShaderResource::~ComputeShaderResource()
-{
-	SAFE_RELEASE(Input);
-	SAFE_RELEASE(Output);
-	SAFE_RELEASE(SRV);
-	SAFE_RELEASE(UAV);
-	SAFE_RELEASE(Result);
-}
-
-void ComputeShaderResource::CreateBuffer()
-{
-	CreateInput();
-	
-	CreateSRV();
-
-	CreateOutput();
-
-	CreateUAV();
-
-	CreateResult();
-}
-
-RawBuffer::RawBuffer( void * InInputData, string InDataName, UINT InDataSize, UINT InOutputSize )
+RawBuffer::RawBuffer( void * InInputData, UINT InDataSize, UINT InOutputSize )
 	: DataSize(InDataSize), OutputSize(InOutputSize)
 {
 	Data = InInputData;
 	CreateBuffer();
 }
 
-void RawBuffer::SetInputData( const void * InData )
+void RawBuffer::SetInputData( const void * InData ) const
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
@@ -40,7 +18,7 @@ void RawBuffer::SetInputData( const void * InData )
 	DeviceContext->Unmap(Input, 0);
 }
 
-void RawBuffer::GetOutputData( void * OutData )
+void RawBuffer::GetOutputData( void * OutData ) const
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	DeviceContext->CopyResource(Result, Output);
@@ -79,7 +57,9 @@ void RawBuffer::CreateSRV()
 	if (DataSize <= 0)
 		return ;
 
-	ID3D11Buffer * Buffer = static_cast<ID3D11Buffer *>(Input);
+	ID3D11Buffer * Buffer = nullptr;
+	CHECK(Input->QueryInterface(&Buffer) >= 0);
+	
 	D3D11_BUFFER_DESC BufferDesc;
 	Buffer->GetDesc(&BufferDesc);
 	
@@ -90,7 +70,6 @@ void RawBuffer::CreateSRV()
 	SRVDesc.BufferEx.NumElements = BufferDesc.ByteWidth / 4; // 4 : sizeof(float)
 
 	CHECK(D3D::Get()->GetDevice()->CreateShaderResourceView(Buffer, &SRVDesc, &this->SRV) >= 0);
-	int a = 0;
 }
 
 void RawBuffer::CreateOutput()
@@ -106,7 +85,6 @@ void RawBuffer::CreateOutput()
 	BufferDesc.BindFlags		= D3D11_BIND_UNORDERED_ACCESS;
 	BufferDesc.MiscFlags		= D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
 	BufferDesc.Usage			= D3D11_USAGE_DEFAULT; // GPU에서 CPU로 보내기만 가능.
-	// BufferDesc.CPUAccessFlags	= D3D11_CPU_ACCESS_READ;
 
 	ID3D11Buffer * OutBuffer = nullptr;
 	CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &OutBuffer) >= 0);
@@ -118,8 +96,9 @@ void RawBuffer::CreateUAV()
 {
 	ASSERT(OutputSize > 0, "Invalid OutputSize")
 
-	// ID3D11Buffer * OutBuffer = dynamic_cast<ID3D11Buffer *>(Output);
-	ID3D11Buffer * OutBuffer = static_cast<ID3D11Buffer *>(Output);
+	ID3D11Buffer * OutBuffer = nullptr;
+	CHECK(Output->QueryInterface(&OutBuffer) >= 0);
+	
 	D3D11_BUFFER_DESC BufferDesc;
 	OutBuffer->GetDesc(&BufferDesc);
 	
@@ -139,8 +118,9 @@ void RawBuffer::CreateResult()
 	
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 
-	// ID3D11Buffer * OutBuffer = dynamic_cast<ID3D11Buffer *>(Output);
-	ID3D11Buffer * OutBuffer = static_cast<ID3D11Buffer *>(Output);
+	ID3D11Buffer * OutBuffer = nullptr;
+	CHECK(Output->QueryInterface(&OutBuffer) >= 0);
+	
 	D3D11_BUFFER_DESC BufferDesc;
 	OutBuffer->GetDesc(&BufferDesc);
 	

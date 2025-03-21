@@ -31,7 +31,7 @@ namespace Sdt
 
 		ID3D11Device * Device = D3D::Get()->GetDevice();
 		const HRESULT hr = Device->CreateBuffer(&BufferDesc, &InitData, &VertexBuffer);
-		CHECK(hr);
+		CHECK(hr >= 0);
 	}
 
 	void Rectangle::Destroy()

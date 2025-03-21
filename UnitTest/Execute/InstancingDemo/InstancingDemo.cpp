@@ -58,7 +58,7 @@ namespace Sdt
 
 	void InstancingDemo::SetModelsPosition( int MaxInstanceCount, float Stride )
 	{
-		const int Width = sqrt(MaxInstanceCount);
+		const int Width = static_cast<int>(sqrt(MaxInstanceCount));
 		const int Height = (MaxInstanceCount + Width - 1) / Width;
 		const int Depth = ModelInstances.size();
 		

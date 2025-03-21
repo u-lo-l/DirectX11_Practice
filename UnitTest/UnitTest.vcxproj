@@ -19,32 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Execute\006_Rectangle\Rectangle.cpp" />
-    <ClCompile Include="Execute\009_World\WorldDemo.cpp" />
-    <ClCompile Include="Execute\009_World\WorldDemo2.cpp" />
-    <ClCompile Include="Execute\011_Grid\Grid.cpp" />
-    <ClCompile Include="Execute\019_TextureColorBlending\TextureColorBlending.cpp" />
-    <ClCompile Include="Execute\020_TextureLayering\HeightMap.cpp" />
     <ClCompile Include="Execute\024_Terrain\TerrainDemo.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\InstancingDemo.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\Instancing_Vertex.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\NonInstancing_Vertex.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Execute\006_Rectangle\Rectangle.h" />
-    <ClInclude Include="Execute\009_World\WorldDemo.h" />
-    <ClInclude Include="Execute\009_World\WorldDemo2.h" />
-    <ClInclude Include="Execute\011_Grid\Grid.h" />
-    <ClInclude Include="Execute\019_TextureColorBlending\TextureColorBlending.h" />
-    <ClInclude Include="Execute\020_TextureLayering\HeightMap.h" />
     <ClInclude Include="Execute\024_Terrain\TerrainDemo.h" />
-    <ClInclude Include="Execute\InstancingDemo\InstancingDemo.h" />
-    <ClInclude Include="Execute\InstancingDemo\Instancing_Vertex.h" />
-    <ClInclude Include="Execute\InstancingDemo\NonInstancing_Vertex.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

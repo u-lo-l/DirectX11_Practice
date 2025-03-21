@@ -4,23 +4,27 @@
 class VertexBuffer : public BufferBase
 {
 public:
-#ifdef DO_DEBUG
-	VertexBuffer( void * InData,
-					UINT InCount,
-					UINT InStride,
-					const string & MetaData = "",
-					UINT InSlot = 0,
-					bool InCpuWrite = false,
-					bool InGpuWrite = false
-				);
-#else
 	VertexBuffer(void * InData, UINT InCount, UINT InStride, UINT InSlot = 0, bool InCpuWrite = false, bool InGpuWrite = false);
-#endif
 	~VertexBuffer() override = default;
+	VertexBuffer(const VertexBuffer &) = delete;
+	VertexBuffer(VertexBuffer &&) = delete; 
+	VertexBuffer & operator=(const VertexBuffer &) = delete;
+	VertexBuffer & operator=(VertexBuffer &&) = delete;
 	void BindToGPU() override;
 private:
 	UINT Slot;
 
 	bool bCpwWrite;
 	bool bGpuWrite;
+};
+
+class InstanceBuffer final : public VertexBuffer
+{
+public:
+	InstanceBuffer(void * InData, UINT InCount, UINT InStride);
+	~InstanceBuffer() override = default;
+	InstanceBuffer(const InstanceBuffer &) = delete;
+	InstanceBuffer(InstanceBuffer &&) = delete; 
+	InstanceBuffer & operator=(const InstanceBuffer &) = delete;
+	InstanceBuffer & operator=(InstanceBuffer &&) = delete;
 };

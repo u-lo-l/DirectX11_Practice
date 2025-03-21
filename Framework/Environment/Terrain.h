@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Interface/IPlaceable.h"
 #include "Interface/IRenderable.h"
-#include "Renders/HlslShader.hpp"
 
 class Terrain
 {
@@ -41,16 +40,4 @@ private:
 
 	Matrix WorldMat;
 	ID3D11Buffer * WVPCBuffer = nullptr;
-	
-private :
-	static bool IntersectRayTriangle(
-		const DirectX::XMFLOAT3& rayPos,  // 광선의 시작점
-		const DirectX::XMFLOAT3& rayDir,  // 광선의 방향
-		const DirectX::XMFLOAT3& v0,      // 삼각형의 첫 번째 정점
-		const DirectX::XMFLOAT3& v1,      // 삼각형의 두 번째 정점
-		const DirectX::XMFLOAT3& v2,      // 삼각형의 세 번째 정점
-		float* u,                // 교차 지점의 Barycentric 좌표 u
-		float* v,                // 교차 지점의 Barycentric 좌표 v
-		float* dist                 // 교차 지점까지의 거리
-	);
 };

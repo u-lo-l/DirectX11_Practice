@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/Shader/HlslShader.hpp"
 
 namespace Sdt
 {
@@ -17,6 +18,8 @@ namespace Sdt
 	private:
 		Terrain * Landscape = nullptr;
 		Vector Position = Vector::Zero;
+
+		HlslShader<VertexType> * TerrainNormalDrawer = nullptr;
 
 	// // for drawing normal vectors
 	// 	Shader * Drawer = nullptr;
