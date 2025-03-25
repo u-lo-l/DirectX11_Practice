@@ -7,6 +7,7 @@
 #define Const_VS_AnimationBlending b4
 
 #define Const_PS_Material b5
+#define Const_PS_LightDirection b6
 
 #define Texture_VS_KeyFrames t0
 #define Texture_PS_Texture t1 // Diffuse Texture

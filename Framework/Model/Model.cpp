@@ -22,8 +22,8 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 
 	// InstBuffer = new InstanceBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix));
 
-	if (SkeletonData != nullptr)
-		SkeletonData->BindToGPU();
+	// if (SkeletonData != nullptr)
+		// SkeletonData->BindToGPU();
 	
 	// if (ClipSRV2DArray != nullptr)
 	// {
@@ -101,8 +101,8 @@ void Model::Tick()
 	if (AnimationFrameData_CBuffer != nullptr)
 		AnimationFrameData_CBuffer->UpdateData(&this->BlendingDatas, sizeof(AnimationBlendingDesc) * MaxModelInstanceCount );
 	
-	// if (ClipSRV2DArray != nullptr)
-	// 	D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV2DArray);
+	if (ClipSRV2DArray != nullptr)
+		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV2DArray);
 
 	for (ModelMesh * M : Meshes)
 	{

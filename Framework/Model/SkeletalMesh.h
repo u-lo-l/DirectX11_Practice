@@ -25,6 +25,7 @@ private:
 		UINT BaseBoneIndex;
 		float Padding[3];
 	};
+	// 이 SkeletalMesh의 BaseBone. 변경되지 않음.
 	BoneIndexDesc BoneIndexData;
 	ConstantBuffer * BoneIndexBuffer;
 	string CBufferName = "CB_BoneIndex";

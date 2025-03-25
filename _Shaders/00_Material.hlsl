@@ -3,6 +3,7 @@
 static const int DiffuseMap = 0;
 static const int SpecularMap = 1;
 static const int NormalMap = 2;
+
 Texture2D MaterialMaps[MAX_MATERIAL_TEXTURE_COUNT] : register(Texture_PS_Texture);
 
 cbuffer CB_Material : register(Const_PS_Material)

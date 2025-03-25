@@ -4,16 +4,22 @@ UINT GlobalViewProjectionCBuffer::Count = 0;
 
 GlobalViewProjectionCBuffer::GlobalViewProjectionCBuffer()
 {
-	const string DataInfo = "World Context Desc #" + to_string(GlobalViewProjectionCBuffer::Count);
 	ViewProjectionBuffer = new ConstantBuffer(
-												ShaderType::VertexShader,
-												VS_ViewProjection,
-												nullptr,
-												DataInfo,
-												sizeof(ViewProjectionDesc),
-												false
-											);
-	
+		ShaderType::VertexShader,
+		VS_ViewProjection,
+		nullptr,
+		"ViewProjection",
+		sizeof(ViewProjectionDesc),
+		false
+	);
+	LightDirectionBuffer = new ConstantBuffer(
+		ShaderType::PixelShader,
+		PS_LightDirection,
+		nullptr,
+		"LightDirection",
+		sizeof(LightDirectionDesc),
+		false
+	);
 	GlobalViewProjectionCBuffer::Count++;
 }
 
@@ -21,6 +27,7 @@ GlobalViewProjectionCBuffer::~GlobalViewProjectionCBuffer()
 {
 	GlobalViewProjectionCBuffer::Count--;
 	SAFE_DELETE( ViewProjectionBuffer );
+	SAFE_DELETE( LightDirectionBuffer );
 }
 
 void GlobalViewProjectionCBuffer::Tick()
@@ -33,12 +40,14 @@ void GlobalViewProjectionCBuffer::Tick()
 
 	ViewProjectionData.View = Context::Get()->GetViewMatrix();
 	ViewProjectionData.Projection = Context::Get()->GetProjectionMatrix();
-	ViewProjectionData.LightDirection = Context::Get()->GetLightDirection();
+	LightDirectionData.LightDirection = Context::Get()->GetLightDirection();
 
 	ViewProjectionBuffer->UpdateData(&ViewProjectionData, sizeof(ViewProjectionDesc));
+	LightDirectionBuffer->UpdateData(&LightDirectionData, sizeof(LightDirectionDesc));
 }
 
 void GlobalViewProjectionCBuffer::BindToGPU() const
 {
 	ViewProjectionBuffer->BindToGPU();
+	LightDirectionBuffer->BindToGPU();
 }

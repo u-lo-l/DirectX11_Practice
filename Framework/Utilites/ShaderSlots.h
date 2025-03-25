@@ -11,8 +11,9 @@ enum ShaderSlot : uint32_t
 	VS_BoneMatrix = 2,
 	VS_BoneIndex = 3,
 	VS_AnimationBlending = 4,
-	
+
 	PS_Material = 5,
+	PS_LightDirection = 6,
 };
 
 enum TextureSlot : uint32_t

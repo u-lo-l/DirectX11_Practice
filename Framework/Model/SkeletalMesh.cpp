@@ -25,7 +25,14 @@ void SkeletalMesh::CreateBuffers()
 {
 	ModelMesh::CreateBuffers();
 	const string CBufferInfo = MeshName + " : Base Bone Index for this Mesh";
-	BoneIndexBuffer = new ConstantBuffer(ShaderType::VertexShader, VS_BoneIndex, &BoneIndexData, CBufferInfo, sizeof(BoneIndexDesc), true);
+	BoneIndexBuffer = new ConstantBuffer(
+		ShaderType::VertexShader,
+		VS_BoneIndex,
+		&BoneIndexData,
+		CBufferInfo,
+		sizeof(BoneIndexDesc),
+		true
+	);
 }
 
 int SkeletalMesh::GetBoneIndex() const

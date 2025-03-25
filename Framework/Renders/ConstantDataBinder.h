@@ -27,11 +27,17 @@ private:
 	{
 		Matrix View;
 		Matrix Projection;
+	};
+
+	struct LightDirectionDesc
+	{
 		Vector LightDirection;
 		float Padding;
 	};
 
 	ViewProjectionDesc ViewProjectionData;
+	LightDirectionDesc LightDirectionData;
 	
 	ConstantBuffer * ViewProjectionBuffer;
+	ConstantBuffer * LightDirectionBuffer;
 };
