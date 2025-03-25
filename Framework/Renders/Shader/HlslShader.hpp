@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "framework.h"
+#include "Utilites/String.h"
 
 template <class T>
 std::string HlslShader<T>::GetShaderTarget( ShaderType Type )
@@ -31,8 +32,7 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 
 template <class T>
 HlslShader<T>::HlslShader(const wstring & ShaderFileName)
-	: DeviceContext(D3D::Get()->GetDeviceContext())
-	, InputLayout(nullptr)
+	: InputLayout(nullptr)
 	, VertexShader(nullptr)
 	, PixelShader(nullptr)
 	, ComputeShader(nullptr)
@@ -57,11 +57,47 @@ HlslShader<T>::~HlslShader()
 	SAFE_RELEASE(RasterizerState);
 }
 
+// Rasterizer
+template <class T>
+HRESULT HlslShader<T>::CreateRasterizerState_WireFrame()
+{
+	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	RasterizerDesc.CullMode = D3D11_CULL_BACK;
+	RasterizerDesc.FrontCounterClockwise = false;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	return this->CreateRasterizerState(&RasterizerDesc);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateRasterizerState_Solid()
+{
+	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	RasterizerDesc.CullMode = D3D11_CULL_BACK;
+	RasterizerDesc.FrontCounterClockwise = false;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	return this->CreateRasterizerState(&RasterizerDesc);
+}
+
+// Draw
 template <class T>
 void HlslShader<T>::Draw( UINT VertexCount, UINT StartVertexLocation ) const
 {
 	BeginDraw();
-	DeviceContext->Draw(VertexCount, StartVertexLocation);
+	D3D::Get()->GetDeviceContext()->Draw(VertexCount, StartVertexLocation);
 	EndDraw();
 }
 
@@ -69,7 +105,7 @@ template <class T>
 void HlslShader<T>::DrawIndexed( UINT IndexCount, UINT StartIndexLocation, UINT BaseVertexLocation ) const
 {
 	BeginDraw();
-	DeviceContext->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+	D3D::Get()->GetDeviceContext()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
 	EndDraw();
 }
 
@@ -77,7 +113,7 @@ template <class T>
 void HlslShader<T>::DrawInstanced( UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation) const
 {
 	BeginDraw();
-	DeviceContext->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
+	D3D::Get()->GetDeviceContext()->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
 	EndDraw();
 }
 
@@ -92,7 +128,7 @@ void HlslShader<T>::DrawIndexedInstanced
 ) const
 {
 	BeginDraw();
-	DeviceContext->DrawIndexedInstanced(
+	D3D::Get()->GetDeviceContext()->DrawIndexedInstanced(
 		IndexCountPreInstance,
 		InstanceCount,
 		StartIndexLocation,
@@ -105,6 +141,7 @@ void HlslShader<T>::DrawIndexedInstanced
 template <class T>
 void HlslShader<T>::Dispatch( UINT X, UINT Y, UINT Z ) const
 {
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	DeviceContext->Dispatch(X, Y, Z);
 
 	// Best-Practice임. 하지만 근거는 이해하지 못함.
@@ -122,12 +159,12 @@ int HlslShader<T>::AddConstantBuffer( ID3D11Buffer * CBuffer )
 {
 	const int index = ConstantBuffers.size();
 	ConstantBuffers.push_back(CBuffer);
-	DeviceContext->VSSetConstantBuffers(index, 1, &CBuffer);
+	D3D::Get()->GetDeviceContext()->VSSetConstantBuffers(index, 1, &CBuffer);
 	return index;	
 }
 
 template <class T>
-HRESULT HlslShader<T>::SetRasterizerState( const D3D11_RASTERIZER_DESC * RSDesc )
+HRESULT HlslShader<T>::CreateRasterizerState( const D3D11_RASTERIZER_DESC * RSDesc )
 {
 	return D3D::Get()->GetDevice()->CreateRasterizerState( RSDesc, &this->RasterizerState );
 }
@@ -208,14 +245,35 @@ void HlslShader<T>::InitializeInputLayout( ID3DBlob * VertexShaderBlob )
 		VertexShaderBlob->GetBufferSize(),
 		&InputLayout
 	);
+	if (FAILED(Hr))
+	{
+		char* errorMessage = nullptr;
+
+		// HRESULT로부터 에러 메시지를 얻기
+		FormatMessageA(
+			FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+			NULL,
+			Hr,
+			0,
+			(LPSTR)&errorMessage,
+			0,
+			NULL
+		);
+
+		std::string errorStr = errorMessage;
+
+		// 메모리 해제
+		LocalFree(errorMessage);
+	}
 	ASSERT((Hr >= 0), "Failed to create input layout")
 }
 
 template <class T>
 void HlslShader<T>::BeginDraw() const
 {
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	
 	DeviceContext->IASetInputLayout(InputLayout);
-
 	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
 	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
 	DeviceContext->RSSetState(RasterizerState);

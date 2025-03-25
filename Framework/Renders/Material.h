@@ -1,64 +1,61 @@
-﻿// #pragma once
-//
-// class ConstantBuffer;
-//
-// class Material
-// {
-// private:
-// 	using ThisClass = Material;
-// 	enum class TextureMapType : uint8_t  // NOLINT(performance-enum-size)
-// 	{
-// 		Diffuse = 0, Specular, Normal, Max
-// 	};
-// 	static constexpr UINT MaxTextureCount = static_cast<UINT>(TextureMapType::Max);
-// 	
-// public:
-// #ifdef DO_DEBUG
-// 	explicit Material(const string & MetaData = "Material.ColorData");
-// 	explicit Material(Shader * InDrawer, const string & MetaData = "Material.ColorData");
-// 	explicit Material(const wstring & InShaderFileName, const string & MetaData = "Material.ColorData");
-// #else
-// 	Material();
-// 	explicit Material(Shader * InDrawer);
-// 	explicit Material(const wstring & InShaderFileName);
-// #endif
-// 	~Material();
-//
-// 	void Render();
-//
-// 	void SetShader(const wstring & InShaderFileName);
-// 	void SetShader(Shader * InShader);
-// 	Shader * GetShader() const;
-// 	void SetAmbient(const Color & InAmbient) { ColorData.Ambient = InAmbient; }
-// 	void SetDiffuse(const Color & InDiffuse) { ColorData.Diffuse = InDiffuse; }
-// 	void SetSpecular(const Color & InSpecular) { ColorData.Specular = InSpecular; }
-// 	void SetEmissive(const Color & InEmissive) { ColorData.Emissive = InEmissive; }
-// 	void SetDiffuseMap(const string & InFilePath);
-// 	void SetDiffuseMap(const wstring & InWFilePath);
-// 	void SetSpecularMap(const string & InFilePath);
-// 	void SetSpecularMap(const wstring & InWFilePath);
-// 	void SetNormalMap(const string & InFilePath);
-// 	void SetNormalMap(const wstring & InWFilePath);
-//
-// private:
-// 	struct Colors
-// 	{
-// 		Color Ambient {0, 0, 0, 1};
-// 		Color Diffuse {1, 1, 1, 1};
-// 		Color Specular {0, 0, 0, 1};
-// 		Color Emissive {0, 0, 0, 1};
-// 	};
-// 	
-// private:
-// 	Shader * Drawer;
-//
-// 	Colors ColorData;
-//
-// 	ConstantBuffer * CBuffer = nullptr;
-// 	IECB_t * ECB_Color = nullptr; // sCBuffer : in course
-// 	
-// 	Texture * Textures[ThisClass::MaxTextureCount];
-// 	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount];
-// 	IESRV_t * ESRV_TextureMap = nullptr; // sSRVs : in course
-// };
-//
+﻿#pragma once
+#include "Renders/Shader/HlslShader.hpp"
+
+class ConstantBuffer;
+
+class Material
+{
+private:
+	using VertexType = ModelVertex;
+	using ThisClass = Material;
+	enum class TextureMapType : uint8_t  // NOLINT(performance-enum-size)
+	{
+		Diffuse = 0, Specular, Normal, Max
+	};
+	static constexpr UINT MaxTextureCount = static_cast<UINT>(TextureMapType::Max);
+	
+public:
+	Material();
+	explicit Material(HlslShader<VertexType> * InDrawer);
+	explicit Material(const wstring & InShaderFileName);
+	~Material();
+
+	void Tick();
+	void Render();
+
+	void SetShader(const wstring & InShaderFileName);
+	void SetShader(HlslShader<VertexType> * InShader);
+	HlslShader<VertexType> * GetShader() const;
+	void SetAmbient(const Color & InAmbient) { ColorData.Ambient = InAmbient; }
+	void SetDiffuse(const Color & InDiffuse) { ColorData.Diffuse = InDiffuse; }
+	void SetSpecular(const Color & InSpecular) { ColorData.Specular = InSpecular; }
+	void SetEmissive(const Color & InEmissive) { ColorData.Emissive = InEmissive; }
+	void SetDiffuseMap(const string & InFilePath);
+	void SetDiffuseMap(const wstring & InWFilePath);
+	void SetSpecularMap(const string & InFilePath);
+	void SetSpecularMap(const wstring & InWFilePath);
+	void SetNormalMap(const string & InFilePath);
+	void SetNormalMap(const wstring & InWFilePath);
+
+private:
+	struct Colors
+	{
+		Color Ambient {0, 0, 0, 1};
+		Color Diffuse {1, 1, 1, 1};
+		Color Specular {0, 0, 0, 1};
+		Color Emissive {0, 0, 0, 1};
+	};
+	
+private:
+	HlslShader<VertexType> * Shader;
+	
+	Colors ColorData;
+
+	ConstantBuffer * ColorData_CBuffer = nullptr;
+	// IECB_t * ECB_Color = nullptr; // sCBuffer : in course
+	
+	Texture * Textures[ThisClass::MaxTextureCount];
+	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount];
+	// IESRV_t * ESRV_TextureMap = nullptr; // sSRVs : in course
+};
+

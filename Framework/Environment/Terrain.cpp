@@ -17,22 +17,9 @@ Terrain::Terrain(const wstring& InShaderFileName, const wstring& InHeightMapFile
 	this->CreateNormalData();
 	this->CreateBuffer();
 
-	WorldMat = Matrix::Identity;
+	CHECK(Shader->CreateRasterizerState_WireFrame() >= 0);
 
-	{
-		D3D11_RASTERIZER_DESC RasterizerDesc;
-		RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-		RasterizerDesc.CullMode = D3D11_CULL_BACK;
-		RasterizerDesc.FrontCounterClockwise = false;
-		RasterizerDesc.DepthBias = 0;
-		RasterizerDesc.DepthBiasClamp = 0.0f;
-		RasterizerDesc.SlopeScaledDepthBias = 0.0f;
-		RasterizerDesc.DepthClipEnable = true;
-		RasterizerDesc.ScissorEnable = false;
-		RasterizerDesc.MultisampleEnable = false;
-		RasterizerDesc.AntialiasedLineEnable = false;
-		CHECK(Shader->SetRasterizerState(&RasterizerDesc) >= 0);
-	}
+	WorldMat = Matrix::Identity;
 }
 
 Terrain::~Terrain()
@@ -71,6 +58,7 @@ void Terrain::Render() const
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	DeviceContext->VSSetConstantBuffers(0, 1, &WVPCBuffer);
+
 	Shader->DrawIndexed(IndexCount);
 }
 

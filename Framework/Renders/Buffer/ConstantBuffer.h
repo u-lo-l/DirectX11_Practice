@@ -18,6 +18,7 @@ public:
 	operator ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() const { return Buffer; }
 	operator const ID3D11Buffer *() { return Buffer; }
+	operator ID3D11Buffer * const *() const { return &Buffer; }
 
 	void UpdateData(void * InData = nullptr, UINT InDataSize = 0);
 	void BindToGPU() override;

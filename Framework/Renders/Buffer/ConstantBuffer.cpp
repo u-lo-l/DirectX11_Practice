@@ -7,11 +7,6 @@ ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, v
 	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
 
 	Data = InData;
-#ifdef DO_DEBUG
-	BufferType = "Constant";
-	BufferInfo = move(DataName);
-	printf("%s Buffer size %d for %s Created [%s]\n", BufferType.c_str(), InDataSize, DataName.c_str(), BufferInfo.c_str());
-#endif
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	
 	
@@ -39,15 +34,12 @@ ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, v
 
 void ConstantBuffer::UpdateData( void * InData, UINT InDataSize )
 {
+	if (bIsStatic == true)
+		return ;
 	if (DataSize != InDataSize)
 		return;
 	Data = InData;
-}
 
-void ConstantBuffer::BindToGPU()
-{
-	if (bIsStatic == true)
-		return ;
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
 	D3D11_MAPPED_SUBRESOURCE Subresource;
@@ -55,10 +47,19 @@ void ConstantBuffer::BindToGPU()
 	CHECK(DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource) >= 0);
 	memcpy(Subresource.pData, this->Data, this->DataSize);
 	DeviceContext->Unmap(Buffer, 0);
+}
+
+void ConstantBuffer::BindToGPU()
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
 	switch (TargetShaderType)
 	{
 	case ShaderType::VertexShader:
 		DeviceContext->VSSetConstantBuffers(RegisterIndex, 1, &Buffer);
+		break;
+	case ShaderType::PixelShader:
+		DeviceContext->PSSetConstantBuffers(RegisterIndex, 1, &Buffer);
 		break;
 	default:
 		break;

@@ -180,9 +180,9 @@ void VertexTextureNormal::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & O
 // float3 Position, float2 UV, float4 Color, float3 Normal, float3 Tangent, float4 Indices, float4 Weights;
 void ModelVertex::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs )
 {
-	OutLayoutDescs.resize(8);
+	OutLayoutDescs.resize(11);
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 11; i++)
 	{
 		OutLayoutDescs[i].SemanticIndex = 0;
 		OutLayoutDescs[i].InputSlot = HlslShader<ModelVertex>::VertexSlot;
@@ -209,17 +209,42 @@ void ModelVertex::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayout
 	OutLayoutDescs[4].SemanticName = "TANGENT";
 	OutLayoutDescs[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	
-	OutLayoutDescs[5].SemanticName = "BlENDINDICIES";
+	OutLayoutDescs[5].SemanticName = "BLENDINDICES";
 	OutLayoutDescs[5].Format = DXGI_FORMAT_R32G32B32A32_UINT;
 	
-	OutLayoutDescs[6].SemanticName = "BLENDWEIGHT";
+	OutLayoutDescs[6].SemanticName = "BLENDWEIGHTS";
 	OutLayoutDescs[6].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 	OutLayoutDescs[7].SemanticName = "INSTANCE";
-	OutLayoutDescs[7].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	OutLayoutDescs[7].SemanticIndex = 0;
-	OutLayoutDescs[7].InputSlot = HlslShader<ModelVertex>::InstanceSlot;
-	OutLayoutDescs[7].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	OutLayoutDescs[7].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-	OutLayoutDescs[7].InstanceDataStepRate = 1;
+    OutLayoutDescs[7].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  // 행렬이 4개 컬럼으로 전달됨
+    OutLayoutDescs[7].SemanticIndex = 0;
+    OutLayoutDescs[7].InputSlot = InstancingSlot;
+    OutLayoutDescs[7].AlignedByteOffset = 0;
+    OutLayoutDescs[7].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+    OutLayoutDescs[7].InstanceDataStepRate = 1;
+
+    // 각 행렬의 나머지 3개 부분
+    OutLayoutDescs[8].SemanticName = "INSTANCE";
+    OutLayoutDescs[8].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  // 행렬의 2번째, 3번째, 4번째 컬럼
+    OutLayoutDescs[8].SemanticIndex = 1;
+    OutLayoutDescs[8].InputSlot = InstancingSlot;
+    OutLayoutDescs[8].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    OutLayoutDescs[8].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+    OutLayoutDescs[8].InstanceDataStepRate = 1;
+
+	OutLayoutDescs[9].SemanticName = "INSTANCE";
+	OutLayoutDescs[9].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  // 행렬의 2번째, 3번째, 4번째 컬럼
+	OutLayoutDescs[9].SemanticIndex = 2;
+	OutLayoutDescs[9].InputSlot = InstancingSlot;
+	OutLayoutDescs[9].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	OutLayoutDescs[9].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	OutLayoutDescs[9].InstanceDataStepRate = 1;
+
+	OutLayoutDescs[10].SemanticName = "INSTANCE";
+	OutLayoutDescs[10].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  // 행렬의 2번째, 3번째, 4번째 컬럼
+	OutLayoutDescs[10].SemanticIndex = 3;
+	OutLayoutDescs[10].InputSlot = InstancingSlot;
+	OutLayoutDescs[10].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	OutLayoutDescs[10].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	OutLayoutDescs[10].InstanceDataStepRate = 1;
 }

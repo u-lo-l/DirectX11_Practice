@@ -6,6 +6,7 @@
 #include "Execute/011_Grid/Grid.h"
 #include "Execute/019_TextureColorBlending/TextureColorBlending.h"
 #include "Execute/024_Terrain/TerrainDemo.h"
+#include "Execute/InstancingDemo/InstancingDemo.h"
 
 void Main::Initialize()
 {
@@ -18,8 +19,10 @@ void Main::Initialize()
 	// PUSH_MAIN(Sdt::WorldDemo2);
 	// PUSH_MAIN(Sdt::Grid);
 	// PUSH_MAIN(Sdt::TextureColorBlending);
-	PUSH_MAIN(Sdt::TerrainDemo);
+	// PUSH_MAIN(Sdt::TerrainDemo);
+	PUSH_MAIN(Sdt::InstancingDemo);
 }
+
 
 void Main::Destroy()
 {

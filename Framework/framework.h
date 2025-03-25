@@ -50,8 +50,9 @@ using namespace std;
 #pragma endregion
 
 #pragma region  My Own 
-	#include "Definitions.h"
-
+	#include "Utilites/Definitions.h"
+	#include "Utilites/ShaderSlots.h"
+	
 	#include "Systems/D3D.h"
 	#include "Systems/Gui.h"
 	#include "Systems/SystemTimer.h"

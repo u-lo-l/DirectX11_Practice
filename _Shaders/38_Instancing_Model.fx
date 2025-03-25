@@ -15,13 +15,13 @@ VertexOutput VS_Model_Instancing(ModelInstanceVertexInput input)
 {    
     VertexOutput output;
     
-    ModelWorldTF = mul(BoneTransforms[BoneIndex], input.Transform);
+    matrix WorldTF = mul(BoneTransforms[BoneIndex], input.Transform);
 
-    output.Position = mul(input.Position, ModelWorldTF);
+    output.Position = mul(input.Position, WorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
            
-    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
+    output.Normal = mul(input.Normal, (float3x3) WorldTF);
     
     output.Uv = input.Uv;
     

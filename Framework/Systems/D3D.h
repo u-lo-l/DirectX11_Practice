@@ -81,14 +81,12 @@ private:
 	~D3D();
 
 private:
-	// GPU와 통신하는 객체
-	ID3D11Device * Device;
+	
+	ID3D11Device * Device; // GPU와 통신하는 객체
 	IDXGISwapChain * SwapChain;
-	// GPU 명령 즉시 실행 컨텍스트
-	ID3D11DeviceContext * DeviceContext;
+	ID3D11DeviceContext * DeviceContext; // GPU 명령 즉시 실행 컨텍스트
 	
 	ID3D11RenderTargetView * RenderTargetView;
-
 	ID3D11DepthStencilView * DepthStencilView;
 	ID3D11Texture2D * DSVTexture;
 };

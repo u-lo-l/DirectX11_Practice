@@ -28,7 +28,9 @@ void Context::Tick()
 {
 	if (!!MainCamera)
 		MainCamera->Tick();
-	// ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
+	if (!!VP_CBuffer)
+		VP_CBuffer->Tick();
+	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 
 /**
@@ -63,6 +65,21 @@ void Context::ResizeScreen()
 	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 }
 
+Camera * Context::GetCamera() const
+{
+	return MainCamera;
+}
+
+const Vector & Context::GetLightDirection() const
+{
+	return LightDirection;
+}
+
+GlobalViewProjectionCBuffer * Context::GetViewProjectionCBuffer() const
+{
+	return VP_CBuffer;
+}
+
 Context::Context()
  : MainCamera(new Camera())
 {
@@ -80,11 +97,14 @@ Context::Context()
 	this->Viewport->MaxDepth = 1;
 
 	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
+
+	VP_CBuffer = new GlobalViewProjectionCBuffer();
 }
 
 Context::~Context()
 {
 	SAFE_DELETE(Viewport);
 	SAFE_DELETE(MainCamera);
+	SAFE_DELETE(VP_CBuffer);
 }
 

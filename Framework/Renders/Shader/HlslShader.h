@@ -35,6 +35,14 @@ public:
 	~HlslShader();
 private:
 	wstring FileName;
+
+public:
+	// Rasterizer
+	HRESULT CreateRasterizerState_WireFrame();
+	HRESULT CreateRasterizerState_Solid();
+	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
+
+	// Draw
 public:
 	void Draw(UINT VertexCount, UINT StartVertexLocation = 0) const;
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0) const;
@@ -44,7 +52,6 @@ public:
 
 public:
 	int AddConstantBuffer(ID3D11Buffer * CBuffer);
-	HRESULT SetRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 	
 private:
 	void CompileShader(ShaderType Type, const wstring & ShaderFileName);
@@ -53,8 +60,6 @@ private:
 	void BeginDraw() const;
 	void EndDraw() const;
 private:
-	ID3D11DeviceContext * const DeviceContext;
-	
 	ID3D11InputLayout * InputLayout;
 
 	ID3D11VertexShader * VertexShader;

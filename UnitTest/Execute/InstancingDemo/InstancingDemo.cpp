@@ -5,25 +5,27 @@ namespace Sdt
 {
 	void InstancingDemo::Initialize()
 	{
-		Context::Get()->GetCamera()->SetPosition(0, 50, -250);
+		Camera * const MainCamera = Context::Get()->GetCamera();
+		 
+		MainCamera->SetPosition( 0, 10, 0 );
+		MainCamera->SetRotation( 210, 135, 180);
 		SetPlane();
 		
-		ModelInstances.insert(ModelInstances.end(), {
-			// {new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
-			// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
-			// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
-			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
-			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
-		});
-		constexpr UINT InstanceCount = 144;
-		constexpr float Stride = 25.f;
-		SetModelsPosition(InstanceCount, Stride);
+		// ModelInstances.insert(ModelInstances.end(), {
+		// 	{new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
+		// 	// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
+		// 	// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
+		// 	// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
+		// 	// {new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
+		// });
+		// constexpr UINT InstanceCount = 1;
+		// constexpr float Stride = 25.f;
+		// SetModelsPosition(InstanceCount, Stride);
 	}
 
 	void InstancingDemo::Destroy()
 	{
 		SAFE_DELETE(Plane);
-		SAFE_DELETE(Drawer);
 		for (ModelInstanceData ModelAndScale : ModelInstances)
 		{
 			SAFE_DELETE(ModelAndScale.Object);
@@ -50,7 +52,7 @@ namespace Sdt
 	{
 		Plane = new Model(L"Plane");
 		Transform * tf = Plane->AddTransforms();
-		tf->SetPosition({0,-10,0});
+		tf->SetPosition({0,0,0});
 		tf->SetScale({10,1,10});
 		tf->SetRotation({0,0,90});
 		tf->UpdateWorldMatrix();;
