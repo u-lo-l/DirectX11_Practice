@@ -14,6 +14,7 @@ namespace Sdt
 	{
 		// MakeModel(L"Adam", {});
 		// MakeModel(L"Adam", {L"Idle",L"Idle2",L"Idle3", L"Dance01", L"Dance02", L"Dance03", L"Boxing", L"Boxing2", L"HeadHit"}, 1.f);
+		MakeModel(L"Adam", {L"Idle"}, 1.f);
 		// MakeModel(L"Airplane", {}, 0.1f);
 		// MakeModel(L"Cube", {}, 1.f);
 		// MakeModel(L"Cylinder", {}, 1.f);

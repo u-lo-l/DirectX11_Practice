@@ -46,7 +46,14 @@ void Skeleton::ClearBoneTable()
 void Skeleton::CreateBuffer()
 {
 	const string CBufferInfo = "Bone Transform Data";
-	BoneDescBuffer = new ConstantBuffer(ShaderType::VertexShader,VS_BoneMatrix, &BoneData, CBufferInfo, sizeof(BoneDesc), true);
+	BoneDescBuffer = new ConstantBuffer(
+		ShaderType::VertexShader,
+		VS_BoneMatrix,
+		&BoneData,
+		CBufferInfo,
+		sizeof(BoneDesc),
+		true
+	);
 }
 
 void Skeleton::BindToGPU() const

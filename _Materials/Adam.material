@@ -5,7 +5,7 @@
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1001_Diffuse.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "NormalMap" : [ "../_Models/Adam/Ch08_1001_Normal.png" ],
-      "ShaderName" : "38_Instancing_Model.hlsl",
+      "ShaderName" : "38_Instancing_Model_Animation.hlsl",
       "Specular" : "0.500000,0.500000,0.500000,1.000000",
       "SpecularMap" : [ "../_Models/Adam/Ch08_1001_Specular.png" ]
    },
@@ -15,7 +15,7 @@
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1002_Diffuse.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "NormalMap" : [ "../_Models/Adam/Ch08_1002_Normal.png" ],
-      "ShaderName" : "38_Instancing_Model.hlsl",
+      "ShaderName" : "38_Instancing_Model_Animation.hlsl",
       "Specular" : "0.500000,0.500000,0.500000,1.000000",
       "SpecularMap" : [ "../_Models/Adam/Ch08_1002_Specular.png" ]
    },
@@ -24,7 +24,7 @@
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1003_Diffuse.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
-      "ShaderName" : "38_Instancing_Model.hlsl",
+      "ShaderName" : "38_Instancing_Model_Animation.hlsl",
       "Specular" : "0.000000,0.000000,0.000000,1.000000"
    }
 }

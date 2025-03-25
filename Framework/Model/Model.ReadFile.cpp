@@ -42,6 +42,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	// Animation
 	Json::Value Animations = Root["Animations"];
 	const UINT AnimationCount = Animations.size();
+	this->Animations.reserve(AnimationCount);
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
 		ReadAnimation(String::ToWString(Animations[i].asString()));
@@ -166,11 +167,13 @@ void Model::ReadAnimation( const wstring & InFileName )
 	if (this->SkeletonData != nullptr)
 		BoneTable = this->SkeletonData->GetCachedBoneTable();
 	ModelAnimation * Anim = ModelAnimation::ReadAnimationFile(BinReader, BoneTable); 
-	Animations.push_back(Anim);
+	this->Animations.emplace_back(Anim);
 	
 	SAFE_DELETE(BinReader);
 	if (Animations.size() > 0)
+	{
 		SetClipIndex(0, 0);
+	}
 }
 
 void Model::CreateAnimationTexture()
@@ -261,9 +264,10 @@ void Model::CreateAnimationTexture()
 		SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 		SRVDesc.Texture2DArray.MipLevels = 1;
+		SRVDesc.Texture2DArray.MostDetailedMip = 0;
 		SRVDesc.Texture2DArray.ArraySize = AnimationCount;
 
-		CHECK(D3D::Get()->GetDevice()->CreateShaderResourceView(ClipTexture, &SRVDesc, &this->ClipSRV) >= 0);
+		CHECK(D3D::Get()->GetDevice()->CreateShaderResourceView(ClipTexture, &SRVDesc, &this->ClipSRV2DArray) >= 0);
 		SAFE_RELEASE(ClipTexture);
 #pragma endregion
 	}

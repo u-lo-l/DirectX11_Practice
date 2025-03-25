@@ -55,15 +55,15 @@ private:
 	/// </remarks>
 	void CreateDeviceAndContext();
 
-	/// <summary> DirectX11에서 렌더 타겟 뷰(Render Target View, RTV)를 생성. </summary>
+	/// <summary> DirectX11에서 렌더 타겟 뷰(BindToGPU Target View, RTV)를 생성. </summary>
 	/// <remarks>
 	/// 이 함수는 스왑 체인에서 백 버퍼를 가져와 렌더 타겟 뷰를 생성하고,
 	/// 이를 Output-Merger Stage에서 렌더 타겟으로 설정한다.
-	///  - Render Target : GPU가 수행한 렌더링 결과가 저장되는 공간. 화면에 직접 출력되거나 PostProcessing에 사용된다.
-	///  BackBuffer가 가장 기본적인 Render Target이다.
-	///  - Render Target View : 렌더 타깃을 GPU에 바인딩하기 위한 Direct3D 객체.
+	///  - BindToGPU Target : GPU가 수행한 렌더링 결과가 저장되는 공간. 화면에 직접 출력되거나 PostProcessing에 사용된다.
+	///  BackBuffer가 가장 기본적인 BindToGPU Target이다.
+	///  - BindToGPU Target View : 렌더 타깃을 GPU에 바인딩하기 위한 Direct3D 객체.
 	///  - OM stage : 셰이더 처리 결과를 받아 최종적으로 출력 데이터(픽셀 색상, 깊이, 스텐실 값)를 결합.
-	///  결합된 데이터를 렌더 타깃(Render Target)과 깊이-스텐실 뷰(Depth-Stencil View)에 출력
+	///  결합된 데이터를 렌더 타깃(BindToGPU Target)과 깊이-스텐실 뷰(Depth-Stencil View)에 출력
 	/// </remarks>
 	void CreateRTV();
 	void CreateDSV();

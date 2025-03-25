@@ -14,8 +14,8 @@ namespace Sdt
 		MainCamera->SetRotation( 211, 133, 180);
 		MainCamera->SetPosition( -138, 108, -142 );
 
-		const vector<wstring> ModelNames = {L"XYBot", L"Shannon", L"Airplane", L"Mousey"};
-		// const vector<wstring> ModelNames = {L"Adam"};
+		// const vector<wstring> ModelNames = {L"XYBot", L"Shannon", L"Airplane", L"Mousey"};
+		const vector<wstring> ModelNames = {L"Adam"};
 		// const vector<wstring> ModelNames = {L"Airplane"};
 		// const vector<wstring> ModelNames = {L"Mousey", L"Adam", L"Airplane"};
 

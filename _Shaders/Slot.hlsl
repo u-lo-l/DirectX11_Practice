@@ -8,10 +8,10 @@
 
 #define Const_PS_Material b5
 
-#define Texture_PS_Texture t0 // Diffuse Texture
-// t1 for Specular Texture
-// t2 for Normal Texture
-#define Texture_VS_KeyFrames t3
+#define Texture_VS_KeyFrames t0
+#define Texture_PS_Texture t1 // Diffuse Texture
+// t2 for Specular Texture
+// t3 for Normal Texture
 
 #define Sampler_PS_Default s0
 

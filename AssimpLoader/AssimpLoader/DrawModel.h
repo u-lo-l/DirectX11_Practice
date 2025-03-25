@@ -16,6 +16,5 @@ namespace Sdt
 	private:
 		vector<Model *> Models;
 		int ModelIndex = 0;
-		int Pass = 0;
 	};
 }

@@ -20,21 +20,21 @@ Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternio
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
 
-	InstBuffer = new InstanceBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix));
+	// InstBuffer = new InstanceBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix));
 
 	if (SkeletonData != nullptr)
 		SkeletonData->BindToGPU();
 	
-	if (ClipSRV != nullptr)
-	{
-		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV);
-	}
+	// if (ClipSRV2DArray != nullptr)
+	// {
+	// 	D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV2DArray);
+	// }
 }
 
 Model::~Model()
 {
 	SAFE_DELETE(InstBuffer);
-	SAFE_RELEASE(ClipSRV);
+	SAFE_RELEASE(ClipSRV2DArray);
 	
 	for (const ModelMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
@@ -50,24 +50,34 @@ Model::~Model()
 void Model::Tick()
 {
 	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+	// printf("%f",DeltaTime);
 	// for (Transform * Tf : WorldTransforms)
 	// {
 	// 	Tf->SetRotation({0, 0, Tf->GetRotationInDegree().Z + 60 * DeltaTime});
 	// }
-	
-
+	const int InstanceCount = max(WorldTransforms.size(), 1);
 	
 	if (Animations.empty() == false)
 	{
-		if (ImGui::Button("Change", ImVec2(200, 30)))
+		if (InstanceCount == 1)
 		{
-			for (UINT InstanceId = 0; InstanceId < WorldTransforms.size() ; InstanceId++)
+			if (ImGui::SliderInt("Animation Index", &ClipIndex, 0, Animations.size() - 1))
 			{
-				SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
-				WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
+				SetClipIndex(0, ClipIndex);
 			}
 		}
-		for (int InstanceId = 0; InstanceId < static_cast<int>(WorldTransforms.size()) ; InstanceId++)
+		else
+		{
+			if (ImGui::Button("Change", ImVec2(200, 30)))
+			{
+				for (UINT InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
+				{
+					SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
+					WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
+				}
+			}
+		}
+		for (int InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
 		{
 			AnimationBlendingDesc & TargetBlending = BlendingDatas[InstanceId];
 
@@ -88,7 +98,12 @@ void Model::Tick()
 			}
 		}
 	}
+	if (AnimationFrameData_CBuffer != nullptr)
+		AnimationFrameData_CBuffer->UpdateData(&this->BlendingDatas, sizeof(AnimationBlendingDesc) * MaxModelInstanceCount );
 	
+	// if (ClipSRV2DArray != nullptr)
+	// 	D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV2DArray);
+
 	for (ModelMesh * M : Meshes)
 	{
 		M->Tick();
@@ -100,11 +115,11 @@ void Model::Render() const
 	// Model에서 InstanceBuffer를 Bind해주면 Mesh들에서 갖다 쓴다.
 	// 여기서 Bind해주는 정보는 Model의 World기준 Transform Matrix이다.
 	// 각 Model들의 위치정보가 바뀔 수 있기에 Render에서 처리해준다.
-	if (InstBuffer != nullptr)
-		InstBuffer->BindToGPU();
+	// if (InstBuffer != nullptr)
+	// 	InstBuffer->BindToGPU();
 
-	if (FrameCBuffer != nullptr)
-		FrameCBuffer->BindToGPU();
+	if (AnimationFrameData_CBuffer != nullptr)
+		AnimationFrameData_CBuffer->BindToGPU();
 
 	if (SkeletonData != nullptr)
 		SkeletonData->BindToGPU();
@@ -143,6 +158,8 @@ const Transform * Model::GetTransforms( UINT Index ) const
 void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 {
 	ASSERT(InClipIndex < (int)Animations.size(), "Animation Index Not Valid")
+
+	ClipIndex = InClipIndex;
 	AnimationBlendingDesc & TargetBlendingData = BlendingDatas[InInstanceID];
 	if(TargetBlendingData.Current.Clip < 0)
 	{
@@ -167,19 +184,14 @@ void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 
 void Model::CreateAnimationBuffers()
 {
-	FrameCBuffer = new ConstantBuffer(
+	AnimationFrameData_CBuffer = new ConstantBuffer(
 		ShaderType::VertexShader,
 		ShaderSlot::VS_AnimationBlending,
 		&this->BlendingDatas,
 		"Instancing Animation Blending Description",
-		sizeof(AnimationBlendingDesc) * MaxModelInstanceCount
+		sizeof(AnimationBlendingDesc) * MaxModelInstanceCount,
+		false
 	);
-
-	// 대신 매 Tick과 Render마다 다르게 렌더링 해야하나 시발?
-	// for (const auto & pair : MaterialsTable)
-	// {
-	// 	ECB_FrameBuffers.emplace_back(pair.second->GetShader()->AsConstantBuffer(CBufferName));
-	// }
 }
 
 void Model::UpdateCurrentFrameData( int InstanceId )
@@ -202,4 +214,9 @@ void Model::UpdateFrameData(FrameDesc & FrameData) const
 
 	FrameData.CurrentFrame = CurrAndNextFrame.first;
 	FrameData.NextFrame = CurrAndNextFrame.second;
+	ImGui::Text("Target Clip : %d", FrameData.Clip);
+	ImGui::Text("Delta Time  : %f", DeltaTime);
+	ImGui::Text("Curr Frame  : %d", static_cast<int>(FrameData.CurrentTime));
+	ImGui::Text("Next Frame : %d", static_cast<int>(FrameData.CurrentTime)+1);
+	ImGui::Text("   Time     : %f", FrameData.CurrentTime);
 }

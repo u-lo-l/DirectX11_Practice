@@ -21,7 +21,7 @@ public:
 	~Material();
 
 	void Tick();
-	void Render();
+	void BindToGPU();
 
 	void SetShader(const wstring & InShaderFileName);
 	void SetShader(HlslShader<VertexType> * InShader);

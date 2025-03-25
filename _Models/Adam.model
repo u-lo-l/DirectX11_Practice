@@ -1,4 +1,5 @@
 {
+   "Animations" : [ "Adam/Idle" ],
    "File" : {
       "Material" : "Adam",
       "Mesh" : "Adam"

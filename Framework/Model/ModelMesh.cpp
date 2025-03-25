@@ -32,7 +32,7 @@ void ModelMesh::Render(UINT InstanceCount) const
 	
 	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	
-	MaterialData->Render();
+	MaterialData->BindToGPU();
 	
 	// MaterialData->GetShader()->DrawIndexedInstanced(
 	// 	Indices.size(),

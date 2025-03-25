@@ -9,7 +9,6 @@ ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, v
 	Data = InData;
 	ID3D11Device * Device = D3D::Get()->GetDevice();
 	
-	
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
 	

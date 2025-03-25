@@ -8,11 +8,11 @@ class ModelAnimation
 {
 public:
 	static constexpr UINT MaxFrameLength = 512;
+	ModelAnimation() = default;
 private :
 	friend class Model;
 	struct KeyFrameData;
 	struct KeyFrameTFTable;
-	ModelAnimation() = default;
 	~ModelAnimation();
 private:
 	static ModelAnimation * ReadAnimationFile(

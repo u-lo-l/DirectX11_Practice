@@ -1,6 +1,5 @@
 ﻿#include "framework.h"
 #include "ModelAnimation.h"
-
 #include <fstream>
 
 ModelAnimation::~ModelAnimation()
@@ -10,7 +9,8 @@ ModelAnimation::~ModelAnimation()
 }
 
 // Assimp로 읽어서 나름대로 정리하여 저장한 .animation파일을 읽어서 다시 구성하는 과정.
-ModelAnimation * ModelAnimation::ReadAnimationFile(
+ModelAnimation * ModelAnimation::ReadAnimationFile
+(
 	const BinaryReader * InReader,
 	const Model::CachedBoneTableType * InCachedBoneTable
 )
@@ -22,6 +22,7 @@ ModelAnimation * ModelAnimation::ReadAnimationFile(
 	ModelAnimationToReturn->TicksPerSecond = InReader->ReadFloat();
 
 	const UINT KeyFrameCount = InReader->ReadUint();
+	
 	// TODO : InBoneTable이 Nullptr일 떄 다시 생각해보자. 지금은 그냥 넘어감.
 	ModelAnimationToReturn->KeyFrames.assign(KeyFrameCount, nullptr);
 	for (UINT i = 0; i < KeyFrameCount; i++)

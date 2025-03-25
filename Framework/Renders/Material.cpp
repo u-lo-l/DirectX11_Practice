@@ -34,7 +34,7 @@ void Material::Tick()
 	ColorData_CBuffer->UpdateData(&ColorData, sizeof(ThisClass::Colors));
 }
 
-void Material::Render()
+void Material::BindToGPU()
 {
 	if (Shader == nullptr)
 		return ;
