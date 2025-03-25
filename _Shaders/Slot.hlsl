@@ -8,9 +8,12 @@
 
 #define Const_PS_Material b5
 
-#define Texture_VS_KeyFrames t0
-#define Texture_PS_Texture t5
+#define Texture_PS_Texture t0 // Diffuse Texture
+// t1 for Specular Texture
+// t2 for Normal Texture
+#define Texture_VS_KeyFrames t3
 
+#define Sampler_PS_Default s0
 
 #define MAX_MODEL_TRANSFORM 256
 #define MAX_INSTANCE_COUNT 200

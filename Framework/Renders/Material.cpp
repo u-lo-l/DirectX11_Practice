@@ -5,19 +5,19 @@
 Material::Material()
  : Shader(nullptr), ColorData_CBuffer(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
-	ColorData_CBuffer = new ConstantBuffer(ShaderType::PixelShader, PS_Material, &ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CreateBuffer();
 }
 
 Material::Material(HlslShader<VertexType> * InDrawer )
  : Shader(InDrawer), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	ColorData_CBuffer = new ConstantBuffer(ShaderType::PixelShader,PS_Material, &ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CreateBuffer();
 }
 
 Material::Material( const wstring & InShaderFileName )
  : Shader(new HlslShader<VertexType>(InShaderFileName)), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	ColorData_CBuffer = new ConstantBuffer(ShaderType::PixelShader,PS_Material, &ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CreateBuffer();
 }
 
 Material::~Material()
@@ -36,17 +36,26 @@ void Material::Tick()
 
 void Material::Render()
 {
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-
 	if (Shader == nullptr)
-	{
 		return ;
-	}
-	// if (ECB_Color != nullptr)
-	// 	ECB_Color->SetConstantBuffer(*ColorData_CBuffer);
-	// if (ESRV_TextureMap != nullptr)
-	// 	ESRV_TextureMap->SetResourceArray((ID3D11ShaderResourceView **)&SRVs, 0, ThisClass::MaxTextureCount);
+	
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	ColorData_CBuffer->BindToGPU();
+	DeviceContext->PSSetShaderResources(TextureSlot::PS_TextureMap, MaxTextureCount, SRVs);
+}
+
+void Material::CreateBuffer()
+{
+	if (!!ColorData_CBuffer)
+		SAFE_DELETE(ColorData_CBuffer);
+	ColorData_CBuffer = new ConstantBuffer(
+		ShaderType::PixelShader,
+		PS_Material,
+		&ColorData,
+		"Material.ColorData",
+		sizeof(ThisClass::Colors),
+		false
+	);
 }
 
 void Material::SetShader( const wstring & InShaderFileName )
@@ -60,8 +69,7 @@ void Material::SetShader( HlslShader<VertexType> * InShader )
 {
 	Shader = InShader;
 	Shader->CreateRasterizerState_Solid();
-	// ECB_Color = Drawer->AsConstantBuffer("CB_Material");
-	// ESRV_TextureMap = Drawer->AsSRV("MaterialMaps");
+	Shader->CreateSamplerState_Linear();
 }
 
 HlslShader<Material::VertexType> * Material::GetShader() const

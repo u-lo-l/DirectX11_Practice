@@ -38,6 +38,7 @@ public:
 	void SetNormalMap(const wstring & InWFilePath);
 
 private:
+	void CreateBuffer();
 	struct Colors
 	{
 		Color Ambient {0, 0, 0, 1};
@@ -48,14 +49,11 @@ private:
 	
 private:
 	HlslShader<VertexType> * Shader;
-	
 	Colors ColorData;
-
 	ConstantBuffer * ColorData_CBuffer = nullptr;
-	// IECB_t * ECB_Color = nullptr; // sCBuffer : in course
 	
 	Texture * Textures[ThisClass::MaxTextureCount];
-	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount];
-	// IESRV_t * ESRV_TextureMap = nullptr; // sSRVs : in course
+	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount]; // Texture에서 해제됨.
 };
+
 

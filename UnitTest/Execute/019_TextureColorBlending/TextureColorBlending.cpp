@@ -115,7 +115,7 @@ namespace Sdt
 			RasterizerDesc.ScissorEnable = false;
 			RasterizerDesc.MultisampleEnable = false;
 			RasterizerDesc.AntialiasedLineEnable = false;
-			CHECK(Drawer->SetRasterizerState(&RasterizerDesc) >= 0);
+			CHECK(Drawer->CreateRasterizerState(&RasterizerDesc) >= 0);
 		}
 
 		//Sampler
@@ -157,8 +157,7 @@ namespace Sdt
 		ImGui::SliderFloat("LerpRate", &LerpRate, 0, 1);
 		ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 		
-
-			
+		// Constant Buffer
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		if (SUCCEEDED(DeviceContext->Map(WVPCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource)))
 		{
@@ -186,6 +185,7 @@ namespace Sdt
 			memcpy(MappedResource2.pData, &LerpBuffer, sizeof(Temp));
 			DeviceContext->Unmap(LerpRateCBuffer, 0);			
 		}
+		// Constant Buffer
 	}
 
 	void TextureColorBlending::Render()
@@ -195,12 +195,14 @@ namespace Sdt
 		constexpr UINT offset = 0;
 
 		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		
 		DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &stride, &offset);
 		DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		DeviceContext->VSSetConstantBuffers(0, 1, &WVPCBuffer);
 		DeviceContext->PSSetConstantBuffers(1, 1, &LerpRateCBuffer);
-		// DeviceContext->PSSetShaderResources(0, 1, &this->Srv);
+		DeviceContext->PSSetShaderResources(0, 1, *SampleTexture);
+		
 		Drawer->DrawIndexed(IndexCount);
 	}
 }

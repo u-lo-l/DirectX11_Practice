@@ -23,8 +23,8 @@ struct VertexInput
     float3 Tangent               : TANGENT;
     float4 Indices               : BLENDINDICES;
     float4 Weight                : BLENDWEIGHTS;
-
     row_major float4x4 Transform : INSTANCE;
+
     // InstanceID : GPU가 자동으로 생성하며, 쉐이더로 전달됩니다. C++ 코드에서 직접 설정할 필요가 없음
     uint InstanceID              : SV_InstanceID;
 };
@@ -54,9 +54,11 @@ struct BlendingFrame
     AnimationFrame Next;
 };
 
+static const int CURR_FRAME = 0;
+static const int NEXT_FRAME = 1;
 struct InterploateKeyframeParams
 {
-    int CurrentOrNext;
+    int TargetFrame;
     int BoneIndex;
     float Weight;
 };
@@ -85,7 +87,6 @@ Texture2DArray<float4> ClipsTFMap : register(Texture_VS_KeyFrames);
 int g_BoneCountToFindWeight = 4;
 int g_MipMapLevel = 0;
 
-// Current = 0 , Next = 1
 matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params, int InstanceID = 0);
 
 float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
@@ -105,7 +106,7 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
         
         matrix currentAnim = 0;
         
-        ParamsCurrent.CurrentOrNext = 0;
+        ParamsCurrent.TargetFrame = CURR_FRAME;
         ParamsCurrent.BoneIndex = targetBoneIndex;
         ParamsCurrent.Weight = Weights[i];
         currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent, input.InstanceID);
@@ -113,7 +114,7 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
         [flatten]
         if (AnimationBlending[input.InstanceID].Next.Clip >= 0)
         {
-            ParamsNext.CurrentOrNext = 1;
+            ParamsNext.TargetFrame = NEXT_FRAME;
             ParamsNext.BoneIndex = targetBoneIndex;
             ParamsNext.Weight = Weights[i];
             currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext, input.InstanceID), AnimationBlending[input.InstanceID].ElapsedBlendTime);
@@ -142,21 +143,14 @@ VertexOutput VSMain(VertexInput input)
 
     output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
     
-    // output.Position = mul(input.Position, WorldTF);
-    // output.Position = mul(output.Position, View);
-    // output.Position = mul(output.Position, Projection);
-    // output.Uv = input.Uv;
-    // output.Normal = mul(input.Normal, (float3x3) WorldTF);
-    
     return output;
 }
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
-	float Light = dot(LightDirection, normal);
-    float3 color = float3(1,1,1);
-    // float3 color = MaterialMaps[0].Sample(Samp, input.Uv).rgb;
-    color *= Light;
+	// float Light = dot(LightDirection, normal);
+    float3 color = MaterialMaps[DiffuseMap].Sample(DefaultSampler, input.Uv).rgb;
+    // color *= Light;
     return float4(color, 1);
 }

@@ -7,9 +7,7 @@ Texture::Texture( const wstring & FileName, bool bDefaultPath )
 	wstring FullPath = bDefaultPath == true ? W_TEXTURE_PATH + FileName : FileName;  
 	this->FileName = Path::GetFileName( FullPath );
 	
-	LoadTexture(FullPath);
-
-	D3D::Get()->GetDeviceContext()->PSSetShaderResources(0, 1, &this->SRV);
+	CHECK(LoadTextureAndCreateSRV(FullPath) >= 0);
 }
 
 Texture::~Texture()
@@ -17,7 +15,12 @@ Texture::~Texture()
 	SAFE_RELEASE(this->SRV);
 }
 
-void Texture::LoadTexture(const wstring & FullPath)
+void Texture::BindToGPU() const
+{
+	D3D::Get()->GetDeviceContext()->PSSetShaderResources(TextureSlot::PS_TextureMap, 1, &this->SRV);
+}
+
+HRESULT Texture::LoadTextureAndCreateSRV(const wstring & FullPath)
 {
 	DirectX::ScratchImage ScratchImage;
 	const wstring Extension = Path::GetExtension(FullPath);
@@ -33,15 +36,14 @@ void Texture::LoadTexture(const wstring & FullPath)
 	{
 		CHECK(LoadFromWICFile(FullPath.c_str(), DirectX::WIC_FLAGS_NONE, &TexMeta, ScratchImage) >= 0);
 	}
-	// SRV
-	CHECK(CreateShaderResourceView(
+	// SRV 생성
+	return CreateShaderResourceView(
 		D3D::Get()->GetDevice(),
 		ScratchImage.GetImages(),
 		ScratchImage.GetImageCount(),
 		TexMeta,
-		&this->SRV) >= 0
+		&this->SRV
 	);
-	
 }
 
 void Texture::ExtractTextureColors( vector<Color> & OutPixels ) const
@@ -50,7 +52,6 @@ void Texture::ExtractTextureColors( vector<Color> & OutPixels ) const
 
 	ID3D11Texture2D * SourceTexture = nullptr;
 	SRV->GetResource(reinterpret_cast<ID3D11Resource **>(&SourceTexture));
-	
 
 	D3D11_TEXTURE2D_DESC TextureDesc = {};
 	SourceTexture->GetDesc(&TextureDesc);

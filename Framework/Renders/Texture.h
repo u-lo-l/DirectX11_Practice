@@ -7,13 +7,15 @@ public:
 	explicit Texture(const wstring& FileName, bool bDefaultPath = false);
 	~Texture();
 public:
+	void BindToGPU() const;;
 	UINT GetWidth() const { return TexMeta.width; }
 	UINT GetHeight() const { return TexMeta.height; }
 	ID3D11ShaderResourceView * GetSRV() const { return SRV; }
+	operator ID3D11ShaderResourceView * const *() const { return &SRV; }
 	// D3D11_TEXTURE2D_DESC ReadPixels(vector<Color>& OutPixels);
 	void ExtractTextureColors(vector<Color>& OutPixels) const;
 private:
-	void LoadTexture(const wstring & FullPath);
+	HRESULT LoadTextureAndCreateSRV(const wstring & FullPath);
 public:
 private:
 	// D3D11_TEXTURE2D_DESC ReadPixels(DXGI_FORMAT InFormat, vector<Color> & OutPixels);

@@ -32,9 +32,8 @@ void ModelMesh::Render(UINT InstanceCount) const
 	
 	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	
-	// MaterialData->Render();
+	MaterialData->Render();
 	
-	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// MaterialData->GetShader()->DrawIndexedInstanced(
 	// 	Indices.size(),
 	// 	InstanceCount

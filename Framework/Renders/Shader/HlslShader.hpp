@@ -170,6 +170,29 @@ HRESULT HlslShader<T>::CreateRasterizerState( const D3D11_RASTERIZER_DESC * RSDe
 }
 
 template <class T>
+HRESULT HlslShader<T>::CreateSamplerState_Linear()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+			
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	return this->CreateSamplerState(&SamplerDesc);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc )
+{
+	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &this->SamplerState);
+}
+
+template <class T>
 void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileName )
 {
 	ID3DBlob * ErrorBlob = nullptr;
@@ -273,16 +296,26 @@ void HlslShader<T>::BeginDraw() const
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	
-	DeviceContext->IASetInputLayout(InputLayout);
-	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
-	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
-	DeviceContext->RSSetState(RasterizerState);
-	DeviceContext->PSSetShader(PixelShader, nullptr, 0);
+	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	if (!!InputLayout)
+		DeviceContext->IASetInputLayout(InputLayout);
+	if (!!ComputeShader)
+		DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
+	if (!!VertexShader)
+		DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+	if (!!RasterizerState)
+		DeviceContext->RSSetState(RasterizerState);
+	if (!!PixelShader)
+		DeviceContext->PSSetShader(PixelShader, nullptr, 0);
+	if (!!SamplerState)
+		DeviceContext->PSSetSamplers(SamplerSlot::PS_Default, 1, &this->SamplerState);
 }
 
 template <class T>
 void HlslShader<T>::EndDraw() const
 {
+	// ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	
 	// 일단 전체 파이프라인에서 HS, DS, GS를 사용하지 않으니 굳이 필요한 코드는 아님.
 	// 추후에 다른 RenderPass에서 건드리면 그 때 주석 해제하도록 하자.
 	// DeviceContext->HSSetShader(nullptr, nullptr, 0);

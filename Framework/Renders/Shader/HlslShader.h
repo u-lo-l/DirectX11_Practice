@@ -42,6 +42,9 @@ public:
 	HRESULT CreateRasterizerState_Solid();
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 
+	// Sampler
+	HRESULT CreateSamplerState_Linear();
+	HRESULT CreateSamplerState(const D3D11_SAMPLER_DESC * SampDesc);
 	// Draw
 public:
 	void Draw(UINT VertexCount, UINT StartVertexLocation = 0) const;
@@ -67,6 +70,7 @@ private:
 	ID3D11ComputeShader * ComputeShader;
 
 	ID3D11RasterizerState * RasterizerState;
+	ID3D11SamplerState * SamplerState;
 
 	// 이거 weak_ptr로 수정해야함. 해제는 CBuffer클래스 몫
 	vector<ID3D11Buffer*> ConstantBuffers;
