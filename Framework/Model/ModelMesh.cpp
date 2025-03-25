@@ -24,7 +24,7 @@ void ModelMesh::Tick()
 
 void ModelMesh::Render(UINT InstanceCount) const
 {
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	// ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
@@ -33,12 +33,12 @@ void ModelMesh::Render(UINT InstanceCount) const
 	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	
 	MaterialData->BindToGPU();
-	
-	// MaterialData->GetShader()->DrawIndexedInstanced(
-	// 	Indices.size(),
-	// 	InstanceCount
-	// );
-	MaterialData->GetShader()->DrawIndexed(Indices.size());
+
+	MaterialData->GetShader()->DrawIndexedInstanced(
+		Indices.size(),
+		InstanceCount
+	);
+	// MaterialData->GetShader()->DrawIndexed(Indices.size());
 }
 
 // 매 Tick마다 Model::Tick에서 호출되어서 Mesh의 WorldTransform을 넣어준다.

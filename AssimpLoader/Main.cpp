@@ -8,8 +8,8 @@
 
 void Main::Initialize()
 {
-	// PUSH_MAIN(Sdt::ExportFile);
-	PUSH_MAIN(Sdt::DrawModel);
+	PUSH_MAIN(Sdt::ExportFile);
+	// PUSH_MAIN(Sdt::DrawModel);
 }
 
 void Main::Destroy()

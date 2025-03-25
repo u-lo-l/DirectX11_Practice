@@ -18,9 +18,9 @@ void Main::Initialize()
 	// PUSH_MAIN(Sdt::WorldDemo);
 	// PUSH_MAIN(Sdt::WorldDemo2);
 	// PUSH_MAIN(Sdt::Grid);
-	PUSH_MAIN(Sdt::TextureColorBlending);
+	// PUSH_MAIN(Sdt::TextureColorBlending);
 	// PUSH_MAIN(Sdt::TerrainDemo);
-	// PUSH_MAIN(Sdt::InstancingDemo);
+	PUSH_MAIN(Sdt::InstancingDemo);
 }
 
 

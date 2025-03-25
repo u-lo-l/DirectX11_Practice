@@ -6,21 +6,18 @@
 const static int g_BoneCountToFindWeight = 4;
 const static int g_MipMapLevel = 0;
 
-// 정상
 cbuffer CB_BoneMatrix : register(Const_VS_BoneMatrix)
 {
     matrix OffsetMatrix[MAX_MODEL_TRANSFORM];      // RootToBone Matrix. == Inv(Bone의 Root-Coordinate Transform)
     matrix BoneTransforms[MAX_MODEL_TRANSFORM];    //
 }
 
-// 정상
 cbuffer CB_BoneIndex : register(Const_VS_BoneIndex)
 {
     uint BaseBoneIndex;
     float3 Padding;
 }
 
-// 정상
 cbuffer CB_AnimationBlending : register(Const_VS_AnimationBlending)
 {
     BlendingFrame AnimationBlending[MAX_INSTANCE_COUNT];
@@ -60,54 +57,19 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input);
 
 VertexOutput VSMain(VertexInput input)
 {    
-    // matrix TF = input.Transform;
-    matrix TF = WorldTF;
+    matrix TF = input.Transform;
+    // matrix TF = WorldTF;
     matrix ModelWorldTF = mul(BoneTransforms[BaseBoneIndex], TF);
 
     VertexOutput output;
     output.Uv = input.Uv;
     output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
+
     output.Position = SetAnimatedBoneToWorldTF_Instancing(input); // Local_Space(Bone Root Space)
-
-    // START
-    // int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
-    // float Weights[4] = { input.Weight.x, input.Weight.y, input.Weight.z, input.Weight.w };
-
-    // float4 pos = 0;
-    // InterploateKeyframeParams ParamsCurrent;
-    // InterploateKeyframeParams ParamsNext;
-
-    // for(int i = 0 ; i < g_BoneCountToFindWeight ; i++)
-    // {
-    //     int targetBoneIndex = Indices[i];
-    //     float4 VertexPosInBoneSpace = mul(input.Position, OffsetMatrix[targetBoneIndex]);
-        
-    //     matrix currentAnim = 0;
-        
-    //     ParamsCurrent.TargetFrame = CURR_FRAME;
-    //     ParamsCurrent.BoneIndex = targetBoneIndex;
-    //     ParamsCurrent.Weight = Weights[i];
-
-    //     // currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent, input.InstanceID);
-    //     currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent);
-
-    //     [flatten]// 지금은 Next없으니까 PASS
-    //     if (AnimationBlending[input.InstanceID].Next.Clip >= 0)
-    //     {
-    //         ParamsNext.TargetFrame = NEXT_FRAME;
-    //         ParamsNext.BoneIndex = targetBoneIndex;
-    //         ParamsNext.Weight = Weights[i];
-    //         // currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext, input.InstanceID), AnimationBlending[input.InstanceID].ElapsedBlendTime);
-    //         currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext), AnimationBlending[0].ElapsedBlendTime);
-    //     }
-
-    //     pos += mul(VertexPosInBoneSpace, currentAnim);
-    // }
-    // END
-
     output.Position = mul(output.Position, ModelWorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
+    
     return output;
 }
 
@@ -119,7 +81,6 @@ float4 PSMain(VertexOutput input) : SV_Target
     color *= Light;
     return float4(color, 1);
 }
-
 
 /*======================================================================================================*/
 
@@ -144,17 +105,16 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
         ParamsCurrent.BoneIndex = targetBoneIndex;
         ParamsCurrent.Weight = Weights[i];
 
-        // currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent, input.InstanceID);
-        currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent);
+        currentAnim = InterpolateKeyFrameMatrix(ParamsCurrent, input.InstanceID);
 
-        // [flatten] 지금은 Next없으니까 PASS
-        // if (AnimationBlending[input.InstanceID].Next.Clip >= 0)
-        // {
-        //     ParamsNext.TargetFrame = NEXT_FRAME;
-        //     ParamsNext.BoneIndex = targetBoneIndex;
-        //     ParamsNext.Weight = Weights[i];
-        //     currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext, input.InstanceID), AnimationBlending[input.InstanceID].ElapsedBlendTime);
-        // }
+        [flatten]
+        if (AnimationBlending[input.InstanceID].Next.Clip >= 0)
+        {
+            ParamsNext.TargetFrame = NEXT_FRAME;
+            ParamsNext.BoneIndex = targetBoneIndex;
+            ParamsNext.Weight = Weights[i];
+            currentAnim = lerp(currentAnim, InterpolateKeyFrameMatrix(ParamsNext, input.InstanceID), AnimationBlending[input.InstanceID].ElapsedBlendTime);
+        }
 
         pos += mul(VertexPosInBoneSpace, currentAnim);
     }

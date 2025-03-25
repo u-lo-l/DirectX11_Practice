@@ -11,16 +11,17 @@ namespace Sdt
 		MainCamera->SetRotation( 210, 135, 180);
 		SetPlane();
 		
-		// ModelInstances.insert(ModelInstances.end(), {
-		// 	{new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
-		// 	// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
-		// 	// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
-		// 	// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
-		// 	// {new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
-		// });
-		// constexpr UINT InstanceCount = 1;
-		// constexpr float Stride = 25.f;
-		// SetModelsPosition(InstanceCount, Stride);
+		ModelInstances.insert(ModelInstances.end(), {
+			// {new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
+			// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
+			// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
+			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
+			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
+		});
+		
+		constexpr UINT InstanceCount = 169;
+		constexpr float Stride = 25.f;
+		SetModelsPosition(InstanceCount, Stride);
 	}
 
 	void InstancingDemo::Destroy()
@@ -52,8 +53,8 @@ namespace Sdt
 	{
 		Plane = new Model(L"Plane");
 		Transform * tf = Plane->AddTransforms();
-		tf->SetPosition({0,0,0});
-		tf->SetScale({10,1,10});
+		tf->SetPosition({0,-10,0});
+		tf->SetScale({5,1,5});
 		tf->SetRotation({0,0,90});
 		tf->UpdateWorldMatrix();;
 	}

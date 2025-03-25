@@ -65,7 +65,7 @@ public:
 	int ClipIndex = 0;
 private:
 	vector<ModelAnimation *> Animations {};
-	ID3D11ShaderResourceView * ClipSRV2DArray = nullptr;
+	ID3D11ShaderResourceView * KeyFrameSRV2DArray = nullptr;
 
 	/*--------------------------------------------*/
 
@@ -119,7 +119,7 @@ public:
 	#pragma region Read Animation Data
 	public :
 		void ReadAnimation(const wstring & InFileName);
-		void CreateAnimationTexture();
+		void CreateAnimationTextureAndSRV();
 	#pragma endregion Read Animation Data
 	
 #pragma endregion ReadFile

@@ -10,39 +10,25 @@ Model::Model(const wstring & ModelFileName)
 
 Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
 {
-#ifdef DO_DEBUG
-	WorldTransform = new Transform("Model WorldTransform of [" + String::ToString(ModelFileName) + "]");
-#else
 	WorldTransform = new Transform();
-#endif
 	WorldTransform->SetTRS(Pos,Rot,Scale);
 	const wstring FullFilePath = W_MODEL_PATH + ModelFileName + L".model";
 	this->ModelName = String::ToString(ModelFileName);
 	ReadFile(FullFilePath);
-
-	// InstBuffer = new InstanceBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix));
-
-	// if (SkeletonData != nullptr)
-		// SkeletonData->BindToGPU();
-	
-	// if (ClipSRV2DArray != nullptr)
-	// {
-	// 	D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV2DArray);
-	// }
+	InstBuffer = new InstanceBuffer(WorldTFMatrix, MaxModelInstanceCount, sizeof(Matrix));
 }
 
 Model::~Model()
 {
-	SAFE_DELETE(InstBuffer);
-	SAFE_RELEASE(ClipSRV2DArray);
+	SAFE_RELEASE(KeyFrameSRV2DArray);
 	
+	SAFE_DELETE(InstBuffer);
 	for (const ModelMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
 	for (pair<string, Material *> KeyVal : MaterialsTable)
 		SAFE_DELETE(KeyVal.second);
 	for (const ModelAnimation * Animation : Animations)
 		SAFE_DELETE(Animation);
-
 	for (const Transform * Tf : WorldTransforms)
 		SAFE_DELETE(Tf);
 }
@@ -50,11 +36,7 @@ Model::~Model()
 void Model::Tick()
 {
 	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
-	// printf("%f",DeltaTime);
-	// for (Transform * Tf : WorldTransforms)
-	// {
-	// 	Tf->SetRotation({0, 0, Tf->GetRotationInDegree().Z + 60 * DeltaTime});
-	// }
+
 	const int InstanceCount = max(WorldTransforms.size(), 1);
 	
 	if (Animations.empty() == false)
@@ -68,7 +50,7 @@ void Model::Tick()
 		}
 		else
 		{
-			if (ImGui::Button("Change", ImVec2(200, 30)))
+			if (ImGui::Button("Random Animation", ImVec2(200, 30)))
 			{
 				for (UINT InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
 				{
@@ -98,11 +80,12 @@ void Model::Tick()
 			}
 		}
 	}
+	
 	if (AnimationFrameData_CBuffer != nullptr)
 		AnimationFrameData_CBuffer->UpdateData(&this->BlendingDatas, sizeof(AnimationBlendingDesc) * MaxModelInstanceCount );
 	
-	if (ClipSRV2DArray != nullptr)
-		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &ClipSRV2DArray);
+	if (KeyFrameSRV2DArray != nullptr)
+		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &KeyFrameSRV2DArray);
 
 	for (ModelMesh * M : Meshes)
 	{
@@ -115,8 +98,8 @@ void Model::Render() const
 	// Model에서 InstanceBuffer를 Bind해주면 Mesh들에서 갖다 쓴다.
 	// 여기서 Bind해주는 정보는 Model의 World기준 Transform Matrix이다.
 	// 각 Model들의 위치정보가 바뀔 수 있기에 Render에서 처리해준다.
-	// if (InstBuffer != nullptr)
-	// 	InstBuffer->BindToGPU();
+	if (InstBuffer != nullptr)
+		InstBuffer->BindToGPU();
 
 	if (AnimationFrameData_CBuffer != nullptr)
 		AnimationFrameData_CBuffer->BindToGPU();
@@ -214,9 +197,4 @@ void Model::UpdateFrameData(FrameDesc & FrameData) const
 
 	FrameData.CurrentFrame = CurrAndNextFrame.first;
 	FrameData.NextFrame = CurrAndNextFrame.second;
-	ImGui::Text("Target Clip : %d", FrameData.Clip);
-	ImGui::Text("Delta Time  : %f", DeltaTime);
-	ImGui::Text("Curr Frame  : %d", static_cast<int>(FrameData.CurrentTime));
-	ImGui::Text("Next Frame : %d", static_cast<int>(FrameData.CurrentTime)+1);
-	ImGui::Text("   Time     : %f", FrameData.CurrentTime);
 }

@@ -1,5 +1,15 @@
 {
-   "Animations" : [ "Adam/Idle" ],
+   "Animations" : [
+      "Adam/Idle",
+      "Adam/Idle2",
+      "Adam/Idle3",
+      "Adam/Dance01",
+      "Adam/Dance02",
+      "Adam/Dance03",
+      "Adam/Boxing",
+      "Adam/Boxing2",
+      "Adam/HeadHit"
+   ],
    "File" : {
       "Material" : "Adam",
       "Mesh" : "Adam"
