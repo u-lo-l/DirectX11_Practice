@@ -13,7 +13,7 @@ namespace Sdt
 		Drawer = new Shader(ShaderName);
 		PerFrame = new ConstantDataBinder(Drawer);
 
-		DiffuseMap = new Texture( L"Box_Diffuse.png", nullptr, true);
+		DiffuseMap = new Texture( L"Box_Diffuse.png",  true);
 		sDiffuseMap = Drawer->AsSRV("Texture");
 		
 		sDiffuseMap->SetResource(DiffuseMap->GetSRV());

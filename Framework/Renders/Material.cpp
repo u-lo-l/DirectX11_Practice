@@ -1,45 +1,24 @@
 ﻿// ReSharper disable All
 #include "framework.h"
 #include "Material.h"
-#include "Buffers.h"
 
-#ifdef DO_DEBUG
-Material::Material( const string & MetaData )
-: Drawer(nullptr), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr, }, SRVs{nullptr,}
-{
-	CBuffer = new ConstantBuffer(&ColorData, MetaData,sizeof(ThisClass::Colors));
-}
-
-Material::Material( Shader * InDrawer, const string & MetaData )
-: Drawer(InDrawer), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
-{
-	CBuffer = new ConstantBuffer(&ColorData, MetaData,sizeof(ThisClass::Colors));
-}
-
-Material::Material( const wstring & InShaderFileName, const string & MetaData )
-: Drawer(new Shader(InShaderFileName)), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
-{
-	CBuffer = new ConstantBuffer(&ColorData, MetaData,sizeof(ThisClass::Colors));
-}
-#else
 Material::Material()
- : Drawer(nullptr), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr, }, SRVs{nullptr,}
+ : Shader(nullptr), ColorData_CBuffer(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
-	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CreateBuffer();
 }
 
-Material::Material(Shader * InDrawer )
- : Drawer(InDrawer), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
+Material::Material(HlslShader<VertexType> * InDrawer )
+ : Shader(InDrawer), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CreateBuffer();
 }
 
 Material::Material( const wstring & InShaderFileName )
- : Drawer(new Shader(InShaderFileName)), CBuffer(nullptr), ECB_Color(nullptr), Textures{nullptr,}, SRVs{nullptr,}
+ : Shader(new HlslShader<VertexType>(InShaderFileName)), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	CBuffer = new ConstantBuffer(&ColorData, "Material.ColorData",sizeof(ThisClass::Colors));
+	CreateBuffer();
 }
-#endif
 
 Material::~Material()
 {
@@ -47,40 +26,55 @@ Material::~Material()
 	{
 		SAFE_DELETE(Textures[i]);
 	}
-	SAFE_DELETE(Drawer);
+	SAFE_DELETE(Shader);
 }
 
-void Material::Render()
+void Material::Tick()
 {
-	if (Drawer == nullptr)
-	{
-		return ;
-	}
+	ColorData_CBuffer->UpdateData(&ColorData, sizeof(ThisClass::Colors));
+}
 
-	if (ECB_Color != nullptr)
-		ECB_Color->SetConstantBuffer(*CBuffer);
-	if (ESRV_TextureMap != nullptr)
-		ESRV_TextureMap->SetResourceArray((ID3D11ShaderResourceView **)&SRVs, 0, ThisClass::MaxTextureCount);
+void Material::BindToGPU()
+{
+	if (Shader == nullptr)
+		return ;
+	
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	ColorData_CBuffer->BindToGPU();
+	DeviceContext->PSSetShaderResources(TextureSlot::PS_TextureMap, MaxTextureCount, SRVs);
+}
+
+void Material::CreateBuffer()
+{
+	if (!!ColorData_CBuffer)
+		SAFE_DELETE(ColorData_CBuffer);
+	ColorData_CBuffer = new ConstantBuffer(
+		ShaderType::PixelShader,
+		PS_Material,
+		&ColorData,
+		"Material.ColorData",
+		sizeof(ThisClass::Colors),
+		false
+	);
 }
 
 void Material::SetShader( const wstring & InShaderFileName )
 {
 	assert(InShaderFileName.length() > 0);
-	Drawer = new Shader(InShaderFileName);
-	ECB_Color = Drawer->AsConstantBuffer("CB_Material");
-	ESRV_TextureMap = Drawer->AsSRV("MaterialMaps");
+	Shader = new HlslShader<VertexType>(InShaderFileName);
+	SetShader(Shader);
 }
 
-void Material::SetShader( Shader * InShader )
+void Material::SetShader( HlslShader<VertexType> * InShader )
 {
-	Drawer = InShader;
-	ECB_Color = Drawer->AsConstantBuffer("CB_Material");
-	ESRV_TextureMap = Drawer->AsSRV("MaterialMaps");
+	Shader = InShader;
+	Shader->CreateRasterizerState_Solid();
+	Shader->CreateSamplerState_Linear();
 }
 
-Shader * Material::GetShader() const
+HlslShader<Material::VertexType> * Material::GetShader() const
 {
-	return Drawer;
+	return Shader;
 }
 
 void Material::SetDiffuseMap( const string & InFilePath )

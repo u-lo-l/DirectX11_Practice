@@ -1,6 +1,6 @@
 #pragma once
 
-class ConstantDataBinder;
+class GlobalViewProjectionCBuffer;
 
 class Context
 {
@@ -17,11 +17,14 @@ public:
 	void Tick();
 	void Render() const;
 	void ResizeScreen();
-public:
-	Camera * GetCamera() const {return MainCamera;}
-	const Vector & GetLightDirection() const {return LightDirection;}
+
+	Camera * GetCamera() const;// {return MainCamera;}
+	const Vector & GetLightDirection() const;// {return LightDirection;}
+	GlobalViewProjectionCBuffer * GetViewProjectionCBuffer() const;// { return VP_CBuffer; }
 private:
 	static Context * Instance;
+
+	
 private:
 	Context();
 	~Context();
@@ -32,6 +35,5 @@ public:
 private:
 	Camera * MainCamera;
 	D3D11_VIEWPORT * Viewport;
-public:
-	// ConstantDataBinder * CBBinder = nullptr;
+	GlobalViewProjectionCBuffer * VP_CBuffer = nullptr;
 };

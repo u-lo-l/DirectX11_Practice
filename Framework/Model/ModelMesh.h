@@ -34,9 +34,6 @@ protected:
 	void SetWorldTransform( const Transform * InTransform ) const;
 	
 protected :
-	Shader * CachedShader = nullptr;
-	int Pass = 0;
-
 	string MeshName;
 
 	Transform * ref_ModelWorldTransform = nullptr;
@@ -46,16 +43,18 @@ public:
 protected:
 	Material * MaterialData = nullptr;
 
-	UINT VerticesCount = 0;
-	VertexType * Vertices = nullptr;
+	vector<VertexType> Vertices;
 	
-	UINT IndicesCount = 0;
-	UINT* Indices = nullptr;
+	vector<UINT> Indices;
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-	
-	// View-Projection Matrix정보임. 굳이 왜 여기에 또... 이거도 Shader마다인데...
-	// 이게 Global에 생성해놓고 가져다 써야겠다.
-	ConstantDataBinder * GlobalMatrixCBBinder = nullptr;
+
+	///
+	struct W_Desc
+	{
+		Matrix World;
+	} W_Data;
+	ConstantBuffer * WBuffer = nullptr;
+	///
 };

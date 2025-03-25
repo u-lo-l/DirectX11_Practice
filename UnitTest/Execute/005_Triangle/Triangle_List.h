@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 class Triangle_List : public IExecutable
 {
 public:
-	using InnerVertexType = VertexColor;
+	using VertexType = VertexColor;
 
 public:
 	void Initialize() override;
@@ -15,9 +16,10 @@ public:
 	void Render() override;
 
 private:
-	Shader* shader = nullptr;
+	// Shader* shader = nullptr;
+	HlslShader<VertexType> * Drawer = nullptr;
 
-	vector<InnerVertexType> Vertices;
+	vector<VertexType> Vertices;
 	ID3D11Buffer * VertexBuffer = nullptr;
 	ID3D11Buffer * VertexBuffer2 = nullptr;
 };

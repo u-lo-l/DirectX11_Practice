@@ -5,9 +5,9 @@ Camera::Camera()
 {
 	RotationMat = Matrix::Identity;
 	ViewMat = Matrix::Identity;
-
-	SetRotationMat();
+	
 	SetViewMat();
+	SetRotationMat();
 }
 
 Camera::~Camera()
@@ -54,13 +54,14 @@ void Camera::Tick()
 		MoveSpeed = DefaultMoveSpeed;
 	}
 	
-	SetViewMat();
 
 	const Vector Delta = Sdt::Mouse::Get()->GetMoveDelta();
 	EulerAngle.X += Delta.Y * RotationSpeed * DeltaTime;
-	EulerAngle.Y += Delta.X * RotationSpeed * DeltaTime;
-	EulerAngle.Z = 0;
+	// EulerAngle.Y = 0;
+	EulerAngle.Y -= Delta.X * RotationSpeed * DeltaTime;
+	EulerAngle.Z += 0;
 
+	SetViewMat();
 	SetRotationMat();
 }
 
@@ -100,7 +101,7 @@ void Camera::SetRotation(float R, float P, float Y)
 	SetRotationMat();
 }
 
-void Camera::SetRotation(const Vector& InEuler)
+void Camera::SetRotation(const Vector & InEuler)
 {
 	EulerAngle = { Math::ToRadians(InEuler.X), Math::ToRadians(InEuler.Y), Math::ToRadians(InEuler.Z) };
 	SetRotationMat();
@@ -118,7 +119,8 @@ void Camera::SetRopSpeed( float InSpeed )
 
 void Camera::SetViewMat()
 {
-	Matrix::CreateLookAt(ViewMat, Position, At(), Up);
+	// Matrix::CreateLookAt(ViewMat, Position, At(), Up);
+	ViewMat = Matrix::CreateLookAt(Position, Position + Forward, Up);
 }
 
 void Camera::SetRotationMat()

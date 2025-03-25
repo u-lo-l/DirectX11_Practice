@@ -1,73 +1,38 @@
 ﻿#include "framework.h"
 #include "Transform.h"
 
-#ifdef DO_DEBUG
-Transform::Transform( const string & MetaData )
-: CBuffer(nullptr), ECB_CBuffer(nullptr)
-, Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
-{
-	CBufferData.World= Matrix::Identity;
-	CBuffer = new ConstantBuffer(&CBufferData, MetaData, sizeof(ThisClass::CBufferData));
-}
-#else
-Transform::Transform()
- : CBuffer(nullptr), ECB_CBuffer(nullptr)
- , Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
- , ref_WorldMatrix(nullptr)
-{
-	CBufferData.World= Matrix::Identity;
-	CBuffer = new ConstantBuffer(&CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
-}
-
 Transform::Transform(const Matrix * InMatrix )
-	: CBuffer(nullptr), ECB_CBuffer(nullptr)
+	: CBuffer(nullptr)
 	, Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
 	, ref_WorldMatrix(InMatrix)
 {
-	CBufferData.World= Matrix::Identity;
-	CBuffer = new ConstantBuffer(&CBufferData, "Transform World Mat", sizeof(ThisClass::CBufferData));
+	WorldTransform_Data.World = InMatrix == nullptr ? Matrix::Identity : *InMatrix;
+	CBuffer = new ConstantBuffer(ShaderType::VertexShader, ShaderSlot::VS_World, &WorldTransform_Data, "Transform World Mat", sizeof(ThisClass::CBufferDesc));
 }
-#endif
 
 Transform::~Transform()
 {
 	SAFE_DELETE(CBuffer);
 }
 
-// void Transform::Tick()
-// {
-// 	if (bTransformChanged == false)
-// 		return ;
-// 	UpdateWorldMatrix();
-// 	
-// 	bTransformChanged = false;
-// }
-
-void Transform::BindCBufferToGPU( const Shader * InShader )
+void Transform::Tick()
 {
-	ASSERT(CBuffer != nullptr, "CBuffer Not Valid");
-	ASSERT(InShader != nullptr, "Shader Not Valid");
-
-	if (ECB_CBuffer == nullptr)
-		ECB_CBuffer = InShader->AsConstantBuffer("CB_World");
-	
-	CBuffer->BindToGPU();
-	CHECK(ECB_CBuffer->SetConstantBuffer(*CBuffer) >= 0);
+	CBuffer->UpdateData( &WorldTransform_Data, sizeof(CBufferDesc));
 }
 
 Vector Transform::GetForward() const
 {
-	return CBufferData.World.Forward();
+	return WorldTransform_Data.World.Forward();
 }
 
 Vector Transform::GetUp() const
 {
-	return CBufferData.World.Up();
+	return WorldTransform_Data.World.Up();
 }
 
 Vector Transform::GetRight() const
 {
-	return CBufferData.World.Right();
+	return WorldTransform_Data.World.Right();
 }
 
 const Vector & Transform::GetPosition() const
@@ -132,7 +97,7 @@ void Transform::SetTRS( const Vector & InPosition, const Quaternion & InRotation
 {
 	Position = InPosition;
 	Scale = InScale;
-	EulerAngleInRadian = InRotation.ToEulerAngles();
+	EulerAngleInRadian = InRotation.ToEulerAnglesInRadian();
 	EulerAngleInDegree = { Math::ToDegrees(EulerAngleInRadian.X), Math::ToDegrees(EulerAngleInRadian.Y), Math::ToDegrees(EulerAngleInRadian.Z)};
 	UpdateWorldMatrix();
 }
@@ -143,8 +108,8 @@ void Transform::UpdateWorldMatrix()
 	const Matrix Rotation = Matrix::CreateFromYawPitchRoll(EulerAngleInRadian.Z, EulerAngleInRadian.Y, EulerAngleInRadian.X);
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
-	CBufferData.World = Scale * Rotation * Translation;
+	WorldTransform_Data.World = Scale * Rotation * Translation;
 
 	if (ref_WorldMatrix != nullptr)
-		memcpy((void *)ref_WorldMatrix, &CBufferData.World, sizeof(Matrix));
+		memcpy((void *)ref_WorldMatrix, &WorldTransform_Data.World, sizeof(Matrix));
 }

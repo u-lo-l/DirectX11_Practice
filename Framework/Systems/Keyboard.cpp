@@ -6,14 +6,14 @@ Keyboard * Keyboard::Instance = nullptr;
 
 void Keyboard::Create()
 {
-	ASSERT(Instance == nullptr, "Keyboard Instance must null on Create()");
+	ASSERT(Instance == nullptr, "Keyboard Instance must null on Create()")
 	Instance = new Keyboard();
 
 }
 
 void Keyboard::Destroy()
 {
-	ASSERT(Instance != nullptr, "Keyboard Instance must not null on Destroy()");
+	ASSERT(Instance != nullptr, "Keyboard Instance must not null on Destroy()")
 	SAFE_DELETE(Instance);
 }
 

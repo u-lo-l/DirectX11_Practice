@@ -1,33 +1,53 @@
 ﻿#include "framework.h"
-#include "ConstantDataBinder.h"
-UINT ConstantDataBinder::Count = 0;
 
-ConstantDataBinder::ConstantDataBinder( Shader * InDrawer )
- : Drawer( InDrawer )
+UINT GlobalViewProjectionCBuffer::Count = 0;
+
+GlobalViewProjectionCBuffer::GlobalViewProjectionCBuffer()
 {
-	string DataInfo = "World Context Desc #" + to_string( ConstantDataBinder::Count );
-	ContextBuffer = new ConstantBuffer(&ContextDescData, DataInfo, sizeof(ContextDesc));
-	ContextECB = Drawer->AsConstantBuffer("CB_Context");
-	ConstantDataBinder::Count++;
+	ViewProjectionBuffer = new ConstantBuffer(
+		ShaderType::VertexShader,
+		VS_ViewProjection,
+		nullptr,
+		"ViewProjection",
+		sizeof(ViewProjectionDesc),
+		false
+	);
+	LightDirectionBuffer = new ConstantBuffer(
+		ShaderType::PixelShader,
+		PS_LightDirection,
+		nullptr,
+		"LightDirection",
+		sizeof(LightDirectionDesc),
+		false
+	);
+	GlobalViewProjectionCBuffer::Count++;
 }
 
-ConstantDataBinder::~ConstantDataBinder()
+GlobalViewProjectionCBuffer::~GlobalViewProjectionCBuffer()
 {
-	ConstantDataBinder::Count--;
-	SAFE_DELETE( ContextBuffer );
+	GlobalViewProjectionCBuffer::Count--;
+	SAFE_DELETE( ViewProjectionBuffer );
+	SAFE_DELETE( LightDirectionBuffer );
 }
 
-void ConstantDataBinder::Tick()
+void GlobalViewProjectionCBuffer::Tick()
 {
-	ContextDescData.View = Context::Get()->GetViewMatrix();
-	ContextDescData.ViewInv = Matrix::Invert(ContextDescData.View);
-	ContextDescData.Projection = Context::Get()->GetProjectionMatrix();
-	ContextDescData.ViewProjection = ContextDescData.View * ContextDescData.Projection;
-	ContextDescData.LightDirection = Context::Get()->GetLightDirection();
+	// ContextDescData.View = Context::Get()->GetViewMatrix();
+	// ContextDescData.ViewInv = Matrix::Invert(ContextDescData.View);
+	// ContextDescData.Projection = Context::Get()->GetProjectionMatrix();
+	// ContextDescData.ViewProjection = ContextDescData.View * ContextDescData.Projection;
+	// ContextDescData.LightDirection = Context::Get()->GetLightDirection();
+
+	ViewProjectionData.View = Context::Get()->GetViewMatrix();
+	ViewProjectionData.Projection = Context::Get()->GetProjectionMatrix();
+	LightDirectionData.LightDirection = Context::Get()->GetLightDirection();
+
+	ViewProjectionBuffer->UpdateData(&ViewProjectionData, sizeof(ViewProjectionDesc));
+	LightDirectionBuffer->UpdateData(&LightDirectionData, sizeof(LightDirectionDesc));
 }
 
-void ConstantDataBinder::BindToGPU() const
+void GlobalViewProjectionCBuffer::BindToGPU() const
 {
-	ContextBuffer->BindToGPU();
-	CHECK(ContextECB->SetConstantBuffer(*ContextBuffer) >= 0);
+	ViewProjectionBuffer->BindToGPU();
+	LightDirectionBuffer->BindToGPU();
 }

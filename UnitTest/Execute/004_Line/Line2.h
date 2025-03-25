@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Renders/VertexLayout.h"
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 class Line2 : public IExecutable
 {
 public:
-	typedef typename VertexColor InnerVertex;
+	using VertexType = VertexColor;
 public:
 	void Initialize();
 	void Destroy();
@@ -16,6 +16,7 @@ public:
 
 private:
 	Shader* shader = nullptr;
+	HlslShader<VertexType> * hlslShader = nullptr;
 
 	vector<VertexColor> Vertices;
 	ID3D11Buffer* VertexBuffer;

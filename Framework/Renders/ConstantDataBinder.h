@@ -1,34 +1,43 @@
 ﻿#pragma once
 
-/**
- * CBuffer에 넘어갈 내용이 여기로 들어간다.
- */
-class ConstantDataBinder
+class GlobalViewProjectionCBuffer
 {
 private:
 	static UINT Count;
 public:
-	explicit ConstantDataBinder(Shader * InDrawer);
-	~ConstantDataBinder();
+	GlobalViewProjectionCBuffer();
+	~GlobalViewProjectionCBuffer();
 
 	void Tick();
 	void BindToGPU() const;
 	
 private:
-	struct ContextDesc
+	// struct ContextDesc
+	// {
+	// 	Matrix View;
+	// 	Matrix ViewInv;
+	// 	Matrix Projection;
+	// 	Matrix ViewProjection;
+	// 	Vector LightDirection;
+	// 	float Padding;
+	// };
+	// ContextDesc ContextDescData;
+
+	struct ViewProjectionDesc
 	{
 		Matrix View;
-		Matrix ViewInv;
 		Matrix Projection;
-		Matrix ViewProjection;
+	};
+
+	struct LightDirectionDesc
+	{
 		Vector LightDirection;
 		float Padding;
 	};
 
-	ContextDesc ContextDescData;
-
-	ConstantBuffer * ContextBuffer;
-	IECB_t * ContextECB;
-
-	Shader * Drawer;
+	ViewProjectionDesc ViewProjectionData;
+	LightDirectionDesc LightDirectionData;
+	
+	ConstantBuffer * ViewProjectionBuffer;
+	ConstantBuffer * LightDirectionBuffer;
 };

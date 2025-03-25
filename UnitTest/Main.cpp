@@ -1,14 +1,28 @@
 // ReSharper disable CppInconsistentNaming
 #include "Pch.h"
 #include "Main.h"
-
-#include "Execute/RawBufferDemo/RawBufferDemo.h"
 #include "Systems/Window.h"
+
+#include "Execute/011_Grid/Grid.h"
+#include "Execute/019_TextureColorBlending/TextureColorBlending.h"
+#include "Execute/024_Terrain/TerrainDemo.h"
+#include "Execute/InstancingDemo/InstancingDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(Sdt::RawBufferDemo);
+	// PUSH_MAIN(Sdt::RawBufferDemo);
+	// PUSH_MAIN(Line);
+	// PUSH_MAIN(Sdt::Line2);
+	// PUSH_MAIN(Line_Circle);
+	// PUSH_MAIN(Triangle_List);
+	// PUSH_MAIN(Sdt::WorldDemo);
+	// PUSH_MAIN(Sdt::WorldDemo2);
+	// PUSH_MAIN(Sdt::Grid);
+	// PUSH_MAIN(Sdt::TextureColorBlending);
+	// PUSH_MAIN(Sdt::TerrainDemo);
+	PUSH_MAIN(Sdt::InstancingDemo);
 }
+
 
 void Main::Destroy()
 {

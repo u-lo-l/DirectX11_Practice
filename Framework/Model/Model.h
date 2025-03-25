@@ -11,11 +11,11 @@ class Model
 {
 public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
-	constexpr static int MaxModelInstanceCount = 500;
+	constexpr static int MaxModelInstanceCount = 200;
 private:
 	using ThisClass = Model;
 
-/*====================================================================================*/
+	/*====================================================================================*/
 
 public:
 	explicit Model( const wstring & ModelFileName );
@@ -25,18 +25,14 @@ public:
 	void Tick();
 	void Render() const;
 
-/*====================================================================================*/
+	/*====================================================================================*/
 
 private:
 	// TODO : 이거 있을 위치가 여기는 아닌 것 같은데...
 	static Color JsonStringToColor(const Json::String & InJson);
-
 	string ModelName;
-	
 	map<string, Material*> MaterialsTable;
-	
 	vector<ModelMesh *> Meshes;
-
 	Transform * WorldTransform;
 
 #pragma region Instancing
@@ -49,31 +45,28 @@ private:
 	vector<Transform*> WorldTransforms; // 실제 인스턴스의 Transform
 	Matrix WorldTFMatrix[MaxModelInstanceCount]; // Shader(InstanceBuffer)에 넘겨줄 배열
 
-	VertexBuffer * InstanceBuffer;
+	InstanceBuffer * InstBuffer = nullptr;
 #pragma endregion Instancing
 	
-/*====================================================================================*/
+	/*====================================================================================*/
 
 #pragma region Bone Data
 private:
 	Skeleton * SkeletonData = nullptr; 
 #pragma endregion Bone Data
 
-/*====================================================================================*/
+	/*====================================================================================*/
 
-// TODO : Animation이 없을 수도 있는데...
+	// TODO : Animation이 없을 수도 있는데...
 #pragma region Animation Data
 public:
 	UINT GetClipCount() const { return Animations.size(); }
 	void SetClipIndex(UINT InInstanceID, int InClipIndex);
-	
+	int ClipIndex = 0;
 private:
-	vector<ModelAnimation *> Animations;
+	vector<ModelAnimation *> Animations {};
+	ID3D11ShaderResourceView * KeyFrameSRV2DArray = nullptr;
 
-	ID3D11ShaderResourceView * ClipSRV = nullptr;
-	// 최초 시작 한 번만 그냥 SetResource해주면 됨. 애니메이션이 동적으로 추가되거나 하지 않음.
-	vector<IESRV_t *> ClipSRVVariables;
-	
 	/*--------------------------------------------*/
 
 	struct FrameDesc
@@ -93,14 +86,12 @@ private:
 		FrameDesc Next;
 	};
 	void CreateAnimationBuffers();
-	void UpdateCurrentFrameData(int InstanceId);
-	void UpdateNextFrameData(int InstanceId);
+	void UpdateCurrentFrameData(int InstanceId = 0);
+	void UpdateNextFrameData(int InstanceId = 0);
 	void UpdateFrameData(FrameDesc & FrameData) const;
 
 	AnimationBlendingDesc BlendingDatas[MaxModelInstanceCount];
-	ConstantBuffer * FrameCBuffer;
-	string CBufferName = "CB_AnimationBlending";
-	vector<IECB_t *> ECB_FrameBuffers;
+	ConstantBuffer * AnimationFrameData_CBuffer;
 	
 #pragma endregion Animation Data
 	
@@ -122,19 +113,18 @@ public:
 
 	#pragma region Read Mesh Data
 	public:
-		void ReadMesh(const wstring & InFileName);
+		void ReadMeshAndCreateBoneTable(const wstring & InFileName);
 	#pragma endregion Read Mesh Data
 
 	#pragma region Read Animation Data
 	public :
 		void ReadAnimation(const wstring & InFileName);
-		void CreateAnimationTexture();
+		void CreateAnimationTextureAndSRV();
 	#pragma endregion Read Animation Data
 	
 #pragma endregion ReadFile
 
 /*====================================================================================*/
-
 };
 
 

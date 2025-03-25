@@ -1,6 +1,6 @@
 // ReSharper disable CppClangTidyPerformanceEnumSize
 #pragma once
-#include "../Core/Vector.h"
+#include "../Math/Vector.h"
 
 constexpr int MAX_INPUT_MOUSE = 8;
 

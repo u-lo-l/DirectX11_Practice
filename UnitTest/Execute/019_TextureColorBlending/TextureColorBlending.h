@@ -7,11 +7,11 @@ namespace Sdt
 	class TextureColorBlending final : public IExecutable
 	{
 	private:
-		Camera* MainCamera = nullptr;
+		Camera * MainCamera = nullptr;
 
 	public:
-		using InnerVertexType = VertexTextureColor;
-		using InnerIndexType = UINT;
+		using VertexType = VertexTextureColor;
+		using IndexType = UINT;
 
 	public:
 		void Initialize() override;
@@ -21,22 +21,27 @@ namespace Sdt
 		void Render() override;
 
 	private:
-		Shader* shader = nullptr;
+		// Shader* shader = nullptr;
+		HlslShader<VertexType> * Drawer = nullptr;
 
 		float LerpRate = 0;
-
-
-		UINT VertexCount = 4;
-		InnerVertexType* Vertices = nullptr;
+		
+		const static UINT VertexCount;
+		vector<VertexType> Vertices;
 		ID3D11Buffer* VertexBuffer = nullptr;
 
-		UINT IndexCount = 6;
-		UINT* Indices = nullptr;
+		const static UINT IndexCount;
+		vector<UINT> Indices;
 		ID3D11Buffer* IndexBuffer = nullptr;
 
 		Matrix WorldMat;
+		Matrix ViewMat;
 		Matrix ProjectionMat;
 
-		ID3D11ShaderResourceView * Srv = nullptr;
+		Texture * SampleTexture = nullptr;
+		ID3D11SamplerState * SamplerState = nullptr;
+		// World-View-Projection Constant Buffer
+		ID3D11Buffer * WVPCBuffer = nullptr;
+		ID3D11Buffer * LerpRateCBuffer = nullptr;
 	};
 }

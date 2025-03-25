@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 namespace Sdt
 {
@@ -8,9 +9,8 @@ namespace Sdt
 	{
 	private:
 		static const int VERTEX_COUNT;
-
 	public:
-		using InnerVertexType = Vertex;
+		using VertexType = Vertex;
 
 	public:
 		void Initialize() override;
@@ -20,13 +20,18 @@ namespace Sdt
 		void Render() override;
 
 	private:
-		Shader * shader = nullptr;
+		// Shader * shader = nullptr;
+		HlslShader<VertexType> * Drawer = nullptr;
 
-		InnerVertexType * Vertices = nullptr;
+		VertexType * Vertices = nullptr;
 		ID3D11Buffer* VertexBuffer = nullptr;
 
 		Matrix WorldMat;
 		Matrix ViewMat;
 		Matrix ProjectionMat;
+
+		ID3D11Buffer* CB_World = nullptr;
+		ID3D11Buffer* CB_View = nullptr;
+		ID3D11Buffer* CB_Projection = nullptr;
 	};
 }

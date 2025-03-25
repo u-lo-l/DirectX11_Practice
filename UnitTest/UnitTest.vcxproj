@@ -19,14 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Execute\RawBufferDemo\RawBufferDemo.cpp" />
+    <ClCompile Include="Execute\019_TextureColorBlending\TextureColorBlending.cpp" />
+    <ClCompile Include="Execute\024_Terrain\TerrainDemo.cpp" />
+    <ClCompile Include="Execute\InstancingDemo\InstancingDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Execute\RawBufferDemo\RawBufferDemo.h" />
+    <ClInclude Include="Execute\019_TextureColorBlending\TextureColorBlending.h" />
+    <ClInclude Include="Execute\024_Terrain\TerrainDemo.h" />
+    <ClInclude Include="Execute\InstancingDemo\InstancingDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

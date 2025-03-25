@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Systems/IExecutable.h"
+#include "Renders/HlslShader.hpp"
 
 class Line_Circle : public IExecutable
 {
 public:
-	using InnerVertexType = VertexColor;
+	using VertexType = VertexColor;
 
 public:
 	void Initialize() override;
@@ -16,7 +17,8 @@ public:
 
 private:
 	Shader* shader = nullptr;
+	HlslShader<VertexType> * hlslShader;
 
-	vector<InnerVertexType> Vertices;
+	vector<VertexType> Vertices;
 	ID3D11Buffer * VertexBuffer = nullptr;
 };

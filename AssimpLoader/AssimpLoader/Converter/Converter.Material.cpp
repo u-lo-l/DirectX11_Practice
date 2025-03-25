@@ -96,8 +96,8 @@ namespace Sdt
 		ID3D11Device * const Device = D3D::Get()->GetDevice();
 		ID3D11DeviceContext * const Context = D3D::Get()->GetDeviceContext();
 		
-		ASSERT(InSaveFolder.empty() == false, "InSaveFolder is not valid");
-		ASSERT(InFileName.empty() == false, "InFileName is not valid");
+		ASSERT(InSaveFolder.empty() == false, "InSaveFolder is not valid")
+		ASSERT(InFileName.empty() == false, "InFileName is not valid")
 
 		const string Filename = Path::GetFileName(InFileName);
 		const aiTexture * Texture = Scene->GetEmbeddedTexture(InFileName.c_str());

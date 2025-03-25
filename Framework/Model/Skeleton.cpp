@@ -18,7 +18,6 @@ void Skeleton::SetUpBoneTable(const vector<ModelMesh *> & Meshes)
 	for (int i = 0; i < GetBoneCount(); i++)
 	{
 		ModelBone * TargetBone = this->Bones[i];
-
 		/*
 		 * 기본적으로 mVertex들은 fbx모델의 Root를 기준으로 한다.
 		 * 하지만 mMesh가 어떤 aiNode의 Transform을 참조하는경우 해당 Transform(이하 aiTF)을 기준으로한다.
@@ -44,21 +43,20 @@ void Skeleton::ClearBoneTable()
 	SAFE_DELETE(CachedBoneTable);
 }
 
-void Skeleton::CreateBuffer( const map<string, Material *> & MaterialsInModel)
+void Skeleton::CreateBuffer()
 {
 	const string CBufferInfo = "Bone Transform Data";
-	BoneDescBuffer = new ConstantBuffer(&BoneData, CBufferInfo, sizeof(BoneDesc));
-	for (const auto & Pair : MaterialsInModel)
-	{
-		ECB_BoneDescBuffers.emplace_back(Pair.second->GetShader()->AsConstantBuffer(CBufferName));
-	}
+	BoneDescBuffer = new ConstantBuffer(
+		ShaderType::VertexShader,
+		VS_BoneMatrix,
+		&BoneData,
+		CBufferInfo,
+		sizeof(BoneDesc),
+		true
+	);
 }
 
 void Skeleton::BindToGPU() const
 {
 	BoneDescBuffer->BindToGPU();
-	for (IECB_t * CBufferHandle : ECB_BoneDescBuffers)
-	{
-		CHECK(CBufferHandle->SetConstantBuffer(*BoneDescBuffer) >= 0);
-	}
 }

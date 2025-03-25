@@ -24,7 +24,6 @@ namespace Sdt
 		void SetModelsPosition(int MaxInstanceCount = 10, float Stride = 20);
 		
 	private:
-		Shader * Drawer = nullptr;
 		Model * Plane = nullptr;
 		vector<ModelInstanceData> ModelInstances;
 

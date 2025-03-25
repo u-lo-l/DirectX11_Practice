@@ -4,7 +4,7 @@
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Textures/Crack.jpg" ],
       "Emissive" : "0.800000,0.800000,0.800000,1.000000",
-      "ShaderName" : "38_Instancing_Model.fx",
+      "ShaderName" : "38_Instancing_Model.hlsl",
       "Specular" : "0.800000,0.800000,0.800000,1.000000",
    }
 }

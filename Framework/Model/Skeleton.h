@@ -12,7 +12,7 @@ public:
 	void ClearBoneTable();
 	const CachedBoneTableType * GetCachedBoneTable() const { return CachedBoneTable; }
 	// BoneDesc ConstantBuffer 생성
-	void CreateBuffer( const map<string, Material *> & MaterialsInModel);
+	void CreateBuffer();
 	// BoneDesc ConstantBuffer를 GPU에 바인딩.
 	void BindToGPU() const;
 private:
@@ -31,6 +31,4 @@ private:
 	BoneDesc BoneData;
 	ConstantBuffer * BoneDescBuffer;
 	string CBufferName = "CB_ModelBones";
-	// CB_MOdelBones라는 이름의 ConstantBuffer를 다루는 Handle
-	vector<IECB_t *> ECB_BoneDescBuffers; 
 };

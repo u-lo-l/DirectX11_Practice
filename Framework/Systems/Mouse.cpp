@@ -7,21 +7,21 @@ namespace Sdt
 
 	void Mouse::Create()
 	{
-		ASSERT(Instance == nullptr, "Mouse Instance must null on Create()");
+		ASSERT(Instance == nullptr, "Mouse Instance must null on Create()")
 
 		Instance = new Mouse();
 	}
 
 	void Mouse::Destroy()
 	{
-		ASSERT(Instance != nullptr, "Mouse Instance must not null on Destroy()");
+		ASSERT(Instance != nullptr, "Mouse Instance must not null on Destroy()")
 
 		SAFE_DELETE(Instance);
 	}
 
 	Mouse* Mouse::Get()
 	{
-		//ASSERT(Instance != nullptr, "Mouse Instance must not null on Get()");
+		//ASSERT(Instance != nullptr, "Mouse Instance must not null on Get()")
 
 		return Instance;
 	}
@@ -32,9 +32,9 @@ namespace Sdt
 		ZeroMemory(ButtonStatus, sizeof(BYTE) * MAX_MOUSE_BUTTON);
 		ZeroMemory(ButtonMaps, sizeof(MouseButtonState) * MAX_MOUSE_BUTTON);
 
-		ButtonStatus[0] = GetAsyncKeyState(VK_LBUTTON) & 0x8000 ? 1 : 0;
-		ButtonStatus[1] = GetAsyncKeyState(VK_RBUTTON) & 0x8000 ? 1 : 0;
-		ButtonStatus[2] = GetAsyncKeyState(VK_MBUTTON) & 0x8000 ? 1 : 0;
+		ButtonStatus[static_cast<int>(MouseButton::Left)] = GetAsyncKeyState(VK_LBUTTON) & 0x8000 ? 1 : 0;
+		ButtonStatus[static_cast<int>(MouseButton::Right)] = GetAsyncKeyState(VK_RBUTTON) & 0x8000 ? 1 : 0;
+		ButtonStatus[static_cast<int>(MouseButton::Middle)] = GetAsyncKeyState(VK_MBUTTON) & 0x8000 ? 1 : 0;
 
 		for (DWORD i = 0; i < MAX_MOUSE_BUTTON; i++)
 		{

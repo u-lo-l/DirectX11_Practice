@@ -26,11 +26,10 @@ using namespace std;
 	#pragma comment(lib, "D3DCompiler.lib")
 #pragma endregion
 
-
-#pragma region Effect
-	#include "Effect/d3dx11effect.h"
-	#pragma comment(lib, "Effect/Effects11d.lib")
-#pragma endregion
+// #pragma region Effect
+// 	#include "Effect/d3dx11effect.h"
+// 	#pragma comment(lib, "Effect/Effects11d.lib")
+// #pragma endregion
 
 #pragma region DirectXTex
 	#include "DirectXTex/DirectXTex.h"
@@ -51,22 +50,23 @@ using namespace std;
 #pragma endregion
 
 #pragma region  My Own 
-	#include "Definitions.h"
-
+	#include "Utilites/Definitions.h"
+	#include "Utilites/ShaderSlots.h"
+	
 	#include "Systems/D3D.h"
 	#include "Systems/Gui.h"
 	#include "Systems/SystemTimer.h"
-#include "Systems/Keyboard.h"
+	#include "Systems/Keyboard.h"
 	#include "Systems/Mouse.h"
 
 	#include "Viewer/Camera.h"
 
-	#include "Renders/Shader.h"
-	#include "Renders/VertexLayout.h"
+	#include "Renders/Shader/VertexLayout.h"
+	#include "Renders/Shader/HlslShader.h"
 	#include "Renders/Texture.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"
-	#include "Renders/Buffers.h"
+	#include "Renders/Buffer/Buffers.h"
 	#include "Renders/ConstantDataBinder.h"
 	#include "Renders/Transform.h"
 
@@ -83,13 +83,15 @@ using namespace std;
 #pragma endregion
 
 #pragma region  SDT_Math
-	#include "Core/Vector2D.h"
-	#include "Core/Vector.h"
-	#include "Core/Vector4.h"
-	#include "Core/Quaternion.h"
-	#include "Core/Matrix.h"
-	#include "Core/Plane.h"
-	#include "Core/Point.h"
-	#include "Core/Color.h"
-	#include "Core/Math.h"
+	#include "Math/Vector2D.h"
+	#include "Math/Vector.h"
+	#include "Math/Vector4.h"
+	#include "Math/Quaternion.h"
+	#include "Math/Matrix.h"
+	#include "Math/Plane.h"
+	#include "Math/Point.h"
+	#include "Math/Color.h"
+	#include "Math/Math.h"
 #pragma endregion
+
+string GetD3D11ReturnMessage(HRESULT Hr);

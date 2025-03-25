@@ -11,7 +11,8 @@ namespace Sdt
 	void DrawModel::Initialize()
 	{
 		Camera * MainCamera = Context::Get()->GetCamera();
-		MainCamera->SetPosition(0, 150, -250);
+		MainCamera->SetRotation( 211, 133, 180);
+		MainCamera->SetPosition( -138, 108, -142 );
 
 		// const vector<wstring> ModelNames = {L"XYBot", L"Shannon", L"Airplane", L"Mousey"};
 		const vector<wstring> ModelNames = {L"Adam"};
@@ -33,7 +34,6 @@ namespace Sdt
 	void DrawModel::Tick()
 	{
 		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
-		
 		Models[ModelIndex]->Tick();
 	}
 

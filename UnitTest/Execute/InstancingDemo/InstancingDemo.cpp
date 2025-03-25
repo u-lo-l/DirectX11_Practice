@@ -5,7 +5,10 @@ namespace Sdt
 {
 	void InstancingDemo::Initialize()
 	{
-		Context::Get()->GetCamera()->SetPosition(0, 50, -250);
+		Camera * const MainCamera = Context::Get()->GetCamera();
+		 
+		MainCamera->SetPosition( 0, 10, 0 );
+		MainCamera->SetRotation( 210, 135, 180);
 		SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
@@ -15,7 +18,8 @@ namespace Sdt
 			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
 			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
 		});
-		constexpr UINT InstanceCount = 144;
+		
+		constexpr UINT InstanceCount = 169;
 		constexpr float Stride = 25.f;
 		SetModelsPosition(InstanceCount, Stride);
 	}
@@ -23,7 +27,6 @@ namespace Sdt
 	void InstancingDemo::Destroy()
 	{
 		SAFE_DELETE(Plane);
-		SAFE_DELETE(Drawer);
 		for (ModelInstanceData ModelAndScale : ModelInstances)
 		{
 			SAFE_DELETE(ModelAndScale.Object);
@@ -51,14 +54,14 @@ namespace Sdt
 		Plane = new Model(L"Plane");
 		Transform * tf = Plane->AddTransforms();
 		tf->SetPosition({0,-10,0});
-		tf->SetScale({10,1,10});
+		tf->SetScale({5,1,5});
 		tf->SetRotation({0,0,90});
 		tf->UpdateWorldMatrix();;
 	}
 
 	void InstancingDemo::SetModelsPosition( int MaxInstanceCount, float Stride )
 	{
-		const int Width = sqrt(MaxInstanceCount);
+		const int Width = static_cast<int>(sqrt(MaxInstanceCount));
 		const int Height = (MaxInstanceCount + Width - 1) / Width;
 		const int Depth = ModelInstances.size();
 		
