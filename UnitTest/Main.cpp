@@ -22,7 +22,7 @@ void Main::Initialize()
 	// PUSH_MAIN(Sdt::TextureColorBlending);
 	// PUSH_MAIN(Sdt::TerrainDemo);
 	// PUSH_MAIN(sdt::InstancingDemo);
-	PUSH_MAIN(sdt::RawBufferDemo);
+	PUSH_MAIN(sdt::RawBufferDgitemo);
 }
 
 
