@@ -33,31 +33,45 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 
 template <class T>
 HlslShader<T>::HlslShader(const wstring & ShaderFileName, UINT TargetShaderFlag)
-	: InputLayout(nullptr)
-	, VertexShader(nullptr)
-	, PixelShader(nullptr)
-	, GeometryShader(nullptr)
-	, RasterizerState(nullptr)
 {
-	if (ShaderFileName.empty() == false)
-	{
-		FileName = W_SHADER_PATH + ShaderFileName;
-		if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
-			CompileShader(ShaderType::VertexShader, FileName);
-		if (TargetShaderFlag & static_cast<UINT>(ShaderType::PixelShader))
-			CompileShader(ShaderType::PixelShader, FileName);
-		if (TargetShaderFlag & static_cast<UINT>(ShaderType::GeometryShader))
-			CompileShader(ShaderType::GeometryShader, FileName);
-	}
+	if (ShaderFileName.empty() == true)
+		return ;
+	FileName = W_SHADER_PATH + ShaderFileName;
+	if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
+		CompileShader(ShaderType::VertexShader, FileName);
+	if (TargetShaderFlag & static_cast<UINT>(ShaderType::PixelShader))
+		CompileShader(ShaderType::PixelShader, FileName);
+	if (TargetShaderFlag & static_cast<UINT>(ShaderType::GeometryShader))
+		CompileShader(ShaderType::GeometryShader, FileName);
+	CHECK(CreateRasterizerState_Solid() >= 0);
+	CHECK(CreateBlendState_NoBlend() >= 0);
+	CHECK(CreateDepthStencilState_Default() >= 0);
 }
 
 template <class T>
 HlslShader<T>::~HlslShader()
 {
 	SAFE_RELEASE(InputLayout);
+	
+	SAFE_RELEASE(RasterizerState);
+	SAFE_RELEASE(SamplerState);
+	SAFE_RELEASE(BlendState);
+	SAFE_RELEASE(DepthStencilState);
+	
+	SAFE_RELEASE(Prev_RasterizerState);
+	SAFE_RELEASE(Prev_SamplerState);
+	SAFE_RELEASE(Prev_BlendState);
+	SAFE_RELEASE(Prev_DepthStencilState);
+	
 	SAFE_RELEASE(VertexShader);
 	SAFE_RELEASE(PixelShader);
-	SAFE_RELEASE(RasterizerState);
+	SAFE_RELEASE(GeometryShader);
+}
+
+template <class T>
+void HlslShader<T>::SetTopology(D3D_PRIMITIVE_TOPOLOGY InTopology)
+{
+	Topology = InTopology;
 }
 
 // Rasterizer
@@ -129,9 +143,26 @@ HRESULT HlslShader<T>::CreateRasterizerState_Solid_NoCull()
 	return this->CreateRasterizerState(&RasterizerDesc);
 }
 
+template <class T>
+HRESULT HlslShader<T>::CreateRasterizerState_Solid_CW()
+{
+	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	RasterizerDesc.CullMode = D3D11_CULL_BACK;
+	RasterizerDesc.FrontCounterClockwise = true;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	return this->CreateRasterizerState(&RasterizerDesc);
+}
+
 // Draw
 template <class T>
-void HlslShader<T>::Draw( UINT VertexCount, UINT StartVertexLocation ) const
+void HlslShader<T>::Draw( UINT VertexCount, UINT StartVertexLocation )
 {
 	BeginDraw();
 	D3D::Get()->GetDeviceContext()->Draw(VertexCount, StartVertexLocation);
@@ -139,7 +170,7 @@ void HlslShader<T>::Draw( UINT VertexCount, UINT StartVertexLocation ) const
 }
 
 template <class T>
-void HlslShader<T>::DrawIndexed( UINT IndexCount, UINT StartIndexLocation, UINT BaseVertexLocation ) const
+void HlslShader<T>::DrawIndexed( UINT IndexCount, UINT StartIndexLocation, UINT BaseVertexLocation )
 {
 	BeginDraw();
 	D3D::Get()->GetDeviceContext()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
@@ -147,7 +178,7 @@ void HlslShader<T>::DrawIndexed( UINT IndexCount, UINT StartIndexLocation, UINT 
 }
 
 template <class T>
-void HlslShader<T>::DrawInstanced( UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation) const
+void HlslShader<T>::DrawInstanced( UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation)
 {
 	BeginDraw();
 	D3D::Get()->GetDeviceContext()->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
@@ -162,7 +193,7 @@ void HlslShader<T>::DrawIndexedInstanced
 	UINT StartIndexLocation,
 	INT BaseVertexLocation,
 	UINT StartInstanceLocation
-) const
+)
 {
 	BeginDraw();
 	D3D::Get()->GetDeviceContext()->DrawIndexedInstanced(
@@ -201,6 +232,7 @@ HRESULT HlslShader<T>::CreateSamplerState_Linear()
 template <class T>
 HRESULT HlslShader<T>::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc, const SamplerSlot SlotNum )
 {
+	SAFE_RELEASE(SamplerState);
 	SamplerSlotNum = SlotNum;
 	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerState);
 }
@@ -263,7 +295,36 @@ HRESULT HlslShader<T>::CreateBlendState_AlphaBlendCoverage()
 template <class T>
 HRESULT HlslShader<T>::CreateBlendState(const D3D11_BLEND_DESC* BlendDesc)
 {
+	SAFE_RELEASE(BlendState);
 	return D3D::Get()->GetDevice()->CreateBlendState(BlendDesc, &BlendState);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateDepthStencilState_Default()
+{
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
+	DepthStencilDesc.DepthEnable = true;
+	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	DepthStencilDesc.StencilEnable = false;
+	return CreateDepthStencilState( &DepthStencilDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateDepthStencilState_NoDepth()
+{
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
+	DepthStencilDesc.DepthEnable = false;
+	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	DepthStencilDesc.StencilEnable = false;
+	return CreateDepthStencilState( &DepthStencilDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* DepthStencilDesc)
+{
+	SAFE_RELEASE(DepthStencilState);
+	return D3D::Get()->GetDevice()->CreateDepthStencilState(DepthStencilDesc, &DepthStencilState);
 }
 
 template <class T>
@@ -274,9 +335,9 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 
 	// https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/d3dcompile-constants
 	int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
-	// flag |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
-	// flag |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
-	// flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
+	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
+	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
 	Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
 	
 	constexpr int EffectFlag = 0; // Effect FrameWork 쓸 떄만 씀.
@@ -368,11 +429,11 @@ void HlslShader<T>::InitializeInputLayout( ID3DBlob * VertexShaderBlob )
 }
 
 template <class T>
-void HlslShader<T>::BeginDraw() const
+void HlslShader<T>::BeginDraw()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-	
-	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	DeviceContext->IASetPrimitiveTopology(Topology);
 	if (!!InputLayout)
 		DeviceContext->IASetInputLayout(InputLayout);
 	
@@ -382,25 +443,57 @@ void HlslShader<T>::BeginDraw() const
 		DeviceContext->GSSetShader(GeometryShader, nullptr, 0);
 	
 	if (!!RasterizerState)
+	{
+		DeviceContext->RSGetState(&Prev_RasterizerState);
 		DeviceContext->RSSetState(RasterizerState);
+	}
 	
 	if (!!SamplerState)
+	{
+		DeviceContext->PSGetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &Prev_SamplerState);
 		DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &SamplerState);
+	}
 	if (!!PixelShader)
 		DeviceContext->PSSetShader(PixelShader, nullptr, 0);
 
 	if (!!BlendState)
 	{
-		constexpr float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		DeviceContext->OMGetBlendState(&Prev_BlendState, BlendFactor, nullptr);
 		DeviceContext->OMSetBlendState(BlendState, BlendFactor, 0xFFFFFFFF);
+	}
+	if (!!DepthStencilState)
+	{
+		DeviceContext->OMGetDepthStencilState(&Prev_DepthStencilState, nullptr);
+		DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
 	}
 }
 
 template <class T>
-void HlslShader<T>::EndDraw() const
+void HlslShader<T>::EndDraw()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-	
+	if (!!Prev_RasterizerState)
+	{
+		DeviceContext->RSSetState(Prev_RasterizerState);
+		SAFE_RELEASE(Prev_RasterizerState);
+	}
+	if (!!Prev_SamplerState)
+	{
+		DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &Prev_SamplerState);
+		SAFE_RELEASE(Prev_SamplerState);
+	}
+	if (!!Prev_BlendState)
+	{
+		float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		DeviceContext->OMSetBlendState(Prev_BlendState, BlendFactor, 0xFFFFFFFF);
+		SAFE_RELEASE(Prev_BlendState);
+	}
+	if (!!Prev_DepthStencilState)
+	{
+		DeviceContext->OMSetDepthStencilState(Prev_DepthStencilState,0);
+		SAFE_RELEASE(Prev_DepthStencilState);
+	}
 	// 일단 전체 파이프라인에서 HS, DS, GS를 사용하지 않으니 굳이 필요한 코드는 아님.
 	// 추후에 다른 RenderPass에서 건드리면 그 때 주석 해제하도록 하자.
 	// DeviceContext->HSSetShader(nullptr, nullptr, 0);

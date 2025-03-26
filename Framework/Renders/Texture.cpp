@@ -15,9 +15,9 @@ Texture::~Texture()
 	SAFE_RELEASE(this->SRV);
 }
 
-void Texture::BindToGPU() const
+void Texture::BindToGPU(UINT SlotNum) const
 {
-	D3D::Get()->GetDeviceContext()->PSSetShaderResources(TextureSlot::PS_TextureMap, 1, &this->SRV);
+	D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &this->SRV);
 }
 
 HRESULT Texture::LoadTextureAndCreateSRV(const wstring & FullPath)

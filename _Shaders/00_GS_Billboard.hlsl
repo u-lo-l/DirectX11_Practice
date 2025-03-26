@@ -41,7 +41,7 @@ struct GeometryOutput
 };
 
 SamplerState LinearSampler : register(Sampler_PS_Linear);
-Texture2DArray BillboardMap : register(t0);
+Texture2DArray BillboardMap : register(Texture_PS_Billboard);
 
 /*==========================================================*/
 

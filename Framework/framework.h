@@ -47,6 +47,7 @@ using namespace std;
 #pragma region  My Own 
 	#include "Utilites/Definitions.h"
 	#include "Utilites/ShaderSlots.h"
+	#include "Utilites/Helper.h"
 	
 	#include "Systems/D3D.h"
 	#include "Systems/Gui.h"
@@ -77,6 +78,7 @@ using namespace std;
 	#include "Model/ModelAnimation.h"
 
 	#include "Environment/Terrain.h"
+	#include "Environment/SkySphere.h"
 
 #include "Objects/Billboard/Billboard.h"
 #include "Objects/CrossQuad/CrossQuad.h"

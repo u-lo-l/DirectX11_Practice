@@ -35,11 +35,13 @@ private:
 	wstring FileName;
 
 public:
+	void SetTopology(D3D_PRIMITIVE_TOPOLOGY InTopology);
 	// Rasterizer
 	HRESULT CreateRasterizerState_WireFrame();
 	HRESULT CreateRasterizerState_Solid();
 	HRESULT CreateRasterizerState_WireFrame_NoCull();
 	HRESULT CreateRasterizerState_Solid_NoCull();
+	HRESULT CreateRasterizerState_Solid_CW();
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 
 	// Sampler
@@ -51,27 +53,39 @@ public:
 	HRESULT CreateBlendState_AlphaBlend();
 	HRESULT CreateBlendState_AlphaBlendCoverage();
 	HRESULT CreateBlendState(const D3D11_BLEND_DESC * BlendDesc);
+
+	//DepthStencil
+	HRESULT CreateDepthStencilState_Default();
+	HRESULT CreateDepthStencilState_NoDepth();
+	HRESULT CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC * DepthStencilDesc);
 private:
 	SamplerSlot SamplerSlotNum = SamplerSlot::PS_Linear;
 	// Draw
 public:
-	void Draw(UINT VertexCount, UINT StartVertexLocation = 0) const;
-	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0) const;
-	void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation = 0, UINT StartInstanceLocation = 0) const;
-	void DrawIndexedInstanced(UINT IndexCountPreInstance, UINT InstanceCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0, UINT StartInstanceLocation = 0) const;
+	void Draw(UINT VertexCount, UINT StartVertexLocation = 0);
+	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0);
+	void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation = 0, UINT StartInstanceLocation = 0);
+	void DrawIndexedInstanced(UINT IndexCountPreInstance, UINT InstanceCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0, UINT StartInstanceLocation = 0);
 
 private:
 	void CompileShader(ShaderType Type, const wstring & ShaderFileName);
 	void InitializeInputLayout(ID3DBlob * VertexShaderBlob);
 
-	void BeginDraw() const;
-	void EndDraw() const;
+	void BeginDraw();
+	void EndDraw();
 private:
-	ID3D11InputLayout * InputLayout;
+	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	ID3D11InputLayout * InputLayout = nullptr;
 	
 	ID3D11RasterizerState * RasterizerState = nullptr;
 	ID3D11SamplerState * SamplerState = nullptr;
 	ID3D11BlendState * BlendState = nullptr;
+	ID3D11DepthStencilState * DepthStencilState = nullptr;
+
+	ID3D11RasterizerState * Prev_RasterizerState = nullptr;
+	ID3D11SamplerState * Prev_SamplerState = nullptr;
+	ID3D11BlendState * Prev_BlendState = nullptr;
+	ID3D11DepthStencilState * Prev_DepthStencilState = nullptr;
 
 	ID3D11VertexShader * VertexShader = nullptr;
 	ID3D11PixelShader * PixelShader = nullptr;

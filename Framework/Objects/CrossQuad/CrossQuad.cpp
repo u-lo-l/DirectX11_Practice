@@ -53,7 +53,7 @@ void CrossQuad::Render() const
 	GS_ViewProjectionBuffer->BindToGPU();
 	VBuffer->BindToGPU();
 	WorldTF->BindToGPU();
-	CrossQuadTextures->BindToGPU();
+	CrossQuadTextures->BindToGPU(PS_Billboard);
 
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	CrossQuadShader->Draw(VertexCount);

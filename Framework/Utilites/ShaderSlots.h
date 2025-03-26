@@ -22,10 +22,11 @@ enum ShaderSlot : uint32_t
 enum TextureSlot : uint32_t
 {
 	VS_KeyFrames = 0,
+	PS_Billboard = 0,
+	PS_SkyBox = 0,
 	PS_TextureMap = 1, // Diffuse Texture
 	// 1 for Specular Map,
 	// 2 for Normal Map.
-	PS_Billboard = 4
 };
 
 enum SamplerSlot : uint32_t

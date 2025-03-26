@@ -14,6 +14,7 @@
 
 #define Texture_VS_KeyFrames        t0
 #define Texture_PS_Billboard        t0
+#define Texture_PS_SkyBox           t0
 #define Texture_PS_Texture          t1 // Diffuse Texture
 //                                  t2    Specular Texture
 //                                  t3    Normal Texture

@@ -64,10 +64,10 @@ namespace sdt
 			Json::Value Value;
 			Value["ShaderName"] = Data->ShaderName;
 
-			Value["Ambient"] = ColorToJson(Data->Ambient);
-			Value["Diffuse"] = ColorToJson(Data->Diffuse);
-			Value["Specular"] = ColorToJson(Data->Specular);
-			Value["Emissive"] = ColorToJson(Data->Emissive);
+			Value["Ambient"] = Helper::ColorToJson(Data->Ambient);
+			Value["Diffuse"] = Helper::ColorToJson(Data->Diffuse);
+			Value["Specular"] = Helper::ColorToJson(Data->Specular);
+			Value["Emissive"] = Helper::ColorToJson(Data->Emissive);
 
 			for (const string & Name : Data->DiffuseFiles)
 				Value["DiffuseMap"].append(SaveTextureAsFile(FolderName, Name));

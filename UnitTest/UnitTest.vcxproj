@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Execute\Bilboard\BillboardDemo.cpp">
+    <ClCompile Include="Execute\CubeMap\SkyBoxDemo.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -98,17 +98,13 @@
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Execute\Bilboard\CrossQuadDemo.cpp" />
-    <ClCompile Include="Execute\InstancingDemo\InstancingDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Execute\Bilboard\BillboardDemo.h" />
-    <ClInclude Include="Execute\Bilboard\CrossQuadDemo.h" />
-    <ClInclude Include="Execute\InstancingDemo\InstancingDemo.h" />
+    <ClInclude Include="Execute\CubeMap\SkyBoxDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

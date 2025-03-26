@@ -1,19 +1,25 @@
 // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+
 #pragma once
 #include "Math/Vector.h"
 #include "Math/Vector2D.h"
 #include "Math/Vector4.h"
 
 //---------------------------------------------------------------------------//
+
 struct Vertex
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
 
 	Vertex()
 	: Position(0, 0, 0) {}
+	explicit Vertex(const Vector & Position)
+	: Position(Position) {}
 	Vector Position;
 };
+
 //---------------------------------------------------------------------------//
+
 struct VertexColor
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
@@ -27,7 +33,9 @@ struct VertexColor
 	Vector Position;
 	Color Color;
 };
+
 //---------------------------------------------------------------------------//
+
 struct VertexTexture
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
@@ -43,6 +51,7 @@ struct VertexTexture
 };
 
 //---------------------------------------------------------------------------//
+
 struct VertexTextureColor
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
@@ -61,7 +70,9 @@ struct VertexTextureColor
 	Vector2D UV;
 	Color Color;
 };
+
 //---------------------------------------------------------------------------//
+
 struct VertexNormal
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
@@ -73,7 +84,9 @@ struct VertexNormal
 	Vector Position;
 	Vector Normal;
 };
+
 //---------------------------------------------------------------------------//
+
 struct VertexTextureNormal
 {
 	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );

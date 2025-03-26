@@ -37,9 +37,4 @@ namespace sdt
 
 		ASSERT(Scene != nullptr, Loader->GetErrorString())
 	}
-
-	string Converter::ColorToJson( const Color & InColor )
-	{
-		return String::Format("%0.6f,%0.6f,%0.6f,%0.6f", InColor.R, InColor.G, InColor.B, InColor.A);
-	}
 }

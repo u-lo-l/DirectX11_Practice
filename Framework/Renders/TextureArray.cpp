@@ -65,9 +65,9 @@ TextureArray::~TextureArray()
 	SAFE_RELEASE(this->SRV);
 }
 
-void TextureArray::BindToGPU() const
+void TextureArray::BindToGPU(UINT SlotNum) const
 {
-	D3D::Get()->GetDeviceContext()->PSSetShaderResources(0, 1, &this->SRV);
+	D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &this->SRV);
 }
 
 // TODO : 깔끔하게 정리좀 하자.

@@ -53,7 +53,7 @@ void Billboard::Render() const
 	GS_ViewProjectionBuffer->BindToGPU();
 	VBuffer->BindToGPU();
 	WorldTF->BindToGPU();
-	BillboardTextures->BindToGPU();
+	BillboardTextures->BindToGPU(PS_Billboard);
 
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	BillboardShader->Draw(VertexCount);

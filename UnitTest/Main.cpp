@@ -8,8 +8,9 @@
 // #include "Execute/024_Terrain/TerrainDemo.h"
 // #include "Execute/ComputeShaderDemo/RawBufferDemo.h"
 // #include "Execute/InstancingDemo/InstancingDemo.h"
-#include "Execute/Bilboard/BillboardDemo.h"
-#include "Execute/Bilboard/CrossQuadDemo.h"
+// #include "Execute/Billboard/BillboardDemo.h"
+// #include "Execute/Billboard/CrossQuadDemo.h"
+#include "Execute/CubeMap/SkyBoxDemo.h"
 
 void Main::Initialize()
 {
@@ -26,7 +27,8 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::InstancingDemo);
 	// PUSH_MAIN(sdt::RawBufferDemo);
 	// PUSH_MAIN(sdt::BillboardDemo);
-	PUSH_MAIN(sdt::CrossQuadDemo);
+	// PUSH_MAIN(sdt::CrossQuadDemo);
+	PUSH_MAIN(sdt::SkyBoxDemo);
 }
 
 

@@ -24,7 +24,7 @@ private:
 	void CreateBuffer();
 private:
 	int Pass = 0;
-	// Shader * Drawer = nullptr;
+	// Shader * SkyShader = nullptr;
 	HlslShader<TerrainVertexType> * Shader = nullptr;
 	Texture* HeightMap;
 

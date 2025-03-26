@@ -13,8 +13,7 @@ namespace sdt
 		Converter();
 		~Converter();
 		void ReadAiSceneFromFile(const wstring& InFileName);
-	private:
-		static string ColorToJson(const Color & InColor);
+
 	private:
 		wstring FilePath;
 		Assimp::Importer* Loader;

@@ -46,7 +46,3 @@
 #define W_MATERIAL_PATH	L"../_Materials/"
 #define W_TEXTURE_PATH	L"../_Textures/"
 #define W_ASSET_PATH	L"../_Assets/"
-//
-// typedef struct ID3DX11EffectConstantBuffer IECB_t;
-// typedef struct ID3DX11EffectShaderResourceVariable IESRV_t;
-

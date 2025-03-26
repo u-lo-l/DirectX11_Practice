@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Interface\IPlaceable.cpp" />
     <ClCompile Include="Interface\IRenderable.cpp" />
     <ClCompile Include="Math\Color.cpp" />
@@ -519,11 +520,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Utilites\BinaryFile.cpp" />
+    <ClCompile Include="Utilites\Helper.cpp" />
     <ClCompile Include="Utilites\Path.cpp" />
     <ClCompile Include="Utilites\String.cpp" />
     <ClCompile Include="Viewer\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Interface\IPlaceable.h" />
     <ClInclude Include="Interface\IRenderable.h" />
     <ClInclude Include="Math\Color.h" />
@@ -571,6 +574,7 @@
     <ClInclude Include="Systems\Window.h" />
     <ClInclude Include="Utilites\BinaryFile.h" />
     <ClInclude Include="Utilites\Definitions.h" />
+    <ClInclude Include="Utilites\Helper.h" />
     <ClInclude Include="Utilites\Path.h" />
     <ClInclude Include="Utilites\ShaderSlots.h" />
     <ClInclude Include="Utilites\String.h" />
