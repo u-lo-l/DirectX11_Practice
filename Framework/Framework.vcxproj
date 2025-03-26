@@ -34,6 +34,8 @@
     <ClCompile Include="Model\SkeletalMesh.cpp" />
     <ClCompile Include="Model\Skeleton.cpp" />
     <ClCompile Include="Model\StaticMesh.cpp" />
+    <ClCompile Include="Objects\Billboard\Billboard.cpp" />
+    <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
     <ClCompile Include="Renders\Buffer\BufferBase.cpp" />
     <ClCompile Include="Renders\Buffer\ComputeShaderResource.cpp" />
     <ClCompile Include="Renders\Buffer\IndexBuffer.cpp">
@@ -503,6 +505,7 @@
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="Renders\Texture.cpp" />
+    <ClCompile Include="Renders\TextureArray.cpp" />
     <ClCompile Include="Renders\Transform.cpp" />
     <ClCompile Include="Systems\D3D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -541,6 +544,8 @@
     <ClInclude Include="Model\SkeletalMesh.h" />
     <ClInclude Include="Model\Skeleton.h" />
     <ClInclude Include="Model\StaticMesh.h" />
+    <ClInclude Include="Objects\Billboard\Billboard.h" />
+    <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
     <ClInclude Include="Renders\Buffer\BufferBase.h" />
     <ClInclude Include="Renders\Buffer\Buffers.h" />
     <ClInclude Include="Renders\Buffer\ComputeShaderResource.h" />
@@ -555,6 +560,7 @@
     <ClInclude Include="Renders\Shader\HlslShader.h" />
     <ClInclude Include="Renders\Shader\VertexLayout.h" />
     <ClInclude Include="Renders\Texture.h" />
+    <ClInclude Include="Renders\TextureArray.h" />
     <ClInclude Include="Renders\Transform.h" />
     <ClInclude Include="Systems\D3D.h" />
     <ClInclude Include="Systems\Gui.h" />

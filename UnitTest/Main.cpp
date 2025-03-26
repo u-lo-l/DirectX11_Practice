@@ -3,11 +3,13 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-#include "Execute/011_Grid/Grid.h"
-#include "Execute/019_TextureColorBlending/TextureColorBlending.h"
-#include "Execute/024_Terrain/TerrainDemo.h"
-#include "Execute/ComputeShaderDemo/RawBufferDemo.h"
-#include "Execute/InstancingDemo/InstancingDemo.h"
+// #include "Execute/011_Grid/Grid.h"
+// #include "Execute/019_TextureColorBlending/TextureColorBlending.h"
+// #include "Execute/024_Terrain/TerrainDemo.h"
+// #include "Execute/ComputeShaderDemo/RawBufferDemo.h"
+// #include "Execute/InstancingDemo/InstancingDemo.h"
+#include "Execute/Bilboard/BillboardDemo.h"
+#include "Execute/Bilboard/CrossQuadDemo.h"
 
 void Main::Initialize()
 {
@@ -22,7 +24,9 @@ void Main::Initialize()
 	// PUSH_MAIN(Sdt::TextureColorBlending);
 	// PUSH_MAIN(Sdt::TerrainDemo);
 	// PUSH_MAIN(sdt::InstancingDemo);
-	PUSH_MAIN(sdt::RawBufferDemo);
+	// PUSH_MAIN(sdt::RawBufferDemo);
+	// PUSH_MAIN(sdt::BillboardDemo);
+	PUSH_MAIN(sdt::CrossQuadDemo);
 }
 
 

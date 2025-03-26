@@ -60,6 +60,9 @@ void ConstantBuffer::BindToGPU()
 	case ShaderType::PixelShader:
 		DeviceContext->PSSetConstantBuffers(RegisterIndex, 1, &Buffer);
 		break;
+	case ShaderType::GeometryShader:
+		DeviceContext->GSSetConstantBuffers(RegisterIndex, 1, &Buffer);
+		break;
 	default:
 		break;
 	}

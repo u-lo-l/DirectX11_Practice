@@ -4,8 +4,6 @@
 #include "Math/Vector2D.h"
 #include "Math/Vector4.h"
 
-struct ShaderInputType { };
-
 //---------------------------------------------------------------------------//
 struct Vertex
 {
@@ -103,6 +101,22 @@ typedef struct VertexTextureColorNormalTangentBlend
 	Vector4 Indices {0, };
 	Vector4 Weights {0, };
 } ModelVertex;
+
+//---------------------------------------------------------------------------//
+
+struct VertexBillboard
+{
+	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+
+	VertexBillboard()
+		: Position(0, 0, 0), Scale(0, 0), MapIndex(0) {}
+	VertexBillboard(const Vector& Position, const Vector2D& Scale, const UINT MapIndex)
+		: Position(Position), Scale(Scale), MapIndex(MapIndex) {}
+	
+	Vector Position;
+	Vector2D Scale;
+	UINT MapIndex;
+};
 
 //---------------------------------------------------------------------------//
 

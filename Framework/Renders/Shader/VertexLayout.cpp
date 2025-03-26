@@ -248,3 +248,34 @@ void ModelVertex::CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayout
 	OutLayoutDescs[10].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
 	OutLayoutDescs[10].InstanceDataStepRate = 1;
 }
+
+void VertexBillboard::CreatInputLayout(vector<D3D11_INPUT_ELEMENT_DESC>& OutLayoutDescs)
+{
+	OutLayoutDescs.resize(4);
+
+	for (int i = 0; i < 4; i++)
+	{
+		OutLayoutDescs[i].SemanticIndex = 0;
+		OutLayoutDescs[i].InputSlot = HlslShader<VertexTextureColor>::VertexSlot;
+		OutLayoutDescs[i].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+		OutLayoutDescs[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		OutLayoutDescs[i].InstanceDataStepRate = 0;
+	}
+
+	OutLayoutDescs[0].SemanticName = "POSITION";
+	OutLayoutDescs[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	
+	OutLayoutDescs[1].SemanticName = "SCALE";
+	OutLayoutDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	
+	OutLayoutDescs[2].SemanticName = "MAPINDEX";
+	OutLayoutDescs[2].Format = DXGI_FORMAT_R8_UINT;
+
+	OutLayoutDescs[3].SemanticName = "INSTANCE";
+	OutLayoutDescs[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	OutLayoutDescs[3].SemanticIndex = 0;
+	OutLayoutDescs[3].InputSlot = HlslShader<VertexBillboard>::InstanceSlot;
+	OutLayoutDescs[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	OutLayoutDescs[3].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	OutLayoutDescs[3].InstanceDataStepRate = 1;
+}

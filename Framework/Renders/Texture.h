@@ -31,3 +31,5 @@ private:
 	DirectX::TexMetadata TexMeta;
 	wstring FileName;
 };
+
+

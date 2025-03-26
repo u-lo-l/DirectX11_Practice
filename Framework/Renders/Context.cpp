@@ -28,8 +28,8 @@ void Context::Tick()
 {
 	if (!!MainCamera)
 		MainCamera->Tick();
-	if (!!VP_CBuffer)
-		VP_CBuffer->Tick();
+	if (!!VP_CBuffer_VS)
+		VP_CBuffer_VS->Tick();
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 
@@ -77,7 +77,7 @@ const Vector & Context::GetLightDirection() const
 
 GlobalViewProjectionCBuffer * Context::GetViewProjectionCBuffer() const
 {
-	return VP_CBuffer;
+	return VP_CBuffer_VS;
 }
 
 Context::Context()
@@ -98,13 +98,13 @@ Context::Context()
 
 	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 
-	VP_CBuffer = new GlobalViewProjectionCBuffer();
+	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
 }
 
 Context::~Context()
 {
 	SAFE_DELETE(Viewport);
 	SAFE_DELETE(MainCamera);
-	SAFE_DELETE(VP_CBuffer);
+	SAFE_DELETE(VP_CBuffer_VS);
 }
 

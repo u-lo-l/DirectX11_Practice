@@ -13,6 +13,7 @@ public:
 	using CachedBoneTableType = unordered_map<string, ModelBone *>;
 	constexpr static int MaxModelInstanceCount = 200;
 private:
+	using VertexType = ModelVertex;
 	using ThisClass = Model;
 
 	/*====================================================================================*/
@@ -31,7 +32,7 @@ private:
 	// TODO : 이거 있을 위치가 여기는 아닌 것 같은데...
 	static Color JsonStringToColor(const Json::String & InJson);
 	string ModelName;
-	map<string, Material*> MaterialsTable;
+	map<string, Material<VertexType>*> MaterialsTable;
 	vector<ModelMesh *> Meshes;
 	Transform * WorldTransform;
 
@@ -106,9 +107,9 @@ public:
 	public:
 		void ReadMaterial(const wstring & InFileName);
 	private:
-		static void ReadShaderName(const Json::Value & Value, Material * MatData);
-		static void ReadColor(const Json::Value & Value, Material * MatData);
-		static void ReadColorMap(const Json::Value & Value, Material * MatData);
+		static void ReadShaderName(const Json::Value & Value, Material<VertexType> * MatData);
+		static void ReadColor(const Json::Value & Value, Material<VertexType> * MatData);
+		static void ReadColorMap(const Json::Value & Value, Material<VertexType> * MatData);
 	#pragma endregion Read Material Data
 
 	#pragma region Read Mesh Data

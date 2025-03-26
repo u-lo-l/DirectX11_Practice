@@ -1,42 +1,30 @@
 ﻿#pragma once
 
+struct ViewProjectionDesc
+{
+	Matrix View;
+	Matrix ViewInv;
+	Matrix Projection;
+};
+
 class GlobalViewProjectionCBuffer
 {
-private:
-	static UINT Count;
 public:
-	GlobalViewProjectionCBuffer();
+	explicit GlobalViewProjectionCBuffer();
 	~GlobalViewProjectionCBuffer();
 
 	void Tick();
 	void BindToGPU() const;
-	
+
 private:
-	// struct ContextDesc
-	// {
-	// 	Matrix View;
-	// 	Matrix ViewInv;
-	// 	Matrix Projection;
-	// 	Matrix ViewProjection;
-	// 	Vector LightDirection;
-	// 	float Padding;
-	// };
-	// ContextDesc ContextDescData;
-
-	struct ViewProjectionDesc
-	{
-		Matrix View;
-		Matrix Projection;
-	};
-
 	struct LightDirectionDesc
 	{
 		Vector LightDirection;
 		float Padding;
 	};
 
-	ViewProjectionDesc ViewProjectionData;
-	LightDirectionDesc LightDirectionData;
+	ViewProjectionDesc ViewProjectionData {};
+	LightDirectionDesc LightDirectionData {};
 	
 	ConstantBuffer * ViewProjectionBuffer;
 	ConstantBuffer * LightDirectionBuffer;

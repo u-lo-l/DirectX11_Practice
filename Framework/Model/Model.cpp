@@ -25,7 +25,7 @@ Model::~Model()
 	SAFE_DELETE(InstBuffer);
 	for (const ModelMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
-	for (pair<string, Material *> KeyVal : MaterialsTable)
+	for (pair<string, Material<VertexType> *> KeyVal : MaterialsTable)
 		SAFE_DELETE(KeyVal.second);
 	for (const ModelAnimation * Animation : Animations)
 		SAFE_DELETE(Animation);
