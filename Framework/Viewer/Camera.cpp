@@ -16,8 +16,8 @@ Camera::~Camera()
 
 void Camera::Tick()
 {
-	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
-	if (Sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
+	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
+	if (sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
 	{
 		return;
 	}
@@ -55,7 +55,7 @@ void Camera::Tick()
 	}
 	
 
-	const Vector Delta = Sdt::Mouse::Get()->GetMoveDelta();
+	const Vector Delta = sdt::Mouse::Get()->GetMoveDelta();
 	EulerAngle.X += Delta.Y * RotationSpeed * DeltaTime;
 	// EulerAngle.Y = 0;
 	EulerAngle.Y -= Delta.X * RotationSpeed * DeltaTime;

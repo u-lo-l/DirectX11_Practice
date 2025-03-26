@@ -1,7 +1,7 @@
 ﻿#include "Pch.h"
 #include "DrawModel.h"
 
-namespace Sdt
+namespace sdt
 {
 	DrawModel::~DrawModel()
 	{

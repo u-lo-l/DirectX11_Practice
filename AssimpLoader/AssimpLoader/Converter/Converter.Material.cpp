@@ -2,7 +2,7 @@
 #include "Converter.h"
 #include <fstream>
 
-namespace Sdt
+namespace sdt
 {
 	void Converter::ExportMaterial( const wstring & InSaveFileName, const string & InShaderFileName, bool InbOverwrite )
 	{

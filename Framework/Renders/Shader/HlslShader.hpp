@@ -35,7 +35,7 @@ HlslShader<T>::HlslShader(const wstring & ShaderFileName)
 	: InputLayout(nullptr)
 	, VertexShader(nullptr)
 	, PixelShader(nullptr)
-	, ComputeShader(nullptr)
+	// , ComputeShader(nullptr)
 	, RasterizerState(nullptr)
 {
 	if (ShaderFileName.empty() == false)
@@ -43,7 +43,6 @@ HlslShader<T>::HlslShader(const wstring & ShaderFileName)
 		FileName = W_SHADER_PATH + ShaderFileName;
 		CompileShader(ShaderType::VertexShader, FileName);
 		CompileShader(ShaderType::PixelShader, FileName);
-		// CompileShader(ShaderType::ComputeShader, FileName);
 	}
 }
 
@@ -53,7 +52,7 @@ HlslShader<T>::~HlslShader()
 	SAFE_RELEASE(InputLayout);
 	SAFE_RELEASE(VertexShader);
 	SAFE_RELEASE(PixelShader);
-	SAFE_RELEASE(ComputeShader);
+	// SAFE_RELEASE(ComputeShader);
 	SAFE_RELEASE(RasterizerState);
 }
 
@@ -139,31 +138,6 @@ void HlslShader<T>::DrawIndexedInstanced
 }
 
 template <class T>
-void HlslShader<T>::Dispatch( UINT X, UINT Y, UINT Z ) const
-{
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-	DeviceContext->Dispatch(X, Y, Z);
-
-	// Best-Practice임. 하지만 근거는 이해하지 못함.
-	// https://github.com/walbourn/directx-sdk-samples/blob/main/BasicCompute11/BasicCompute11.cpp
-	ID3D11ShaderResourceView * NullSRV = nullptr;
-	DeviceContext->CSSetShaderResources(0, 1, &NullSRV);
-	ID3D11UnorderedAccessView * NullUAV = nullptr;
-	DeviceContext->CSSetUnorderedAccessViews(0,1, &NullUAV, nullptr);
-	DeviceContext->CSSetShader(nullptr, nullptr, 0);
-}
-
-
-template <class T>
-int HlslShader<T>::AddConstantBuffer( ID3D11Buffer * CBuffer )
-{
-	const int index = ConstantBuffers.size();
-	ConstantBuffers.push_back(CBuffer);
-	D3D::Get()->GetDeviceContext()->VSSetConstantBuffers(index, 1, &CBuffer);
-	return index;	
-}
-
-template <class T>
 HRESULT HlslShader<T>::CreateRasterizerState( const D3D11_RASTERIZER_DESC * RSDesc )
 {
 	return D3D::Get()->GetDevice()->CreateRasterizerState( RSDesc, &this->RasterizerState );
@@ -240,10 +214,6 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	{
 		Hr = Device->CreatePixelShader(BufferAddr, BufferSize, nullptr, &PixelShader);
 	}
-	else if (Type == ShaderType::ComputeShader)
-	{
-		Hr = Device->CreateComputeShader(BufferAddr, BufferSize, nullptr, &ComputeShader);
-	}
 	else
 	{
 		SAFE_RELEASE(ShaderBlob);
@@ -299,8 +269,7 @@ void HlslShader<T>::BeginDraw() const
 	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	if (!!InputLayout)
 		DeviceContext->IASetInputLayout(InputLayout);
-	if (!!ComputeShader)
-		DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
+
 	if (!!VertexShader)
 		DeviceContext->VSSetShader(VertexShader, nullptr, 0);
 	if (!!RasterizerState)

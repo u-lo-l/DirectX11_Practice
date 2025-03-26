@@ -35,7 +35,7 @@ Model::~Model()
 
 void Model::Tick()
 {
-	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 
 	const int InstanceCount = max(WorldTransforms.size(), 1);
 	
@@ -52,7 +52,7 @@ void Model::Tick()
 		{
 			if (ImGui::Button("Random Animation", ImVec2(200, 30)))
 			{
-				for (UINT InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
+				for (int InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
 				{
 					SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
 					WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
@@ -190,7 +190,7 @@ void Model::UpdateNextFrameData( int InstanceId )
 void Model::UpdateFrameData(FrameDesc & FrameData) const
 {
 	const ModelAnimation * TargetAnimation = Animations[FrameData.Clip];
-	const float DeltaTime = Sdt::SystemTimer::Get()->GetDeltaTime();
+	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 	
 	FrameData.CurrentTime = TargetAnimation->CalculateNextTime(FrameData.CurrentTime, DeltaTime);
 	const pair<int, int> CurrAndNextFrame = TargetAnimation->GetCurrentAndNextFrame(FrameData.CurrentTime);

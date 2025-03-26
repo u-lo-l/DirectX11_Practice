@@ -29,6 +29,19 @@ void RawBuffer::GetOutputData( void * OutData ) const
 	DeviceContext->Unmap(Result, 0);
 }
 
+void RawBuffer::BindInputToGPU() const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	DeviceContext->CSSetShaderResources(0, 1, &SRV);
+}
+
+void RawBuffer::BindOutputToGPU() const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	// nullptr for Buffer Offset
+	DeviceContext->CSSetUnorderedAccessViews(0, 1, &UAV, nullptr);
+}
+
 void RawBuffer::CreateInput()
 {
 	if (DataSize <= 0)

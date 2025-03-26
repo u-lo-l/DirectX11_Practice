@@ -11,7 +11,7 @@ enum class MouseButton
 constexpr int MAX_MOUSE_BUTTON = 4;
 //constexpr int MAX_MOUSE_BUTTON = static_cast<int>(MouseButton::Max);
 
-namespace Sdt
+namespace sdt
 {
 	class Mouse
 	{

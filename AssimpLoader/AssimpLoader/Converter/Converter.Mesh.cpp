@@ -57,7 +57,7 @@ static void CheckWeight(UINT MeshCount, const vector<MeshData *> & Meshes)
 	printf("=== === === === === === === === === === \n");
 }
 #endif
-namespace Sdt
+namespace sdt
 {
 	void Converter::ExportMesh( const wstring & InSaveFileName )
 	{

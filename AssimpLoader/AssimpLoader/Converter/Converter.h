@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../Types.h"
 
-namespace Sdt
+namespace sdt
 {
 	class Converter
 	{

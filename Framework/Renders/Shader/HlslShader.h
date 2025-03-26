@@ -6,7 +6,6 @@ using std::string;
 using std::wstring;
 using std::map;
 #include <d3d11.h>
-#include <d3dcompiler.h>
 
 enum class ShaderType : uint8_t
 {
@@ -51,10 +50,8 @@ public:
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0) const;
 	void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation = 0, UINT StartInstanceLocation = 0) const;
 	void DrawIndexedInstanced(UINT IndexCountPreInstance, UINT InstanceCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0, UINT StartInstanceLocation = 0) const;
-	void Dispatch(UINT X, UINT Y, UINT Z) const;
+	// void Dispatch(UINT X, UINT Y, UINT Z) const;
 
-public:
-	int AddConstantBuffer(ID3D11Buffer * CBuffer);
 	
 private:
 	void CompileShader(ShaderType Type, const wstring & ShaderFileName);
@@ -67,12 +64,9 @@ private:
 
 	ID3D11VertexShader * VertexShader;
 	ID3D11PixelShader * PixelShader;
-	ID3D11ComputeShader * ComputeShader;
+	// ID3D11ComputeShader * ComputeShader;
 
 	ID3D11RasterizerState * RasterizerState;
 	ID3D11SamplerState * SamplerState;
-
-	// 이거 weak_ptr로 수정해야함. 해제는 CBuffer클래스 몫
-	vector<ID3D11Buffer*> ConstantBuffers;
 };
 

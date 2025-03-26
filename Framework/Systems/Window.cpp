@@ -12,8 +12,8 @@ WPARAM Window::Run(IExecutable * InMain)
 	D3D::Create();
 	Gui::Create();
 	Keyboard::Create();
-	Sdt::Mouse::Create();
-	Sdt::SystemTimer::Create();
+	sdt::Mouse::Create();
+	sdt::SystemTimer::Create();
 	Context::Create();
 
 	Main = InMain;
@@ -39,8 +39,8 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Main->Destroy();
 	Context::Destroy();
-	Sdt::SystemTimer::Destroy();
-	Sdt::Mouse::Destroy();
+	sdt::SystemTimer::Destroy();
+	sdt::Mouse::Destroy();
 	Keyboard::Destroy();
 	Gui::Destroy();
 	D3D::Destroy();
@@ -120,7 +120,7 @@ void Window::Destroy()
 
 LRESULT CALLBACK Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam)
 {
-	Sdt::Mouse::Get()->WndProc(InMessage, InwParam, InlParam);
+	sdt::Mouse::Get()->WndProc(InMessage, InwParam, InlParam);
 
 	if (Gui::Get()->WndProc(InHandle, InMessage, InwParam, InlParam))
 		return TRUE;
@@ -164,8 +164,8 @@ LRESULT CALLBACK Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam,
 void Window::MainRender()
 {
 	Gui::Tick();
-	Sdt::SystemTimer::Get()->Tick();	// DeltaTime 계산
-	Sdt::Mouse::Get()->Tick();	// Mouse변화량 계산
+	sdt::SystemTimer::Get()->Tick();	// DeltaTime 계산
+	sdt::Mouse::Get()->Tick();	// Mouse변화량 계산
 	Context::Get()->Tick();		//
 	Main->Tick();				// Main에 Push된 IExecutable들 실행
 

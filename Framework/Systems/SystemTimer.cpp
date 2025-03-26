@@ -1,7 +1,7 @@
 #include "framework.h"
 #include "SystemTimer.h"
 
-namespace Sdt
+namespace sdt
 {
 	SystemTimer* SystemTimer::Instance = nullptr;
 

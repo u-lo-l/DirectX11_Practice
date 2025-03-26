@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Sdt
+namespace sdt
 {
 // #pragma region Timer
 // 	class Timer

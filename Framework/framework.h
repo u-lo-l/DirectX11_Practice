@@ -26,11 +26,6 @@ using namespace std;
 	#pragma comment(lib, "D3DCompiler.lib")
 #pragma endregion
 
-// #pragma region Effect
-// 	#include "Effect/d3dx11effect.h"
-// 	#pragma comment(lib, "Effect/Effects11d.lib")
-// #pragma endregion
-
 #pragma region DirectXTex
 	#include "DirectXTex/DirectXTex.h"
 	#pragma comment(lib, "DirectXTex/DirectXTex.lib")
@@ -63,6 +58,7 @@ using namespace std;
 
 	#include "Renders/Shader/VertexLayout.h"
 	#include "Renders/Shader/HlslShader.h"
+	#include "Renders/Shader/HlslComputeShader.h"
 	#include "Renders/Texture.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"

@@ -19,7 +19,7 @@ public:
 	operator ID3D11Buffer*() const { return Buffer; }
 	operator const ID3D11Buffer*() const { return Buffer; }
 	operator const ID3D11Buffer*() { return Buffer; }
-	
+private:
 	void BindToGPU() override {};
 private:
 	UINT DataSize = 0; // InputSize
@@ -29,8 +29,8 @@ private:
 public :
 	void SetInputData( const void * InData) const;
 	void GetOutputData(void * OutData) const;
-
-	
+	void BindInputToGPU() const;
+	void BindOutputToGPU() const;
 // ~Begin ComputeShaderResource
 protected:
 	void CreateInput() override;

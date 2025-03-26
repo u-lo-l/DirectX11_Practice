@@ -2,7 +2,7 @@
 
 #include "Systems/IExecutable.h"
 
-namespace Sdt
+namespace sdt
 {
 	// NOLINT(cppcoreguidelines-special-member-functions)
 	class DrawModel final : public IExecutable

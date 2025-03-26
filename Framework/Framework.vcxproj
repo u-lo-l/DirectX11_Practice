@@ -347,6 +347,7 @@
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\ConstantDataBinder.cpp" />
     <ClCompile Include="Renders\Material.cpp" />
+    <ClCompile Include="Renders\Shader\HlslComputeShader.cpp" />
     <ClCompile Include="Renders\Shader\HlslShader.hpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -550,6 +551,7 @@
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\ConstantDataBinder.h" />
     <ClInclude Include="Renders\Material.h" />
+    <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
     <ClInclude Include="Renders\Shader\HlslShader.h" />
     <ClInclude Include="Renders\Shader\VertexLayout.h" />
     <ClInclude Include="Renders\Texture.h" />

@@ -2,7 +2,7 @@
 #include "Converter.h"
 #include <fstream>
 
-namespace Sdt
+namespace sdt
 {
 	void Converter::ExportAnimation( const string & InSaveFileName, int InClipIndex )
 	{

@@ -1,7 +1,7 @@
 ﻿#include "Pch.h"
 #include "InstancingDemo.h"
 
-namespace Sdt
+namespace sdt
 {
 	void InstancingDemo::Initialize()
 	{
@@ -12,15 +12,15 @@ namespace Sdt
 		SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			// {new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
-			// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
-			// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
+			{new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
+			{new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
+			{new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
 			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
 			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
 		});
 		
 		constexpr UINT InstanceCount = 169;
-		constexpr float Stride = 25.f;
+		constexpr float Stride = 40.f;
 		SetModelsPosition(InstanceCount, Stride);
 	}
 

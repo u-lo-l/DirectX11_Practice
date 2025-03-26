@@ -2,7 +2,7 @@
 #include "Converter.h"
 #include <fstream>
 
-namespace Sdt
+namespace sdt
 {
 	Converter::Converter()
 	 : Loader(nullptr), Scene(nullptr)

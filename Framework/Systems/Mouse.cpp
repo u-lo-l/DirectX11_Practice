@@ -1,7 +1,7 @@
 ﻿#include "Framework.h"
 #include "Mouse.h"
 
-namespace Sdt
+namespace sdt
 {
 	Mouse* Mouse::Instance = nullptr;
 

@@ -2,7 +2,7 @@
 
 #include "Systems/IExecutable.h"
 
-namespace Sdt
+namespace sdt
 {
 	class InstancingDemo final : public IExecutable
 	{

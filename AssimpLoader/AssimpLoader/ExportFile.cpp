@@ -3,7 +3,7 @@
 #include "ExportFile.h"
 #include "Converter/Converter.h"
 
-namespace Sdt
+namespace sdt
 {
 	// const string ShaderForAnim = "23_AnimationTwinning.fx";
 	// const string ShaderForAnim = "38_Instancing_Model_Animation.fx";
