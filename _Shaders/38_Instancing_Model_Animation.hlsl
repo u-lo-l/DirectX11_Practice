@@ -77,7 +77,7 @@ float4 PSMain(VertexOutput input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
 	float Light = dot(LightDirection, normal);
-    float3 color = MaterialMaps[DiffuseMap].Sample(DefaultSampler, input.Uv).rgb;
+    float3 color = MaterialMaps[DiffuseMap].Sample(LinearSampler, input.Uv).rgb;
     color *= Light;
     return float4(color, 1);
 }

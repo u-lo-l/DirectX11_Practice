@@ -8,10 +8,11 @@ cbuffer CB_World : register(Const_VS_World)
 cbuffer CB_ViewProjection : register(Const_VS_VieProjection)
 { 
     matrix View;
+    matrix ViewInv;
     matrix Projection;
 }
 
-cbuffer CB_ViewProjection : register(Const_PS_LightDirection)
+cbuffer CB_LightDirection : register(Const_PS_LightDirection)
 { 
     float3 LightDirection;
 }

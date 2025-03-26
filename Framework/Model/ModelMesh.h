@@ -16,7 +16,7 @@ protected:
 	static void ReadMeshFile(
 		const BinaryReader * InReader,
 		vector<ThisClassPtr> & OutMeshes,
-		const map<string, Material*> & InMaterialTable,
+		const map<string, Material<VertexType>*> & InMaterialTable,
 		bool bIsSkeletal = false
 	);
 
@@ -39,9 +39,9 @@ protected :
 	Transform * ref_ModelWorldTransform = nullptr;
 
 public:
-	void SetMaterialData(Material * InMaterial);
+	void SetMaterialData(Material<VertexType> * InMaterial);
 protected:
-	Material * MaterialData = nullptr;
+	Material<VertexType> * MaterialData = nullptr;
 
 	vector<VertexType> Vertices;
 	

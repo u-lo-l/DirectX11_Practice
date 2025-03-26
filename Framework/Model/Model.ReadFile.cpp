@@ -85,7 +85,7 @@ void Model::ReadMaterial( const wstring & InFileName)
 #ifdef DO_DEBUG
 		Material * MatData = new Material("Material : [" + String::ToString(InFileName) + "_" + Name + "]");
 #else
-		Material * MatData = new Material();
+		Material<VertexType> * MatData = new Material<VertexType>();
 #endif
 		Json::Value Value = Root[Name];
 
@@ -99,13 +99,13 @@ void Model::ReadMaterial( const wstring & InFileName)
 	Stream.close();
 }
 
-void Model::ReadShaderName(const Json::Value & Value, Material * MatData)
+void Model::ReadShaderName(const Json::Value & Value, Material<VertexType> * MatData)
 {
 	if (Value["ShaderName"].asString().size() > 0)
 		MatData->SetShader(String::ToWString(Value["ShaderName"].asString()));
 }
 
-void Model::ReadColor(const Json::Value & Value, Material * MatData)
+void Model::ReadColor(const Json::Value & Value, Material<VertexType> * MatData)
 {
 	MatData->SetAmbient(JsonStringToColor(Value["Ambient"].asString()));
 	MatData->SetDiffuse(JsonStringToColor(Value["Diffuse"].asString()));
@@ -113,7 +113,7 @@ void Model::ReadColor(const Json::Value & Value, Material * MatData)
 	MatData->SetEmissive(JsonStringToColor(Value["Emissive"].asString()));
 }
 
-void Model::ReadColorMap(const Json::Value & Value, Material * MatData)
+void Model::ReadColorMap(const Json::Value & Value, Material<VertexType> * MatData)
 {
 	UINT count = Value["DiffuseMap"].size();
 	for (UINT i = 0; i < count; i++)

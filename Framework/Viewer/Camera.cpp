@@ -82,12 +82,14 @@ void Camera::SetPosition(float X, float Y, float Z)
 {
 	Position = { X, Y, Z };
 	SetViewMat();
+	SetRotationMat();
 }
 
 void Camera::SetPosition(const Vector& Vec)
 {
 	Position = Vec;
 	SetViewMat();
+	SetRotationMat();
 }
 
 const Vector& Camera::GetEulerAngle() const
@@ -98,12 +100,14 @@ const Vector& Camera::GetEulerAngle() const
 void Camera::SetRotation(float R, float P, float Y)
 {
 	EulerAngle = { Math::ToRadians(R), Math::ToRadians(P), Math::ToRadians(Y) };
+	SetViewMat();
 	SetRotationMat();
 }
 
 void Camera::SetRotation(const Vector & InEuler)
 {
 	EulerAngle = { Math::ToRadians(InEuler.X), Math::ToRadians(InEuler.Y), Math::ToRadians(InEuler.Z) };
+	SetViewMat();
 	SetRotationMat();
 }
 

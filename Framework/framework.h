@@ -60,6 +60,7 @@ using namespace std;
 	#include "Renders/Shader/HlslShader.h"
 	#include "Renders/Shader/HlslComputeShader.h"
 	#include "Renders/Texture.h"
+	#include "Renders/TextureArray.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"
 	#include "Renders/Buffer/Buffers.h"
@@ -76,6 +77,10 @@ using namespace std;
 	#include "Model/ModelAnimation.h"
 
 	#include "Environment/Terrain.h"
+
+#include "Objects/Billboard/Billboard.h"
+#include "Objects/CrossQuad/CrossQuad.h"
+
 #pragma endregion
 
 #pragma region  SDT_Math

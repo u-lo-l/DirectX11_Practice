@@ -20,6 +20,12 @@ void Transform::Tick()
 	CBuffer->UpdateData( &WorldTransform_Data, sizeof(CBufferDesc));
 }
 
+void Transform::BindToGPU()
+{
+	ASSERT(CBuffer != nullptr, "CBuffer Not Valid")
+	CBuffer->BindToGPU();
+}
+
 Vector Transform::GetForward() const
 {
 	return WorldTransform_Data.World.Forward();

@@ -14,4 +14,4 @@ cbuffer CB_Material : register(Const_PS_Material)
 	float4 Emissive;
 }
 
-SamplerState DefaultSampler : register(Sampler_PS_Default);
+SamplerState LinearSampler : register(Sampler_PS_Linear);

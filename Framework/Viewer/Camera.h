@@ -13,7 +13,6 @@ public:
 	const Matrix & GetViewMatrix() const;
 	void SetPosition(float X, float Y, float Z);
 	void SetPosition(const Vector & Vec);
-
 	const Vector & GetEulerAngle() const;
 	void SetRotation(float R, float P, float Y);
 	void SetRotation(const Vector & InEuler);

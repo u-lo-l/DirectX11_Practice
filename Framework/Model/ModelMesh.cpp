@@ -47,7 +47,7 @@ void ModelMesh::SetWorldTransform( const Transform * InTransform) const
 	ref_ModelWorldTransform->SetTRS(InTransform);
 }
 
-void ModelMesh::SetMaterialData( Material * InMaterial )
+void ModelMesh::SetMaterialData( Material<VertexType> * InMaterial )
 {
 	MaterialData = InMaterial;
 }
@@ -56,7 +56,7 @@ void ModelMesh::ReadMeshFile
 (
 	const BinaryReader * InReader,
 	vector<ModelMesh*> & OutMeshes,
-	const map<string, Material*> & InMaterialTable,
+	const map<string, Material<VertexType>*> & InMaterialTable,
 	bool bIsSkeletal
 )
 {

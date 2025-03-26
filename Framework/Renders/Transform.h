@@ -12,8 +12,7 @@ public:
 	~Transform();
 
 	void Tick();
-	template<class TShaderType>
-	void BindCBufferToGPU(const TShaderType * InShader);
+	void BindToGPU();
 public:
 	Vector GetForward() const;
 	Vector GetUp() const;
@@ -57,15 +56,3 @@ private:
 	const Matrix * ref_WorldMatrix;
 #pragma endregion Instancing
 };
-
-template<class TShaderType>
-void Transform::BindCBufferToGPU( const TShaderType * InShader )
-{
-	ASSERT(CBuffer != nullptr, "CBuffer Not Valid")
-	ASSERT(InShader != nullptr, "Shader Not Valid")
-
-	// if (ECB_CBuffer == nullptr)
-	// 	ECB_CBuffer = InShader->AsConstantBuffer("CB_World");
-	CBuffer->BindToGPU();
-	// CHECK(ECB_CBuffer->SetConstantBuffer(*CBuffer) >= 0);
-}

@@ -7,9 +7,9 @@ std::string HlslShader<T>::GetShaderTarget( ShaderType Type )
 {
 	switch (Type)
 	{
-	case ShaderType::VertexShader:	return "vs_5_0";
-	case ShaderType::PixelShader:	return "ps_5_0";
-	case ShaderType::ComputeShader:	return "cs_5_0";
+	case ShaderType::VertexShader:	 return "vs_5_0";
+	case ShaderType::PixelShader:	 return "ps_5_0";
+	case ShaderType::GeometryShader: return "gs_5_0";
 	default:
 		ASSERT(false, "Unknown Shader Type")
 		return "";
@@ -21,28 +21,33 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 {
 	switch (Type)
 	{
-	case ShaderType::VertexShader:	return "VSMain";
-	case ShaderType::PixelShader:	return "PSMain";
-	case ShaderType::ComputeShader:	return "CSMain";
+	case ShaderType::VertexShader:	 return "VSMain";
+	case ShaderType::PixelShader:	 return "PSMain";
+	case ShaderType::GeometryShader: return "GSMain";
 	default :
 		ASSERT(false, "Unknown Shader Type")
 		return "";
 	}
 }
 
+
 template <class T>
-HlslShader<T>::HlslShader(const wstring & ShaderFileName)
+HlslShader<T>::HlslShader(const wstring & ShaderFileName, UINT TargetShaderFlag)
 	: InputLayout(nullptr)
 	, VertexShader(nullptr)
 	, PixelShader(nullptr)
-	// , ComputeShader(nullptr)
+	, GeometryShader(nullptr)
 	, RasterizerState(nullptr)
 {
 	if (ShaderFileName.empty() == false)
 	{
 		FileName = W_SHADER_PATH + ShaderFileName;
-		CompileShader(ShaderType::VertexShader, FileName);
-		CompileShader(ShaderType::PixelShader, FileName);
+		if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
+			CompileShader(ShaderType::VertexShader, FileName);
+		if (TargetShaderFlag & static_cast<UINT>(ShaderType::PixelShader))
+			CompileShader(ShaderType::PixelShader, FileName);
+		if (TargetShaderFlag & static_cast<UINT>(ShaderType::GeometryShader))
+			CompileShader(ShaderType::GeometryShader, FileName);
 	}
 }
 
@@ -52,7 +57,6 @@ HlslShader<T>::~HlslShader()
 	SAFE_RELEASE(InputLayout);
 	SAFE_RELEASE(VertexShader);
 	SAFE_RELEASE(PixelShader);
-	// SAFE_RELEASE(ComputeShader);
 	SAFE_RELEASE(RasterizerState);
 }
 
@@ -80,6 +84,40 @@ HRESULT HlslShader<T>::CreateRasterizerState_Solid()
 	D3D11_RASTERIZER_DESC RasterizerDesc;
 	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	RasterizerDesc.CullMode = D3D11_CULL_BACK;
+	RasterizerDesc.FrontCounterClockwise = false;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	return this->CreateRasterizerState(&RasterizerDesc);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateRasterizerState_WireFrame_NoCull()
+{
+	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	RasterizerDesc.CullMode = D3D11_CULL_NONE;
+	RasterizerDesc.FrontCounterClockwise = false;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	return this->CreateRasterizerState(&RasterizerDesc);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateRasterizerState_Solid_NoCull()
+{
+	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	RasterizerDesc.CullMode = D3D11_CULL_NONE;
 	RasterizerDesc.FrontCounterClockwise = false;
 	RasterizerDesc.DepthBias = 0;
 	RasterizerDesc.DepthBiasClamp = 0.0f;
@@ -157,13 +195,75 @@ HRESULT HlslShader<T>::CreateSamplerState_Linear()
 	SamplerDesc.MinLOD = 0;
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	return this->CreateSamplerState(&SamplerDesc);
+	return this->CreateSamplerState(&SamplerDesc, PS_Linear);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc )
+HRESULT HlslShader<T>::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc, const SamplerSlot SlotNum )
 {
-	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &this->SamplerState);
+	SamplerSlotNum = SlotNum;
+	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerState);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState_NoBlend()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = false;
+	BlendDesc.IndependentBlendEnable = false;
+	BlendDesc.RenderTarget[0].BlendEnable = false;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL ^ D3D11_COLOR_WRITE_ENABLE_ALPHA;
+	return CreateBlendState( &BlendDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState_AlphaBlend()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = false;
+	BlendDesc.IndependentBlendEnable = false;
+	
+	BlendDesc.RenderTarget[0].BlendEnable = true;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	return CreateBlendState( &BlendDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState_AlphaBlendCoverage()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = true;
+	BlendDesc.IndependentBlendEnable = false;
+
+	BlendDesc.RenderTarget[0].BlendEnable = true;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	return CreateBlendState( &BlendDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState(const D3D11_BLEND_DESC* BlendDesc)
+{
+	return D3D::Get()->GetDevice()->CreateBlendState(BlendDesc, &BlendState);
 }
 
 template <class T>
@@ -198,7 +298,9 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
 	}
 	if (FAILED(hr) && ErrorBlob == nullptr)
+	{
 		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
+	}
 	SAFE_RELEASE(ErrorBlob);
 	
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
@@ -213,6 +315,10 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	else if (Type == ShaderType::PixelShader)
 	{
 		Hr = Device->CreatePixelShader(BufferAddr, BufferSize, nullptr, &PixelShader);
+	}
+	else if (Type == ShaderType::GeometryShader)
+	{
+		Hr = Device->CreateGeometryShader(BufferAddr, BufferSize, nullptr, &GeometryShader);
 	}
 	else
 	{
@@ -269,25 +375,35 @@ void HlslShader<T>::BeginDraw() const
 	DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	if (!!InputLayout)
 		DeviceContext->IASetInputLayout(InputLayout);
-
+	
 	if (!!VertexShader)
 		DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+	if (!!GeometryShader)
+		DeviceContext->GSSetShader(GeometryShader, nullptr, 0);
+	
 	if (!!RasterizerState)
 		DeviceContext->RSSetState(RasterizerState);
+	
+	if (!!SamplerState)
+		DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &SamplerState);
 	if (!!PixelShader)
 		DeviceContext->PSSetShader(PixelShader, nullptr, 0);
-	if (!!SamplerState)
-		DeviceContext->PSSetSamplers(SamplerSlot::PS_Default, 1, &this->SamplerState);
+
+	if (!!BlendState)
+	{
+		constexpr float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		DeviceContext->OMSetBlendState(BlendState, BlendFactor, 0xFFFFFFFF);
+	}
 }
 
 template <class T>
 void HlslShader<T>::EndDraw() const
 {
-	// ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	
 	// 일단 전체 파이프라인에서 HS, DS, GS를 사용하지 않으니 굳이 필요한 코드는 아님.
 	// 추후에 다른 RenderPass에서 건드리면 그 때 주석 해제하도록 하자.
 	// DeviceContext->HSSetShader(nullptr, nullptr, 0);
 	// DeviceContext->DSSetShader(nullptr, nullptr, 0);
-	// DeviceContext->GSSetShader(nullptr, nullptr, 0);
+	DeviceContext->GSSetShader(nullptr, nullptr, 0);
 }
