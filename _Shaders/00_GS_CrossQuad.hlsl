@@ -99,12 +99,10 @@ void GSMain(point VertexOutput input[1], inout TriangleStream<GeometryOutput> st
 }
 
 
-// Rasterizer state : Cull_NONE (양면)
-// BlendState : AlphaBlend_Coverage (bs, float4(0, 0, 0, 0), 0xFF)
+// RasterizerState : Cull_NONE
+// BlendState : AlphaBlend_Coverage
 float4 PSMain(GeometryOutput input) : SV_Target
 {
     const float ScaleFactor = 1.75f;
     return BillboardMap.Sample(LinearSampler, float3(input.Uv, input.MapIndex)) * ScaleFactor;
 }
-
-/*========================================================================================*/

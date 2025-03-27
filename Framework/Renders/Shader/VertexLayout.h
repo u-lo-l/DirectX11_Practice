@@ -133,3 +133,17 @@ struct VertexBillboard
 
 //---------------------------------------------------------------------------//
 
+// Vertex For Rain, Snow, Hail
+struct VertexPrecipitation
+{
+	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+
+	VertexPrecipitation()
+		: Position(0, 0, 0), Scale(0, 0), Random(0,0) {}
+	VertexPrecipitation(const Vector& Position, const Vector2D& Scale, const Vector2D& Random)
+		: Position(Position), Scale(Scale), Random(Random) {}
+	
+	Vector Position;
+	Vector2D Scale;
+	Vector2D Random;
+};

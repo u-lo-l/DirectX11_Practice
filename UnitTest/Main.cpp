@@ -3,32 +3,11 @@
 #include "Main.h"
 #include "Systems/Window.h"
 
-// #include "Execute/011_Grid/Grid.h"
-// #include "Execute/019_TextureColorBlending/TextureColorBlending.h"
-// #include "Execute/024_Terrain/TerrainDemo.h"
-// #include "Execute/ComputeShaderDemo/RawBufferDemo.h"
-// #include "Execute/InstancingDemo/InstancingDemo.h"
-// #include "Execute/Billboard/BillboardDemo.h"
-// #include "Execute/Billboard/CrossQuadDemo.h"
-#include "Execute/CubeMap/SkyBoxDemo.h"
 
+#include "Execute/033_WeatherDemo/WeatherDemo.h"
 void Main::Initialize()
 {
-	// PUSH_MAIN(Sdt::RawBufferDemo);
-	// PUSH_MAIN(Line);
-	// PUSH_MAIN(Sdt::Line2);
-	// PUSH_MAIN(Line_Circle);
-	// PUSH_MAIN(Triangle_List);
-	// PUSH_MAIN(Sdt::WorldDemo);
-	// PUSH_MAIN(Sdt::WorldDemo2);
-	// PUSH_MAIN(Sdt::Grid);
-	// PUSH_MAIN(Sdt::TextureColorBlending);
-	// PUSH_MAIN(Sdt::TerrainDemo);
-	// PUSH_MAIN(sdt::InstancingDemo);
-	// PUSH_MAIN(sdt::RawBufferDemo);
-	// PUSH_MAIN(sdt::BillboardDemo);
-	// PUSH_MAIN(sdt::CrossQuadDemo);
-	PUSH_MAIN(sdt::SkyBoxDemo);
+	PUSH_MAIN(sdt::WeatherDemo);
 }
 
 

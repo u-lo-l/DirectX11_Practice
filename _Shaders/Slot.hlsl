@@ -1,13 +1,14 @@
 #define InstancingSlot 9
 
-#define Const_VS_World              b0
-#define Const_VS_VieProjection      b1
-#define Const_VS_BoneMatrix         b2
-#define Const_VS_BoneIndex          b3
-#define Const_VS_AnimationBlending  b4
+#define Const_VS_World              b0 // <- Global
+
+#define Const_VS_VieProjection      b1 // <- Model
+#define Const_VS_BoneMatrix         b2 // <- Model
+#define Const_VS_BoneIndex          b3 // <- Model
+#define Const_VS_AnimationBlending  b4 // <- Model
 
 #define Const_PS_Material           b5
-#define Const_PS_LightDirection     b6
+#define Const_PS_LightDirection     b6 // <- Global
 
 #define Const_GS_World              b9
 #define Const_GS_VieProjection      b10
