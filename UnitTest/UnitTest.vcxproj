@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Execute\033_WeatherDemo\WeatherDemo.cpp" />
+    <ClCompile Include="Execute\034_ParticleDemo\ParticleDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Execute\033_WeatherDemo\WeatherDemo.h" />
+    <ClInclude Include="Execute\034_ParticleDemo\ParticleDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

@@ -10,11 +10,11 @@ public:
 	VertexBuffer(VertexBuffer &&) = delete; 
 	VertexBuffer & operator=(const VertexBuffer &) = delete;
 	VertexBuffer & operator=(VertexBuffer &&) = delete;
+	virtual void UpdateData();
 	void BindToGPU() override;
-private:
+protected:
 	UINT Slot;
-
-	bool bCpwWrite;
+	bool bCpuWrite;
 	bool bGpuWrite;
 };
 

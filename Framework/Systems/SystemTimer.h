@@ -27,7 +27,7 @@ namespace sdt
 		static SystemTimer* Get();
 		void Tick();
 		float GetDeltaTime() const { return DeltaTime; }
-
+		float GetRunningTime() const { return RunningTime; }
 	private:
 		static SystemTimer* Instance;
 		
@@ -38,8 +38,9 @@ namespace sdt
 	private:
 		chrono::steady_clock::time_point StartTime;
 		chrono::steady_clock::time_point PrevFrameTime;
-		float DeltaTime;
-		double RunningTime;
+		
+		float DeltaTime;	// Unit : Second
+		float RunningTime;	// Unit : Second
 	};
 #pragma endregion SystemTimer
 }

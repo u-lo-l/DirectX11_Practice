@@ -33,7 +33,7 @@ namespace sdt
 		const chrono::duration<double> Temp = (current - PrevFrameTime);
 		DeltaTime = static_cast<float>(Temp.count());
 		PrevFrameTime = current;
-		RunningTime += static_cast<double>(DeltaTime);
+		RunningTime += DeltaTime;
 	}
 
 	SystemTimer::SystemTimer()

@@ -23,6 +23,7 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AQyxagab_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FZirosyr_003FQyxagab_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ARofehox_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FSypuwuc_003FRofehox_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ASilopiv_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FXivuzeh_003FSilopiv_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATovuxax_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FVabaxek_003FTovuxax_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AVumyjec_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FZyjifut_003FVumyjec_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AXasaryr_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FKesatun_003FXasaryr_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AXolucos_002Easm_002Fl_003AC_0021_003FUsers_003Fjeffk_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FPysymyd_003FXolucos_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
@@ -46,6 +47,7 @@
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe</s:String>
 	<s:Int64 x:Key="/Default/Environment/Hierarchy/Build/BuildTool/MsbuildVersion/@EntryValue">1114112</s:Int64>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=deactive/@EntryIndexedValue">True</s:Boolean>
 	
 	
 	

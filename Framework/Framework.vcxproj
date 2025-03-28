@@ -38,7 +38,10 @@
     <ClCompile Include="Model\StaticMesh.cpp" />
     <ClCompile Include="Objects\Billboard\Billboard.cpp" />
     <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
+    <ClCompile Include="ParticleSystem\ParticleSystem.cpp" />
+    <ClCompile Include="ParticleSystem\ParticleSystem.ReadFile.cpp" />
     <ClCompile Include="Renders\Buffer\BufferBase.cpp" />
+    <ClCompile Include="Renders\Buffer\CircularVertexBuffer.cpp" />
     <ClCompile Include="Renders\Buffer\ComputeShaderResource.cpp" />
     <ClCompile Include="Renders\Buffer\IndexBuffer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -552,8 +555,11 @@
     <ClInclude Include="Model\StaticMesh.h" />
     <ClInclude Include="Objects\Billboard\Billboard.h" />
     <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
+    <ClInclude Include="ParticleSystem\ParticleData.h" />
+    <ClInclude Include="ParticleSystem\ParticleSystem.h" />
     <ClInclude Include="Renders\Buffer\BufferBase.h" />
     <ClInclude Include="Renders\Buffer\Buffers.h" />
+    <ClInclude Include="Renders\Buffer\CircularVertexBuffer.h" />
     <ClInclude Include="Renders\Buffer\ComputeShaderResource.h" />
     <ClInclude Include="Renders\Buffer\ConstantBuffer.h" />
     <ClInclude Include="Renders\Buffer\IndexBuffer.h" />

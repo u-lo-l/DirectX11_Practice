@@ -310,3 +310,40 @@ void VertexPrecipitation::CreatInputLayout(vector<D3D11_INPUT_ELEMENT_DESC>& Out
 	OutLayoutDescs[3].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
 	OutLayoutDescs[3].InstanceDataStepRate = 1;
 }
+
+void VertexParticle::CreatInputLayout(vector<D3D11_INPUT_ELEMENT_DESC>& OutLayoutDescs)
+{
+	OutLayoutDescs.resize(6);
+
+	for (int i = 0; i < 6; i++)
+	{
+		OutLayoutDescs[i].SemanticIndex = 0;
+		OutLayoutDescs[i].InputSlot = HlslShader<VertexTextureColor>::VertexSlot;
+		OutLayoutDescs[i].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+		OutLayoutDescs[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		OutLayoutDescs[i].InstanceDataStepRate = 0;
+	}
+
+	OutLayoutDescs[0].SemanticName = "POSITION";
+	OutLayoutDescs[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	
+	OutLayoutDescs[1].SemanticName = "START_VELOCITY";
+	OutLayoutDescs[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	
+	OutLayoutDescs[2].SemanticName = "END_VELOCITY";
+	OutLayoutDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	
+	OutLayoutDescs[3].SemanticName = "RANDOM";
+	OutLayoutDescs[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+	OutLayoutDescs[4].SemanticName = "TIME";
+	OutLayoutDescs[4].Format = DXGI_FORMAT_R32_FLOAT;
+	
+	OutLayoutDescs[5].SemanticName = "INSTANCE";
+	OutLayoutDescs[5].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	OutLayoutDescs[5].SemanticIndex = 0;
+	OutLayoutDescs[5].InputSlot = HlslShader<VertexBillboard>::InstanceSlot;
+	OutLayoutDescs[5].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	OutLayoutDescs[5].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	OutLayoutDescs[5].InstanceDataStepRate = 1;
+}

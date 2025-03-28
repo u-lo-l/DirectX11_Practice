@@ -5,9 +5,12 @@
 
 
 #include "Execute/033_WeatherDemo/WeatherDemo.h"
+#include "Execute/034_ParticleDemo/ParticleDemo.h"
+
 void Main::Initialize()
 {
-	PUSH_MAIN(sdt::WeatherDemo);
+	// PUSH_MAIN(sdt::WeatherDemo);
+	PUSH_MAIN(sdt::ParticleDemo);
 }
 
 

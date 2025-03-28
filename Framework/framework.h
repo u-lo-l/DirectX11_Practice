@@ -80,6 +80,8 @@ using namespace std;
 	#include "Environment/Terrain.h"
 	#include "Environment/SkySphere.h"
 
+	#include "ParticleSystem/ParticleSystem.h"
+
 #include "Objects/Billboard/Billboard.h"
 #include "Objects/CrossQuad/CrossQuad.h"
 

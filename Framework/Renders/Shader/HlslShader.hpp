@@ -255,6 +255,83 @@ HRESULT HlslShader<T>::CreateBlendState_NoBlend()
 }
 
 template <class T>
+HRESULT HlslShader<T>::CreateBlendState_Opaque()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = false;
+	BlendDesc.IndependentBlendEnable = false;
+	
+	BlendDesc.RenderTarget[0].BlendEnable = true;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	return CreateBlendState( &BlendDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState_Additive()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = false;
+	BlendDesc.IndependentBlendEnable = false;
+	
+	BlendDesc.RenderTarget[0].BlendEnable = true;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	return CreateBlendState( &BlendDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState_Multiply()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = false;
+	BlendDesc.IndependentBlendEnable = false;
+	
+	BlendDesc.RenderTarget[0].BlendEnable = true;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	return CreateBlendState( &BlendDesc );
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateBlendState_Multiply2X()
+{
+	D3D11_BLEND_DESC BlendDesc = {};
+	BlendDesc.AlphaToCoverageEnable = false;
+	BlendDesc.IndependentBlendEnable = false;
+	
+	BlendDesc.RenderTarget[0].BlendEnable = true;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_DEST_COLOR;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	return CreateBlendState( &BlendDesc );
+}
+
+
+template <class T>
 HRESULT HlslShader<T>::CreateBlendState_AlphaBlend()
 {
 	D3D11_BLEND_DESC BlendDesc = {};
@@ -281,8 +358,8 @@ HRESULT HlslShader<T>::CreateBlendState_AlphaBlendCoverage()
 	BlendDesc.IndependentBlendEnable = false;
 
 	BlendDesc.RenderTarget[0].BlendEnable = true;
-	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_DEST_COLOR;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_COLOR;
 	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
@@ -321,6 +398,17 @@ HRESULT HlslShader<T>::CreateDepthStencilState_NoDepth()
 }
 
 template <class T>
+HRESULT HlslShader<T>::CreateDepthStencilState_Particle()
+{
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc = {};
+	DepthStencilDesc.DepthEnable = true;
+	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	DepthStencilDesc.StencilEnable = false;
+	return CreateDepthStencilState( &DepthStencilDesc );
+}
+
+template <class T>
 HRESULT HlslShader<T>::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* DepthStencilDesc)
 {
 	SAFE_RELEASE(DepthStencilState);
@@ -337,8 +425,8 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
 	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
 	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
-	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
-	Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
+	Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+	// Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
 	
 	constexpr int EffectFlag = 0; // Effect FrameWork 쓸 떄만 씀.
 	

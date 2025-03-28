@@ -13,9 +13,9 @@ CrossQuad::CrossQuad()
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::PixelShader);
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::GeometryShader);
 	CrossQuadShader = new ShaderType(ShaderName, ShaderTypeFlag);
-	CHECK(CrossQuadShader->CreateRasterizerState_Solid_NoCull() >= 0);
-	CHECK(CrossQuadShader->CreateBlendState_AlphaBlendCoverage() >= 0);
-
+	CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));
+	CHECK(SUCCEEDED(CrossQuadShader->CreateBlendState_AlphaBlendCoverage()));
+	CHECK(SUCCEEDED(CrossQuadShader->CreateDepthStencilState_Default()));
 	GS_ViewProjectionBuffer = new ConstantBuffer(
 		::ShaderType::GeometryShader,
 		GS_ViewProjection,

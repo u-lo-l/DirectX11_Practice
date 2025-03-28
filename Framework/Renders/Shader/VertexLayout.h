@@ -147,3 +147,20 @@ struct VertexPrecipitation
 	Vector2D Scale;
 	Vector2D Random;
 };
+
+//---------------------------------------------------------------------------//
+struct VertexParticle
+{
+	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	VertexParticle()
+		: Position(0, 0, 0), StartVelocity(0, 0, 0), EndVelocity(0, 0, 0), Random(0, 0, 0, 0), SpawnedTime(0.f) {}
+	VertexParticle(const Vector& InPosition, const Vector& InStartVelocity, const Vector& InEndVelocity,const Vector4& InRandom, const float InTime)
+		: Position(InPosition), StartVelocity(InStartVelocity),  EndVelocity(InEndVelocity),Random(InRandom), SpawnedTime(InTime) {}
+	
+	Vector Position;
+	Vector StartVelocity;
+	Vector EndVelocity;
+	Vector4 Random;  // each elements value between [0, 1]
+	// 언제 이 Particle의 Vertex가 추가되었는지
+	float SpawnedTime; 
+};

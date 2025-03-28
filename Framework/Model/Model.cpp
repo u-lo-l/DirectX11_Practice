@@ -38,6 +38,8 @@ void Model::Tick()
 	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 
 	const int InstanceCount = max(WorldTransforms.size(), 1);
+	if (InstBuffer != nullptr)
+		InstBuffer->UpdateData();
 	
 	if (Animations.empty() == false)
 	{

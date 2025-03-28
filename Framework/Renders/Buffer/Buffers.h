@@ -4,4 +4,5 @@
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
 #include "RawBuffer.h"
+#include "CircularVertexBuffer.h"
 

@@ -29,6 +29,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{47
 		_Shaders\38_Instancing_Model_Animation.hlsl = _Shaders\38_Instancing_Model_Animation.hlsl
 		_Shaders\Slot.hlsl = _Shaders\Slot.hlsl
 		_Shaders\39_ComputeShaderDemo.hlsl = _Shaders\39_ComputeShaderDemo.hlsl
+		_Shaders\40_SkyBox.hlsl = _Shaders\40_SkyBox.hlsl
+		_Shaders\41_Weather.hlsl = _Shaders\41_Weather.hlsl
+		_Shaders\42_ParticleSystem.hlsl = _Shaders\42_ParticleSystem.hlsl
+		_Shaders\Slot.Weather.hlsl = _Shaders\Slot.Weather.hlsl
+		_Shaders\42_ParticleSystem.Slot.hlsl = _Shaders\42_ParticleSystem.Slot.hlsl
+		_Shaders\42_ParticleSystem.Resource.hlsl = _Shaders\42_ParticleSystem.Resource.hlsl
+		_Shaders\42_ParticleSystem.Funtions.hlsl = _Shaders\42_ParticleSystem.Funtions.hlsl
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{0688B656-22DE-41DD-AAB9-301CEB139698}"

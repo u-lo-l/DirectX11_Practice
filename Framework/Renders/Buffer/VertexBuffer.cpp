@@ -19,29 +19,31 @@ VertexBuffer::VertexBuffer
 	bool InCpuWrite,
 	bool InGpuWrite
 )
-: Slot(InSlot), bCpwWrite(InCpuWrite), bGpuWrite(InGpuWrite)
+: Slot(InSlot), bCpuWrite(InCpuWrite), bGpuWrite(InGpuWrite)
 {
 	Data = InData;
 	Count = InCount;
 	Stride = InStride;
 	
 	ID3D11Device * Device = D3D::Get()->GetDevice();
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
 	
 	BufferDesc.ByteWidth = Stride * Count;
 	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-	if (bCpwWrite == false && bGpuWrite == false)
+	if (bCpuWrite == false && bGpuWrite == false)
 	{
 		BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	}
-	else if (bCpwWrite == true && bGpuWrite == false)
+	else if (bCpuWrite == true && bGpuWrite == false)
 	{
 		BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	}
-	else if (bCpwWrite == false && bGpuWrite == true)
+	else if (bCpuWrite == false && bGpuWrite == true)
 	{
 		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	}
@@ -51,24 +53,28 @@ VertexBuffer::VertexBuffer
 		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
 	}
 
-	D3D11_SUBRESOURCE_DATA SubresourceData;
-	ZeroMemory(&SubresourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+	D3D11_SUBRESOURCE_DATA SubresourceData {};
 	SubresourceData.pSysMem = Data;
 	CHECK(Device->CreateBuffer(&BufferDesc, &SubresourceData, &Buffer) >= 0);
+}
+
+void VertexBuffer::UpdateData()
+{
+	if (bCpuWrite == false)
+		return;
+	
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	D3D11_MAPPED_SUBRESOURCE Subresource;
+	DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource);
+	memcpy(Subresource.pData, Data, Stride * Count);
+	DeviceContext->Unmap(Buffer, 0);
 }
 
 void VertexBuffer::BindToGPU()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-	constexpr UINT Offset = 0;
 
-	if (bCpwWrite == true)
-	{
-		D3D11_MAPPED_SUBRESOURCE Subresource;
-		DeviceContext->Map(Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &Subresource);
-		memcpy(Subresource.pData, Data, Stride * Count);
-		DeviceContext->Unmap(Buffer, 0);
-	}
+	constexpr UINT Offset = 0;
 	DeviceContext->IASetVertexBuffers(Slot, 1, &Buffer, &Stride, &Offset);
 }
 

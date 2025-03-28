@@ -50,6 +50,11 @@ public:
 
 	// Blend
 	HRESULT CreateBlendState_NoBlend();
+	HRESULT CreateBlendState_Opaque();
+	HRESULT CreateBlendState_Additive();
+	HRESULT CreateBlendState_Multiply();
+	HRESULT CreateBlendState_Multiply2X();
+
 	HRESULT CreateBlendState_AlphaBlend();
 	HRESULT CreateBlendState_AlphaBlendCoverage();
 	HRESULT CreateBlendState(const D3D11_BLEND_DESC * BlendDesc);
@@ -57,6 +62,7 @@ public:
 	//DepthStencil
 	HRESULT CreateDepthStencilState_Default();
 	HRESULT CreateDepthStencilState_NoDepth();
+	HRESULT CreateDepthStencilState_Particle();
 	HRESULT CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC * DepthStencilDesc);
 private:
 	SamplerSlot SamplerSlotNum = SamplerSlot::PS_Linear;

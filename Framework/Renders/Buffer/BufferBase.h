@@ -12,8 +12,4 @@ protected:
 	void * Data = nullptr;
 	UINT Count = 0;
 	UINT Stride = 0;
-#ifdef DO_DEBUG
-	string BufferInfo;
-	string BufferType;
-#endif
 };
