@@ -29,7 +29,7 @@ Model::~Model()
 		SAFE_DELETE(KeyVal.second);
 	for (const ModelAnimation * Animation : Animations)
 		SAFE_DELETE(Animation);
-	for (const Transform * Tf : WorldTransforms)
+	for (const Transform * Tf : InstanceWorldTransforms)
 		SAFE_DELETE(Tf);
 }
 
@@ -37,7 +37,7 @@ void Model::Tick()
 {
 	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 
-	const int InstanceCount = max(WorldTransforms.size(), 1);
+	const int InstanceCount = max(InstanceWorldTransforms.size(), 1);
 	if (InstBuffer != nullptr)
 		InstBuffer->UpdateData();
 	
@@ -57,7 +57,7 @@ void Model::Tick()
 				for (int InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
 				{
 					SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
-					WorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
+					InstanceWorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
 				}
 			}
 		}
@@ -109,7 +109,7 @@ void Model::Render() const
 	if (SkeletonData != nullptr)
 		SkeletonData->BindToGPU();
 
-	const int InstanceCount = WorldTransforms.size();
+	const int InstanceCount = InstanceWorldTransforms.size();
 	for (ModelMesh * const M : Meshes)
 	{
 		M->Render(InstanceCount);
@@ -126,18 +126,18 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 
 Transform * Model::AddTransforms()
 {
-	const int Index = WorldTransforms.size();
+	const int Index = InstanceWorldTransforms.size();
 	Transform * NewTransform = new Transform(&WorldTFMatrix[Index]);
-	WorldTransforms.push_back(NewTransform);
+	InstanceWorldTransforms.push_back(NewTransform);
 	
 	return NewTransform;
 }
 
 const Transform * Model::GetTransforms( UINT Index ) const
 {
-	if (Index >= WorldTransforms.size())
+	if (Index >= InstanceWorldTransforms.size())
 		return nullptr;
-	return WorldTransforms[Index];
+	return InstanceWorldTransforms[Index];
 }
 
 void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )

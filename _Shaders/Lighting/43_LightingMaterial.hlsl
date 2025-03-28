@@ -1,4 +1,4 @@
-#include "Slot.hlsl"
+#include "43_LightingSlot.hlsl"
 
 static const int DiffuseMap = 0;
 static const int SpecularMap = 1;

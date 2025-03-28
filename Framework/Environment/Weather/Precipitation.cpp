@@ -3,7 +3,7 @@
 
 Precipitation::Precipitation(const Vector& InExtent, UINT InDrawCount, const wstring& InFilePath, WeatherType InWeatherType)
 {
-	ShaderName = L"41_Weather.hlsl";
+	ShaderName = L"Weather/41_Weather.hlsl";
 	
 	UINT ShaderTypeFlag = 0;
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::VertexShader);

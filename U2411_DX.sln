@@ -10,34 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssimpLoader", "AssimpLoade
 		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C} = {F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shaders", "_Shaders", "{475B8564-0ABE-4F80-B811-5B482B8EBF10}"
-	ProjectSection(SolutionItems) = preProject
-		_Shaders\00_Animation_Structure.hlsl = _Shaders\00_Animation_Structure.hlsl
-		_Shaders\00_Material.hlsl = _Shaders\00_Material.hlsl
-		_Shaders\00_WorldViewProjection.hlsl = _Shaders\00_WorldViewProjection.hlsl
-		_Shaders\04_Line.hlsl = _Shaders\04_Line.hlsl
-		_Shaders\04_Line_Circle.hlsl = _Shaders\04_Line_Circle.hlsl
-		_Shaders\04_Line2.hlsl = _Shaders\04_Line2.hlsl
-		_Shaders\05_Triangle_List.hlsl = _Shaders\05_Triangle_List.hlsl
-		_Shaders\09_World.hlsl = _Shaders\09_World.hlsl
-		_Shaders\09_World2.hlsl = _Shaders\09_World2.hlsl
-		_Shaders\11_Grid.hlsl = _Shaders\11_Grid.hlsl
-		_Shaders\12_Texture.hlsl = _Shaders\12_Texture.hlsl
-		_Shaders\17_Terain.hlsl = _Shaders\17_Terain.hlsl
-		_Shaders\17_TerrainNormal.hlsl = _Shaders\17_TerrainNormal.hlsl
-		_Shaders\38_Instancing_Model.hlsl = _Shaders\38_Instancing_Model.hlsl
-		_Shaders\38_Instancing_Model_Animation.hlsl = _Shaders\38_Instancing_Model_Animation.hlsl
-		_Shaders\Slot.hlsl = _Shaders\Slot.hlsl
-		_Shaders\39_ComputeShaderDemo.hlsl = _Shaders\39_ComputeShaderDemo.hlsl
-		_Shaders\40_SkyBox.hlsl = _Shaders\40_SkyBox.hlsl
-		_Shaders\41_Weather.hlsl = _Shaders\41_Weather.hlsl
-		_Shaders\42_ParticleSystem.hlsl = _Shaders\42_ParticleSystem.hlsl
-		_Shaders\Slot.Weather.hlsl = _Shaders\Slot.Weather.hlsl
-		_Shaders\42_ParticleSystem.Slot.hlsl = _Shaders\42_ParticleSystem.Slot.hlsl
-		_Shaders\42_ParticleSystem.Resource.hlsl = _Shaders\42_ParticleSystem.Resource.hlsl
-		_Shaders\42_ParticleSystem.Funtions.hlsl = _Shaders\42_ParticleSystem.Funtions.hlsl
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{0688B656-22DE-41DD-AAB9-301CEB139698}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C} = {F29B0BFF-EAFC-4DCF-AC3A-FB51E8D09B8C}

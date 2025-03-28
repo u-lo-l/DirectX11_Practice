@@ -1,7 +1,7 @@
-#include "Slot.hlsl"
-#include "00_Material.hlsl"
-#include "00_WorldViewProjection.hlsl"
-#include "00_Animation_Structure.hlsl"
+#include "43_WVP.hlsl"
+#include "43_LightingMaterial.hlsl"
+#include "43_Lighting.hlsl"
+#include "../00_Animation_Structure.hlsl"
 
 const static int g_BoneCountToFindWeight = 4;
 const static int g_MipMapLevel = 0;
@@ -47,11 +47,9 @@ struct VertexOutput
     float3 Normal                : NORMAL;
 };
 
-
 matrix GetClipTransformMatrix(int BoneIndex, int TargetFrame, int ClipIndex);
 matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params, int InstanceID = 0);
 float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input);
-
 
 /*======================================================================================================*/
 
@@ -63,23 +61,46 @@ VertexOutput VSMain(VertexInput input)
 
     VertexOutput output;
     output.Uv = input.Uv;
-    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
+
+    output.Normal = mul(input.Normal, (float3x3)ModelWorldTF);
 
     output.Position = SetAnimatedBoneToWorldTF_Instancing(input); // Local_Space(Bone Root Space)
     output.Position = mul(output.Position, ModelWorldTF);
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
+    output.Position = mul(output.Position, View_VS);
+    output.Position = mul(output.Position, Projection_VS);
     
     return output;
 }
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float3 normal = normalize(input.Normal);
-	float Light = saturate(dot(-LightDirection, normal));
-    float3 color = MaterialMaps[DiffuseMap].Sample(LinearSampler, input.Uv).rgb;
-    color *= Light;
-    return float4(color, 1);
+    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
+    input.Normal = NormalMapping(input.Uv, input.Normal, input.Normal, NomalMapTexel.xyz);
+
+    float4 A = float4(1,1,1,1);
+    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv);
+    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv);
+
+    float4 GlobalAmbient = float4(0.01f,0.01f,0.01f,0.01f);
+    PhongLighting MaterialBaseColor = {A,D,S};
+    PhongLightingCoefficent PhongCoeff = {1,1,1};
+    float4 Phong = ComputePhongLight(
+        LightDirection_PS,
+        ViewInv_PS._41_42_43,
+        input.Normal,
+        input.Position.xyz,
+        GlobalAmbient,
+        MaterialBaseColor,
+        PhongCoeff
+    );
+    float4 Rim = ComputeRimLight(
+        LightDirection_PS,
+        ViewInv_PS._41_42_43,
+        input.Normal,
+        input.Position.xyz,
+        0.05f
+    );
+    return Phong + Rim;
 }
 
 /*======================================================================================================*/

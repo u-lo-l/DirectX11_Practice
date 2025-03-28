@@ -39,7 +39,7 @@ void Billboard::Tick()
 	WorldTF->Tick();
 	
 	ViewProjectionData.View = Context::Get()->GetViewMatrix();
-	ViewProjectionData.ViewInv = Matrix::Invert(ViewProjectionData.View); 
+	ViewProjectionData.ViewInv = Matrix::Invert(ViewProjectionData.View);
 	ViewProjectionData.Projection = Context::Get()->GetProjectionMatrix();
 	GS_ViewProjectionBuffer->UpdateData(&ViewProjectionData, sizeof(ViewProjectionDesc));
 	

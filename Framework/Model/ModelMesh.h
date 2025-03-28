@@ -49,12 +49,12 @@ protected:
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
+	ConstantBuffer * VP_CBuffer_PS = nullptr;
 
-	///
-	struct W_Desc
+	struct ViewInvDesc
 	{
-		Matrix World;
-	} W_Data;
-	ConstantBuffer * WBuffer = nullptr;
-	///
+		Matrix ViewInv;
+	};
+	ViewInvDesc PS_ViewInv;
+	Transform * WorldTF = nullptr;
 };

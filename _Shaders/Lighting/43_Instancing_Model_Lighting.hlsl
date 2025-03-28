@@ -1,6 +1,6 @@
-#include "Slot.hlsl"
-#include "00_Material.hlsl"
-#include "00_WorldViewProjection.hlsl"
+#include "43_WVP.hlsl"
+#include "43_LightingMaterial.hlsl"
+#include "43_Lighting.hlsl"
 
 const static int g_BoneCountToFindWeight = 4;
 const static int g_MipMapLevel = 0;
@@ -35,8 +35,10 @@ struct VertexInput
 struct VertexOutput
 {
     float4 Position              : SV_Position;
+    float3 WorldPosition         : Position1;
     float2 Uv                    : UV;
     float3 Normal                : NORMAL;
+    float3 Tangent   : TANGENT;
 };
 
 /*======================================================================================================*/
@@ -44,25 +46,50 @@ struct VertexOutput
 VertexOutput VSMain(VertexInput input)
 {    
     matrix TF = input.Transform;
-    // matrix TF = WorldTF;
     matrix ModelWorldTF = mul(BoneTransforms[BaseBoneIndex], TF);
 
     VertexOutput output;
     output.Uv = input.Uv;
     output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
-
+    output.Tangent = mul(input.Tangent, (float3x3) ModelWorldTF);
+    
     output.Position = mul(input.Position, ModelWorldTF);
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
+    output.WorldPosition = output.Position.xyz;
+
+    output.Position = mul(output.Position, View_VS);
+    output.Position = mul(output.Position, Projection_VS);
     
     return output;
 }
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float3 normal = normalize(input.Normal);
-	float Light = saturate(dot(-LightDirection, normal));
-    float3 color = MaterialMaps[DiffuseMap].Sample(LinearSampler, input.Uv).rgb;
-    color *= Light;
-    return float4(color, 1);
+    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
+    input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+
+    float4 A = float4(1,1,1,1);
+    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv);
+    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv);
+
+    float4 GlobalAmbient = float4(0.01f,0.01f,0.01f,0.01f);
+    PhongLighting MaterialBaseColor = {A,D,S};
+    PhongLightingCoefficent PhongCoeff = {1,1,1};
+    float4 Phong = ComputePhongLight(
+        LightDirection_PS,
+        ViewInv_PS._41_42_43,
+        input.Normal,
+        input.WorldPosition,
+        GlobalAmbient,
+        MaterialBaseColor,
+        PhongCoeff
+    );
+    float4 Rim = ComputeRimLight(
+        LightDirection_PS,
+        ViewInv_PS._41_42_43,
+        input.Normal,
+        input.WorldPosition,
+        0.3f
+    );
+
+    return Phong + Rim;
 }

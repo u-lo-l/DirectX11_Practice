@@ -9,13 +9,14 @@
 
 #define Const_PS_Material           b5
 #define Const_PS_LightDirection     b6 // <- Global
+#define Const_PS_ViewInv            b7
 
-#define Const_GS_World              b9
-#define Const_GS_VieProjection      b10
+// #define Const_GS_World              b9
+// #define Const_GS_VieProjection      b10
 
 #define Texture_VS_KeyFrames        t0
-#define Texture_PS_Billboard        t0
-#define Texture_PS_SkyBox           t0
+// #define Texture_PS_Billboard        t0
+// #define Texture_PS_SkyBox           t0
 #define Texture_PS_Texture          t1 // Diffuse Texture
 //                                  t2    Specular Texture
 //                                  t3    Normal Texture

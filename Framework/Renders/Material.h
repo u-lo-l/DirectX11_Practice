@@ -138,6 +138,7 @@ void Material<TVertexType>::SetShader( HlslShader<VertexType> * InShader )
 	Shader = InShader;
 	Shader->CreateRasterizerState_Solid();
 	Shader->CreateSamplerState_Linear();
+	Shader->CreateSamplerState_Anisotropic();
 	Shader->CreateBlendState_NoBlend();
 }
 

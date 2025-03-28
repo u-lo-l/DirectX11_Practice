@@ -8,7 +8,7 @@ cbuffer CB_World : register(Const_VS_World)
     matrix WorldTF_VS;
 }
 
-cbuffer CB_ViewProjection : register(Const_VS_VieProjection)
+cbuffer CB_ViewProjection : register(Const_VS_ViewProjection)
 { 
     matrix View_VS;
     matrix ViewInv_VS;

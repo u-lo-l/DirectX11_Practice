@@ -14,6 +14,7 @@ enum ShaderSlot : uint32_t
 
 	PS_Material = 5,
 	PS_LightDirection = 6,
+	PS_ViewInverse = 7,
 
 	GS_World = 9,
 	GS_ViewProjection = 10	
@@ -32,4 +33,5 @@ enum TextureSlot : uint32_t
 enum SamplerSlot : uint32_t
 {
 	PS_Linear = 0,	
+	PS_Anisotropic = 1,	
 };

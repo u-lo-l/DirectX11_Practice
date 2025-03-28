@@ -5,30 +5,34 @@
 ModelMesh::ModelMesh()
 	: ref_ModelWorldTransform(new Transform())
 {
+	WorldTF = new Transform();
+
 }
 
 ModelMesh::~ModelMesh()
 {
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
-	SAFE_DELETE(WBuffer);
+	SAFE_DELETE(WorldTF);
+	SAFE_DELETE(VP_CBuffer_PS);
 }
 
 // InstanceSize는 Model의 Transforms의 size()
 // BlendingDesc의 Current의 Clip정보는 일단 랜덤으로 줬다고 가정하자.
 void ModelMesh::Tick()
 {
-	W_Data.World = Matrix::Identity;
-	WBuffer->UpdateData(&W_Data, sizeof(W_Desc));
+	WorldTF->Tick();
+	PS_ViewInv.ViewInv = Matrix::Invert(Context::Get()->GetViewMatrix());
+	VP_CBuffer_PS->UpdateData(&PS_ViewInv, sizeof(ViewInvDesc));
 }
 
 void ModelMesh::Render(UINT InstanceCount) const
 {
 	// ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
-	WBuffer->BindToGPU();
+	WorldTF->BindToGPU();
+	VP_CBuffer_PS->BindToGPU();
 	
 	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	
@@ -38,7 +42,6 @@ void ModelMesh::Render(UINT InstanceCount) const
 		Indices.size(),
 		InstanceCount
 	);
-	// MaterialData->GetShader()->DrawIndexed(Indices.size());
 }
 
 // 매 Tick마다 Model::Tick에서 호출되어서 Mesh의 WorldTransform을 넣어준다.
@@ -87,7 +90,7 @@ void ModelMesh::ReadMeshFile
 			InReader->ReadByte(&Ptr, sizeof(VertexType) * VertexCount);
 		}
 		
-		const UINT IndexCount = InReader->ReadUint();
+		const UINT IndexCount = InReader->ReadUint();	
 		if (IndexCount > 0)
 		{
 			OutMeshes[i]->Indices.resize(IndexCount);
@@ -101,6 +104,13 @@ void ModelMesh::CreateBuffers()
 {
 	VBuffer = new VertexBuffer(Vertices.data(), Vertices.size(), sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices.data(), Indices.size());
-	WBuffer = new ConstantBuffer(ShaderType::VertexShader, VS_World, &W_Data, "W", sizeof(W_Desc));
+	VP_CBuffer_PS = new ConstantBuffer(
+		ShaderType::PixelShader,
+		ShaderSlot::PS_ViewInverse,
+		nullptr,
+		"PS_ViewInv",
+		sizeof(ViewInvDesc),
+		false
+	);
 }
 

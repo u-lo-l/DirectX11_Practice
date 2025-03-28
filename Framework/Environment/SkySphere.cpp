@@ -4,7 +4,7 @@
 SkySphere::SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount)
 	: Radius(InRadius), SliceCount(InSliceCount)
 {
-	SkyShader = new ShaderType(L"40_SkyBox.hlsl");
+	SkyShader = new ShaderType(L"Weather/40_SkyBox.hlsl");
 	CHECK(SkyShader->CreateSamplerState_Linear() >= 0);	
 	CHECK(SkyShader->CreateRasterizerState_Solid_CW() >= 0);
 	CHECK(SkyShader->CreateDepthStencilState_NoDepth() >= 0);

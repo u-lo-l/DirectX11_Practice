@@ -2,15 +2,11 @@
 #include "Pch.h"
 #include "Main.h"
 #include "Systems/Window.h"
-
-
-#include "Execute/033_WeatherDemo/WeatherDemo.h"
-#include "Execute/034_ParticleDemo/ParticleDemo.h"
+#include "Execute/035_LightingDemo/LightingDemo.h"
 
 void Main::Initialize()
 {
-	// PUSH_MAIN(sdt::WeatherDemo);
-	PUSH_MAIN(sdt::ParticleDemo);
+	PUSH_MAIN(sdt::LightingDemo);
 }
 
 

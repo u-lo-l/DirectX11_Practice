@@ -5,7 +5,7 @@ cbuffer CB_World : register(Const_VS_World)
     matrix WorldTF;
 }
 
-cbuffer CB_ViewProjection : register(Const_VS_VieProjection)
+cbuffer CB_ViewProjection : register(Const_VS_ViewProjection)
 { 
     matrix View;
     matrix ViewInv;

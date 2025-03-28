@@ -1,0 +1,87 @@
+
+struct PhongLighting
+{
+    float4 Ambient;
+    float4 Diffuse;
+    float4 Specular;
+};
+
+struct PhongLightingCoefficent
+{
+    float Ambient;
+    float Diffuse;
+    float Specular;
+};
+
+
+// https://sgvr.kaist.ac.kr/~sungeui/render/rendering_book_1.2ed.pdf
+// Ambient :  I_ra = k_a * I_ia
+// Diffuse : I_rd = k_d * I_i * cosθ = k_d * I_i * (N·L) 
+// Specular : I_rs =k_s * I_s(cos φ)^ns = k_s*I_s(V·R)^ns
+float4 ComputePhongLight(
+    in float3 LightDirection,
+    in float3 ViewPosition,
+    in float3 Normal,
+    in float3 WorldPosition,
+    in float4 GlobalAmbient,
+    in PhongLighting MaterialColor,
+    in PhongLightingCoefficent Coeff
+)
+{
+    PhongLighting Phong;
+    float3 L = normalize(-LightDirection);
+    float3 N = saturate(normalize(Normal));
+    Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
+
+    float NdotL = saturate(dot(L, N));
+    Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse * NdotL;
+
+    float ns = saturate(MaterialColor.Specular.a) * 128 + 1;
+    float3 R = normalize(reflect(-L, N));
+    float3 V = normalize(ViewPosition - WorldPosition); // also called as E for Eye-Vector
+    float VdotR = saturate(dot(V, R));
+    Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);
+
+    return Phong.Ambient + Phong.Diffuse + Phong.Specular;
+}
+
+float4 ComputeRimLight(
+    float3 LightDirection,
+    float3 ViewPosition,
+    float3 Normal,
+    float3 WorldPosition,
+    float RimWidth
+)
+{
+    float3 L = normalize(LightDirection);
+    float3 N = normalize(Normal);
+    float3 V = normalize(ViewPosition - WorldPosition);
+
+    float NdotV = saturate(dot(N, V));
+    float LdotV = saturate(dot(L, V));
+    float Rim = smoothstep(1 - RimWidth, 1.0f, 1.0f - NdotV);
+    Rim = pow(Rim, 2);
+    Rim = Rim * LdotV;
+    return float4(Rim, Rim, Rim, 1);
+}
+
+float3 NormalMapping
+(
+    float2 uv,
+    float3 normal,
+    float3 tangent,
+    float3 normalMapTexelValue
+)
+{
+    [flatten]
+    if (any(normalMapTexelValue.rgb) == false) // 잘못된 TBN-coord가 생성됨.
+        return normal;
+    
+    float3 NewLocalNormal = normalMapTexelValue * 2.0f - 1.0f; //-1.0f ~ +1.0f
+    
+    float3 N = normalize(normal);
+    float3 T = normalize(tangent - dot(tangent, N) * N);
+    float3 B = cross(N, T);
+    
+    return normalize(mul(NewLocalNormal, float3x3(T, B, N)));
+}

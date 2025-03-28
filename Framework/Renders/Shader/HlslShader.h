@@ -43,6 +43,7 @@ public:
 	HRESULT CreateRasterizerState_Solid_NoCull();
 	HRESULT CreateRasterizerState_Solid_CW();
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
+	HRESULT CreateSamplerState_Anisotropic();
 
 	// Sampler
 	HRESULT CreateSamplerState_Linear();

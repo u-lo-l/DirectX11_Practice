@@ -1,6 +1,15 @@
-#include "../Slot.hlsl"
-#include "../00_WorldViewProjection.hlsl"
+#include "Slot.SkyBox.hlsl"
+cbuffer CB_World : register(Const_VS_World)
+{ 
+    matrix WorldTF;
+}
 
+cbuffer CB_ViewProjection : register(Const_VS_ViewProjection)
+{ 
+    matrix View;
+    matrix ViewInv;
+    matrix Projection;
+}
 struct VertexInput
 {
     float4 Position : Position;
@@ -26,14 +35,9 @@ VertexOutput VSMain(VertexInput input)
 }
 
 SamplerState LinearSampler : register(Sampler_PS_Linear);
-TextureCube CubeMap : register(t0);
+TextureCube CubeMap : register(Texture_PS_CubeMap);
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
     return CubeMap.Sample(LinearSampler, input.oPosition);
 }
-
-// technique11 T0
-// {
-//     P_RS_DSS_VP(P0, FrontCounterClockwise_True, DepthEnable_False, VS, PS)
-// }

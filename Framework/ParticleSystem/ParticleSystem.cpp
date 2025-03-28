@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "ParticleSystem.h"
 
-const wstring ParticleSystem::ShaderName = L"42_ParticleSystem.hlsl";
+const wstring ParticleSystem::ShaderName = L"Particle/42_ParticleSystem.hlsl";
 
 ParticleSystem::ParticleSystem(const wstring & InFileName)
 {
