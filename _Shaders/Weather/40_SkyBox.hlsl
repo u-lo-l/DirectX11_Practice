@@ -1,5 +1,5 @@
-#include "Slot.hlsl"
-#include "00_WorldViewProjection.hlsl"
+#include "../Slot.hlsl"
+#include "../00_WorldViewProjection.hlsl"
 
 struct VertexInput
 {
