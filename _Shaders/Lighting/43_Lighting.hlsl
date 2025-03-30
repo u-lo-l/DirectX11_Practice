@@ -1,34 +1,48 @@
-
-struct PhongLighting
-{
-    float4 Ambient;
-    float4 Diffuse;
-    float4 Specular;
-};
-
+#include "43_LightingResources.hlsl"
 struct PhongLightingCoefficent
 {
     float Ambient;
     float Diffuse;
     float Specular;
 };
+ColorDesc ComputePhongLight(in float3 LightDirection, in float3 ViewPosition, in float3 Normal, in float3 WorldPosition, in float4 GlobalAmbient, in ColorDesc MaterialColor, in PhongLightingCoefficent Coeff);
+float4 ComputeRimLight(float3 LightDirection, float3 ViewPosition, float3 Normal, float3 WorldPosition, float RimWidth);
 
 
+ColorDesc ComputePhongLight (
+    in float3 LightDirection,
+    in float3 ViewPosition,
+    in float3 Normal,
+    in float3 WorldPosition,
+    in ColorDesc Color
+)
+{
+    PhongLightingCoefficent Coeff = {1,1,1};
+    return ComputePhongLight(
+        LightDirection,
+        ViewPosition,
+        Normal,
+        WorldPosition,
+        float4(0,0,0,0),
+        Color,
+        Coeff
+    );
+}
 // https://sgvr.kaist.ac.kr/~sungeui/render/rendering_book_1.2ed.pdf
 // Ambient :  I_ra = k_a * I_ia
 // Diffuse : I_rd = k_d * I_i * cosθ = k_d * I_i * (N·L) 
 // Specular : I_rs =k_s * I_s(cos φ)^ns = k_s*I_s(V·R)^ns
-float4 ComputePhongLight(
+ColorDesc ComputePhongLight(
     in float3 LightDirection,
     in float3 ViewPosition,
     in float3 Normal,
     in float3 WorldPosition,
     in float4 GlobalAmbient,
-    in PhongLighting MaterialColor,
+    in ColorDesc MaterialColor,
     in PhongLightingCoefficent Coeff
 )
 {
-    PhongLighting Phong;
+    ColorDesc Phong;
     float3 L = normalize(-LightDirection);
     float3 N = saturate(normalize(Normal));
     Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
@@ -42,7 +56,7 @@ float4 ComputePhongLight(
     float VdotR = saturate(dot(V, R));
     Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);
 
-    return Phong.Ambient + Phong.Diffuse + Phong.Specular;
+    return Phong;
 }
 
 float4 ComputeRimLight(
@@ -84,4 +98,22 @@ float3 NormalMapping
     float3 B = cross(N, T);
     
     return normalize(mul(NewLocalNormal, float3x3(T, B, N)));
+}
+
+const static float A1 = 1.f;
+const static float A2 = 0.1f;
+const static float A3 = 0.01f;
+float AttenuationFactor(float Distance)
+{
+    return 1 / (A1 + A2 * Distance + A3 * pow(Distance, 2));
+}
+
+const static float Falloff = 1.;
+float SpotLightFactor(float Theta, float Phi, float NdotV)
+{
+    // [flatten] if (cos(Theta/2) < NdotV) return 0;
+    [flatten] if (NdotV < cos(Phi/2))   return 1;
+
+    float Factor = (NdotV - cos(Phi/2)) / (cos(Theta) - cos(Phi));
+    return pow(Factor, Falloff);
 }

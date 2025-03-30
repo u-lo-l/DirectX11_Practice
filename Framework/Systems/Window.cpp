@@ -15,6 +15,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	sdt::Mouse::Create();
 	sdt::SystemTimer::Create();
 	Context::Create();
+	LightingManager::Create();
 
 	Main = InMain;
 	Main->Initialize();
@@ -38,6 +39,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	}
 
 	Main->Destroy();
+	LightingManager::Destroy();
 	Context::Destroy();
 	sdt::SystemTimer::Destroy();
 	sdt::Mouse::Destroy();
@@ -167,6 +169,7 @@ void Window::MainRender()
 	sdt::SystemTimer::Get()->Tick();	// DeltaTime 계산
 	sdt::Mouse::Get()->Tick();	// Mouse변화량 계산
 	Context::Get()->Tick();		//
+	LightingManager::Get()->Tick();
 	Main->Tick();				// Main에 Push된 IExecutable들 실행
 
 	//말은 클리어지만 배경 색 칠하는거다.
@@ -174,7 +177,7 @@ void Window::MainRender()
 	D3D::Get()->ClearDepthStencilView();
 	
 	Context::Get()->Render();
-
+	LightingManager::Get()->Render();
 	Main->Render();
 	Gui::Get()->Render();
 	D3D::Get()->Present();

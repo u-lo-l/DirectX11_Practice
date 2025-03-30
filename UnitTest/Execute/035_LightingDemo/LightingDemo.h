@@ -33,6 +33,8 @@ namespace sdt
 		void SetModelsPosition_Square(const vector<ModelInstanceData> & Models, int MaxInstanceCount = 10, float Stride = 20, const Vector& Center = {0,0,0}) const;
 		void SetModelsPosition_Line(const vector<ModelInstanceData> & Models, int MaxInstanceCount = 10, float Stride = 20, const Vector& Center = {0,0,0}) const;
 		void MakeRandomGrasses(const Vector & Center, const Vector2D & Range, UINT Count, UINT MapIndex);
+		void CreatePointLights();
+		void CreateSpotLights();
 		Model * Plane = nullptr;
 		vector<ModelInstanceData> ModelInstances;
 		vector<ModelInstanceData> ModelInstances_ForLighting;

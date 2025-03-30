@@ -2,7 +2,7 @@
 
 #define Const_VS_World              b0 // <- Global
 
-#define Const_VS_ViewProjection      b1 // <- Model
+#define Const_VS_ViewProjection     b1 // <- Model
 #define Const_VS_BoneMatrix         b2 // <- Model
 #define Const_VS_BoneIndex          b3 // <- Model
 #define Const_VS_AnimationBlending  b4 // <- Model
@@ -10,6 +10,7 @@
 #define Const_PS_Material           b5
 #define Const_PS_LightDirection     b6 // <- Global
 #define Const_PS_ViewInv            b7
+#define Const_PS_Lights        b8
 
 // #define Const_GS_World              b9
 // #define Const_GS_VieProjection      b10

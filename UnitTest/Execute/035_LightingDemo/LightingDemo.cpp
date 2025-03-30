@@ -112,6 +112,8 @@ namespace sdt
 			constexpr UINT InstanceCount = 5;
 			constexpr float Stride = 50.f;
 			SetModelsPosition_Line(ModelInstances_ForLighting, InstanceCount, Stride, {300,5,0});
+			// CreatePointLights();
+			CreateSpotLights();
 		}
 	}
 
@@ -220,4 +222,85 @@ namespace sdt
 			Grasses->Add(position, scale, MapIndex);
 		}
 	}
+
+	void LightingDemo::CreatePointLights()
+	{
+		PointLight light;
+
+		light =
+		{
+			Color(0, 0, 0, 1), //Ambient
+			Color(0, 0, 1, 1), //Diffuse
+			Color(0, 0, 0.7f, 1), //Specular
+			Color(0, 0, 0.7f, 1), //Emissive
+			Vector(-1.0f, 0.5f, -4.0f)+ Vector(300,0,0), //Position
+			2, //Range
+			0.9f //Intensity
+		};
+		LightingManager::Get()->AddPointLight(light);
+
+		light =
+		{
+			Color(0.0f, 0.0f, 0.0f, 1.0f),
+			Color(1.0f, 0.0f, 0.0f, 1.0f),
+			Color(0.6f, 0.2f, 0.0f, 1.0f),
+			Color(0.6f, 0.3f, 0.0f, 1.0f),
+			Vector(+1.0f, 0.5f, -4.0f)+ Vector(300,0,0), 
+			2.0f, 
+			0.3f
+		};
+		LightingManager::Get()->AddPointLight(light);
+	}
+
+	void LightingDemo::CreateSpotLights()
+	{
+		SpotLight light;
+		light =
+		{
+			Color(0.3f, 1.0f, 0.0f, 1.0f),
+			Color(0.7f, 1.0f, 0.0f, 1.0f),
+			Color(0.3f, 1.0f, 0.0f, 1.0f),
+			Color(0.3f, 1.0f, 0.0f, 1.0f),
+			Vector(-2.5f, 5.0f, +3.0f) + Vector(300,0,0), 
+			25.0f,
+			Vector(0, -1, 0), 
+			30.0f, 
+			45.f,
+			90.f
+		 };
+		LightingManager::Get()->AddSpotLight(light);
+
+		light =
+		{
+			Color(1.0f, 0.2f, 0.9f, 1.0f),
+			Color(1.0f, 0.2f, 0.9f, 1.0f),
+			Color(1.0f, 0.2f, 0.9f, 1.0f),
+			Color(1.0f, 0.2f, 0.9f, 1.0f),
+			Vector(0.0f, 5.0f, +3.0f)+ Vector(300,0,0), 
+			30.0f,
+			Vector(0, -1, 0), 
+			40.0f,
+			20,
+			45
+			// 20 * Math::DegToRadian,
+			// 45 * Math::DegToRadian
+		};
+		LightingManager::Get()->AddSpotLight(light);
+
+		light =
+		{
+			Color(0.0f, 0.2f, 0.9f, 1.0f),
+			Color(0.0f, 0.2f, 0.9f, 1.0f),
+			Color(0.0f, 0.2f, 0.9f, 1.0f),
+			Color(0.0f, 0.2f, 0.9f, 1.0f),
+			Vector(2.5f, 5.0f, +3.0f)+ Vector(300,0,0),
+			35.0f,
+			Vector(0, -1, 0),
+			20.0f,
+			60 * Math::DegToRadian,
+			90 * Math::DegToRadian
+		};
+		LightingManager::Get()->AddSpotLight(light);
+	}
+
 }

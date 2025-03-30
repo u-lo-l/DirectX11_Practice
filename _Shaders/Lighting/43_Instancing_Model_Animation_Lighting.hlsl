@@ -1,5 +1,5 @@
 #include "43_WVP.hlsl"
-#include "43_LightingMaterial.hlsl"
+#include "43_LightingResources.hlsl"
 #include "43_Lighting.hlsl"
 #include "../00_Animation_Structure.hlsl"
 
@@ -82,7 +82,7 @@ float4 PSMain(VertexOutput input) : SV_Target
     float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv);
 
     float4 GlobalAmbient = float4(0.01f,0.01f,0.01f,0.01f);
-    PhongLighting MaterialBaseColor = {A,D,S};
+    ColorDesc MaterialBaseColor = {A,D,S};
     PhongLightingCoefficent PhongCoeff = {1,1,1};
     float4 Phong = ComputePhongLight(
         LightDirection_PS,

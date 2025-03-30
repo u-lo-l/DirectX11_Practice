@@ -1,6 +1,6 @@
 #include "43_WVP.hlsl"
-#include "43_LightingMaterial.hlsl"
-#include "43_Lighting.hlsl"
+// #include "43_LightingResources.hlsl"
+#include "43_AreaLigthing.Fucntions.hlsl"
 
 const static int g_BoneCountToFindWeight = 4;
 const static int g_MipMapLevel = 0;
@@ -67,29 +67,35 @@ float4 PSMain(VertexOutput input) : SV_Target
     float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
     input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
 
-    float4 A = float4(1,1,1,1);
+    float4 A = float4(0.1f,0.1f,0.1f,1.f);
     float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv);
     float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv);
 
     float4 GlobalAmbient = float4(0.01f,0.01f,0.01f,0.01f);
-    PhongLighting MaterialBaseColor = {A,D,S};
-    PhongLightingCoefficent PhongCoeff = {1,1,1};
-    float4 Phong = ComputePhongLight(
+
+    ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
         LightDirection_PS,
-        ViewInv_PS._41_42_43,
-        input.Normal,
         input.WorldPosition,
-        GlobalAmbient,
-        MaterialBaseColor,
-        PhongCoeff
+        ViewInv_PS._41_42_43,
+        input.Normal
     );
-    float4 Rim = ComputeRimLight(
-        LightDirection_PS,
-        ViewInv_PS._41_42_43,
-        input.Normal,
+    ColorDesc PointLightColor = ApplyPointLights(
         input.WorldPosition,
-        0.3f
+        ViewInv_PS._41_42_43,
+        input.Normal
+    );
+    ColorDesc SpotLightColor = ApplySpotLights(
+        input.WorldPosition,
+        ViewInv_PS._41_42_43,
+        input.Normal
     );
 
-    return Phong + Rim;
+    ColorDesc FinalLightColor;
+    FinalLightColor.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    FinalLightColor.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    FinalLightColor.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    FinalLightColor.Ambient  *= A;
+    FinalLightColor.Diffuse  *= D;
+    FinalLightColor.Specular *= S;
+    return FinalLightColor.Ambient + FinalLightColor.Diffuse + FinalLightColor.Specular;
 }

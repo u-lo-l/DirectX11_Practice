@@ -15,6 +15,7 @@ enum ShaderSlot : uint32_t
 	PS_Material = 5,
 	PS_LightDirection = 6,
 	PS_ViewInverse = 7,
+	PS_Lights = 8,
 
 	GS_World = 9,
 	GS_ViewProjection = 10	

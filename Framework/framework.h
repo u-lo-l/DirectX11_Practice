@@ -82,6 +82,8 @@ using namespace std;
 
 	#include "ParticleSystem/ParticleSystem.h"
 
+	#include "Ligthing/LightingManager.h"
+
 #include "Objects/Billboard/Billboard.h"
 #include "Objects/CrossQuad/CrossQuad.h"
 
