@@ -2,6 +2,7 @@
 
 #include "Environment/Weather/Precipitation.h"
 #include "Systems/IExecutable.h"
+#include "Renders/Shader/HlslTextureShader.h"
 
 namespace sdt
 {
@@ -19,7 +20,9 @@ namespace sdt
 		void Destroy() override;
 
 		void Tick() override;
+		void PreRender() override;
 		void Render() override;
+		void PostRender() override;
 		
 	private:
 		void LoadSky();
@@ -43,5 +46,10 @@ namespace sdt
 		Precipitation * Rain = nullptr;
 		
 		ParticleSystem * Particle_Fire = nullptr;
+
+		RenderTarget * RT = nullptr;
+		DepthStencil * DS = nullptr;
+
+		HlslTextureShader * TextureShader = nullptr;
 	};
 }

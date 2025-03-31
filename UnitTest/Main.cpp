@@ -26,10 +26,22 @@ void Main::Tick()
 		executable->Tick();
 }
 
+void Main::PreRender()
+{
+	for (IExecutable* executable : Executables)
+		executable->PreRender();
+}
+
 void Main::Render()
 {
 	for (IExecutable* executable : Executables)
 		executable->Render();
+}
+
+void Main::PostRender()
+{
+	for (IExecutable* executable : Executables)
+		executable->PostRender();
 }
 
 void Main::Push(IExecutable* Executable)

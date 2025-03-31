@@ -432,6 +432,7 @@
       <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
+    <ClCompile Include="Renders\Shader\HlslTextureShader.cpp" />
     <ClCompile Include="Renders\Shader\VertexLayout.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -528,6 +529,8 @@
     <ClCompile Include="Utilites\Path.cpp" />
     <ClCompile Include="Utilites\String.cpp" />
     <ClCompile Include="Viewer\Camera.cpp" />
+    <ClCompile Include="Viewer\DepthStencil.cpp" />
+    <ClCompile Include="Viewer\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment\SkySphere.h" />
@@ -572,6 +575,7 @@
     <ClInclude Include="Renders\Material.h" />
     <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
     <ClInclude Include="Renders\Shader\HlslShader.h" />
+    <ClInclude Include="Renders\Shader\HlslTextureShader.h" />
     <ClInclude Include="Renders\Shader\VertexLayout.h" />
     <ClInclude Include="Renders\Texture.h" />
     <ClInclude Include="Renders\TextureArray.h" />
@@ -590,6 +594,8 @@
     <ClInclude Include="Utilites\ShaderSlots.h" />
     <ClInclude Include="Utilites\String.h" />
     <ClInclude Include="Viewer\Camera.h" />
+    <ClInclude Include="Viewer\DepthStencil.h" />
+    <ClInclude Include="Viewer\RenderTarget.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

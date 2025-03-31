@@ -9,7 +9,9 @@ public:
 	void Destroy() override;
 
 	void Tick() override;
+	void PreRender() override;
 	void Render() override;
+	void PostRender() override;
 
 private:
 	void Push(IExecutable* Executable);

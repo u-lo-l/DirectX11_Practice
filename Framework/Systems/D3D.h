@@ -67,11 +67,11 @@ private:
 	/// </remarks>
 	void CreateRTV();
 	void CreateDSV();
-	void SetRenderTargets() const;
 public:
 	ID3D11Device* GetDevice() const { return Device; }
 	ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; }
 
+	void SetRenderTarget() const;
 	void ClearRenderTargetView( const Color & InColor) const;
 	void ClearDepthStencilView() const;
 	void Present() const;

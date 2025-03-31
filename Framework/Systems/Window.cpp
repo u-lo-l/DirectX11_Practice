@@ -167,18 +167,29 @@ void Window::MainRender()
 {
 	Gui::Tick();
 	sdt::SystemTimer::Get()->Tick();	// DeltaTime 계산
-	sdt::Mouse::Get()->Tick();	// Mouse변화량 계산
-	Context::Get()->Tick();		//
+	sdt::Mouse::Get()->Tick();			// Mouse변화량 계산
+	Context::Get()->Tick();				//
 	LightingManager::Get()->Tick();
-	Main->Tick();				// Main에 Push된 IExecutable들 실행
+	Main->Tick();						// Main에 Push된 IExecutable들 실행
 
+	{
+		Main->PreRender();	
+	}
+	
 	//말은 클리어지만 배경 색 칠하는거다.
+	// D3D::Get()->SetRenderTarget();
 	D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
 	D3D::Get()->ClearDepthStencilView();
 	
 	Context::Get()->Render();
 	LightingManager::Get()->Render();
 	Main->Render();
+	
+	{
+		Main->PostRender();	
+	}
 	Gui::Get()->Render();
+
+	
 	D3D::Get()->Present();
 }

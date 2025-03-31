@@ -64,7 +64,7 @@ void D3D::ResizeScreen( float InWidth, float InHeight )
 
 	CreateRTV();
 	CreateDSV();
-	SetRenderTargets();
+	SetRenderTarget();
 }
 
 D3D::D3D()
@@ -72,7 +72,7 @@ D3D::D3D()
 	CreateDeviceAndContext();
 	CreateRTV();
 	CreateDSV();
-	SetRenderTargets();
+	SetRenderTarget();
 	// DeviceContext->OMSetBlendState( nullptr, nullptr, 0xFFFFFFFF );
 }
 
@@ -176,7 +176,7 @@ void D3D::CreateDSV()
 	CHECK(Device->CreateDepthStencilView(DSVTexture, &DepthStencilViewDesc, &DepthStencilView) >= 0);
 }
 
-void D3D::SetRenderTargets() const
+void D3D::SetRenderTarget() const
 {
 	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
 }

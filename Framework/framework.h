@@ -56,6 +56,8 @@ using namespace std;
 	#include "Systems/Mouse.h"
 
 	#include "Viewer/Camera.h"
+	#include "Viewer/DepthStencil.h"
+	#include "Viewer/RenderTarget.h"
 
 	#include "Renders/Shader/VertexLayout.h"
 	#include "Renders/Shader/HlslShader.h"

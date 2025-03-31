@@ -5,10 +5,19 @@ namespace sdt
 {
 	void LightingDemo::Initialize()
 	{
+		// RT = new RenderTarget(0,0);
+		// DS = new DepthStencil(0,0, false);
+		// T7extureShader = new HlslTextureShader(*RT);
+		// TextureShader->GetTransform()->SetScale({300, 200, 1});
+		// TextureShader->GetTransform()->SetPosition({150, 100, 0});
+
+		// TextureShader->GetTransform()->SetScale({1, 1, 1});
+		// TextureShader->GetTransform()->SetPosition({0, 0, 0});
+		
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 150, 150, 20 );
 		MainCamera->SetRotation( 225, 0, 180);
-
+		
 		// Particle_Fire = new ParticleSystem(L"Fire");
 		// Particle_Fire->SetScale(35.f);
 		// LoadWeather();
@@ -25,6 +34,16 @@ namespace sdt
 		{
 			SAFE_DELETE(ModelAndScale.Object);
 		}
+		for (ModelInstanceData ModelAndScale : ModelInstances_ForLighting)
+		{
+			SAFE_DELETE(ModelAndScale.Object);
+		}
+		SAFE_DELETE(Grasses);
+		SAFE_DELETE(Sky);
+		SAFE_DELETE(Rain);
+		SAFE_DELETE(Particle_Fire);
+		SAFE_DELETE(RT);
+		SAFE_DELETE(DS);
 	}
 
 	void LightingDemo::Tick()
@@ -46,6 +65,12 @@ namespace sdt
 			Particle_Fire->Add({0,5,0});
 			Particle_Fire->Tick();
 		}
+		// if (!!RT && Keyboard::Get()->IsPressed(VK_SPACE))
+		// {
+		// 	RT->SaveTexture(L"TEST");
+		// }
+		// if (!!TextureShader)
+		// 	TextureShader->Tick();
 	}
 
 	void LightingDemo::Render()
@@ -64,6 +89,33 @@ namespace sdt
 			Rain->Render();
 		if (!!Particle_Fire)
 			Particle_Fire->Render();
+	}
+
+	void LightingDemo::PostRender()
+	{
+		if (!!TextureShader)
+			TextureShader->Render();
+	}
+
+	void LightingDemo::PreRender()
+	{
+		// RT->SetRenderTarget(DS);
+		// if (!!Sky)
+		// 	Sky->Render();
+		// if (!!Plane)
+		// 	Plane->Render();
+		// for (const ModelInstanceData & P : ModelInstances)
+		// 	P.Object->Render();
+		// for (const ModelInstanceData & P : ModelInstances_ForLighting)
+		// 	P.Object->Render();
+		// if (!!Grasses)
+		// 	Grasses->Render();
+		// if (!!Rain)
+		// 	Rain->Render();
+		// if (!!Particle_Fire)
+		// 	Particle_Fire->Render();
+		// RT->ClearRenderTarget();
+		// DS->ClearDepthStencil();
 	}
 
 	void LightingDemo::LoadWeather()
