@@ -1,6 +1,6 @@
 #include "43_WVP.hlsl"
-#include "43_LightingResources.hlsl"
-#include "43_Lighting.hlsl"
+// #include "43_LightingResources.hlsl"
+#include "43_AreaLigthing.Fucntions.hlsl"
 #include "../00_Animation_Structure.hlsl"
 
 const static int g_BoneCountToFindWeight = 4;
@@ -42,9 +42,11 @@ struct VertexInput
 
 struct VertexOutput
 {
-    float4 Position              : SV_Position;
-    float2 Uv                    : UV;
-    float3 Normal                : NORMAL;
+    float4 Position      : SV_Position;
+    float3 WorldPosition : WPOSITION;
+    float2 Uv            : UV;
+    float3 Normal        : NORMAL;
+    float3 Tangent       : TANGENT;
 };
 
 matrix GetClipTransformMatrix(int BoneIndex, int TargetFrame, int ClipIndex);
@@ -74,33 +76,40 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
-    input.Normal = NormalMapping(input.Uv, input.Normal, input.Normal, NomalMapTexel.xyz);
+    // float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
+    // input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
 
-    float4 A = float4(1,1,1,1);
-    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv);
-    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv);
+    float4 A = Ambient;
+    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
+    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
 
-    float4 GlobalAmbient = float4(0.01f,0.01f,0.01f,0.01f);
-    ColorDesc MaterialBaseColor = {A,D,S};
-    PhongLightingCoefficent PhongCoeff = {1,1,1};
-    float4 Phong = ComputePhongLight(
+    float4 GlobalAmbient = float4(0.2f,0.2f,0.2f,1.f);
+
+    ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
         LightDirection_PS,
+        input.WorldPosition,
         ViewInv_PS._41_42_43,
-        input.Normal,
-        input.Position.xyz,
-        GlobalAmbient,
-        MaterialBaseColor,
-        PhongCoeff
+        input.Normal
     );
-    float4 Rim = ComputeRimLight(
-        LightDirection_PS,
+    ColorDesc PointLightColor = ApplyPointLights(
+        input.WorldPosition,
         ViewInv_PS._41_42_43,
-        input.Normal,
-        input.Position.xyz,
-        0.05f
+        input.Normal
     );
-    return Phong + Rim;
+    ColorDesc SpotLightColor = ApplySpotLights(
+        input.WorldPosition,
+        ViewInv_PS._41_42_43,
+        input.Normal
+    );
+
+    ColorDesc OutPut;
+    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    OutPut.Diffuse  = DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    OutPut.Specular = DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    OutPut.Ambient  *= A;
+    OutPut.Diffuse  *= D;
+    OutPut.Specular *= S;
+    return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
 }
 
 /*======================================================================================================*/

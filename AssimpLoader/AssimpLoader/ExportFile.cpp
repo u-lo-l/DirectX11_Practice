@@ -8,8 +8,10 @@ namespace sdt
 	// const string ShaderForAnim = "23_AnimationTwinning.fx";
 	// const string ShaderForAnim = "38_Instancing_Model_Animation.fx";
 	// const string ShaderForNonAnim = "38_Instancing_Model.fx";
-	const string ShaderForAnim = "38_Instancing_Model_Animation.hlsl";
-	const string ShaderForNonAnim = "38_Instancing_Model.hlsl";
+	// const string ShaderForAnim = "38_Instancing_Model_Animation.hlsl";
+	// const string ShaderForNonAnim = "38_Instancing_Model.hlsl";
+	const string ShaderForAnim = "43_Instancing_Model_Animation_Lighting.hlsl";
+	const string ShaderForNonAnim = "43_Instancing_Model_Lighting.hlsl";
 	void ExportFile::Initialize()
 	{
 		// MakeModel(L"Adam", {});

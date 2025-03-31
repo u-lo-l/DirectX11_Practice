@@ -451,6 +451,9 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	{
 		PreCompiledShaderName = String::ToString(ShaderFileName);
 		PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 5, "");
+		size_t DirectoryIndex = PreCompiledShaderName.rfind("\\");
+		if (DirectoryIndex != string::npos)
+			PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 1, "\\PreCompiled");	
 		PreCompiledShaderName += "." + GetShaderTarget(Type) + ".cso";
 		std::ifstream file(PreCompiledShaderName, std::ios::binary | std::ios::ate);
 		if (file.is_open() == true)

@@ -65,40 +65,37 @@ VertexOutput VSMain(VertexInput input)
 float4 PSMain(VertexOutput input) : SV_Target
 {
     float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
-    input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+    // input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+    return NomalMapTexel;
+    // float4 A = Ambient;
+    // float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
+    // float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
 
-    float4 A = float4(0.1f,0.1f,0.1f,1.f);
-    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv);
-    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv);
+    // float4 GlobalAmbient = float4(0.1f,0.1f,0.1f,1.f);
 
-    float4 GlobalAmbient = float4(0.01f,0.01f,0.01f,0.01f);
+    // ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
+    //     LightDirection_PS,
+    //     input.WorldPosition,
+    //     ViewInv_PS._41_42_43,
+    //     input.Normal
+    // );
+    // ColorDesc PointLightColor = ApplyPointLights(
+    //     input.WorldPosition,
+    //     ViewInv_PS._41_42_43,
+    //     input.Normal
+    // );
+    // ColorDesc SpotLightColor = ApplySpotLights(
+    //     input.WorldPosition,
+    //     ViewInv_PS._41_42_43,
+    //     input.Normal
+    // );
 
-    ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
-        LightDirection_PS,
-        input.WorldPosition,
-        ViewInv_PS._41_42_43,
-        input.Normal
-    );
-    ColorDesc PointLightColor = ApplyPointLights(
-        input.WorldPosition,
-        ViewInv_PS._41_42_43,
-        input.Normal
-    );
-    ColorDesc SpotLightColor = ApplySpotLights(
-        input.WorldPosition,
-        ViewInv_PS._41_42_43,
-        input.Normal
-    );
-
-    ColorDesc OutPut;
-    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
-    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
-    OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
-    OutPut.Ambient  *= A;
-    OutPut.Diffuse  *= D;
-    OutPut.Specular *= S;
-    return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
-    return Ambient;
-    return Specular;
-    return float4(MaterialPadding[0], MaterialPadding[0], MaterialPadding[0], 1.f);
+    // ColorDesc OutPut;
+    // OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    // OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    // OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    // OutPut.Ambient  *= A;
+    // OutPut.Diffuse  *= D;
+    // OutPut.Specular *= S;
+    // return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
 }
