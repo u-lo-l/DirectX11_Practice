@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "framework.h"
+
+#include <fstream>
+
 #include "Utilites/String.h"
 
 template <class T>
@@ -440,33 +443,64 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
 
+	string PreCompiledShaderName = "";
+	bool bUsePrecompiledShader = false;
+	size_t ExtensionIndex = ShaderFileName.rfind(L".hlsl");
+	HRESULT hr = -1;
+	if (ExtensionIndex != string::npos)
+	{
+		PreCompiledShaderName = String::ToString(ShaderFileName);
+		PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 5, "");
+		PreCompiledShaderName += "." + GetShaderTarget(Type) + ".cso";
+		std::ifstream file(PreCompiledShaderName, std::ios::binary | std::ios::ate);
+		if (file.is_open() == true)
+		{
+			std::streamsize FileSize = file.tellg();
+			file.seekg(0, std::ios::beg);
+
+			hr = D3DCreateBlob(FileSize, &ShaderBlob);
+			file.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
+			file.close();
+			if (SUCCEEDED(hr))
+			{
+				bUsePrecompiledShader = true;
+			}
+		}
+	}
+	
 	// https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/d3dcompile-constants
 	int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
 	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
 	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
 	Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
 	// Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
-	
+
 	constexpr int EffectFlag = 0; // Effect FrameWork 쓸 떄만 씀.
-	
-	HRESULT hr = D3DCompileFromFile(
-		ShaderFileName.c_str(),
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		GetEntryPoint(Type).c_str(),
-		GetShaderTarget(Type).c_str(),
-		Flag,
-		EffectFlag,
-		&ShaderBlob,
-		&ErrorBlob
-	);
+
+	if (bUsePrecompiledShader == false)
+	{
+		hr = D3DCompileFromFile(
+			ShaderFileName.c_str(),
+			nullptr,
+			D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			GetEntryPoint(Type).c_str(),
+			GetShaderTarget(Type).c_str(),
+			Flag,
+			EffectFlag,
+			&ShaderBlob,
+			&ErrorBlob
+		);{}
+	}
 	if (FAILED(hr) && ErrorBlob != nullptr)
 	{
 		const char * const ErrMsg = static_cast<char *>(ErrorBlob->GetBufferPointer());
+		string ShaderFile = (bUsePrecompiledShader == true) ? PreCompiledShaderName : String::ToString(ShaderFileName);
+		SAFE_RELEASE(ErrorBlob);
 		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
 	}
 	if (FAILED(hr) && ErrorBlob == nullptr)
 	{
+		SAFE_RELEASE(ErrorBlob);
 		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
 	}
 	SAFE_RELEASE(ErrorBlob);
@@ -475,6 +509,12 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	HRESULT Hr = 0;
 	const void * BufferAddr = ShaderBlob->GetBufferPointer();
 	const UINT BufferSize = ShaderBlob->GetBufferSize();
+	if (bUsePrecompiledShader == false && PreCompiledShaderName.length() > 0)
+	{
+		std::ofstream outFile(PreCompiledShaderName, std::ios::binary);
+		outFile.write((char*)ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize());
+		outFile.close();
+	}
 	if (Type == ShaderType::VertexShader)
 	{
 		Hr = Device->CreateVertexShader(BufferAddr, BufferSize, nullptr, &VertexShader);

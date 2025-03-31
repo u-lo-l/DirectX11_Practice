@@ -3,7 +3,7 @@
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1001_Diffuse.png" ],
-      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "Emissive" : "0.200000,2.000000,0.000000,0.000000",
       "NormalMap" : [ "../_Models/Adam/Ch08_1001_Normal.png" ],
       "ShaderName" : "38_Instancing_Model_Animation.hlsl",
       "Specular" : "0.500000,0.500000,0.500000,1.000000",
@@ -13,7 +13,7 @@
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1002_Diffuse.png" ],
-      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "Emissive" : "0.200000,2.000000,0.000000,0.000000",
       "NormalMap" : [ "../_Models/Adam/Ch08_1002_Normal.png" ],
       "ShaderName" : "38_Instancing_Model_Animation.hlsl",
       "Specular" : "0.500000,0.500000,0.500000,1.000000",
@@ -23,7 +23,7 @@
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1003_Diffuse.png" ],
-      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "Emissive" : "0.200000,2.000000,0.000000,0.000000",
       "ShaderName" : "38_Instancing_Model_Animation.hlsl",
       "Specular" : "0.000000,0.000000,0.000000,1.000000"
    }

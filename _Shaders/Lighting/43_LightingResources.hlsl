@@ -18,9 +18,9 @@ cbuffer CB_Material : register(Const_PS_Material)
 	float4 Ambient;
 	float4 Diffuse;
 	float4 Specular;
-	float2 MaterialPadding;
 	float  RimWidth;
 	float  RimPower;
+	float2 MaterialPadding;
 }
 
 struct ColorDesc

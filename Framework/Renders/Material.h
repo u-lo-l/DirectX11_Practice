@@ -46,7 +46,9 @@ private:
 		Color Ambient {0, 0, 0, 1};
 		Color Diffuse {1, 1, 1, 1};
 		Color Specular {0, 0, 0, 1};
-		Color Emissive {0, 0, 0, 1};
+		float RimWidth = 0.1f;
+		float RimPower = 1.f;
+		float Padding[2] = {0, 0};
 	};
 	
 private:
@@ -65,21 +67,18 @@ template<class TVertexType>
 Material<TVertexType>::Material()
  : Shader(nullptr), ColorData_CBuffer(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
-	CreateBuffer();
 }
 
 template<class TVertexType>
 Material<TVertexType>::Material(HlslShader<VertexType> * InDrawer )
  : Shader(InDrawer), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	CreateBuffer();
 }
 
 template<class TVertexType>
 Material<TVertexType>::Material( const wstring & InShaderFileName )
  : Shader(new HlslShader<VertexType>(InShaderFileName)), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
 {
-	CreateBuffer();
 }
 
 template<class TVertexType>
@@ -114,13 +113,14 @@ void Material<TVertexType>::CreateBuffer()
 {
 	if (!!ColorData_CBuffer)
 		SAFE_DELETE(ColorData_CBuffer);
+	
 	ColorData_CBuffer = new ConstantBuffer(
 		ShaderType::PixelShader,
 		PS_Material,
 		&ColorData,
 		"Material.ColorData",
 		sizeof(typename ThisClass::Colors),
-		false
+		true
 	);
 }
 
@@ -140,6 +140,7 @@ void Material<TVertexType>::SetShader( HlslShader<VertexType> * InShader )
 	Shader->CreateSamplerState_Linear();
 	Shader->CreateSamplerState_Anisotropic();
 	Shader->CreateBlendState_NoBlend();
+	CreateBuffer();
 }
 
 template<class TVertexType>
@@ -169,7 +170,8 @@ void Material<TVertexType>::SetSpecular(const Color& InSpecular)
 template <class TVertexType>
 void Material<TVertexType>::SetEmissive(const Color& InEmissive)
 {
-	ColorData.Emissive = InEmissive;
+	ColorData.RimWidth = InEmissive[0];
+	ColorData.RimPower = InEmissive[1] + 1.f;
 }
 
 template<class TVertexType>

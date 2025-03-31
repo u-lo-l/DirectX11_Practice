@@ -3,7 +3,7 @@
       "Ambient" : "0.000000,0.000000,0.000000,0.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Textures/Box_Diffuse.png" ],
-      "Emissive" : "0.800000,0.800000,0.800000,1.000000",
+      "Emissive" : "0.100000,2.000000,0.800000,1.000000",
       "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
       "Specular" : "0.800000,0.800000,0.800000,1.000000",
    },
@@ -11,7 +11,7 @@
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.215861,0.215861,0.215861,1.000000",
       "DiffuseMap" : [ "../_Textures/Box_Diffuse.png" ],
-      "Emissive" : "0.000000,0.000000,0.000000,1.000000",
+      "Emissive" : "0.100000,2.000000,0.000000,1.000000",
       "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
       "Specular" : "0.200000,0.200000,0.200000,1.000000"
    }

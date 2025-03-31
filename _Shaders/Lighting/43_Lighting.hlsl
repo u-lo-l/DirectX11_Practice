@@ -29,9 +29,9 @@ ColorDesc ComputePhongLight (
     );
 }
 // https://sgvr.kaist.ac.kr/~sungeui/render/rendering_book_1.2ed.pdf
-// Ambient :  I_ra = k_a * I_ia
-// Diffuse : I_rd = k_d * I_i * cosθ = k_d * I_i * (N·L) 
-// Specular : I_rs =k_s * I_s(cos φ)^ns = k_s*I_s(V·R)^ns
+// Ambient  : I_ra = k_a * I_ia
+// Diffuse  : I_rd = k_d * I_i * cosθ = k_d * I_i * (N·L) 
+// Specular : I_rs = k_s * I_s * (cos φ)^ns = k_s * I_s * {(V·R)^ns}
 ColorDesc ComputePhongLight(
     in float3 LightDirection,
     in float3 ViewPosition,
@@ -44,7 +44,7 @@ ColorDesc ComputePhongLight(
 {
     ColorDesc Phong;
     float3 L = normalize(-LightDirection);
-    float3 N = saturate(normalize(Normal));
+    float3 N = normalize(Normal);
     Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
 
     float NdotL = saturate(dot(L, N));
@@ -63,8 +63,7 @@ float4 ComputeRimLight(
     float3 LightDirection,
     float3 ViewPosition,
     float3 Normal,
-    float3 WorldPosition,
-    float RimWidth
+    float3 WorldPosition
 )
 {
     float3 L = normalize(LightDirection);
@@ -73,9 +72,12 @@ float4 ComputeRimLight(
 
     float NdotV = saturate(dot(N, V));
     float LdotV = saturate(dot(L, V));
-    float Rim = smoothstep(1 - RimWidth, 1.0f, 1.0f - NdotV);
-    Rim = pow(Rim, 2);
+    float a = saturate(1 - RimWidth);
+    float b = 1.f;
+    float c = saturate(1 - NdotV);
+    float Rim = smoothstep(a, b, c);
     Rim = Rim * LdotV;
+    Rim = pow(Rim, RimPower);
     return float4(Rim, Rim, Rim, 1);
 }
 
@@ -111,7 +113,7 @@ float AttenuationFactor(float Distance)
 const static float Falloff = 1.;
 float SpotLightFactor(float Theta, float Phi, float NdotV)
 {
-    // [flatten] if (cos(Theta/2) < NdotV) return 0;
+    [flatten] if (cos(Theta/2) < NdotV) return 0;
     [flatten] if (NdotV < cos(Phi/2))   return 1;
 
     float Factor = (NdotV - cos(Phi/2)) / (cos(Theta) - cos(Phi));

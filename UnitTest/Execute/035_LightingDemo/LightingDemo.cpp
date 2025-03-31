@@ -112,7 +112,7 @@ namespace sdt
 			constexpr UINT InstanceCount = 5;
 			constexpr float Stride = 50.f;
 			SetModelsPosition_Line(ModelInstances_ForLighting, InstanceCount, Stride, {300,5,0});
-			// CreatePointLights();
+			CreatePointLights();
 			CreateSpotLights();
 		}
 	}

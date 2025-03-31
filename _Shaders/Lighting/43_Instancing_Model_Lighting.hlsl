@@ -29,16 +29,16 @@ struct VertexInput
     matrix Transform : INSTANCE;
 
     // InstanceID : GPU가 자동으로 생성하며, 쉐이더로 전달됩니다. C++ 코드에서 직접 설정할 필요가 없음
-    uint InstanceID              : SV_InstanceID;
+    uint InstanceID  : SV_InstanceID;
 };
 
 struct VertexOutput
 {
-    float4 Position              : SV_Position;
-    float3 WorldPosition         : Position1;
-    float2 Uv                    : UV;
-    float3 Normal                : NORMAL;
-    float3 Tangent   : TANGENT;
+    float4 Position      : SV_Position;
+    float3 WorldPosition : WPOSITION;
+    float2 Uv            : UV;
+    float3 Normal        : NORMAL;
+    float3 Tangent       : TANGENT;
 };
 
 /*======================================================================================================*/
@@ -90,12 +90,15 @@ float4 PSMain(VertexOutput input) : SV_Target
         input.Normal
     );
 
-    ColorDesc FinalLightColor;
-    FinalLightColor.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
-    FinalLightColor.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
-    FinalLightColor.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
-    FinalLightColor.Ambient  *= A;
-    FinalLightColor.Diffuse  *= D;
-    FinalLightColor.Specular *= S;
-    return FinalLightColor.Ambient + FinalLightColor.Diffuse + FinalLightColor.Specular;
+    ColorDesc OutPut;
+    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    OutPut.Ambient  *= A;
+    OutPut.Diffuse  *= D;
+    OutPut.Specular *= S;
+    return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
+    return Ambient;
+    return Specular;
+    return float4(MaterialPadding[0], MaterialPadding[0], MaterialPadding[0], 1.f);
 }

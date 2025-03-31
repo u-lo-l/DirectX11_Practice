@@ -15,8 +15,7 @@ ColorDesc ApplyGlobalDirectionalLights(
         LightDirection,
         ViewPosition,
         Normal,
-        WorldPosition,
-        0.3f
+        WorldPosition
     );
     ColorDesc LightColor = ComputePhongLight(
         LightDirection,
@@ -25,8 +24,8 @@ ColorDesc ApplyGlobalDirectionalLights(
         WorldPosition,
         SunLightColor
     );
-    LightColor.Ambient += Rim;
-    LightColor.Diffuse += Rim;
+    LightColor.Ambient  += Rim;
+    LightColor.Diffuse  += Rim;
     LightColor.Specular += Rim;
     return LightColor;
 };
@@ -55,8 +54,7 @@ ColorDesc ApplyPointLights(
             LightDir,
             ViewPosition,
             Normal,
-            WorldPosition,
-            0.3f
+            WorldPosition
         );
         ColorDesc Phong = ComputePhongLight(
             WorldPosition - PointLights[i].Position,
@@ -66,9 +64,12 @@ ColorDesc ApplyPointLights(
             PointLights[i].Color
         );
         float Atten = AttenuationFactor(length(WorldPosition- PointLights[i].Position));
-        LightColor.Ambient += Phong.Ambient * Atten + Rim;
-        LightColor.Diffuse += Phong.Diffuse * Atten + Rim;
-        LightColor.Specular += Phong.Specular * Atten + Rim;
+        LightColor.Ambient  += Phong.Ambient  * Atten;
+        LightColor.Diffuse  += Phong.Diffuse  * Atten;
+        LightColor.Specular += Phong.Specular * Atten;
+        // LightColor.Ambient  += Rim;
+        // LightColor.Diffuse  += Rim;
+        // LightColor.Specular += Rim;
     }
 
     return LightColor;
@@ -99,8 +100,7 @@ ColorDesc ApplySpotLights(
             LightDir,
             ViewPosition,
             Normal,
-            WorldPosition,
-            0.3f
+            WorldPosition
         );
         ColorDesc Phong = ComputePhongLight(
             WorldPosition - SpotLights[i].Position,
@@ -111,11 +111,13 @@ ColorDesc ApplySpotLights(
         );
         float Atten = AttenuationFactor(length(WorldPosition- SpotLights[i].Position));
         // float Spot = SpotLightFactor(SpotLights[i].Theta, SpotLights[i].Phi, dot(Normal,V));
-        // float Atten = 1.f;
         float Spot = 1.f;
-        LightColor.Ambient += Phong.Ambient * Atten * Spot + Rim;
-        LightColor.Diffuse += Phong.Diffuse * Atten * Spot + Rim;
-        LightColor.Specular += Phong.Specular * Atten * Spot + Rim;
+        LightColor.Ambient  += Phong.Ambient  * Atten * Spot;
+        LightColor.Diffuse  += Phong.Diffuse  * Atten * Spot;
+        LightColor.Specular += Phong.Specular * Atten * Spot;
+        // LightColor.Ambient  += Rim;
+        // LightColor.Diffuse  += Rim;
+        // LightColor.Specular += Rim;
     }
 
     return LightColor;
