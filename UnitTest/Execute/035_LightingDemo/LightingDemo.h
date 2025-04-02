@@ -2,7 +2,7 @@
 
 #include "Environment/Weather/Precipitation.h"
 #include "Systems/IExecutable.h"
-#include "Renders/Shader/HlslTextureShader.h"
+#include "Renders/Shader/Hlsl2DTextureShader.h"
 
 namespace sdt
 {
@@ -50,6 +50,8 @@ namespace sdt
 		RenderTarget * RT = nullptr;
 		DepthStencil * DS = nullptr;
 
-		HlslTextureShader * TextureShader = nullptr;
+		Hlsl2DTextureShader * TextureShader = nullptr;
+
+		PostEffect * PEffect = nullptr;
 	};
 }

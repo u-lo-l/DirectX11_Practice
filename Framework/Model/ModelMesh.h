@@ -54,6 +54,8 @@ protected:
 	struct ViewInvDesc
 	{
 		Matrix ViewInv;
+		Vector2D Tiling = {1,1};
+		Vector2D Padding;
 	};
 	ViewInvDesc PS_ViewInv;
 	Transform * WorldTF = nullptr;

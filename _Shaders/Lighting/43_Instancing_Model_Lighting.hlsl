@@ -1,5 +1,4 @@
 #include "43_WVP.hlsl"
-// #include "43_LightingResources.hlsl"
 #include "43_AreaLigthing.Fucntions.hlsl"
 
 const static int g_BoneCountToFindWeight = 4;
@@ -64,38 +63,40 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
+    input.Uv.x *= Tiling.x;
+    input.Uv.y *= Tiling.y;
+    // float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
     // input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
-    return NomalMapTexel;
-    // float4 A = Ambient;
-    // float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
-    // float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
+    // return NomalMapTexel;
+    float4 A = Ambient;
+    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
+    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
 
-    // float4 GlobalAmbient = float4(0.1f,0.1f,0.1f,1.f);
+    float4 GlobalAmbient = float4(0.1f,0.1f,0.1f,1.f);
 
-    // ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
-    //     LightDirection_PS,
-    //     input.WorldPosition,
-    //     ViewInv_PS._41_42_43,
-    //     input.Normal
-    // );
-    // ColorDesc PointLightColor = ApplyPointLights(
-    //     input.WorldPosition,
-    //     ViewInv_PS._41_42_43,
-    //     input.Normal
-    // );
-    // ColorDesc SpotLightColor = ApplySpotLights(
-    //     input.WorldPosition,
-    //     ViewInv_PS._41_42_43,
-    //     input.Normal
-    // );
+    ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
+        LightDirection_PS,
+        input.WorldPosition,
+        ViewInv_PS._41_42_43,
+        input.Normal
+    );
+    ColorDesc PointLightColor = ApplyPointLights(
+        input.WorldPosition,
+        ViewInv_PS._41_42_43,
+        input.Normal
+    );
+    ColorDesc SpotLightColor = ApplySpotLights(
+        input.WorldPosition,
+        ViewInv_PS._41_42_43,
+        input.Normal
+    );
 
-    // ColorDesc OutPut;
-    // OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
-    // OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
-    // OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
-    // OutPut.Ambient  *= A;
-    // OutPut.Diffuse  *= D;
-    // OutPut.Specular *= S;
-    // return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
+    ColorDesc OutPut;
+    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    OutPut.Ambient  *= A;
+    OutPut.Diffuse  *= D;
+    OutPut.Specular *= S;
+    return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
 }

@@ -86,8 +86,9 @@ using namespace std;
 
 	#include "Ligthing/LightingManager.h"
 
-#include "Objects/Billboard/Billboard.h"
-#include "Objects/CrossQuad/CrossQuad.h"
+	#include "Objects/Billboard/Billboard.h"
+	#include "Objects/CrossQuad/CrossQuad.h"
+	#include "Objects/PostEffect/PostEffect.h"
 
 #pragma endregion
 

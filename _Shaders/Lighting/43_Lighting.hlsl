@@ -66,6 +66,9 @@ float4 ComputeRimLight(
     float3 WorldPosition
 )
 {
+    [flatten]
+    if (RimWidth == 0)
+        return float4(0,0,0,1);
     float3 L = normalize(LightDirection);
     float3 N = normalize(Normal);
     float3 V = normalize(ViewPosition - WorldPosition);
@@ -77,7 +80,7 @@ float4 ComputeRimLight(
     float c = saturate(1 - NdotV);
     float Rim = smoothstep(a, b, c);
     Rim = Rim * LdotV;
-    Rim = pow(Rim, RimPower);
+    // Rim = pow(Rim, RimPower);
     return float4(Rim, Rim, Rim, 1);
 }
 

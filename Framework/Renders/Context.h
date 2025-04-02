@@ -8,7 +8,7 @@ private:
 	using ThisClass = Context;
 
 	Matrix Projection;
-	Vector LightDirection = {1, 1, 1};
+	Vector LightDirection = {1, -1, 1};
 	
 public:
 	static void Create();

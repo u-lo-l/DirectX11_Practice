@@ -44,6 +44,6 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    return (1,1,1,1);
-    // return Texture.Sample(LinearSampler, input.Uv);
+    // return (1,1,1,1);
+    return Texture.Sample(LinearSampler, input.Uv);
 }

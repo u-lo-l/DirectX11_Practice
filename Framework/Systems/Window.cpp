@@ -176,19 +176,19 @@ void Window::MainRender()
 		Main->PreRender();	
 	}
 	
-	//말은 클리어지만 배경 색 칠하는거다.
-	// D3D::Get()->SetRenderTarget();
-	D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
-	D3D::Get()->ClearDepthStencilView();
-	
-	Context::Get()->Render();
-	LightingManager::Get()->Render();
-	Main->Render();
+	{
+		D3D::Get()->SetRenderTarget();
+		D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
+		D3D::Get()->ClearDepthStencilView();
+		LightingManager::Get()->Render();
+		Context::Get()->Render();
+		Main->Render();
+	}
 	
 	{
 		Main->PostRender();	
+		Gui::Get()->Render();
 	}
-	Gui::Get()->Render();
 
 	
 	D3D::Get()->Present();

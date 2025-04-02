@@ -25,7 +25,7 @@ public:
 
 	void Tick();
 	void Render() const;
-
+	void SetTiling(const Vector2D& Tiling) const;
 	/*====================================================================================*/
 
 private:

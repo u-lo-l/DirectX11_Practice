@@ -10,22 +10,20 @@ namespace sdt
 	// const string ShaderForNonAnim = "38_Instancing_Model.fx";
 	// const string ShaderForAnim = "38_Instancing_Model_Animation.hlsl";
 	// const string ShaderForNonAnim = "38_Instancing_Model.hlsl";
-	const string ShaderForAnim = "43_Instancing_Model_Animation_Lighting.hlsl";
-	const string ShaderForNonAnim = "43_Instancing_Model_Lighting.hlsl";
+	const string ShaderForAnim = "Lighting/43_Instancing_Model_Animation_Lighting.hlsl";
+	const string ShaderForNonAnim = "Lighting/43_Instancing_Model_Lighting.hlsl";
 	void ExportFile::Initialize()
 	{
-		// MakeModel(L"Adam", {});
 		MakeModel(L"Adam", {L"Idle",L"Idle2",L"Idle3", L"Dance01", L"Dance02", L"Dance03", L"Boxing", L"Boxing2", L"HeadHit"}, 1.f);
-		// MakeModel(L"Adam", {L"Idle"}, 1.f);
-		// MakeModel(L"Airplane", {}, 0.1f);
-		// MakeModel(L"Cube", {}, 1.f);
-		// MakeModel(L"Cylinder", {}, 1.f);
-		// MakeModel(L"Sphere", {}, 1.f);
-		// MakeModel(L"Cone", {}, 1.f);
-		// MakeModel(L"Plane", {}, 10.f);
-		// MakeModel(L"Mousey", {}, 1.f);
-		// MakeModel(L"XYBot", {}, 1.f);
-		// MakeModel(L"Shannon", {}, 1.f);
+		MakeModel(L"Airplane", {}, 0.1f);
+		MakeModel(L"Cube", {}, 1.f);
+		MakeModel(L"Cylinder", {}, 1.f);
+		MakeModel(L"Sphere", {}, 1.f);
+		MakeModel(L"Cone", {}, 1.f);
+		MakeModel(L"Plane", {}, 10.f);
+		MakeModel(L"Mousey", {}, 1.f);
+		MakeModel(L"XYBot", {}, 1.f);
+		MakeModel(L"Shannon", {}, 1.f);
 		MakeModel(L"Kachujin", {L"Idle", L"Run", L"Walk", L"Salsa Dancing"}, 1.f);
 	}
 

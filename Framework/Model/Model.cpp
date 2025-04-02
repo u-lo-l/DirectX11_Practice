@@ -116,6 +116,12 @@ void Model::Render() const
 	}
 }
 
+void Model::SetTiling(const Vector2D & Tiling) const
+{
+	for (ModelMesh * M : Meshes)
+		M->PS_ViewInv.Tiling = Tiling;
+}
+
 Color Model::JsonStringToColor( const Json::String & InJson )
 {
 	vector<Json::String> v;

@@ -39,6 +39,7 @@
     <ClCompile Include="Model\StaticMesh.cpp" />
     <ClCompile Include="Objects\Billboard\Billboard.cpp" />
     <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
+    <ClCompile Include="Objects\PostEffect\PostEffect.cpp" />
     <ClCompile Include="ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="ParticleSystem\ParticleSystem.ReadFile.cpp" />
     <ClCompile Include="Renders\Buffer\BufferBase.cpp" />
@@ -432,7 +433,7 @@
       <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="Renders\Shader\HlslTextureShader.cpp" />
+    <ClCompile Include="Renders\Shader\Hlsl2DTextureShader.cpp" />
     <ClCompile Include="Renders\Shader\VertexLayout.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -560,6 +561,7 @@
     <ClInclude Include="Model\StaticMesh.h" />
     <ClInclude Include="Objects\Billboard\Billboard.h" />
     <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
+    <ClInclude Include="Objects\PostEffect\PostEffect.h" />
     <ClInclude Include="ParticleSystem\ParticleData.h" />
     <ClInclude Include="ParticleSystem\ParticleSystem.h" />
     <ClInclude Include="Renders\Buffer\BufferBase.h" />
@@ -575,7 +577,7 @@
     <ClInclude Include="Renders\Material.h" />
     <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
     <ClInclude Include="Renders\Shader\HlslShader.h" />
-    <ClInclude Include="Renders\Shader\HlslTextureShader.h" />
+    <ClInclude Include="Renders\Shader\Hlsl2DTextureShader.h" />
     <ClInclude Include="Renders\Shader\VertexLayout.h" />
     <ClInclude Include="Renders\Texture.h" />
     <ClInclude Include="Renders\TextureArray.h" />

@@ -447,27 +447,31 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	bool bUsePrecompiledShader = false;
 	size_t ExtensionIndex = ShaderFileName.rfind(L".hlsl");
 	HRESULT hr = -1;
-	if (ExtensionIndex != string::npos)
+	ASSERT(ExtensionIndex != string::npos, "ShaderFileName Not Valid");
+	PreCompiledShaderName = String::ToString(ShaderFileName);
+	PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 5, "");
+	size_t DirectoryIndex = 0;
+	DirectoryIndex = PreCompiledShaderName.rfind("/");
+	PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 1, "/PreCompiled/");
+	// DWORD attrib = GetFileAttributesA(PreCompiledShaderName.c_str());
+	// if (attrib == INVALID_FILE_ATTRIBUTES || !(attrib & FILE_ATTRIBUTE_DIRECTORY))
+	// {
+	// 	CreateDirectoryA(PreCompiledShaderName.c_str(), nullptr);
+	// }
+	PreCompiledShaderName += GetEntryPoint(Type) + ".cso";
+	printf("%s\n", PreCompiledShaderName.c_str());
+	std::ifstream file(PreCompiledShaderName, std::ios::binary | std::ios::ate);
+	if (file.is_open() == true)
 	{
-		PreCompiledShaderName = String::ToString(ShaderFileName);
-		PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 5, "");
-		size_t DirectoryIndex = PreCompiledShaderName.rfind("\\");
-		if (DirectoryIndex != string::npos)
-			PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 1, "\\PreCompiled");	
-		PreCompiledShaderName += "." + GetShaderTarget(Type) + ".cso";
-		std::ifstream file(PreCompiledShaderName, std::ios::binary | std::ios::ate);
-		if (file.is_open() == true)
-		{
-			std::streamsize FileSize = file.tellg();
-			file.seekg(0, std::ios::beg);
+		std::streamsize FileSize = file.tellg();
+		file.seekg(0, std::ios::beg);
 
-			hr = D3DCreateBlob(FileSize, &ShaderBlob);
-			file.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
-			file.close();
-			if (SUCCEEDED(hr))
-			{
-				bUsePrecompiledShader = true;
-			}
+		hr = D3DCreateBlob(FileSize, &ShaderBlob);
+		file.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
+		file.close();
+		if (SUCCEEDED(hr))
+		{
+			bUsePrecompiledShader = true;
 		}
 	}
 	
@@ -476,7 +480,7 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
 	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
 	Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
-	// Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
+	Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
 
 	constexpr int EffectFlag = 0; // Effect FrameWork 쓸 떄만 씀.
 

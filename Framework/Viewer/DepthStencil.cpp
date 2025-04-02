@@ -62,6 +62,6 @@ void DepthStencil::SaveTexture(const wstring& InTextureFileName)
 void DepthStencil::ClearDepthStencil() const
 {
 	ID3D11DeviceContext * const Context = D3D::Get()->GetDeviceContext();
-	UINT ClearFlag = bUseStencil ? D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL : D3D11_CLEAR_DEPTH;
+	const UINT ClearFlag = bUseStencil ? D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL : D3D11_CLEAR_DEPTH;
 	Context->ClearDepthStencilView(DSV, ClearFlag, 1.f, 0);
 }

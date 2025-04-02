@@ -10,8 +10,9 @@ static const int NormalMap = 2;
 
 Texture2D MaterialMaps[MAX_MATERIAL_TEXTURE_COUNT] : register(Texture_PS_Texture);
 
-SamplerState LinearSampler : register(Sampler_PS_Linear);
-SamplerState AnisotropicSampler : register(Sampler_PS_Anisotropic);
+SamplerState LinearSampler		: register(Sampler_PS_Linear);
+SamplerState AnisotropicSampler	: register(Sampler_PS_Anisotropic);
+SamplerState PointSampler		: register(Sampler_PS_Point);
 
 cbuffer CB_Material : register(Const_PS_Material)
 { 

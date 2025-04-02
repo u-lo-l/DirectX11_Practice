@@ -4,7 +4,7 @@
       "Diffuse" :  "0.800000,0.800000,0.800000,1.000000",
       "Emissive" : "0.400000,2.000000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Textures/white.png" ],
-      "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
+      "ShaderName" : "ToonShading/ToonShading.hlsl",
       "Specular" : "0.800000,0.800000,0.800000,1.000000"
    }
 }

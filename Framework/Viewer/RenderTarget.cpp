@@ -42,7 +42,6 @@ RenderTarget::~RenderTarget()
 	SAFE_RELEASE(RTV);
 }
 
-
 void RenderTarget::SaveTexture(const wstring& InTextureFileName) const
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
@@ -68,5 +67,5 @@ void RenderTarget::SetRenderTarget(const DepthStencil* InDepthStencil) const
 
 void RenderTarget::ClearRenderTarget() const
 {
-	D3D::Get()->GetDeviceContext()->ClearRenderTargetView(RTV, D3D::GetDesc().Background);
+	D3D::Get()->GetDeviceContext()->ClearRenderTargetView(RTV,D3D::GetDesc().Background);
 }

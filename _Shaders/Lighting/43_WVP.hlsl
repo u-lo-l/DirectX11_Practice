@@ -15,6 +15,7 @@ cbuffer CB_ViewProjection_VS : register(Const_VS_ViewProjection)
 cbuffer CB_ViewProjection : register(Const_PS_ViewInv)
 {
     matrix ViewInv_PS;
+    float4 Tiling;
 }
 
 cbuffer CB_LightDirection_PS : register(Const_PS_LightDirection)

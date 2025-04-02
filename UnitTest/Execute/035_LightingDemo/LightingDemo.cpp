@@ -5,25 +5,26 @@ namespace sdt
 {
 	void LightingDemo::Initialize()
 	{
-		// RT = new RenderTarget(0,0);
-		// DS = new DepthStencil(0,0, false);
-		// T7extureShader = new HlslTextureShader(*RT);
-		// TextureShader->GetTransform()->SetScale({300, 200, 1});
-		// TextureShader->GetTransform()->SetPosition({150, 100, 0});
-
-		// TextureShader->GetTransform()->SetScale({1, 1, 1});
-		// TextureShader->GetTransform()->SetPosition({0, 0, 0});
+		RT = new RenderTarget(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height));
+		DS = new DepthStencil(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height), false);
+		TextureShader = new Hlsl2DTextureShader(*RT);
+		float TextureWidth = 0.2f * D3D::GetDesc().Width;
+		float TextureHeight = 0.2f * D3D::GetDesc().Height;
+		TextureShader->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
+		// TextureShader->GetTransform()->SetPosition({-1 + TextureWidth / 2,-1 + TextureHeight / 2, 0});
+		TextureShader->GetTransform()->SetPosition({TextureWidth / 2,TextureHeight / 2, 0});
 		
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 150, 150, 20 );
 		MainCamera->SetRotation( 225, 0, 180);
-		
+
+		PEffect = new PostEffect(L"PostEffect/PostEffect.hlsl", *RT);
 		// Particle_Fire = new ParticleSystem(L"Fire");
 		// Particle_Fire->SetScale(35.f);
 		// LoadWeather();
-		// LoadSky();
-		// LoadModel();
-		// LoadCrossQuadGrass();
+		LoadSky();
+		LoadModel();
+		LoadCrossQuadGrass();
 		LoadLightingDemo();
 	}
 
@@ -65,16 +66,36 @@ namespace sdt
 			Particle_Fire->Add({0,5,0});
 			Particle_Fire->Tick();
 		}
-		// if (!!RT && Keyboard::Get()->IsPressed(VK_SPACE))
-		// {
-		// 	RT->SaveTexture(L"TEST");
-		// }
-		// if (!!TextureShader)
-		// 	TextureShader->Tick();
+		if (!!RT && Keyboard::Get()->IsPressed(VK_SPACE))
+		{
+			RT->SaveTexture(L"TEST");
+		}
+		
+		if (!!PEffect)
+			PEffect->Tick();
+		if (!!TextureShader)
+			TextureShader->Tick();
 	}
 
 	void LightingDemo::Render()
 	{
+	}
+
+	void LightingDemo::PostRender()
+	{
+		if (!!PEffect)
+			PEffect->Render();
+
+		
+		if (!!TextureShader) // 원본 축소
+			TextureShader->Render();
+	}
+
+	void LightingDemo::PreRender()
+	{
+		RT->SetRenderTarget(DS);
+		RT->ClearRenderTarget(); // Render 하기 전에 Clear
+		DS->ClearDepthStencil(); // Render 하기 전에 Clear
 		if (!!Sky)
 			Sky->Render();
 		if (!!Plane)
@@ -89,33 +110,6 @@ namespace sdt
 			Rain->Render();
 		if (!!Particle_Fire)
 			Particle_Fire->Render();
-	}
-
-	void LightingDemo::PostRender()
-	{
-		if (!!TextureShader)
-			TextureShader->Render();
-	}
-
-	void LightingDemo::PreRender()
-	{
-		// RT->SetRenderTarget(DS);
-		// if (!!Sky)
-		// 	Sky->Render();
-		// if (!!Plane)
-		// 	Plane->Render();
-		// for (const ModelInstanceData & P : ModelInstances)
-		// 	P.Object->Render();
-		// for (const ModelInstanceData & P : ModelInstances_ForLighting)
-		// 	P.Object->Render();
-		// if (!!Grasses)
-		// 	Grasses->Render();
-		// if (!!Rain)
-		// 	Rain->Render();
-		// if (!!Particle_Fire)
-		// 	Particle_Fire->Render();
-		// RT->ClearRenderTarget();
-		// DS->ClearDepthStencil();
 	}
 
 	void LightingDemo::LoadWeather()
@@ -183,6 +177,7 @@ namespace sdt
 	void LightingDemo::SetPlane()
 	{
 		Plane = new Model(L"Plane");
+		Plane->SetTiling({5,5});
 		Transform * tf = Plane->AddTransforms();
 		tf->SetPosition({0,0,0});
 		tf->SetScale({2.5,1,2.5});

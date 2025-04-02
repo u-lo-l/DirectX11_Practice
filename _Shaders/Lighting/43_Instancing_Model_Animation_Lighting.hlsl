@@ -1,5 +1,4 @@
 #include "43_WVP.hlsl"
-// #include "43_LightingResources.hlsl"
 #include "43_AreaLigthing.Fucntions.hlsl"
 #include "../00_Animation_Structure.hlsl"
 
@@ -56,18 +55,20 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input);
 /*======================================================================================================*/
 
 VertexOutput VSMain(VertexInput input)
-{    
+{
     matrix TF = input.Transform;
     // matrix TF = WorldTF;
     matrix ModelWorldTF = mul(BoneTransforms[BaseBoneIndex], TF);
 
     VertexOutput output;
     output.Uv = input.Uv;
-
-    output.Normal = mul(input.Normal, (float3x3)ModelWorldTF);
+    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
+    output.Tangent = mul(input.Tangent, (float3x3) ModelWorldTF);
 
     output.Position = SetAnimatedBoneToWorldTF_Instancing(input); // Local_Space(Bone Root Space)
     output.Position = mul(output.Position, ModelWorldTF);
+    output.WorldPosition = output.Position.xyz;
+    
     output.Position = mul(output.Position, View_VS);
     output.Position = mul(output.Position, Projection_VS);
     
@@ -78,12 +79,11 @@ float4 PSMain(VertexOutput input) : SV_Target
 {
     // float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
     // input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
-
     float4 A = Ambient;
     float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
     float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
 
-    float4 GlobalAmbient = float4(0.2f,0.2f,0.2f,1.f);
+    float4 GlobalAmbient = float4(0.1f,0.1f,0.1f,1.f);
 
     ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
         LightDirection_PS,
@@ -104,8 +104,8 @@ float4 PSMain(VertexOutput input) : SV_Target
 
     ColorDesc OutPut;
     OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
-    OutPut.Diffuse  = DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
-    OutPut.Specular = DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
     OutPut.Ambient  *= A;
     OutPut.Diffuse  *= D;
     OutPut.Specular *= S;
