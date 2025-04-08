@@ -1,4 +1,3 @@
-
 struct VS_Input
 {
     float4 Position : POSITION;
@@ -9,19 +8,33 @@ struct VS_Output
     float4 Position : SV_POSITION;
     float2 UV : UV;
 };
+const static int   GaussianBlurCount = 6;
+const static float GaussianWeights[13] =
+{
+    0.0090f, 0.0218f, 0.0448f, 0.0784f, 0.1169f, 0.1486f,
+    0.1610f,
+    0.1486f, 0.1169f, 0.0784f, 0.0448f, 0.0218f, 0.0090f
+};
+Texture2D       Texture00           : register(t0);
+Texture2D       Texture01           : register(t1);
 
-Texture2D    DiffuseMap         : register(t0);
-SamplerState LinearSampler      : register(s0);
-SamplerState AnisotropicSampler	: register(s1);
+#define DiffuseMap             Texture00
+#define GaussianBlurXTexture   Texture00
+#define GaussianBlurYTexture   Texture01
+#define OriginTexture          Texture00
+#define GaussianBlurTexture    Texture01
+
+SamplerState    LinearSampler       : register(s0);
+SamplerState    AnisotropicSampler  : register(s1);
 
 cbuffer CB_PostEffect : register(b0)
 {
     float2 PixelSize;
     float  Time;
     float  EffectIndex;
-    float  Radius;
-    float  Amount; //4%
-    float2 Center;
+    float  RadialBlurRadius;
+    float  RadialBlurAmount; //4%
+    float2 RadialBlurScreenCenter;
 };
 
 VS_Output VSMain(VS_Input Input)
@@ -45,11 +58,12 @@ float4 PS_Interace(VS_Output Input);
 float4 PS_Wiggle(VS_Output Input);
 float4 PS_Blur(VS_Output Input);
 float4 PS_RadialBlur(VS_Output Input);
+float4 PS_GaussianBlur(VS_Output Input);
+float4 PS_Bloom(VS_Output Input);
 
 float4 PSMain(VS_Output Input) : SV_TARGET
 {
-    // return float4(EffectIndex / 10, EffectIndex / 10, EffectIndex / 10, 1);
-
+    // return float4(1,1,1,1);
     [flatten] if (0 < EffectIndex && EffectIndex <= 1)
         return PS_Inverse(Input); // 1
     [flatten] if (1 < EffectIndex && EffectIndex <= 2)
@@ -70,6 +84,8 @@ float4 PSMain(VS_Output Input) : SV_TARGET
         return PS_Blur(Input); // 9
     [flatten] if (9 < EffectIndex && EffectIndex <= 10)
         return PS_RadialBlur(Input); // 10
+    [flatten] if (10 < EffectIndex && EffectIndex <= 11)
+        return PS_GaussianBlur(Input); // 11
     return PS_Diffuse(Input); // 0
 }
 
@@ -215,16 +231,17 @@ float4 PS_Blur(VS_Output Input)
     return float4(color, 1.0f);
 }
 
+const static float Epsilon = 1e-6f;
 float4 PS_RadialBlur(VS_Output Input)
 {
-    float2 radius = Input.UV - Center;
-    float r = length(radius) + 1e-6f;
-    radius /= r;
+    float2 PixelScreenPosition = Input.UV;
+    float2 RadiusVector = PixelScreenPosition - RadialBlurScreenCenter;
+    float r = length(RadiusVector) + Epsilon;
+    RadiusVector /= r;
 
-    r = 2 * r / Radius;
-    r = saturate(r);
+    r = saturate(2 * r / RadialBlurRadius);
 
-    float2 delta = radius * r * r * Amount / BlurCount;
+    float2 delta = RadiusVector * r * r * RadialBlurAmount / BlurCount;
     delta = -delta;
 
     float3 RGB = 0;
@@ -236,4 +253,81 @@ float4 PS_RadialBlur(VS_Output Input)
     RGB /= BlurCount;
 
     return float4(RGB, 1);
+}
+
+float4 PS_GaussianBlur(VS_Output Input) // 1-Pass Blur. Bad
+{
+    float2 uv = Input.UV;
+    float u = PixelSize.x;
+    float v = PixelSize.y;
+    
+    float sum = 0;
+    float4 colorX = 0;
+    float4 colorY = 0;
+    for (int i = -GaussianBlurCount; i <= GaussianBlurCount; i++)
+    {
+        float2 temp = uv + float2(0.0f, v * (float) i);
+        float4 OriginColor = DiffuseMap.Sample(LinearSampler, temp);
+        colorY += GaussianWeights[GaussianBlurCount + i] * OriginColor * 0.5f;
+        
+        temp = uv + float2(u * (float) i, 0.0f);
+        OriginColor = DiffuseMap.Sample(LinearSampler, temp);
+        colorX += GaussianWeights[GaussianBlurCount + i] * OriginColor * 0.5f;
+    }
+    return float4(colorX + colorY);
+}
+
+/*--------------------------------2PASS Blur--------------------------------------*/
+
+const static float3 BloomThreshold = float3(0.2126, 0.7152, 0.0722);
+float4 PS_Bloom_Separate(VS_Output Input) : SV_Target
+{
+    float4 Color =DiffuseMap.SampleLevel(LinearSampler, Input.UV, 3);
+    //  DiffuseMap.Sample(LinearSampler, Input.UV);
+    float  Brightness = dot(Color.rgb, BloomThreshold);
+    if (Brightness > 0.75)
+        return Color;
+    else
+        return float4(0,0,0,1);
+}
+
+float4 PS_GaussianBlur_X(VS_Output Input) : SV_Target
+{
+    float2 uv = Input.UV;
+    float u = PixelSize.x;
+    
+    float4 colorX = 0;
+    for (int i = -GaussianBlurCount; i <= GaussianBlurCount; i++)
+    {
+        float2 temp = uv + float2(u * (float) i, 0.0f);
+        float4 OriginColor = DiffuseMap.Sample(LinearSampler, temp);
+        colorX += GaussianWeights[GaussianBlurCount + i] * OriginColor;
+    }
+    return float4(colorX);
+}
+
+float4 PS_GaussianBlur_Y(VS_Output Input) : SV_Target
+{
+    float2 uv = Input.UV;
+    float  v = PixelSize.y;
+    
+    float4 colorY = 0;
+    for (int i = -GaussianBlurCount; i <= GaussianBlurCount; i++)
+    {
+        float2 temp = uv + float2(0.0f, v * (float) i);
+        float4 OriginColor = DiffuseMap.Sample(LinearSampler, temp);
+        colorY += GaussianWeights[GaussianBlurCount + i] * OriginColor;
+    }
+
+    return float4(colorY);
+}
+
+float4 PS_Bloom_Combine(VS_Output Input) : SV_Target
+{
+    float4 Origin = OriginTexture.Sample(LinearSampler, Input.UV);
+    float4 Bloom  = GaussianBlurTexture.Sample(LinearSampler, Input.UV);
+
+    Origin *= (1.0f - saturate(Bloom));
+    
+    return float4((Origin + Bloom).rgb, 1.0f);
 }

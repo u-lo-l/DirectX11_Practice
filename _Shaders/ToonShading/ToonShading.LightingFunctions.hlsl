@@ -17,7 +17,7 @@ ColorDesc ApplyGlobalDirectionalLights(
         Normal,
         WorldPosition
     );
-    ColorDesc LightColor = ComputePhongLight(
+    ColorDesc LightColor = ComputeToonPhongLight(
         LightDirection,
         ViewPosition,
         Normal,
@@ -56,7 +56,7 @@ ColorDesc ApplyPointLights(
             Normal,
             WorldPosition
         );
-        ColorDesc Phong = ComputePhongLight(
+        ColorDesc Phong = ComputeToonPhongLight(
             WorldPosition - PointLights[i].Position,
             ViewPosition,
             Normal,
@@ -102,7 +102,7 @@ ColorDesc ApplySpotLights(
             Normal,
             WorldPosition
         );
-        ColorDesc Phong = ComputePhongLight(
+        ColorDesc Phong = ComputeToonPhongLight(
             WorldPosition - SpotLights[i].Position,
             ViewPosition,
             Normal,

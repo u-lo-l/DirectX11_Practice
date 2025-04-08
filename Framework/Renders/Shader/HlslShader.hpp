@@ -24,9 +24,9 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 {
 	switch (Type)
 	{
-	case ShaderType::VertexShader:	 return "VSMain";
-	case ShaderType::PixelShader:	 return "PSMain";
-	case ShaderType::GeometryShader: return "GSMain";
+	case ShaderType::VertexShader:	 return VSEntryPoint.length() < 1 ?  "VSMain" : VSEntryPoint;
+	case ShaderType::PixelShader:	 return PSEntryPoint.length() < 1 ?  "PSMain" : PSEntryPoint;
+	case ShaderType::GeometryShader: return GSEntryPoint.length() < 1 ?  "GSMain" : GSEntryPoint;
 	default :
 		ASSERT(false, "Unknown Shader Type")
 		return "";
@@ -35,11 +35,22 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 
 
 template <class T>
-HlslShader<T>::HlslShader(const wstring & ShaderFileName, UINT TargetShaderFlag)
+HlslShader<T>::HlslShader
+(
+	const wstring & ShaderFileName,
+	UINT TargetShaderFlag,
+	const string & InVSEntryPoint,
+	const string & InPSEntryPoint,
+	const string & InGSEntryPoint
+)
+	: VSEntryPoint(InVSEntryPoint)
+	, GSEntryPoint(InGSEntryPoint)
+	, PSEntryPoint(InPSEntryPoint)
 {
 	if (ShaderFileName.empty() == true)
 		return ;
 	FileName = W_SHADER_PATH + ShaderFileName;
+	
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
 		CompileShader(ShaderType::VertexShader, FileName);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::PixelShader))
@@ -438,7 +449,7 @@ HRESULT HlslShader<T>::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* D
 }
 
 template <class T>
-void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileName )
+void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileName)
 {
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
@@ -602,21 +613,20 @@ void HlslShader<T>::BeginDraw()
 		DeviceContext->RSSetState(RasterizerState);
 	}
 	
-	if (!!SamplerState)
+	if (!!PixelShader)
+		DeviceContext->PSSetShader(PixelShader, nullptr, 0);
+	if (!!PixelShader && !!SamplerState)
 	{
 		DeviceContext->PSGetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &Prev_SamplerState);
 		DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &SamplerState);
 	}
-	if (!!PixelShader)
-		DeviceContext->PSSetShader(PixelShader, nullptr, 0);
-
-	if (!!BlendState)
+	if (!!PixelShader && !!BlendState)
 	{
 		float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		DeviceContext->OMGetBlendState(&Prev_BlendState, BlendFactor, nullptr);
 		DeviceContext->OMSetBlendState(BlendState, BlendFactor, 0xFFFFFFFF);
 	}
-	if (!!DepthStencilState)
+	if (!!PixelShader && !!DepthStencilState)
 	{
 		DeviceContext->OMGetDepthStencilState(&Prev_DepthStencilState, nullptr);
 		DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
@@ -648,6 +658,8 @@ void HlslShader<T>::EndDraw()
 		DeviceContext->OMSetDepthStencilState(Prev_DepthStencilState,0);
 		SAFE_RELEASE(Prev_DepthStencilState);
 	}
+
+	
 	// 일단 전체 파이프라인에서 HS, DS, GS를 사용하지 않으니 굳이 필요한 코드는 아님.
 	// 추후에 다른 RenderPass에서 건드리면 그 때 주석 해제하도록 하자.
 	// DeviceContext->HSSetShader(nullptr, nullptr, 0);

@@ -46,8 +46,8 @@ VertexOutput VSMain(VertexInput input)
 
     VertexOutput output;
     output.Uv = input.Uv;
-    output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
-    output.Tangent = mul(input.Tangent, (float3x3) ModelWorldTF);
+    output.Normal = normalize(mul(input.Normal, (float3x3) ModelWorldTF));
+    output.Tangent = normalize(mul(input.Tangent, (float3x3) ModelWorldTF));
     
     output.Position = mul(input.Position, ModelWorldTF);
     output.WorldPosition = output.Position.xyz;
@@ -60,22 +60,21 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    input.Uv.x *= Tiling.x;
-    input.Uv.y *= Tiling.y;
-    // float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
-    // input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
-    // return NomalMapTexel;
+    input.Uv.x *= 2;
+    input.Uv.y *= 2;
+    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler , input.Uv);
+    input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+
     float4 A = Ambient;
     float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
     float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
 
-    float3 level = 0.4f + 0.6f * dot(normalize(input.Normal), -LightDirection_PS);
-    level = saturate(level);
-    
-    float4 toon = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(PointSampler, float2(level.x, 0));
-    D += toon;
+    // float3 level = 0.4f + 0.6f * dot(normalize(input.Normal), -LightDirection_PS);
+    // level = saturate(level);
+    // float4 toon = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(PointSampler, float2(level.x, 0));
+    // D += toon;
 
-    float4 GlobalAmbient = float4(0.1f,0.1f,0.1f,1.f);
+    float4 GlobalAmbient = float4(0.2f,0.2f,0.2f,1.f);
 
     ColorDesc DirectionalLightColor = ApplyGlobalDirectionalLights(
         LightDirection_PS,
@@ -95,12 +94,13 @@ float4 PSMain(VertexOutput input) : SV_Target
     );
 
     ColorDesc OutPut;
-    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
-    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
     OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
+    
     OutPut.Ambient  *= A;
     OutPut.Diffuse  *= D;
-    OutPut.Specular *= S;
+    // OutPut.Specular *= S;
     return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
 }
 

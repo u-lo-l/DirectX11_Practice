@@ -806,7 +806,7 @@ Matrix Matrix::CreateFromAxisAngle(Vector axis, float angle)
 //
 // 	matrix.M41 = 0.0f;
 // 	matrix.M42 = 0.0f;
-// 	matrix.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+// 	matrix.M43 = -nearPlaneDistance * farPlaneDistance / (farPlaneDistance - nearPlaneDistance);
 // 	matrix.M44 = 0.0f;
 //
 // 	return matrix;
@@ -991,12 +991,12 @@ Matrix Matrix::CreateOrthographic(float width, float height, float zNearPlane, f
 
 	matrix.M31 = 0.0f;
 	matrix.M32 = 0.0f;
-	matrix.M33 = 1.0f / (zNearPlane - zFarPlane);
+	matrix.M33 = 1.0f / (zFarPlane - zNearPlane);
 	matrix.M34 = 0.0f;
 
 	matrix.M41 = 0.0f;
 	matrix.M42 = 0.0f;
-	matrix.M43 = zNearPlane / (zNearPlane - zFarPlane);
+	matrix.M43 = -zNearPlane / (zFarPlane - zNearPlane);
 	matrix.M44 = 1.0f;
 
 	return matrix;
@@ -1018,12 +1018,12 @@ Matrix Matrix::CreateOrthographicOffCenter(float left, float right, float bottom
 
 	matrix.M31 = 0.0f;
 	matrix.M32 = 0.0f;
-	matrix.M33 = 1.0f / (zNearPlane - zFarPlane);
+	matrix.M33 = 1.0f / (zFarPlane - zNearPlane);
 	matrix.M34 = 0.0f;
 
 	matrix.M41 = (left + right) / (left - right);
 	matrix.M42 = (top + bottom) / (bottom - top);
-	matrix.M43 = zNearPlane / (zNearPlane - zFarPlane);
+	matrix.M43 = - zNearPlane / (zFarPlane - zNearPlane);
 	matrix.M44 = 1.0f;
 
 	return matrix;

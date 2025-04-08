@@ -5,20 +5,22 @@ namespace sdt
 {
 	void LightingDemo::Initialize()
 	{
-		RT = new RenderTarget(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height));
+		Diffuse_RT = new RenderTarget(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height));
 		DS = new DepthStencil(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height), false);
-		TextureShader = new Hlsl2DTextureShader(*RT);
+		TextureShader = new Hlsl2DTextureShader(*Diffuse_RT);
+
 		float TextureWidth = 0.2f * D3D::GetDesc().Width;
 		float TextureHeight = 0.2f * D3D::GetDesc().Height;
 		TextureShader->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
-		// TextureShader->GetTransform()->SetPosition({-1 + TextureWidth / 2,-1 + TextureHeight / 2, 0});
 		TextureShader->GetTransform()->SetPosition({TextureWidth / 2,TextureHeight / 2, 0});
-		
+
+
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 150, 150, 20 );
 		MainCamera->SetRotation( 225, 0, 180);
 
-		PEffect = new PostEffect(L"PostEffect/PostEffect.hlsl", *RT);
+		PEffect = new PostEffect(L"PostEffect/PostEffect.hlsl", Diffuse_RT);
+		
 		// Particle_Fire = new ParticleSystem(L"Fire");
 		// Particle_Fire->SetScale(35.f);
 		// LoadWeather();
@@ -43,7 +45,7 @@ namespace sdt
 		SAFE_DELETE(Sky);
 		SAFE_DELETE(Rain);
 		SAFE_DELETE(Particle_Fire);
-		SAFE_DELETE(RT);
+		SAFE_DELETE(Diffuse_RT);
 		SAFE_DELETE(DS);
 	}
 
@@ -66,9 +68,9 @@ namespace sdt
 			Particle_Fire->Add({0,5,0});
 			Particle_Fire->Tick();
 		}
-		if (!!RT && Keyboard::Get()->IsPressed(VK_SPACE))
+		if (!!Diffuse_RT && Keyboard::Get()->IsPressed(VK_SPACE))
 		{
-			RT->SaveTexture(L"TEST");
+			Diffuse_RT->SaveTexture(L"TEST"); // 원본 이미지 저장.
 		}
 		
 		if (!!PEffect)
@@ -77,6 +79,35 @@ namespace sdt
 			TextureShader->Tick();
 	}
 
+	void LightingDemo::PreRender()
+	{
+		// Render
+		{
+			Diffuse_RT->SetRenderTarget(DS);
+			Diffuse_RT->ClearRenderTarget(); // Render 하기 전에 Clear
+			DS->ClearDepthStencil(); // Render 하기 전에 Clear
+			if (!!Sky)
+				Sky->Render();
+			if (!!Plane)
+				Plane->Render();
+			for (const ModelInstanceData & P : ModelInstances)
+				P.Object->Render();
+			for (const ModelInstanceData & P : ModelInstances_ForLighting)
+				P.Object->Render();
+			if (!!Grasses)
+				Grasses->Render();
+			if (!!Rain)
+				Rain->Render();
+			if (!!Particle_Fire)
+				Particle_Fire->Render();
+		}
+		{
+			// MultiPass Bloom
+			if (!!PEffect)
+				PEffect->PreRender(*Diffuse_RT);
+		}
+	}
+	
 	void LightingDemo::Render()
 	{
 	}
@@ -86,31 +117,11 @@ namespace sdt
 		if (!!PEffect)
 			PEffect->Render();
 
-		
 		if (!!TextureShader) // 원본 축소
 			TextureShader->Render();
 	}
 
-	void LightingDemo::PreRender()
-	{
-		RT->SetRenderTarget(DS);
-		RT->ClearRenderTarget(); // Render 하기 전에 Clear
-		DS->ClearDepthStencil(); // Render 하기 전에 Clear
-		if (!!Sky)
-			Sky->Render();
-		if (!!Plane)
-			Plane->Render();
-		for (const ModelInstanceData & P : ModelInstances)
-			P.Object->Render();
-		for (const ModelInstanceData & P : ModelInstances_ForLighting)
-			P.Object->Render();
-		if (!!Grasses)
-			Grasses->Render();
-		if (!!Rain)
-			Rain->Render();
-		if (!!Particle_Fire)
-			Particle_Fire->Render();
-	}
+
 
 	void LightingDemo::LoadWeather()
 	{
@@ -136,7 +147,7 @@ namespace sdt
 		
 		ModelInstances.insert(ModelInstances.end(), {
 			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
-			{new Model(L"Sphere"),{0.05f,0.05f,0.05f}, 15.f},
+			{new Model(L"Sphere"),{0.1f,0.1f,0.1f}, 15.f},
 		});
 		SetModelsPosition_Square(ModelInstances, InstanceCount, Stride);
 	}

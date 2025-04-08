@@ -27,13 +27,21 @@ private:
 	// ! 우선 하나의 Shader에 하나의 entry_point만 있다고 가정하자.
 	// ! 물론 여러 함수를 하나의 hlsl에 작성하고 선택 할 수도 있겠지.
 	// ! 그건 나중에 처리하자.
-	static string GetEntryPoint( ShaderType Type );
+	string GetEntryPoint( ShaderType Type );
 public:
-	explicit HlslShader(const wstring & ShaderFileName, UINT TargetShaderFlag = ((UINT)ShaderType::VertexShader | (UINT)ShaderType::PixelShader));
+	explicit HlslShader(
+		const wstring & ShaderFileName,
+		UINT TargetShaderFlag = static_cast<UINT>(ShaderType::VertexShader) | static_cast<UINT>(ShaderType::PixelShader),
+		const string & InVSEntryPoint = "VSMain",
+		const string & InPSEntryPoint = "PSMain",
+		const string & InGSEntryPoint = "GSMain"
+	);
 	~HlslShader();
 private:
 	wstring FileName;
-
+	string VSEntryPoint;
+	string GSEntryPoint;
+	string PSEntryPoint;
 public:
 	void SetTopology(D3D_PRIMITIVE_TOPOLOGY InTopology);
 	// Rasterizer
@@ -68,6 +76,11 @@ public:
 private:
 	SamplerSlot SamplerSlotNum = SamplerSlot::PS_Linear;
 	// Draw
+
+// public:
+// 	ID3D11VertexShader * GetVertexShader() const { return VertexShader;}
+// 	ID3D11PixelShader * GetPixelShader() const { return PixelShader;}
+// 	ID3D11GeometryShader * GetGeometryShader() const { return GeometryShader;}
 public:
 	void Draw(UINT VertexCount, UINT StartVertexLocation = 0);
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0);

@@ -6,11 +6,12 @@ struct PhongLightingCoefficent
     float Diffuse;
     float Specular;
 };
-ColorDesc ComputePhongLight(in float3 LightDirection, in float3 ViewPosition, in float3 Normal, in float3 WorldPosition, in float4 GlobalAmbient, in ColorDesc MaterialColor, in PhongLightingCoefficent Coeff);
+ColorDesc ComputeToonPhongLight (in float3 LightDirection, in float3 ViewPosition, in float3 Normal, in float3 WorldPosition, in ColorDesc Color);
+ColorDesc ComputeToonPhongLight(in float3 LightDirection, in float3 ViewPosition, in float3 Normal, in float3 WorldPosition, in float4 GlobalAmbient, in ColorDesc MaterialColor, in PhongLightingCoefficent Coeff);
 float4 ComputeRimLight(float3 LightDirection, float3 ViewPosition, float3 Normal, float3 WorldPosition, float RimWidth);
 
 
-ColorDesc ComputePhongLight (
+ColorDesc ComputeToonPhongLight (
     in float3 LightDirection,
     in float3 ViewPosition,
     in float3 Normal,
@@ -19,7 +20,7 @@ ColorDesc ComputePhongLight (
 )
 {
     PhongLightingCoefficent Coeff = {1,1,1};
-    return ComputePhongLight(
+    return ComputeToonPhongLight(
         LightDirection,
         ViewPosition,
         Normal,
@@ -29,11 +30,9 @@ ColorDesc ComputePhongLight (
         Coeff
     );
 }
-// https://sgvr.kaist.ac.kr/~sungeui/render/rendering_book_1.2ed.pdf
-// Ambient  : I_ra = k_a * I_ia
-// Diffuse  : I_rd = k_d * I_i * cosθ = k_d * I_i * (N·L) 
-// Specular : I_rs = k_s * I_s * (cos φ)^ns = k_s * I_s * {(V·R)^ns}
-ColorDesc ComputePhongLight(
+
+const static int BandShadingLevel = 7;
+ColorDesc ComputeToonPhongLight( // 사실 Blin-Phong임
     in float3 LightDirection,
     in float3 ViewPosition,
     in float3 Normal,
@@ -47,15 +46,27 @@ ColorDesc ComputePhongLight(
     float3 L = normalize(-LightDirection);
     float3 N = normalize(Normal);
     Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
-
-    float NdotL = saturate(dot(L, N));
-    Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse * NdotL;
+    
+    float NdotL = ceil(saturate(dot(L, N)) * BandShadingLevel) / BandShadingLevel;
+    Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse;
+    Phong.Diffuse *= NdotL;
+    // Phong.Diffuse *= round(NdotL);
+    // Phong.Diffuse *= step(0.2f, NdotL);
+    // Phong.Diffuse *= smoothstep(0.2f, 0.25f, NdotL);
 
     float ns = saturate(MaterialColor.Specular.a) * 128 + 1;
-    float3 R = normalize(reflect(-L, N));
     float3 V = normalize(ViewPosition - WorldPosition); // also called as E for Eye-Vector
-    float VdotR = saturate(dot(V, R));
-    Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);
+    { // Phong
+        // float3 R = normalize(reflect(-L, N));
+        // float VdotR = saturate(dot(V, R));
+        // Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);
+    }
+    { // Blin Phong
+        float3 H = normalize(L + V);
+        float NdotH = saturate(dot(H, N));
+        Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(NdotH, ns);
+    }
+    Phong.Specular = smoothstep(0.2, 0.5, Phong.Specular) * 0.5f;
 
     return Phong;
 }
@@ -76,7 +87,7 @@ float4 ComputeRimLight(
 
     float NdotV = saturate(dot(N, V));
     float LdotV = saturate(dot(L, V));
-    float a = saturate(1 - RimWidth);
+    float a = saturate(1 - 0.25f);
     float b = 1.f;
     float c = saturate(1 - NdotV);
     float Rim = smoothstep(a, b, c);

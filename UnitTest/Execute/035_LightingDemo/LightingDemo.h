@@ -47,7 +47,7 @@ namespace sdt
 		
 		ParticleSystem * Particle_Fire = nullptr;
 
-		RenderTarget * RT = nullptr;
+		RenderTarget * Diffuse_RT = nullptr;
 		DepthStencil * DS = nullptr;
 
 		Hlsl2DTextureShader * TextureShader = nullptr;

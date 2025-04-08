@@ -2,8 +2,8 @@
    "DefaultMaterial" : {
       "Ambient" : "0.000000,0.000000,0.000000,0.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
-      "DiffuseMap" : [ "../_Textures/Forest Floor.jpg" ],
-      "NormalMap" : ["../_Textures/Floor_Normal.png"],
+      "DiffuseMap" : [ "../_Textures/white.png" ],
+      "NormalMap" : ["../_Textures/Box_Normal.png"],
       "Emissive" : "0.000000,1.00000,0.800000,1.000000",
       "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
       "Specular" : "0.800000,0.800000,0.800000,1.000000"
@@ -11,8 +11,8 @@
    "WorldGridMaterial" : {
       "Ambient" : "0.000000,0.000000,0.000000,1.000000",
       "Diffuse" : "0.215861,0.215861,0.215861,1.000000",
-      "DiffuseMap" : [ "../_Textures/Forest Floor.jpg" ],
-      "NormalMap" : ["../_Textures/Floor_Normal.png"],
+      "DiffuseMap" : [ "../_Textures/white.png" ],
+      "NormalMap" : ["../_Textures/Box_Normal.png"],
       "Emissive" : "0.000000,1.000000,0.000000,1.000000",
       "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
       "Specular" : "0.200000,0.200000,0.200000,1.000000"

@@ -86,7 +86,7 @@ private:
 	IDXGISwapChain * SwapChain;
 	ID3D11DeviceContext * DeviceContext; // GPU 명령 즉시 실행 컨텍스트
 	
-	ID3D11RenderTargetView * RenderTargetView;
+	ID3D11RenderTargetView * RenderTargetView; //BackBuffer
 	ID3D11DepthStencilView * DepthStencilView;
 	ID3D11Texture2D * DSVTexture;
 };

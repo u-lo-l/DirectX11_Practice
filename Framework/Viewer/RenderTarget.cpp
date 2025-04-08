@@ -14,7 +14,7 @@ RenderTarget::RenderTarget(UINT InWidth, UINT InHeight, DXGI_FORMAT InFormat)
 	D3D11_TEXTURE2D_DESC TextureDesc {};
 	TextureDesc.Width = Width;
 	TextureDesc.Height = Height;
-	TextureDesc.MipLevels = 1;
+	TextureDesc.MipLevels = 3;
 	TextureDesc.ArraySize = 1;
 	TextureDesc.Format = Format;
 	TextureDesc.SampleDesc.Count = 1;
