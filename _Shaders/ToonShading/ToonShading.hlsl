@@ -38,18 +38,6 @@ struct VertexOutput
     float4 ProjectorNDCPosition : PROJ_Position;
 };
 
-// struct MeshOutput
-// {
-//     float4 Position : SV_Position;
-//     float3 oPosition : Position1; //Origin Position
-//     float3 wPosition : Position2; //World Position
-//     float4 wvpPosition : Position3; //WVP Position
-//     float4 wvpPosition_Sub : Position4; //Sub WVP Position
-    
-//     float2 Uv : Uv;
-//     float3 Normal : Normal;
-//     float3 Tangent : Tangent;
-// };
 /*======================================================================================================*/
 
 VertexOutput VSMain(VertexInput input)
@@ -68,7 +56,8 @@ VertexOutput VSMain(VertexInput input)
     output.Position = mul(output.Position, View_VS);
     output.Position = mul(output.Position, Projection_VS);
     
-    output.ProjectorNDCPosition = mul(input.Position, View_Projector_VS);
+
+    output.ProjectorNDCPosition = mul(float4(output.WorldPosition, 1), View_Projector_VS);
     output.ProjectorNDCPosition = mul(output.ProjectorNDCPosition, Projection_Projector_VS);
     output.ProjectorNDCPosition /= output.ProjectorNDCPosition.w;
     return output;
@@ -79,9 +68,8 @@ float4 ApplyProjector_PS(in float4 Color, in float4 wvp);
 float4 PSMain(VertexOutput input) : SV_Target
 {
     float4 Color = ApplyAllLights_PS(input);
-    Color = ApplyProjector_PS(Color, input.ProjectorNDCPosition);
 
-    return Color;
+    return  Color;
 }
 
 float4 ApplyAllLights_PS(VertexOutput input)
@@ -94,9 +82,11 @@ float4 ApplyAllLights_PS(VertexOutput input)
     float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(LinearSampler , input.Uv);
     float3 NewNormal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
     
-    float4 A = Ambient;
-    float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
-    float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
+    ColorDesc MatColor;
+    MatColor.Ambient = Ambient;
+    MatColor.Diffuse = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
+    MatColor.Specular = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
+    MatColor.Diffuse = ApplyProjector_PS(MatColor.Diffuse, input.ProjectorNDCPosition);
 
     float4 GlobalAmbient = float4(0.2f,0.2f,0.2f,1.f);
 
@@ -118,13 +108,14 @@ float4 ApplyAllLights_PS(VertexOutput input)
     );
 
     ColorDesc OutPut;
-    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient + PointLightColor.Ambient  + SpotLightColor.Ambient;
-    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
+    OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
+    OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
     OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
     
-    OutPut.Ambient  *= A;
-    // OutPut.Diffuse  *= D;
-    OutPut.Specular *= S;
+
+    OutPut.Ambient  *= MatColor.Ambient;
+    OutPut.Diffuse  *= MatColor.Diffuse;
+    OutPut.Specular *= MatColor.Specular;
     return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
 }
 
@@ -139,12 +130,8 @@ float4 ApplyProjector_PS(in float4 Color, in float4 ProjectorNDCPosition)
     [flatten]
     if (saturate(uvw.x) == uvw.x && saturate(uvw.y) == uvw.y && saturate(uvw.z) == uvw.z)
     {
-        Color = lerp(Color, float4(1, 0, 0, 1), uvw.z);
-        // float4 DecalImage = ProjectorTexture.Sample(LinearSampler, uvw.xy);
-        
-        // DecalImage.rgb *= ProjectorData.Color;
-        // Color = lerp(Color, DecalImage, DecalImage.a);
+        float4 DecalColor = ProjectorTexture.Sample(LinearSampler, uvw.xy);
+        return lerp(Color, DecalColor, DecalColor.a);
     }
-    
     return Color;
 }

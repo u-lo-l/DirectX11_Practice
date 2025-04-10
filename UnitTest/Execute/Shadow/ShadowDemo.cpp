@@ -27,7 +27,9 @@ namespace sdt
 		LoadCrossQuadGrass();
 		// LoadLightingDemo();
 
-		Decal = new Projector(L"Environments/MagicCircle.png", 10, 10, 0.1, 10);
+		Decal = new Projector(L"Environments/Decal_Dragon.png", 6, 6, 0.1, 20);
+		Decal->SetRotation({0, 90, 0});
+		Decal->SetPosition({-10, 10, 0});
 	}
 
 	void ShadowDemo::Destroy()

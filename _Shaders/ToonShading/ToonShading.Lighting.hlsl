@@ -25,7 +25,7 @@ ColorDesc ComputeToonPhongLight (
         ViewPosition,
         Normal,
         WorldPosition,
-        float4(0,0,0,0),
+        float4(0.1,0.1,0.1,1),
         Color,
         Coeff
     );
@@ -50,9 +50,8 @@ ColorDesc ComputeToonPhongLight( // 사실 Blin-Phong임
     Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
     
     // float NdotL = ceil(saturate(dot(L, N)) * BandShadingLevel) / BandShadingLevel;
-    // Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse;
-    // Phong.Diffuse = float4(0.5,0.5,0,1);
-    Phong.Diffuse = float4(NdotL, NdotL, NdotL, 1);
+    Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse;
+    Phong.Diffuse *= NdotL;
     // Phong.Diffuse *= round(NdotL);
     // Phong.Diffuse *= step(0.2f, NdotL);
     // Phong.Diffuse *= smoothstep(0.2f, 0.25f, NdotL);
@@ -102,7 +101,7 @@ float4 ComputeRimLight(
     return float4(Rim, Rim, Rim, 1);
 }
 
-const static float handed = 1; // for LeftHanded Coordinate
+const static float handed = -1; // for LeftHanded Coordinate
 float3 NormalMapping // TODO : Fix Problem
 (
     float2 uv,

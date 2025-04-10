@@ -2,16 +2,16 @@
 #include "Projector.h"
 
 Projector::Projector(const wstring& InTextureFile, float InWidth, float InHeight, float InNear, float InFar)
+	: Width(InWidth), Height(InHeight), Near(InNear), Far(InFar), FOV(0)
 {
 	DecalTexture = new Texture(InTextureFile, true);
 	
 	World = new Transform();
-	World->SetRotation({90, 0, 0});
 	Proj = new Orthographic(InWidth, InHeight, InNear, InFar);
 	
 	ProjectorCBuffer_VS = new ConstantBuffer(
 		ShaderType::VertexShader,
-		VS_CONST_DECALPROJECTOR,
+		VS_CONST_DECAL_PROJECTOR,
 		&ProjectorData,
 		"Decal Projector Data",
 		sizeof(ProjectorDesc),
@@ -31,9 +31,9 @@ void Projector::Tick()
 	{
 		static Vector position = World->GetPosition();
 		static Vector rotation = World->GetRotationInDegree();
-		ImGui::SliderFloat("PositionX", &position.X, -5, +5);
+		ImGui::SliderFloat("PositionX", &position.X, -30, +30);
 		ImGui::SliderFloat("PositionY", &position.Y, 0, 20);
-		ImGui::SliderFloat("PositionZ", &position.Z, -5, +5);
+		ImGui::SliderFloat("PositionZ", &position.Z, -30, +30);
 		World->SetPosition(position);
 		ImGui::SliderFloat("Roll", &rotation.X, -90, +90);
 		ImGui::SliderFloat("Pitch", &rotation.Y, -90, +90);
@@ -56,4 +56,20 @@ void Projector::Tick()
 void Projector::Render()
 {
 	ProjectorCBuffer_VS->BindToGPU();
+	DecalTexture->BindToGPU(4);
+}
+
+void Projector::SetPosition(const Vector& InPosition) const
+{
+	World->SetPosition(InPosition);
+}
+
+void Projector::SetScale(const Vector& InScale) const
+{
+	World->SetScale(InScale);
+}
+
+void Projector::SetRotation(const Vector& InEulerDegree) const
+{
+	World->SetRotation(InEulerDegree);
 }

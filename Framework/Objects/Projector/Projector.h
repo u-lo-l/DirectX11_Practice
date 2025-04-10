@@ -6,7 +6,7 @@ class Projection;
 class Projector
 {
 private:
-	constexpr static int VS_CONST_DECALPROJECTOR = 9;
+	constexpr static int VS_CONST_DECAL_PROJECTOR = 9;
 public:
 	Projector(const wstring & InTextureFile, float InWidth, float InHeight, float InNear, float InFar);
 	~Projector();
@@ -14,6 +14,10 @@ public:
 	void Tick();
 	void Render();
 
+	void SetPosition(const Vector & InPosition) const;
+	void SetScale(const Vector & InScale) const;
+	void SetRotation(const Vector & InEulerDegree) const;
+	
 	const Matrix & GetViewMatrix() const { return ProjectorData.View; }
 	const Matrix & GetProjectionMatrix() const { return ProjectorData.Projection; }
 	
@@ -34,8 +38,6 @@ private:
 	float FOV = 0.25f;
 
 	Texture * DecalTexture;
-
 	Transform * World;
-	// Matrix Projection;
 	Projection * Proj;
 };

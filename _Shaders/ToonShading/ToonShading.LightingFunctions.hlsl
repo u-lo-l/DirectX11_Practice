@@ -1,6 +1,7 @@
 #include "ToonShading.Lighting.hlsl"
 
 ColorDesc ApplyGlobalDirectionalLights(
+    // in ColorDesc MatColor,
     in float3 LightDirection,
     in float3 WorldPosition,
     in float3 ViewPosition,
@@ -31,6 +32,7 @@ ColorDesc ApplyGlobalDirectionalLights(
 };
 
 ColorDesc ApplyPointLights(
+    // in ColorDesc MatColor,
     in float3 WorldPosition,
     in float3 ViewPosition,
     in float3 Normal
@@ -76,6 +78,7 @@ ColorDesc ApplyPointLights(
 }
 
 ColorDesc ApplySpotLights(
+    // in ColorDesc MatColor,
     in float3 WorldPosition,
     in float3 ViewPosition,
     in float3 Normal
