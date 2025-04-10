@@ -43,7 +43,6 @@ struct PointLightDesc
     float3 Padding;
 };
 
-
 struct SpotLightDesc
 {
 	ColorDesc Color;

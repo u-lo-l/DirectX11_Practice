@@ -1,3 +1,5 @@
+#ifndef __TOONSHADING_RESOURCES__
+#define __TOONSHADING_RESOURCES__
 #include "ToonShading.Slot.hlsl"
 
 #define MAX_POINT_LIGHTS 256
@@ -8,6 +10,7 @@ static const int SpecularMap = 1;
 static const int NormalMap = 2;
 
 Texture2D MaterialMaps[MAX_MATERIAL_TEXTURE_COUNT] : register(Texture_PS_Texture);
+Texture2D ProjectorTexture : register(Texture_PS_Decal);
 
 SamplerState LinearSampler		: register(Sampler_PS_Linear);
 SamplerState AnisotropicSampler	: register(Sampler_PS_Anisotropic);
@@ -21,6 +24,12 @@ cbuffer CB_Material : register(Const_PS_Material)
 	float  RimWidth;
 	float  RimPower;
 	float2 MaterialPadding;
+}
+
+cbuffer CB_Decal_VS : register(Const_VS_DecalProjector)
+{
+    matrix View_Projector_VS;
+    matrix Projection_Projector_VS;
 }
 
 struct ColorDesc
@@ -71,3 +80,4 @@ cbuffer CB_Lights : register(Const_PS_Lights)
 	float3 SpotLightPadding;
 	SpotLightDesc SpotLights[MAX_SPOT_LIGHTS];
 }
+#endif

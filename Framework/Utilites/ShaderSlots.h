@@ -18,7 +18,7 @@ enum ShaderSlot : uint32_t
 	PS_Lights = 8,
 
 	GS_World = 9,
-	GS_ViewProjection = 10	
+	GS_ViewProjection = 10
 };
 
 enum TextureSlot : uint32_t

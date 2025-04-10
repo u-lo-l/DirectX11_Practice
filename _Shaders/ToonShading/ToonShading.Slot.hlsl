@@ -10,7 +10,9 @@
 #define Const_PS_Material           b5
 #define Const_PS_LightDirection     b6 // <- Global
 #define Const_PS_ViewInv            b7
-#define Const_PS_Lights        b8
+#define Const_PS_Lights             b8
+
+#define Const_VS_DecalProjector     b9
 
 // #define Const_GS_World              b9
 // #define Const_GS_VieProjection      b10
@@ -21,6 +23,7 @@
 #define Texture_PS_Texture          t1 // Diffuse Texture
 //                                  t2    Specular Texture
 //                                  t3    Normal Texture
+#define Texture_PS_Decal            t4 // Projector Texture
 
 #define Sampler_PS_Linear           s0
 #define Sampler_PS_Anisotropic      s1

@@ -98,10 +98,10 @@ float3 NormalMapping
     
     float3 NewLocalNormal = normalMapTexelValue * 2.0f - 1.0f; //-1.0f ~ +1.0f
     
-    float3 N = normalize(normal);
-    float3 T = normalize(tangent - dot(tangent, N) * N);
-    float3 B = cross(N, T);
-    
+    float3 N = normalize(normal); // z
+    float3 T = normalize(tangent - dot(tangent, N) * N); // x
+    float3 B = cross(N, T); // y
+
     return normalize(mul(NewLocalNormal, float3x3(T, B, N)));
 }
 

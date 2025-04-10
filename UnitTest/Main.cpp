@@ -2,11 +2,11 @@
 #include "Pch.h"
 #include "Main.h"
 #include "Systems/Window.h"
-#include "Execute/035_LightingDemo/LightingDemo.h"
+#include "Execute/Shadow/ShadowDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(sdt::LightingDemo);
+	PUSH_MAIN(sdt::ShadowDemo);
 }
 
 

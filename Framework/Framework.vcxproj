@@ -40,6 +40,85 @@
     <ClCompile Include="Objects\Billboard\Billboard.cpp" />
     <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
     <ClCompile Include="Objects\PostEffect\PostEffect.cpp" />
+    <ClCompile Include="Objects\Projector\Projector.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
+    <ClCompile Include="Objects\Shadow\Shadow.cpp" />
     <ClCompile Include="ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="ParticleSystem\ParticleSystem.ReadFile.cpp" />
     <ClCompile Include="Renders\Buffer\BufferBase.cpp" />
@@ -355,6 +434,9 @@
     </ClCompile>
     <ClCompile Include="Renders\Context.cpp" />
     <ClCompile Include="Renders\ConstantDataBinder.cpp" />
+    <ClCompile Include="Renders\Projector\Orthographic.cpp" />
+    <ClCompile Include="Renders\Projector\Perspective.cpp" />
+    <ClCompile Include="Renders\Projector\Projection.cpp" />
     <ClCompile Include="Renders\Shader\HlslComputeShader.cpp" />
     <ClCompile Include="Renders\Shader\HlslShader.hpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -514,6 +596,7 @@
     <ClCompile Include="Renders\Texture.cpp" />
     <ClCompile Include="Renders\TextureArray.cpp" />
     <ClCompile Include="Renders\Transform.cpp" />
+    <ClCompile Include="Renders\ViewPort\ViewPort.cpp" />
     <ClCompile Include="Systems\D3D.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -562,6 +645,8 @@
     <ClInclude Include="Objects\Billboard\Billboard.h" />
     <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
     <ClInclude Include="Objects\PostEffect\PostEffect.h" />
+    <ClInclude Include="Objects\Projector\Projector.h" />
+    <ClInclude Include="Objects\Shadow\Shadow.h" />
     <ClInclude Include="ParticleSystem\ParticleData.h" />
     <ClInclude Include="ParticleSystem\ParticleSystem.h" />
     <ClInclude Include="Renders\Buffer\BufferBase.h" />
@@ -575,6 +660,9 @@
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\ConstantDataBinder.h" />
     <ClInclude Include="Renders\Material.h" />
+    <ClInclude Include="Renders\Projector\Orthographic.h" />
+    <ClInclude Include="Renders\Projector\Perspective.h" />
+    <ClInclude Include="Renders\Projector\Projection.h" />
     <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
     <ClInclude Include="Renders\Shader\HlslShader.h" />
     <ClInclude Include="Renders\Shader\Hlsl2DTextureShader.h" />
@@ -582,6 +670,7 @@
     <ClInclude Include="Renders\Texture.h" />
     <ClInclude Include="Renders\TextureArray.h" />
     <ClInclude Include="Renders\Transform.h" />
+    <ClInclude Include="Renders\ViewPort\ViewPort.h" />
     <ClInclude Include="Systems\D3D.h" />
     <ClInclude Include="Systems\Gui.h" />
     <ClInclude Include="Systems\IExecutable.h" />

@@ -1,3 +1,5 @@
+#ifndef __LIGHTING_WVP__
+#define __LIGHTING_WVP__
 #include "43_LightingSlot.hlsl"
 
 cbuffer CB_World_VS : register(Const_VS_World)
@@ -22,3 +24,4 @@ cbuffer CB_LightDirection_PS : register(Const_PS_LightDirection)
 { 
     float3 LightDirection_PS;
 }
+#endif

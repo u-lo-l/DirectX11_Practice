@@ -35,8 +35,21 @@ struct VertexOutput
     float2 Uv            : UV;
     float3 Normal        : NORMAL;
     float3 Tangent       : TANGENT;
+    float4 ProjectorNDCPosition : PROJ_Position;
 };
 
+// struct MeshOutput
+// {
+//     float4 Position : SV_Position;
+//     float3 oPosition : Position1; //Origin Position
+//     float3 wPosition : Position2; //World Position
+//     float4 wvpPosition : Position3; //WVP Position
+//     float4 wvpPosition_Sub : Position4; //Sub WVP Position
+    
+//     float2 Uv : Uv;
+//     float3 Normal : Normal;
+//     float3 Tangent : Tangent;
+// };
 /*======================================================================================================*/
 
 VertexOutput VSMain(VertexInput input)
@@ -46,8 +59,8 @@ VertexOutput VSMain(VertexInput input)
 
     VertexOutput output;
     output.Uv = input.Uv;
-    output.Normal = normalize(mul(input.Normal, (float3x3) ModelWorldTF));
-    output.Tangent = normalize(mul(input.Tangent, (float3x3) ModelWorldTF));
+    output.Normal = normalize(mul(input.Normal, (float3x3)ModelWorldTF));
+    output.Tangent = normalize(mul(input.Tangent, (float3x3)ModelWorldTF));
     
     output.Position = mul(input.Position, ModelWorldTF);
     output.WorldPosition = output.Position.xyz;
@@ -55,24 +68,35 @@ VertexOutput VSMain(VertexInput input)
     output.Position = mul(output.Position, View_VS);
     output.Position = mul(output.Position, Projection_VS);
     
+    output.ProjectorNDCPosition = mul(input.Position, View_Projector_VS);
+    output.ProjectorNDCPosition = mul(output.ProjectorNDCPosition, Projection_Projector_VS);
+    output.ProjectorNDCPosition /= output.ProjectorNDCPosition.w;
     return output;
 }
 
+float4 ApplyAllLights_PS(VertexOutput input);
+float4 ApplyProjector_PS(in float4 Color, in float4 wvp);
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    input.Uv.x *= 2;
-    input.Uv.y *= 2;
-    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler , input.Uv);
-    input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+    float4 Color = ApplyAllLights_PS(input);
+    Color = ApplyProjector_PS(Color, input.ProjectorNDCPosition);
 
+    return Color;
+}
+
+float4 ApplyAllLights_PS(VertexOutput input)
+{
+    input.Uv.x *= Tiling.x;
+    input.Uv.y *= Tiling.y;
+
+    float3 OriginalNormal = input.Normal;
+
+    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(LinearSampler , input.Uv);
+    float3 NewNormal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+    
     float4 A = Ambient;
     float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
     float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;
-
-    // float3 level = 0.4f + 0.6f * dot(normalize(input.Normal), -LightDirection_PS);
-    // level = saturate(level);
-    // float4 toon = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(PointSampler, float2(level.x, 0));
-    // D += toon;
 
     float4 GlobalAmbient = float4(0.2f,0.2f,0.2f,1.f);
 
@@ -80,17 +104,17 @@ float4 PSMain(VertexOutput input) : SV_Target
         LightDirection_PS,
         input.WorldPosition,
         ViewInv_PS._41_42_43,
-        input.Normal
+        NewNormal
     );
     ColorDesc PointLightColor = ApplyPointLights(
         input.WorldPosition,
         ViewInv_PS._41_42_43,
-        input.Normal
+        NewNormal
     );
     ColorDesc SpotLightColor = ApplySpotLights(
         input.WorldPosition,
         ViewInv_PS._41_42_43,
-        input.Normal
+        NewNormal
     );
 
     ColorDesc OutPut;
@@ -99,8 +123,28 @@ float4 PSMain(VertexOutput input) : SV_Target
     OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
     
     OutPut.Ambient  *= A;
-    OutPut.Diffuse  *= D;
-    // OutPut.Specular *= S;
+    // OutPut.Diffuse  *= D;
+    OutPut.Specular *= S;
     return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
 }
 
+float4 ApplyProjector_PS(in float4 Color, in float4 ProjectorNDCPosition)
+{
+    float3 uvw = 0;
+    
+    uvw.x =  ProjectorNDCPosition.x  * 0.5f + 0.5f;
+    uvw.y = -ProjectorNDCPosition.y  * 0.5f + 0.5f;
+    uvw.z =  ProjectorNDCPosition.z ;
+    
+    [flatten]
+    if (saturate(uvw.x) == uvw.x && saturate(uvw.y) == uvw.y && saturate(uvw.z) == uvw.z)
+    {
+        Color = lerp(Color, float4(1, 0, 0, 1), uvw.z);
+        // float4 DecalImage = ProjectorTexture.Sample(LinearSampler, uvw.xy);
+        
+        // DecalImage.rgb *= ProjectorData.Color;
+        // Color = lerp(Color, DecalImage, DecalImage.a);
+    }
+    
+    return Color;
+}

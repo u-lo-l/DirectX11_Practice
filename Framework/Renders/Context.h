@@ -1,5 +1,9 @@
 #pragma once
+#include "Objects/Projector/Projector.h"
+#include "Projector/Perspective.h"
+#include "ViewPort/ViewPort.h"
 
+class Perspective;
 class GlobalViewProjectionCBuffer;
 
 class Context
@@ -7,8 +11,6 @@ class Context
 private:
 	using ThisClass = Context;
 
-	Matrix Projection;
-	Vector LightDirection = {1, -1, 1};
 	
 public:
 	static void Create();
@@ -31,9 +33,12 @@ private:
 	
 public:
 	const Matrix & GetViewMatrix() const { return MainCamera->GetViewMatrix(); }
-	const Matrix & GetProjectionMatrix() const { return Projection; }
+	const Matrix & GetProjectionMatrix() const { return Projection->GetMatrix(); }
 private:
 	Camera * MainCamera;
-	D3D11_VIEWPORT * Viewport;
+	ViewPort * Vp;
 	GlobalViewProjectionCBuffer * VP_CBuffer_VS = nullptr;
+	// Matrix Projection;
+	Perspective * Projection;
+	Vector LightDirection = {1, -1, 1};
 };

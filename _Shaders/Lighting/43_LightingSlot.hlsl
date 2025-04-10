@@ -1,3 +1,5 @@
+#ifndef __LIGHTING_SLOT__
+#define __LIGHTING_SLOT__
 #define InstancingSlot 9
 
 #define Const_VS_World              b0 // <- Global
@@ -33,3 +35,4 @@
 #define MATERIAL_TEXTURE_SPECULAR   1
 #define MATERIAL_TEXTURE_NORMAL     2
 #define MAX_MATERIAL_TEXTURE_COUNT  3
+#endif

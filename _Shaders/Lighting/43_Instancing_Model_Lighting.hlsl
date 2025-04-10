@@ -51,7 +51,9 @@ VertexOutput VSMain(VertexInput input)
     output.Uv = input.Uv;
     output.Normal = mul(input.Normal, (float3x3) ModelWorldTF);
     output.Tangent = mul(input.Tangent, (float3x3) ModelWorldTF);
-    
+    // output.Normal = input.Normal;
+    // output.Tangent = input.Tangent;
+
     output.Position = mul(input.Position, ModelWorldTF);
     output.WorldPosition = output.Position.xyz;
 
@@ -63,11 +65,13 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
+    return float4(input.Tangent, 1);
     input.Uv.x *= Tiling.x;
     input.Uv.y *= Tiling.y;
-    // float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(AnisotropicSampler, input.Uv);
-    // input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
-    // return NomalMapTexel;
+    float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(LinearSampler, input.Uv);
+    input.Normal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
+    // input.Normal = NomalMapTexel.xyz;
+
     float4 A = Ambient;
     float4 D = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
     float4 S = MaterialMaps[MATERIAL_TEXTURE_SPECULAR].Sample(LinearSampler, input.Uv) * Specular;

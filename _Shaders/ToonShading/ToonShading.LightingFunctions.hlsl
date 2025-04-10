@@ -24,9 +24,9 @@ ColorDesc ApplyGlobalDirectionalLights(
         WorldPosition,
         SunLightColor
     );
-    LightColor.Ambient  += Rim;
-    LightColor.Diffuse  += Rim;
-    LightColor.Specular += Rim;
+    // LightColor.Ambient  += Rim;
+    // LightColor.Diffuse  += Rim;
+    // LightColor.Specular += Rim;
     return LightColor;
 };
 

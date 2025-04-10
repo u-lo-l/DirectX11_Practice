@@ -45,11 +45,14 @@ ColorDesc ComputeToonPhongLight( // 사실 Blin-Phong임
     ColorDesc Phong;
     float3 L = normalize(-LightDirection);
     float3 N = normalize(Normal);
+    float NdotL = saturate(dot(L, N));
+
     Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
     
-    float NdotL = ceil(saturate(dot(L, N)) * BandShadingLevel) / BandShadingLevel;
-    Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse;
-    Phong.Diffuse *= NdotL;
+    // float NdotL = ceil(saturate(dot(L, N)) * BandShadingLevel) / BandShadingLevel;
+    // Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse;
+    // Phong.Diffuse = float4(0.5,0.5,0,1);
+    Phong.Diffuse = float4(NdotL, NdotL, NdotL, 1);
     // Phong.Diffuse *= round(NdotL);
     // Phong.Diffuse *= step(0.2f, NdotL);
     // Phong.Diffuse *= smoothstep(0.2f, 0.25f, NdotL);
@@ -65,8 +68,11 @@ ColorDesc ComputeToonPhongLight( // 사실 Blin-Phong임
         float3 H = normalize(L + V);
         float NdotH = saturate(dot(H, N));
         Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(NdotH, ns);
+        Phong.Specular = smoothstep(0.2, 0.5, Phong.Specular) * 0.5f;
     }
-    Phong.Specular = smoothstep(0.2, 0.5, Phong.Specular) * 0.5f;
+    { // 
+
+    }
 
     return Phong;
 }
@@ -96,7 +102,8 @@ float4 ComputeRimLight(
     return float4(Rim, Rim, Rim, 1);
 }
 
-float3 NormalMapping
+const static float handed = 1; // for LeftHanded Coordinate
+float3 NormalMapping // TODO : Fix Problem
 (
     float2 uv,
     float3 normal,
@@ -108,13 +115,15 @@ float3 NormalMapping
     if (any(normalMapTexelValue.rgb) == false) // 잘못된 TBN-coord가 생성됨.
         return normal;
     
-    float3 NewLocalNormal = normalMapTexelValue * 2.0f - 1.0f; //-1.0f ~ +1.0f
+    float3 NewLocalNormal = normalMapTexelValue * 2.0f - 1.0f; // [0, 1] -> [-1, 1]
+
+    float3 N = normalize(normal); // Z
+    float3 T = normalize(tangent - dot(tangent, N) * N); // X
+    float3 B = cross(N, T) * handed; // Y
     
-    float3 N = normalize(normal);
-    float3 T = normalize(tangent - dot(tangent, N) * N);
-    float3 B = cross(N, T);
-    
-    return normalize(mul(NewLocalNormal, float3x3(T, B, N)));
+    float3x3 TBN =  float3x3(T, B, N);
+    float3 WorldNormal = mul(NewLocalNormal, TBN);
+    return WorldNormal;
 }
 
 const static float A1 = 1.f;

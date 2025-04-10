@@ -52,17 +52,8 @@ void Context::Render() const
 
 void Context::ResizeScreen()
 {
-	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 10000.f);
-
-	this->Viewport->TopLeftX = 0;
-	this->Viewport->TopLeftY = 0;
-	this->Viewport->Width = D3D::GetDesc().Width;
-	this->Viewport->Height = D3D::GetDesc().Height;
-	this->Viewport->MinDepth = 0;
-	this->Viewport->MaxDepth = 1;
-
-	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
+	Projection->Set(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi * 0.25f);
+	Vp->SetViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
 }
 
 Camera * Context::GetCamera() const
@@ -83,27 +74,18 @@ GlobalViewProjectionCBuffer * Context::GetViewProjectionCBuffer() const
 Context::Context()
  : MainCamera(new Camera())
 {
-	const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
-	Projection = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 10000.f);
+	Vp = new ViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
+	Projection = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi * 0.25f);
+	
 	MainCamera->SetPosition(0, 0, 10);
 	MainCamera->SetRotation(180, 0, 0);
-
-	this->Viewport = new D3D11_VIEWPORT();
-	this->Viewport->TopLeftX = 0;
-	this->Viewport->TopLeftY = 0;
-	this->Viewport->Width = D3D::GetDesc().Width;
-	this->Viewport->Height = D3D::GetDesc().Height;
-	this->Viewport->MinDepth = 0;
-	this->Viewport->MaxDepth = 1;
-
-	D3D::Get()->GetDeviceContext()->RSSetViewports(1, this->Viewport);
 
 	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
 }
 
 Context::~Context()
 {
-	SAFE_DELETE(Viewport);
+	SAFE_DELETE(Vp);
 	SAFE_DELETE(MainCamera);
 	SAFE_DELETE(VP_CBuffer_VS);
 }

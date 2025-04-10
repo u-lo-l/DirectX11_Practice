@@ -3,7 +3,7 @@
       "Ambient" : "0.000000,0.000000,0.000000,0.000000",
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "Emissive" : "0.800000,0.800000,0.800000,1.000000",
-      "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
+      "ShaderName" : "ToonShading/ToonShading.hlsl",
       "Specular" : "0.800000,0.800000,0.800000,1.000000"
    },
    "texture" : {
@@ -11,7 +11,7 @@
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : [ "../_Models/Airplane/texture.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
-      "ShaderName" : "Lighting/43_Instancing_Model_Lighting.hlsl",
+      "ShaderName" : "ToonShading/ToonShading.hlsl",
       "Specular" : "1.000000,1.000000,1.000000,1.000000",
       "SpecularMap" : [ "../_Models/Airplane/texture_ref.png" ]
    }

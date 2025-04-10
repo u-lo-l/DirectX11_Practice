@@ -158,6 +158,10 @@ namespace sdt
 		{
 			memcpy_s(&Vertex.Tangent, sizeof(Vector), Mesh->mTangents + VertexIndex, sizeof(Vector));
 		}
+		else
+		{
+			Vertex.Tangent = {1,0,0};
+		}
 		return Vertex;
 	}
 
