@@ -5,31 +5,21 @@ namespace sdt
 {
 	void ShadowDemo::Initialize()
 	{
-		Diffuse_RT = new RenderTarget(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height));
-		DS = new DepthStencil(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height), false);
-		TextureShader = new Hlsl2DTextureShader(*Diffuse_RT);
+		Shadow * const ShadowMap = Context::Get()->GetShadowMap();
+		DepthDrawer = new Hlsl2DTextureShader(*ShadowMap->GetRenderTarget());
 
-		float TextureWidth = 0.5f * D3D::GetDesc().Width;
-		float TextureHeight = 0.5f * D3D::GetDesc().Height;
-		TextureShader->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
-		TextureShader->GetTransform()->SetPosition({TextureWidth / 2,TextureHeight / 2, 0});
+		float TextureWidth = 0.1f * ShadowMap->GetWidth();
+		float TextureHeight = 0.1f * ShadowMap->GetHeight();
+		
+		DepthDrawer->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
+		DepthDrawer->GetTransform()->SetPosition({TextureWidth,TextureHeight, 0});
 
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 150, 150, 20 );
 		MainCamera->SetRotation( 225, 0, 180);
 
-		// PEffect = new PostEffect(L"PostEffect/PostEffect.hlsl", Diffuse_RT);
-		// Particle_Fire = new ParticleSystem(L"Fire");
-		// Particle_Fire->SetScale(35.f);
-		// LoadWeather();
 		LoadSky();
 		LoadModel();
-		LoadCrossQuadGrass();
-		// LoadLightingDemo();
-
-		Decal = new Projector(L"Environments/Decal_Dragon.png", 6, 6, 0.1, 20);
-		Decal->SetRotation({0, 90, 0});
-		Decal->SetPosition({-10, 10, 0});
 	}
 
 	void ShadowDemo::Destroy()
@@ -47,8 +37,6 @@ namespace sdt
 		SAFE_DELETE(Sky);
 		SAFE_DELETE(Rain);
 		SAFE_DELETE(Particle_Fire);
-		SAFE_DELETE(Diffuse_RT);
-		SAFE_DELETE(DS);
 	}
 
 	void ShadowDemo::Tick()
@@ -59,90 +47,52 @@ namespace sdt
 			Plane->Tick();
 		for (const ModelInstanceData & P : ModelInstances)
 			P.Object->Tick();
-		for (const ModelInstanceData & P : ModelInstances_ForLighting)
-			P.Object->Tick();
-		if (!!Grasses)
-			Grasses->Tick();
-		if (!!Rain)
-			Rain->Tick();
-		if (!!Particle_Fire)
-		{
-			Particle_Fire->Add({0,5,0});
-			Particle_Fire->Tick();
-		}
-		if (!!Decal)
-			Decal->Tick();
-		if (!!TextureShader)
-			TextureShader->Tick();
 		
+		if (!!DepthDrawer)
+			DepthDrawer->Tick();
 	}
 
 	void ShadowDemo::PreRender()
 	{
 		// Render
-		{
-			// Diffuse_RT->SetRenderTarget(DS);
-			// Diffuse_RT->ClearRenderTarget(); // Render 하기 전에 Clear
-			// DS->ClearDepthStencil(); // Render 하기 전에 Clear
-			// if (!!Sky)
-			// 	Sky->Render();
-			// if (!!Plane)
-			// 	Plane->Render();
-			// for (const ModelInstanceData & P : ModelInstances)
-			// 	P.Object->Render();
-			// for (const ModelInstanceData & P : ModelInstances_ForLighting)
-			// 	P.Object->Render();
-			// if (!!Grasses)
-			// 	Grasses->Render();
-			// if (!!Rain)
-			// 	Rain->Render();
-			// if (!!Particle_Fire)
-			// 	Particle_Fire->Render();
-			// if (!!Decal)
-			// 	Decal->Render();
-		}
+		Shadow * const ShadowMap = Context::Get()->GetShadowMap();
+		if (!!ShadowMap)
+			ShadowMap->PreRender();
+		if (!!Plane)
+			Plane->RenderShadow();
+		for (const ModelInstanceData & P : ModelInstances)
+			P.Object->RenderShadow();
 	}
 	
 	void ShadowDemo::Render()
 	{
 		if (!!Sky)
 			Sky->Render();
+		Shadow * const ShadowMap = Context::Get()->GetShadowMap();
+		if (Keyboard::Get()->IsPressed(VK_SPACE))
+		{
+			ShadowMap->GetRenderTarget()->SaveTexture(L"Shadow");
+		}
+		ID3D11ShaderResourceView * ShadowSRV = *ShadowMap->GetRenderTarget();
+		D3D::Get()->GetDeviceContext()->PSSetShaderResources(5, 1, &ShadowSRV);
 		if (!!Plane)
 			Plane->Render();
 		for (const ModelInstanceData & P : ModelInstances)
 			P.Object->Render();
-		for (const ModelInstanceData & P : ModelInstances_ForLighting)
-			P.Object->Render();
-		if (!!Grasses)
-			Grasses->Render();
-		if (!!Rain)
-			Rain->Render();
-		if (!!Particle_Fire)
-			Particle_Fire->Render();
-		if (!!Decal)
-			Decal->Render();
 	}
 
 	void ShadowDemo::PostRender()
 	{
-		// if (!!TextureShader) // 원본 축소
-		// 	TextureShader->Render();
+		if (!!DepthDrawer) // 원본 축소
+		{
+			DepthDrawer->SetSRV(*Context::Get()->GetShadowMap()->GetRenderTarget());
+			DepthDrawer->Tick();
+			DepthDrawer->Render();
+		}
 	}
 
-
-
-	void ShadowDemo::LoadWeather()
-	{
-		Rain = new Precipitation(
-			Vector(300, 100, 500),
-			static_cast<UINT>(1e+4f),
-			L"Environments/Rain.png",
-			WeatherType::Rain
-		);
-	}
 	void ShadowDemo::LoadSky()
 	{
-		// Sky = new SkySphere(L"Environments/GrassCube1024.dds", 0.5f);
 		Sky = new SkySphere(L"Environments/SunSetCube1024.dds", 0.5f);
 	}
 
@@ -154,43 +104,10 @@ namespace sdt
 			SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			// {new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
-			{new Model(L"Sphere"),{0.1f,0.1f,0.1f}, 15.f},
+			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
+			// {new Model(L"Sphere"),{0.1f,0.1f,0.1f}, 15.f},
 		});
 		SetModelsPosition_Square(ModelInstances, InstanceCount, Stride);
-	}
-	void ShadowDemo::LoadLightingDemo()
-	{
-		if (!Plane)
-			SetPlane();
-		if (!!Plane)
-		{
-			Transform * tf = Plane->AddTransforms();
-			tf->SetPosition({300,0,0});
-			tf->SetScale({2.5,1,2.5});
-			tf->SetRotation({0,0,90});
-			tf->UpdateWorldMatrix();
-			ModelInstances_ForLighting.insert(ModelInstances_ForLighting.end(), {
-				{new Model(L"Cone"),{0.1f,0.1f,0.1f}, 15.f},
-				{new Model(L"Cylinder"),{0.1f,0.1f,0.1f}, 15.f},
-			});
-			constexpr UINT InstanceCount = 5;
-			constexpr float Stride = 50.f;
-			SetModelsPosition_Line(ModelInstances_ForLighting, InstanceCount, Stride, {300,5,0});
-			CreatePointLights();
-			CreateSpotLights();
-		}
-	}
-
-	void ShadowDemo::LoadCrossQuadGrass()
-	{
-		Grasses = new CrossQuad();
-		Grasses->AddTexture(L"Terrain/Grass/grass_07.tga");
-		Grasses->AddTexture(L"Terrain/Grass/grass_11.tga");
-		Grasses->AddTexture(L"Terrain/Grass/grass_14.tga");
-		MakeRandomGrasses({0,0,0}, {-125, 125}, 720, 0);
-		MakeRandomGrasses({0,0,0}, {-125, 125}, 450, 1);
-		MakeRandomGrasses({0,0,0}, {-125, 125}, 310, 2);
 	}
 
 	void ShadowDemo::SetPlane()
@@ -272,102 +189,4 @@ namespace sdt
 			}
 		}
 	}
-
-	void ShadowDemo::MakeRandomGrasses(const Vector& Center, const Vector2D& Range, UINT Count, UINT MapIndex)
-	{
-		for (UINT i = 0; i < Count; i++)
-		{
-			Vector2D scale;
-			scale.X = Math::Random(5.f, 8.f);
-			scale.Y = Math::Random(5.f, 8.f);
-
-			Vector position;
-			position.X = Math::Random(Center.X + Range.X, Center.X + Range.Y);
-			position.Z = Math::Random(Center.Z + Range.X, Center.Z + Range.Y);
-			position.Y = scale.Y * 0.5f + Center.Y;
-
-			Grasses->Add(position, scale, MapIndex);
-		}
-	}
-
-	void ShadowDemo::CreatePointLights()
-	{
-		PointLight light;
-
-		light =
-		{
-			Color(0, 0, 0, 1), //Ambient
-			Color(0, 0, 1, 1), //Diffuse
-			Color(0, 0, 0.7f, 1), //Specular
-			Color(0, 0, 0.7f, 1), //Emissive
-			Vector(-1.0f, 0.5f, -4.0f)+ Vector(300,0,0), //Position
-			2, //Range
-			0.9f //Intensity
-		};
-		LightingManager::Get()->AddPointLight(light);
-
-		light =
-		{
-			Color(0.0f, 0.0f, 0.0f, 1.0f),
-			Color(1.0f, 0.0f, 0.0f, 1.0f),
-			Color(0.6f, 0.2f, 0.0f, 1.0f),
-			Color(0.6f, 0.3f, 0.0f, 1.0f),
-			Vector(+1.0f, 0.5f, -4.0f)+ Vector(300,0,0), 
-			2.0f, 
-			0.3f
-		};
-		LightingManager::Get()->AddPointLight(light);
-	}
-
-	void ShadowDemo::CreateSpotLights()
-	{
-		SpotLight light;
-		light =
-		{
-			Color(0.3f, 1.0f, 0.0f, 1.0f),
-			Color(0.7f, 1.0f, 0.0f, 1.0f),
-			Color(0.3f, 1.0f, 0.0f, 1.0f),
-			Color(0.3f, 1.0f, 0.0f, 1.0f),
-			Vector(-2.5f, 5.0f, +3.0f) + Vector(300,0,0), 
-			25.0f,
-			Vector(0, -1, 0), 
-			30.0f, 
-			45.f,
-			90.f
-		 };
-		LightingManager::Get()->AddSpotLight(light);
-
-		light =
-		{
-			Color(1.0f, 0.2f, 0.9f, 1.0f),
-			Color(1.0f, 0.2f, 0.9f, 1.0f),
-			Color(1.0f, 0.2f, 0.9f, 1.0f),
-			Color(1.0f, 0.2f, 0.9f, 1.0f),
-			Vector(0.0f, 5.0f, +3.0f)+ Vector(300,0,0), 
-			30.0f,
-			Vector(0, -1, 0), 
-			40.0f,
-			20,
-			45
-			// 20 * Math::DegToRadian,
-			// 45 * Math::DegToRadian
-		};
-		LightingManager::Get()->AddSpotLight(light);
-
-		light =
-		{
-			Color(0.0f, 0.2f, 0.9f, 1.0f),
-			Color(0.0f, 0.2f, 0.9f, 1.0f),
-			Color(0.0f, 0.2f, 0.9f, 1.0f),
-			Color(0.0f, 0.2f, 0.9f, 1.0f),
-			Vector(2.5f, 5.0f, +3.0f)+ Vector(300,0,0),
-			35.0f,
-			Vector(0, -1, 0),
-			20.0f,
-			60 * Math::DegToRadian,
-			90 * Math::DegToRadian
-		};
-		LightingManager::Get()->AddSpotLight(light);
-	}
-
 }

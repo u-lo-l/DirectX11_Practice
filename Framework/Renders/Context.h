@@ -3,6 +3,7 @@
 #include "Projector/Perspective.h"
 #include "ViewPort/ViewPort.h"
 
+class Shadow;
 class Perspective;
 class GlobalViewProjectionCBuffer;
 
@@ -32,6 +33,7 @@ private:
 	~Context();
 	
 public:
+	Shadow * GetShadowMap() const { return ShadowMap; }
 	const Matrix & GetViewMatrix() const { return MainCamera->GetViewMatrix(); }
 	const Matrix & GetProjectionMatrix() const { return Projection->GetMatrix(); }
 private:
@@ -41,4 +43,6 @@ private:
 	// Matrix Projection;
 	Perspective * Projection;
 	Vector LightDirection = {1, -1, 1};
+
+	Shadow * ShadowMap = nullptr;
 };

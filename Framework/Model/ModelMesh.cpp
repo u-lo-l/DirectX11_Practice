@@ -13,7 +13,7 @@ ModelMesh::~ModelMesh()
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE(WorldTF);
-	SAFE_DELETE(VP_CBuffer_PS);
+	SAFE_DELETE(ViewInv_CBuffer_PS);
 }
 
 // InstanceSize는 Model의 Transforms의 size()
@@ -22,7 +22,21 @@ void ModelMesh::Tick()
 {
 	WorldTF->Tick();
 	PS_ViewInv.ViewInv = Matrix::Invert(Context::Get()->GetViewMatrix());
-	VP_CBuffer_PS->UpdateData(&PS_ViewInv, sizeof(ViewInvDesc));
+	ViewInv_CBuffer_PS->UpdateData(&PS_ViewInv, sizeof(ViewInvDesc));
+}
+
+void ModelMesh::RenderShadow(UINT InstanceCount) const
+{
+	VBuffer->BindToGPU();
+	IBuffer->BindToGPU();
+	WorldTF->BindToGPU();
+	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
+	Context::Get()->GetShadowMap()->BindToGPU();
+
+	MaterialData->GetShadowShader()->DrawIndexedInstanced(
+		Indices.size(),
+		InstanceCount
+	);
 }
 
 void ModelMesh::Render(UINT InstanceCount) const
@@ -31,7 +45,7 @@ void ModelMesh::Render(UINT InstanceCount) const
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 	WorldTF->BindToGPU();
-	VP_CBuffer_PS->BindToGPU();
+	ViewInv_CBuffer_PS->BindToGPU();
 	
 	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	
@@ -103,7 +117,7 @@ void ModelMesh::CreateBuffers()
 {
 	VBuffer = new VertexBuffer(Vertices.data(), Vertices.size(), sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices.data(), Indices.size());
-	VP_CBuffer_PS = new ConstantBuffer(
+	ViewInv_CBuffer_PS = new ConstantBuffer(
 		ShaderType::PixelShader,
 		ShaderSlot::PS_ViewInverse,
 		nullptr,

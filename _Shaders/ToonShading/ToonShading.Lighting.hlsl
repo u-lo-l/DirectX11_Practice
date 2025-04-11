@@ -102,7 +102,7 @@ float4 ComputeRimLight(
 }
 
 const static float handed = -1; // for LeftHanded Coordinate
-float3 NormalMapping // TODO : Fix Problem
+float3 NormalMapping
 (
     float2 uv,
     float3 normal,

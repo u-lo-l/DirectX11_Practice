@@ -95,6 +95,24 @@ void Model::Tick()
 	}
 }
 
+void Model::RenderShadow() const
+{
+	if (InstBuffer != nullptr)
+		InstBuffer->BindToGPU();
+
+	if (AnimationFrameData_CBuffer != nullptr)
+		AnimationFrameData_CBuffer->BindToGPU();
+
+	if (SkeletonData != nullptr)
+		SkeletonData->BindToGPU();
+
+	const int InstanceCount = InstanceWorldTransforms.size();
+	for (ModelMesh * const M : Meshes)
+	{
+		M->RenderShadow(InstanceCount);
+	}
+}
+
 void Model::Render() const
 {
 	// Model에서 InstanceBuffer를 Bind해주면 Mesh들에서 갖다 쓴다.

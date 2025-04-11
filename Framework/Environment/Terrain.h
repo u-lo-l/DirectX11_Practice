@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include "Interface/IPlaceable.h"
-#include "Interface/IRenderable.h"
 
 class Terrain
 {

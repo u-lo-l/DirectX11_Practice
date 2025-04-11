@@ -5,7 +5,7 @@
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "DiffuseMap" : [ "../_Textures/yellowgreen.png" ],
       "NormalMap" : ["../_Textures/Floor_Normal.png"],
-      "ShaderName" : "ToonShading/ToonShading.hlsl",
+      "ShaderName" : "Model/Model.hlsl",
       "Specular" : "0.200000,0.200000,0.200000,1.000000"
    }
 }

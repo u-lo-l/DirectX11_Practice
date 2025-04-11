@@ -160,7 +160,6 @@ struct VertexParticle
 	Vector Position;
 	Vector StartVelocity;
 	Vector EndVelocity;
-	Vector4 Random;  // each elements value between [0, 1]
-	// 언제 이 Particle의 Vertex가 추가되었는지
-	float SpawnedTime; 
+	Vector4 Random;		// each elements value between [0, 1]
+	float SpawnedTime;
 };

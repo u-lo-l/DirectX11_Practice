@@ -90,6 +90,7 @@ using namespace std;
 	#include "Objects/CrossQuad/CrossQuad.h"
 	#include "Objects/PostEffect/PostEffect.h"
 	#include "Objects/Projector/Projector.h"
+	#include "Objects//Shadow/Shadow.h"
 
 	#include "Renders/ViewPort/ViewPort.h"
 	#include "Renders/Projector/Orthographic.h"

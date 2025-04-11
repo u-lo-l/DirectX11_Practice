@@ -11,10 +11,12 @@ static const int NormalMap = 2;
 
 Texture2D MaterialMaps[MAX_MATERIAL_TEXTURE_COUNT] : register(Texture_PS_Texture);
 Texture2D ProjectorTexture : register(Texture_PS_Decal);
+Texture2D ShadowMap : register (Texture_PS_Shadow);
 
-SamplerState LinearSampler		: register(Sampler_PS_Linear);
-SamplerState AnisotropicSampler	: register(Sampler_PS_Anisotropic);
-SamplerState PointSampler		: register(Sampler_PS_Point);
+SamplerState LinearSampler		            : register(Sampler_PS_Linear);
+SamplerState AnisotropicSampler	            : register(Sampler_PS_Anisotropic);
+SamplerState PointSampler		            : register(Sampler_PS_Point);
+SamplerComparisonState ShadowSampler		: register(Sampler_PS_Shadow);
 
 cbuffer CB_Material : register(Const_PS_Material)
 { 
@@ -31,6 +33,18 @@ cbuffer CB_Decal_VS : register(Const_VS_DecalProjector)
     matrix View_Projector_VS;
     matrix Projection_Projector_VS;
 }
+cbuffer CB_Shadow_VS : register (Const_VS_ShadowViewProjection)
+{
+    matrix ShadowView;
+    matrix ShadowProjection;
+};
+
+cbuffer CB_Shadow_PS : register (Const_PS_ShadowData)
+{
+    float2 ShadowMapSize;
+    float  ShadowBias;
+    uint   ShadowQuality;
+};
 
 struct ColorDesc
 {

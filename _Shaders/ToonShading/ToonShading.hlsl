@@ -1,5 +1,7 @@
-#include "ToonShading.WVP.hlsl"
-#include "ToonShading.LightingFunctions.hlsl"
+#ifndef __TOONSHADING_HLSL__
+# define __TOONSHADING_HLSL__
+# include "ToonShading.WVP.hlsl"
+# include "ToonShading.LightingFunctions.hlsl"
 
 cbuffer CB_BoneMatrix : register(Const_VS_BoneMatrix)
 {
@@ -28,14 +30,21 @@ struct VertexInput
     uint InstanceID  : SV_InstanceID;
 };
 
+struct DepthOutput
+{
+    float4 ShadowPosition : SV_Position;
+};
+
 struct VertexOutput
 {
-    float4 Position      : SV_Position;
-    float3 WorldPosition : WPOSITION;
+    float4 Position             : SV_Position;
+    float3 WorldPosition        : WPOSITION;
+    float4 ProjectorNDCPosition : PROJ_Position;
+    float4 ShadowPosition       : SPOSITION;
+
     float2 Uv            : UV;
     float3 Normal        : NORMAL;
     float3 Tangent       : TANGENT;
-    float4 ProjectorNDCPosition : PROJ_Position;
 };
 
 /*======================================================================================================*/
@@ -56,23 +65,71 @@ VertexOutput VSMain(VertexInput input)
     output.Position = mul(output.Position, View_VS);
     output.Position = mul(output.Position, Projection_VS);
     
-
     output.ProjectorNDCPosition = mul(float4(output.WorldPosition, 1), View_Projector_VS);
     output.ProjectorNDCPosition = mul(output.ProjectorNDCPosition, Projection_Projector_VS);
     output.ProjectorNDCPosition /= output.ProjectorNDCPosition.w;
+
+    output.ShadowPosition = mul(float4(output.WorldPosition, 1), ShadowView);
+    output.ShadowPosition = mul(output.ShadowPosition, ShadowProjection);
+    
     return output;
 }
 
-float4 ApplyAllLights_PS(VertexOutput input);
+DepthOutput VSShadow(VertexInput input)
+{
+    DepthOutput output;
+    matrix TF = input.Transform;
+    matrix ModelWorldTF = mul(BoneTransforms[BaseBoneIndex], TF);
+
+    output.ShadowPosition = mul(input.Position, ModelWorldTF);
+    output.ShadowPosition = mul(output.ShadowPosition, ShadowView);
+    output.ShadowPosition = mul(output.ShadowPosition, ShadowProjection);
+    return output;
+}
+
+ColorDesc ApplyAllLights_PS(VertexOutput input);
 float4 ApplyProjector_PS(in float4 Color, in float4 wvp);
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float4 Color = ApplyAllLights_PS(input);
+    ColorDesc Color = ApplyAllLights_PS(input);
+    float depth = 0;
+    float factor = 0;
+    { // Apply Shadow Depth Testing
+        input.ShadowPosition /= input.ShadowPosition.w;
+        [flatten]
+        if (input.ShadowPosition.x < -1.0f || input.ShadowPosition.x > +1.0f ||
+            input.ShadowPosition.y < -1.0f || input.ShadowPosition.y > +1.0f ||
+            input.ShadowPosition.z < +0.0f || input.ShadowPosition.z > +1.0f)
+        {
+            return  Color.Ambient + Color.Diffuse + Color.Specular;
+        }
 
-    return  Color;
+        input.ShadowPosition.x =  input.ShadowPosition.x * 0.5f + 0.5f;
+        input.ShadowPosition.y = -input.ShadowPosition.y * 0.5f + 0.5f;
+        input.ShadowPosition.z =  input.ShadowPosition.z - ShadowBias;
+        
+        { // No - PCF
+            depth = ShadowMap.Sample(AnisotropicSampler, input.ShadowPosition.xy).r;
+            factor = (float) (depth >= input.ShadowPosition.z);
+        }
+        { // PCF
+            // depth = input.ShadowPosition.z;
+            // factor = ShadowMap.SampleCmpLevelZero(ShadowSampler, input.ShadowPosition.xy, depth).r;
+        }
+
+    }
+    Color.Diffuse *= saturate(factor + 0.2f);
+    Color.Specular *= saturate(factor + 0.2f);
+    return  Color.Ambient + Color.Diffuse + Color.Specular;
 }
 
-float4 ApplyAllLights_PS(VertexOutput input)
+float4 PSShadow(DepthOutput input) : SV_Target
+{
+    float depth = input.ShadowPosition.z / input.ShadowPosition.w;
+    return float4 (depth, depth, depth, 1);
+}
+
+ColorDesc ApplyAllLights_PS(VertexOutput input)
 {
     input.Uv.x *= Tiling.x;
     input.Uv.y *= Tiling.y;
@@ -116,7 +173,7 @@ float4 ApplyAllLights_PS(VertexOutput input)
     OutPut.Ambient  *= MatColor.Ambient;
     OutPut.Diffuse  *= MatColor.Diffuse;
     OutPut.Specular *= MatColor.Specular;
-    return OutPut.Ambient + OutPut.Diffuse + OutPut.Specular;
+    return OutPut;
 }
 
 float4 ApplyProjector_PS(in float4 Color, in float4 ProjectorNDCPosition)
@@ -135,3 +192,5 @@ float4 ApplyProjector_PS(in float4 Color, in float4 ProjectorNDCPosition)
     }
     return Color;
 }
+
+#endif

@@ -28,6 +28,7 @@ protected:
 #endif
 	virtual ~ModelMesh() = 0;
 	void Tick();
+	virtual void RenderShadow(UINT InstanceCount) const;
 	virtual void Render(UINT InstanceCount) const;
 	virtual void CreateBuffers();
 	
@@ -49,7 +50,7 @@ protected:
 
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-	ConstantBuffer * VP_CBuffer_PS = nullptr;
+	ConstantBuffer * ViewInv_CBuffer_PS = nullptr;
 
 	struct ViewInvDesc
 	{

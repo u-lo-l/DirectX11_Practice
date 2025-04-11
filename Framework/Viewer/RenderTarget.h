@@ -14,6 +14,7 @@ public:
 	void SaveTexture(const wstring & InTextureFileName) const;
 	void SetRenderTarget(const class DepthStencil * InDepthStencil) const;
 	void ClearRenderTarget() const;
+	void ClearRenderTarget(const Color & InColor) const;
 private:
 	UINT Width;
 	UINT Height;

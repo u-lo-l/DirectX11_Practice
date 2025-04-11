@@ -13,6 +13,8 @@
 #define Const_PS_Lights             b8
 
 #define Const_VS_DecalProjector     b9
+#define Const_VS_ShadowViewProjection b10
+#define Const_PS_ShadowData b11
 
 // #define Const_GS_World              b9
 // #define Const_GS_VieProjection      b10
@@ -24,10 +26,12 @@
 //                                  t2    Specular Texture
 //                                  t3    Normal Texture
 #define Texture_PS_Decal            t4 // Projector Texture
+#define Texture_PS_Shadow           t5
 
 #define Sampler_PS_Linear           s0
 #define Sampler_PS_Anisotropic      s1
 #define Sampler_PS_Point            s2
+#define Sampler_PS_Shadow           s3
 
 #define MAX_MODEL_TRANSFORM 256
 #define MAX_INSTANCE_COUNT  200

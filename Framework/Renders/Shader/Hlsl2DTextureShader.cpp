@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "Hlsl2DTextureShader.h"
 
-Hlsl2DTextureShader::Hlsl2DTextureShader(ID3D11ShaderResourceView* InSRV)
+Hlsl2DTextureShader::Hlsl2DTextureShader(ID3D11ShaderResourceView * InSRV)
 	: Shader(nullptr), World(nullptr), VBuffer(nullptr), SRV(InSRV)
 {
 	Data.View = Matrix::CreateLookAt(Vector(0, 0, -1), Vector::Zero, Vector::Up);
@@ -63,4 +63,9 @@ void Hlsl2DTextureShader::Render()
 	CBuffer->BindToGPU();
 
 	Shader->Draw(6);
+}
+
+void Hlsl2DTextureShader::SetSRV(ID3D11ShaderResourceView* InSRV)
+{
+	SRV = InSRV;
 }

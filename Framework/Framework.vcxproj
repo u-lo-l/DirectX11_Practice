@@ -13,8 +13,6 @@
   <ItemGroup>
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
-    <ClCompile Include="Interface\IPlaceable.cpp" />
-    <ClCompile Include="Interface\IRenderable.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />
     <ClCompile Include="Math\Color.cpp" />
     <ClCompile Include="Math\Math.cpp" />
@@ -620,8 +618,6 @@
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Environment\Weather\WeatherStructure.h" />
-    <ClInclude Include="Interface\IPlaceable.h" />
-    <ClInclude Include="Interface\IRenderable.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
     <ClInclude Include="Ligthing\LigthtingStruct.h" />
     <ClInclude Include="Math\Color.h" />

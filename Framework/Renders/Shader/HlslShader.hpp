@@ -41,7 +41,8 @@ HlslShader<T>::HlslShader
 	UINT TargetShaderFlag,
 	const string & InVSEntryPoint,
 	const string & InPSEntryPoint,
-	const string & InGSEntryPoint
+	const string & InGSEntryPoint,
+	const D3D_SHADER_MACRO * InMacros
 )
 	: VSEntryPoint(InVSEntryPoint)
 	, GSEntryPoint(InGSEntryPoint)
@@ -52,11 +53,11 @@ HlslShader<T>::HlslShader
 	FileName = W_SHADER_PATH + ShaderFileName;
 	
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
-		CompileShader(ShaderType::VertexShader, FileName);
+		CompileShader(ShaderType::VertexShader, FileName, InMacros);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::PixelShader))
-		CompileShader(ShaderType::PixelShader, FileName);
+		CompileShader(ShaderType::PixelShader, FileName, InMacros);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::GeometryShader))
-		CompileShader(ShaderType::GeometryShader, FileName);
+		CompileShader(ShaderType::GeometryShader, FileName, InMacros);
 	CHECK(CreateRasterizerState_Solid() >= 0);
 	CHECK(CreateBlendState_NoBlend() >= 0);
 	CHECK(CreateDepthStencilState_Default() >= 0);
@@ -112,6 +113,23 @@ HRESULT HlslShader<T>::CreateRasterizerState_Solid()
 	D3D11_RASTERIZER_DESC RasterizerDesc;
 	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	RasterizerDesc.CullMode = D3D11_CULL_BACK;
+	RasterizerDesc.FrontCounterClockwise = false;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	return this->CreateRasterizerState(&RasterizerDesc);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateRasterizerState_Solid_CullFront()
+{
+	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	RasterizerDesc.CullMode = D3D11_CULL_FRONT;
 	RasterizerDesc.FrontCounterClockwise = false;
 	RasterizerDesc.DepthBias = 0;
 	RasterizerDesc.DepthBiasClamp = 0.0f;
@@ -243,6 +261,24 @@ HRESULT HlslShader<T>::CreateSamplerState_Anisotropic()
 	SamplerDesc.MaxAnisotropy = 4;
 
 	return this->CreateSamplerState(&SamplerDesc, PS_Anisotropic);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+			
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	SamplerDesc.MaxAnisotropy = 4;
+
+	return this->CreateSamplerState(&SamplerDesc, PS_Shadow);
 }
 
 template <class T>
@@ -449,7 +485,12 @@ HRESULT HlslShader<T>::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* D
 }
 
 template <class T>
-void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileName)
+void HlslShader<T>::CompileShader
+(
+	ShaderType Type,
+	const wstring & ShaderFileName,
+	const D3D_SHADER_MACRO * InMacros
+)
 {
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
@@ -499,7 +540,7 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 	{
 		hr = D3DCompileFromFile(
 			ShaderFileName.c_str(),
-			nullptr,
+			InMacros,
 			D3D_COMPILE_STANDARD_FILE_INCLUDE,
 			GetEntryPoint(Type).c_str(),
 			GetShaderTarget(Type).c_str(),
@@ -507,7 +548,7 @@ void HlslShader<T>::CompileShader( ShaderType Type, const wstring & ShaderFileNa
 			EffectFlag,
 			&ShaderBlob,
 			&ErrorBlob
-		);{}
+		);
 	}
 	if (FAILED(hr) && ErrorBlob != nullptr)
 	{

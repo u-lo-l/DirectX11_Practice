@@ -69,3 +69,8 @@ void RenderTarget::ClearRenderTarget() const
 {
 	D3D::Get()->GetDeviceContext()->ClearRenderTargetView(RTV,D3D::GetDesc().Background);
 }
+
+void RenderTarget::ClearRenderTarget(const Color& InColor) const
+{
+	D3D::Get()->GetDeviceContext()->ClearRenderTargetView(RTV, InColor);
+}

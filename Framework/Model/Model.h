@@ -24,6 +24,7 @@ public:
 	~Model();
 
 	void Tick();
+	void RenderShadow() const;
 	void Render() const;
 	void SetTiling(const Vector2D& Tiling) const;
 	/*====================================================================================*/
@@ -105,9 +106,9 @@ public:
 
 	#pragma region Read Material Data
 	public:
-		void ReadMaterial(const wstring & InFileName);
+		void ReadMaterial(const wstring & InFileName, bool bUseAnimation = false);
 	private:
-		static void ReadShaderName(const Json::Value & Value, Material<VertexType> * MatData);
+		void ReadShaderName(const Json::Value & Value, Material<VertexType> * OutMatData, bool bUseAnimation = false);
 		static void ReadColor(const Json::Value & Value, Material<VertexType> * MatData);
 		static void ReadColorMap(const Json::Value & Value, Material<VertexType> * MatData);
 	#pragma endregion Read Material Data

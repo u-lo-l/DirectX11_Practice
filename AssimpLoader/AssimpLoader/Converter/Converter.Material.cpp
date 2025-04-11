@@ -33,7 +33,7 @@ namespace sdt
 			float shininess = 0.0f;
 			Material->Get(AI_MATKEY_SHININESS, shininess);
 			Material->Get(AI_MATKEY_COLOR_SPECULAR, color);
-			Materials[i]->Specular = Color(color.r, color.g, color.b, color.a);
+			Materials[i]->Specular = Color(color.r, color.g, color.b, shininess);
 		
 			Material->Get(AI_MATKEY_COLOR_EMISSIVE, color);
 			Materials[i]->Emissive = Color(color.r, color.g, color.b, color.a);

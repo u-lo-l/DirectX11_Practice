@@ -25,9 +25,9 @@ public:
 	void Tick();
 	void BindToGPU();
 
-	void SetShader(const wstring & InShaderFileName);
-	void SetShader(HlslShader<VertexType> * InShader);
+	void SetShader(const wstring & InShaderFileName, const D3D_SHADER_MACRO * ShaderMacro = nullptr);
 	HlslShader<VertexType> * GetShader() const;
+	HlslShader<VertexType> * GetShadowShader() const;
 	void SetAmbient(const Color & InAmbient);
 	void SetDiffuse(const Color & InDiffuse);
 	void SetSpecular(const Color & InSpecular);
@@ -52,7 +52,8 @@ private:
 	};
 	
 private:
-	HlslShader<VertexType> * Shader;
+	HlslShader<VertexType> * Shader = nullptr;
+	HlslShader<VertexType> * ShadowShader = nullptr;
 	Colors ColorData;
 	ConstantBuffer * ColorData_CBuffer = nullptr;
 	
@@ -65,20 +66,23 @@ private:
 
 template<class TVertexType>
 Material<TVertexType>::Material()
- : Shader(nullptr), ColorData_CBuffer(nullptr), Textures{nullptr, }, SRVs{nullptr,}
+ : Shader(nullptr), Textures{nullptr, }, SRVs{nullptr,}
 {
+	// ShadowShader = new HlslShader<VertexType>(L"Shadow/ShadowMap.hlsl");
 }
 
 template<class TVertexType>
 Material<TVertexType>::Material(HlslShader<VertexType> * InDrawer )
- : Shader(InDrawer), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
+ : Shader(InDrawer), Textures{nullptr,}, SRVs{nullptr,}
 {
+	// ShadowShader = new HlslShader<VertexType>(L"Shadow/ShadowMap.hlsl");
 }
 
 template<class TVertexType>
 Material<TVertexType>::Material( const wstring & InShaderFileName )
- : Shader(new HlslShader<VertexType>(InShaderFileName)), ColorData_CBuffer(nullptr), Textures{nullptr,}, SRVs{nullptr,}
+ : Shader(new HlslShader<VertexType>(InShaderFileName)), Textures{nullptr,}, SRVs{nullptr,}
 {
+	// ShadowShader = new HlslShader<VertexType>(L"Shadow/ShadowMap.hlsl");
 }
 
 template<class TVertexType>
@@ -89,6 +93,7 @@ Material<TVertexType>::~Material()
 		SAFE_DELETE(Textures[i]);
 	}
 	SAFE_DELETE(Shader);
+	SAFE_DELETE(ShadowShader);
 }
 
 template<class TVertexType>
@@ -125,21 +130,37 @@ void Material<TVertexType>::CreateBuffer()
 }
 
 template<class TVertexType>
-void Material<TVertexType>::SetShader( const wstring & InShaderFileName )
+void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D3D_SHADER_MACRO * ShaderMacro)
 {
 	assert(InShaderFileName.length() > 0);
-	Shader = new HlslShader<VertexType>(InShaderFileName);
-	SetShader(Shader);
-}
-
-template<class TVertexType>
-void Material<TVertexType>::SetShader( HlslShader<VertexType> * InShader )
-{
-	Shader = InShader;
+	UINT TargetShaderFlag = static_cast<UINT>(ShaderType::VertexShader) | static_cast<UINT>(ShaderType::PixelShader);
+	
+	Shader = new HlslShader<VertexType>(
+		InShaderFileName,
+		TargetShaderFlag,
+		"VSMain",
+		"PSMain",
+		"",
+		ShaderMacro
+	);
 	Shader->CreateRasterizerState_Solid();
 	Shader->CreateSamplerState_Linear();
 	Shader->CreateSamplerState_Anisotropic();
 	Shader->CreateBlendState_NoBlend();
+
+	
+	ShadowShader = new HlslShader<VertexType>(
+		InShaderFileName,
+		TargetShaderFlag,
+		"VSShadow",
+		"PSShadow",
+		"",
+		ShaderMacro
+	);
+	ShadowShader->CreateRasterizerState_Solid();
+	ShadowShader->CreateSamplerState_ShadowSampler();
+	ShadowShader->CreateBlendState_NoBlend();
+
 	CreateBuffer();
 }
 
@@ -147,6 +168,12 @@ template<class TVertexType>
 HlslShader<TVertexType> * Material<TVertexType>::GetShader() const
 {
 	return Shader;
+}
+
+template <class TVertexType>
+HlslShader<TVertexType> * Material<TVertexType>::GetShadowShader() const
+{
+	return ShadowShader;
 }
 
 template <class TVertexType>

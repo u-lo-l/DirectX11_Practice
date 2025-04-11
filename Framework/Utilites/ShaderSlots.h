@@ -34,5 +34,7 @@ enum TextureSlot : uint32_t
 enum SamplerSlot : uint32_t
 {
 	PS_Linear = 0,	
-	PS_Anisotropic = 1,	
+	PS_Anisotropic = 1,
+	PS_Point = 2,
+	PS_Shadow = 3
 };

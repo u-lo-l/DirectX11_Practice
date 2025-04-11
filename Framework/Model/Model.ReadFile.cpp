@@ -22,8 +22,11 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	wstring MaterialName = String::ToWString(material.asString());
 	wstring MeshName = String::ToWString(Mesh.asString());
+
+	Json::Value Animations = Root["Animations"];
+	const UINT AnimationCount = Animations.size();
 	
-	ReadMaterial(MaterialName);
+	ReadMaterial(MaterialName, AnimationCount > 0);
 	// ReadMesh안에서 Skeleton::SetupBoneTable()호출
 	ReadMeshAndCreateBoneTable(MeshName + L"/" + MeshName);
 
@@ -40,19 +43,16 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	WorldTransform->SetScale({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 
 	// Animation
-	Json::Value Animations = Root["Animations"];
-	const UINT AnimationCount = Animations.size();
 	this->Animations.reserve(AnimationCount);
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
 		ReadAnimation(String::ToWString(Animations[i].asString()));
 	}
-
 	if (Animations.empty() == false)
 	{
 		CreateAnimationTextureAndSRV(); // this->ClipSRV에 AnimationTexture 저장.
 	}
-	
+
 	if (SkeletonData != nullptr)
 	{
 		SkeletonData->CreateBuffer();
@@ -66,7 +66,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	}
 }
 
-void Model::ReadMaterial( const wstring & InFileName)
+void Model::ReadMaterial( const wstring & InFileName, bool bUseAnimation)
 {
 	const wstring FullPath = W_MATERIAL_PATH + InFileName + L".material";
 	
@@ -77,19 +77,15 @@ void Model::ReadMaterial( const wstring & InFileName)
 	Stream >> Root;
 
 	const Json::Value::Members Members = Root.getMemberNames();
-#ifdef DO_DEBUG
-	printf("Model : %s -> Material Count : %d\n", ModelName.c_str(), Members.size());
-#endif
 	for (const Json::String & Name : Members)
 	{
-#ifdef DO_DEBUG
-		Material * MatData = new Material("Material : [" + String::ToString(InFileName) + "_" + Name + "]");
-#else
 		Material<VertexType> * MatData = new Material<VertexType>();
-#endif
 		Json::Value Value = Root[Name];
 
-		ReadShaderName(Value, MatData);
+		if (MaterialsTable.find(Name) != MaterialsTable.cend())
+			continue;
+		
+		ReadShaderName(Value, MatData, bUseAnimation);
 		ReadColor(Value, MatData);
 		ReadColorMap(Value, MatData);
 
@@ -99,10 +95,19 @@ void Model::ReadMaterial( const wstring & InFileName)
 	Stream.close();
 }
 
-void Model::ReadShaderName(const Json::Value & Value, Material<VertexType> * MatData)
+void Model::ReadShaderName(const Json::Value & Value, Material<VertexType> * OutMatData, bool bUseAnimation)
 {
 	if (Value["ShaderName"].asString().size() > 0)
-		MatData->SetShader(String::ToWString(Value["ShaderName"].asString()));
+	{
+		vector<D3D_SHADER_MACRO> Macros;
+		if(bUseAnimation)
+		{
+			Macros.push_back({"USE_ANIMATION", "1"});
+		}
+		
+		Macros.push_back({nullptr, nullptr});
+		OutMatData->SetShader(String::ToWString(Value["ShaderName"].asString()), Macros.data());
+	}
 }
 
 void Model::ReadColor(const Json::Value & Value, Material<VertexType> * MatData)

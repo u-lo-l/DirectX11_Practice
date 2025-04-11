@@ -34,7 +34,8 @@ public:
 		UINT TargetShaderFlag = static_cast<UINT>(ShaderType::VertexShader) | static_cast<UINT>(ShaderType::PixelShader),
 		const string & InVSEntryPoint = "VSMain",
 		const string & InPSEntryPoint = "PSMain",
-		const string & InGSEntryPoint = "GSMain"
+		const string & InGSEntryPoint = "GSMain",
+		const D3D_SHADER_MACRO * InMacros = nullptr
 	);
 	~HlslShader();
 private:
@@ -47,11 +48,13 @@ public:
 	// Rasterizer
 	HRESULT CreateRasterizerState_WireFrame();
 	HRESULT CreateRasterizerState_Solid();
+	HRESULT CreateRasterizerState_Solid_CullFront();
 	HRESULT CreateRasterizerState_WireFrame_NoCull();
 	HRESULT CreateRasterizerState_Solid_NoCull();
 	HRESULT CreateRasterizerState_Solid_CW();
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 	HRESULT CreateSamplerState_Anisotropic();
+	HRESULT CreateSamplerState_ShadowSampler();
 
 	// Sampler
 	HRESULT CreateSamplerState_Linear();
@@ -88,7 +91,11 @@ public:
 	void DrawIndexedInstanced(UINT IndexCountPreInstance, UINT InstanceCount, UINT StartIndexLocation = 0, INT BaseVertexLocation = 0, UINT StartInstanceLocation = 0);
 
 private:
-	void CompileShader(ShaderType Type, const wstring & ShaderFileName);
+	void CompileShader(
+		ShaderType Type,
+		const wstring & ShaderFileName,
+		const D3D_SHADER_MACRO * InMacros = nullptr
+	);
 	void InitializeInputLayout(ID3DBlob * VertexShaderBlob);
 
 	void BeginDraw();
