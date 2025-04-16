@@ -43,6 +43,9 @@ private:
 	string VSEntryPoint;
 	string GSEntryPoint;
 	string PSEntryPoint;
+	string HSEntryPoint;
+	string DSEntryPoint;
+
 public:
 	void SetTopology(D3D_PRIMITIVE_TOPOLOGY InTopology);
 	// Rasterizer
@@ -117,5 +120,7 @@ private:
 	ID3D11VertexShader * VertexShader = nullptr;
 	ID3D11PixelShader * PixelShader = nullptr;
 	ID3D11GeometryShader * GeometryShader = nullptr;
+	ID3D11HullShader * HullShader = nullptr;
+	ID3D11DomainShader * DomainShader = nullptr;
 };
 

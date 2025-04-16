@@ -40,7 +40,7 @@ Shadow::~Shadow()
 
 void Shadow::Tick()
 {
-	ImGui::Separator();
+	// ImGui::Separator();
 	ImGui::SeparatorText("Shadow");
 	ImGui::SliderFloat("Shadow Bias", &ShadowData_PS.ShadowBias, -0.01f, +0.01f);
 	

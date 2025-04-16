@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Execute\035_LightingDemo\LightingDemo.cpp" />
+    <ClCompile Include="Execute\DisplacementMappingDemo\DisplacementDemo.cpp" />
     <ClCompile Include="Execute\Shadow\ShadowDemo.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -106,9 +107,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Execute\035_LightingDemo\LightingDemo.h" />
+    <ClInclude Include="Execute\DisplacementMappingDemo\DisplacementDemo.h" />
     <ClInclude Include="Execute\Shadow\ShadowDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Execute\LODDemo\" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

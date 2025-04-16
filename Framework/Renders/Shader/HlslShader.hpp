@@ -13,8 +13,10 @@ std::string HlslShader<T>::GetShaderTarget( ShaderType Type )
 	case ShaderType::VertexShader:	 return "vs_5_0";
 	case ShaderType::PixelShader:	 return "ps_5_0";
 	case ShaderType::GeometryShader: return "gs_5_0";
+	case ShaderType::HullShader:     return "hs_5_0";
+	case ShaderType::DomainShader:   return "ds_5_0";
 	default:
-		ASSERT(false, "Unknown Shader Type")
+		ASSERT(false, "Unknown Shader Type : ShaderTarget")
 		return "";
 	}
 }
@@ -27,8 +29,10 @@ std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
 	case ShaderType::VertexShader:	 return VSEntryPoint.length() < 1 ?  "VSMain" : VSEntryPoint;
 	case ShaderType::PixelShader:	 return PSEntryPoint.length() < 1 ?  "PSMain" : PSEntryPoint;
 	case ShaderType::GeometryShader: return GSEntryPoint.length() < 1 ?  "GSMain" : GSEntryPoint;
+	case ShaderType::HullShader:     return HSEntryPoint.length() < 1 ?  "HSMain" : HSEntryPoint;
+	case ShaderType::DomainShader:   return DSEntryPoint.length() < 1 ?  "DSMain" : DSEntryPoint;
 	default :
-		ASSERT(false, "Unknown Shader Type")
+		ASSERT(false, "Unknown Shader Type : ShaderEntryPoint")
 		return "";
 	}
 }
@@ -58,6 +62,10 @@ HlslShader<T>::HlslShader
 		CompileShader(ShaderType::PixelShader, FileName, InMacros);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::GeometryShader))
 		CompileShader(ShaderType::GeometryShader, FileName, InMacros);
+	if (TargetShaderFlag & static_cast<UINT>(ShaderType::HullShader))
+		CompileShader(ShaderType::HullShader, FileName, InMacros);
+	if (TargetShaderFlag & static_cast<UINT>(ShaderType::DomainShader))
+		CompileShader(ShaderType::DomainShader, FileName, InMacros);
 	CHECK(CreateRasterizerState_Solid() >= 0);
 	CHECK(CreateBlendState_NoBlend() >= 0);
 	CHECK(CreateDepthStencilState_Default() >= 0);
@@ -541,7 +549,7 @@ void HlslShader<T>::CompileShader
 		hr = D3DCompileFromFile(
 			ShaderFileName.c_str(),
 			InMacros,
-			D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			D3D_COMPILE_STANDARD_FILE_INCLUDE, // HLSL내에서 #include 쓸 수 있게 해줌. custom ID3DInclude도 가능.
 			GetEntryPoint(Type).c_str(),
 			GetShaderTarget(Type).c_str(),
 			Flag,
@@ -582,6 +590,14 @@ void HlslShader<T>::CompileShader
 	else if (Type == ShaderType::PixelShader)
 	{
 		Hr = Device->CreatePixelShader(BufferAddr, BufferSize, nullptr, &PixelShader);
+	}
+	else if (Type == ShaderType::HullShader)
+	{
+		Hr = Device->CreateHullShader(BufferAddr, BufferSize, nullptr, &HullShader);
+	}
+	else if (Type == ShaderType::DomainShader)
+	{
+		Hr = Device->CreateDomainShader(BufferAddr, BufferSize, nullptr, &DomainShader);
 	}
 	else if (Type == ShaderType::GeometryShader)
 	{
@@ -645,6 +661,10 @@ void HlslShader<T>::BeginDraw()
 	
 	if (!!VertexShader)
 		DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+	if (!!HullShader)
+		DeviceContext->HSSetShader(HullShader, nullptr, 0);
+	if (!!DomainShader)
+		DeviceContext->DSSetShader(DomainShader, nullptr, 0);
 	if (!!GeometryShader)
 		DeviceContext->GSSetShader(GeometryShader, nullptr, 0);
 	
@@ -703,7 +723,7 @@ void HlslShader<T>::EndDraw()
 	
 	// 일단 전체 파이프라인에서 HS, DS, GS를 사용하지 않으니 굳이 필요한 코드는 아님.
 	// 추후에 다른 RenderPass에서 건드리면 그 때 주석 해제하도록 하자.
-	// DeviceContext->HSSetShader(nullptr, nullptr, 0);
-	// DeviceContext->DSSetShader(nullptr, nullptr, 0);
+	DeviceContext->HSSetShader(nullptr, nullptr, 0);
+	DeviceContext->DSSetShader(nullptr, nullptr, 0);
 	DeviceContext->GSSetShader(nullptr, nullptr, 0);
 }

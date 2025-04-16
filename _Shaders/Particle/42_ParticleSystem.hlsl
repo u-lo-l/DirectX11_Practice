@@ -62,6 +62,9 @@ void GSMain(point VS_Output input[1], inout TriangleStream<GS_Output> stream)
 	PatchCorner[3] = float2(+1.0f, +1.0f);
 
 	GS_Output output;
+	// PatchCorner값을 사용하여 한 변의 길이가 size인 정사각형을 만든다.
+	// W-divide 이전의 데이터이므로 PS에서 W-divide가 수행되면 한 변의 길이가 (size/W)인 정사각형이 된다.
+	// 이 떄 W값은 View공간에서의 Z값으로, Eye(Camera)로부터 멀 수록 작은 Patch가 만들어진다.
 	[unroll(4)]
 	for (int i = 0; i < 4; i++)
 	{

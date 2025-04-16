@@ -1,12 +1,14 @@
 // ReSharper disable CppInconsistentNaming
 #include "Pch.h"
 #include "Main.h"
+
+#include "Execute/DisplacementMappingDemo/DisplacementDemo.h"
 #include "Systems/Window.h"
 #include "Execute/Shadow/ShadowDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(sdt::ShadowDemo);
+	PUSH_MAIN(sdt::DisplacementDemo);
 }
 
 

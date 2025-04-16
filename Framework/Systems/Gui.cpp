@@ -88,7 +88,7 @@ void Gui::Render()
 	// 기본 창 띄우기
 	ImGui::Begin
 	(
-		"TextWindow", nullptr,
+		"Hello ImGUI", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
