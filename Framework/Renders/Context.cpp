@@ -48,10 +48,10 @@ void Context::Render() const
 	GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(static_cast<int>(ImGui::GetIO().Framerate)));
 	
 	const Vector & CamPos = MainCamera->GetPosition();
-	const Vector & CamRot = MainCamera->GetEulerAngle();
+	const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
 	
-	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X* Math::RadianToDeg, CamRot.Y* Math::RadianToDeg, CamRot.Z* Math::RadianToDeg));
 	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
+	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
 }
 
 void Context::ResizeScreen()
@@ -95,4 +95,21 @@ Context::~Context()
 	SAFE_DELETE(MainCamera);
 	SAFE_DELETE(VP_CBuffer_VS);
 }
+
+Shadow* Context::GetShadowMap() const
+{
+	return ShadowMap;
+}
+
+Matrix Context::GetViewMatrix() const
+{
+	return MainCamera->GetViewMatrix();
+}
+
+Matrix Context::GetProjectionMatrix() const
+{
+	return MainCamera->GetProjectionMatrix();
+}
+
+
 

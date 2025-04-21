@@ -3,47 +3,52 @@
 
 Camera::Camera()
 {
-	RotationMat = Matrix::Identity;
-	ViewMat = Matrix::Identity;
-	
-	SetViewMat();
-	SetRotationMat();
+	Tf = new Transform();
+	Proj = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 1000.f, Math::Pi / 4);
 }
 
 Camera::~Camera()
-= default;
+{
+	SAFE_DELETE(Tf);
+	SAFE_DELETE(Proj);
+}
 
 
 void Camera::Tick()
 {
 	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
+	Vector DeltaPosition;
+	const Vector & Forward = Tf->GetForward();
+	const Vector & Right = Tf->GetRight();
+	const Vector & Up = Tf->GetUp();
+
 	if (sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
 	{
 		return;
 	}
 	if (Keyboard::Get()->IsPressed('W') == true)
 	{
-		Position += Forward * MoveSpeed * DeltaTime;
+		DeltaPosition += Forward * MoveSpeed * DeltaTime;
 	}
 	if (Keyboard::Get()->IsPressed('S') == true)
 	{
-		Position -= Forward * MoveSpeed * DeltaTime;
+		DeltaPosition -= Forward * MoveSpeed * DeltaTime;
 	}
 	if (Keyboard::Get()->IsPressed('D') == true)
 	{
-		Position += Right * MoveSpeed * DeltaTime;
+		DeltaPosition += Right * MoveSpeed * DeltaTime;
 	}
 	if (Keyboard::Get()->IsPressed('A') == true)
 	{
-		Position -= Right * MoveSpeed * DeltaTime;
+		DeltaPosition -= Right * MoveSpeed * DeltaTime;
 	}
 	if (Keyboard::Get()->IsPressed('E') == true)
 	{
-		Position += Up * MoveSpeed * DeltaTime;
+		DeltaPosition += Up * MoveSpeed * DeltaTime;
 	}
 	if (Keyboard::Get()->IsPressed('Q') == true)
 	{
-		Position -= Up * MoveSpeed * DeltaTime;
+		DeltaPosition -= Up * MoveSpeed * DeltaTime;
 	}
 	if (Keyboard::Get()->IsPressed(VK_LSHIFT) == true)
 	{
@@ -53,62 +58,62 @@ void Camera::Tick()
 	{
 		MoveSpeed = DefaultMoveSpeed;
 	}
-	
 
 	const Vector Delta = sdt::Mouse::Get()->GetMoveDelta();
-	EulerAngle.X += Delta.Y * RotationSpeed * DeltaTime;
-	// EulerAngle.Y = 0;
-	EulerAngle.Y -= Delta.X * RotationSpeed * DeltaTime;
-	EulerAngle.Z += 0;
+	Vector Euler = Tf->GetRotationInDegree();
+	Euler.X += Delta.Y * RotationSpeed * DeltaTime;
+	Euler.Y += -Delta.X * RotationSpeed * DeltaTime;
+	Euler.Z += 0;
 
-	SetViewMat();
-	SetRotationMat();
+	Tf->SetRotation(Euler);
+	Tf->SetPosition(Tf->GetPosition() + DeltaPosition);
 }
 
 const Vector& Camera::GetPosition() const
 {
-	return Position;
+	return Tf->GetPosition();
 }
 
-const Matrix & Camera::GetViewMatrix() const
+Matrix Camera::GetViewMatrix() const
 {
-	return ViewMat;
+	Matrix Mat = Tf->GetMatrix();
+	Mat.Invert(true);
+	return Mat;
 }
 
-/**
- * @param X ,Y, Z : Angle in degrees
- */
-void Camera::SetPosition(float X, float Y, float Z)
+Matrix Camera::GetProjectionMatrix() const
 {
-	Position = { X, Y, Z };
-	SetViewMat();
-	SetRotationMat();
+	return Proj->GetMatrix();
 }
 
-void Camera::SetPosition(const Vector& Vec)
+void Camera::SetPosition(float X, float Y, float Z) const
 {
-	Position = Vec;
-	SetViewMat();
-	SetRotationMat();
+	Tf->SetPosition({X, Y, Z});
 }
 
-const Vector& Camera::GetEulerAngle() const
+void Camera::SetPosition(const Vector& Vec) const
 {
-	return EulerAngle;
+	Tf->SetPosition(Vec);
 }
 
-void Camera::SetRotation(float R, float P, float Y)
+const Vector& Camera::GetEulerAngleInDegree() const
 {
-	EulerAngle = { Math::ToRadians(R), Math::ToRadians(P), Math::ToRadians(Y) };
-	SetViewMat();
-	SetRotationMat();
+	return Tf->GetRotationInDegree();
 }
 
-void Camera::SetRotation(const Vector & InEuler)
+const Vector& Camera::GetEulerAngleInRadian() const
 {
-	EulerAngle = { Math::ToRadians(InEuler.X), Math::ToRadians(InEuler.Y), Math::ToRadians(InEuler.Z) };
-	SetViewMat();
-	SetRotationMat();
+	return Tf->GetRotationInRadian();
+}
+
+void Camera::SetRotation(float R, float P, float Y) const
+{
+	Tf->SetRotation({R, P, Y});
+}
+
+void Camera::SetRotation(const Vector & InEuler) const
+{
+	Tf->SetRotation(InEuler);
 }
 
 void Camera::SetMoveSpeed( float InSpeed )
@@ -121,22 +126,12 @@ void Camera::SetRopSpeed( float InSpeed )
 	RotationSpeed = InSpeed;
 }
 
-void Camera::SetViewMat()
+void Camera::SetPerspective(float Width, float Height, float Near, float Far, float VFOV) const
 {
-	// Matrix::CreateLookAt(ViewMat, Position, At(), Up);
-	ViewMat = Matrix::CreateLookAt(Position, Position + Forward, Up);
-}
-
-void Camera::SetRotationMat()
-{
-	Matrix::CreateFromEulerAngle(RotationMat, EulerAngle);
-
-	Forward = RotationMat.Forward();
-	Up = RotationMat.Up();
-	Right = RotationMat.Right();
+	Proj->Set(Width, Height, Near, Far, VFOV);
 }
 
 Vector Camera::At() const
 {
-	return Position + Forward;
+	return Tf->GetPosition() + Tf->GetForward();
 }

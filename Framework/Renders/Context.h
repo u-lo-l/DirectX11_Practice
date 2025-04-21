@@ -1,8 +1,8 @@
 #pragma once
-#include "Objects/Projector/Projector.h"
 #include "Projector/Perspective.h"
 #include "ViewPort/ViewPort.h"
 
+class Camera;
 class Shadow;
 class Perspective;
 class GlobalViewProjectionCBuffer;
@@ -33,9 +33,9 @@ private:
 	~Context();
 	
 public:
-	Shadow * GetShadowMap() const { return ShadowMap; }
-	const Matrix & GetViewMatrix() const { return MainCamera->GetViewMatrix(); }
-	const Matrix & GetProjectionMatrix() const { return Projection->GetMatrix(); }
+	Shadow * GetShadowMap() const;
+	Matrix GetViewMatrix() const;
+	Matrix GetProjectionMatrix() const;
 private:
 	Camera * MainCamera;
 	ViewPort * Vp;

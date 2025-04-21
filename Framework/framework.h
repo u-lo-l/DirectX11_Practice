@@ -61,16 +61,15 @@ using namespace std;
 	#include "Utilites/Definitions.h"
 	#include "Utilites/ShaderSlots.h"
 	#include "Utilites/Helper.h"
+	#include "Utilites/Path.h"
+	#include "Utilites/String.h"
+	#include "Utilites/BinaryFile.h"
 	
 	#include "Systems/D3D.h"
 	#include "Systems/Gui.h"
 	#include "Systems/SystemTimer.h"
 	#include "Systems/Keyboard.h"
 	#include "Systems/Mouse.h"
-
-	#include "Viewer/Camera.h"
-	#include "Viewer/DepthStencil.h"
-	#include "Viewer/RenderTarget.h"
 
 	#include "Renders/Shader/VertexLayout.h"
 	#include "Renders/Shader/HlslShader.h"
@@ -82,12 +81,14 @@ using namespace std;
 	#include "Renders/Buffer/Buffers.h"
 	#include "Renders/ConstantDataBinder.h"
 	#include "Renders/Transform.h"
-
 	#include "Renders/Projector/Projection.h"
+	#include "Renders/ViewPort/ViewPort.h"
+	#include "Renders/Projector/Orthographic.h"
+	#include "Renders/Projector/Perspective.h"
 
-	#include "Utilites/Path.h"
-	#include "Utilites/String.h"
-	#include "Utilites/BinaryFile.h"
+	#include "Viewer/Camera.h"
+	#include "Viewer/DepthStencil.h"
+	#include "Viewer/RenderTarget.h"
 
 	#include "Model/Model.h"
 	#include "Model/ModelBone.h"
@@ -108,11 +109,6 @@ using namespace std;
 	#include "Objects/Projector/Projector.h"
 	#include "Objects//Shadow/Shadow.h"
 
-	#include "Renders/ViewPort/ViewPort.h"
-	#include "Renders/Projector/Orthographic.h"
-	#include "Renders/Projector/Perspective.h"
-
 #pragma endregion
-
 
 string GetD3D11ReturnMessage(HRESULT Hr);
