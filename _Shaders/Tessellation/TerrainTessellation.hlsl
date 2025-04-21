@@ -207,6 +207,8 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2, out float4 Color
 {
     // Point1 = mul(Point1, mul(World, View));
     // Point2 = mul(Point2, mul(World, View));
+    Point1 /= Point1.w;
+    Point2 /= Point2.w;
     float L = ScreenDistance;
     float3 Center = ((Point1 + Point2) * 0.5).xyz; // WorldSpace에선 맞음
     float3 ToCenter = Center;
@@ -225,7 +227,8 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2, out float4 Color
     Color = float4(abs(ToCenter) / 512, 1);
     float TessFactor = lerp(MinTessFactor, MaxTessFactor, 1 - saturate(Ssd / (ScreenDiagonal / L)));
     float LODDebug = (TessFactor / MaxTessFactor);
-    Color = float4(abs(ToCenter.x) / 256, abs(ToCenter.x) / 256, abs(ToCenter.x) / 256, 1);
+    float CloseToCenter = 1 - sqrt(ToCenter.x * ToCenter.x + ToCenter.y * ToCenter.y) / 256;
+    Color = float4(CloseToCenter, CloseToCenter, abs(0) / 256, 1);
     // Color = float4(abs(Dx) / 2048, abs(Dx) / 2048, abs(Dx) / 2048, 1);
     return TessFactor;
 }

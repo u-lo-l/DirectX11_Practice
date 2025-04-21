@@ -4,7 +4,6 @@
 Transform::Transform(const Matrix * InMatrix )
 	: CBuffer(nullptr)
 	, Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
-	, ref_WorldMatrix(InMatrix)
 {
 	WorldTransform_Data.World = InMatrix == nullptr ? Matrix::Identity : *InMatrix;
 	CBuffer = new ConstantBuffer(ShaderType::VertexShader, ShaderSlot::VS_World, &WorldTransform_Data, "Transform World Mat", sizeof(ThisClass::CBufferDesc));
@@ -61,6 +60,16 @@ const Vector & Transform::GetRotationInDegree() const
 	return EulerAngleInDegree;
 }
 
+const Matrix& Transform::GetRotationMatrix() const
+{
+	return RotationMat;
+}
+
+const Quaternion& Transform::GetQuaternion() const
+{
+	return Rotation;
+}
+
 void Transform::SetPosition( const Vector & InPosition )
 {
 	Position = InPosition;
@@ -70,8 +79,20 @@ void Transform::SetPosition( const Vector & InPosition )
 void Transform::SetRotation( const Vector & InEulerAngleInDegree )
 {
 	EulerAngleInDegree = InEulerAngleInDegree;
-	EulerAngleInRadian = {Math::ToRadians(EulerAngleInDegree.X), Math::ToRadians(EulerAngleInDegree.Y), Math::ToRadians(EulerAngleInDegree.Z)};
+	EulerAngleInRadian = Math::DegToRadian * EulerAngleInDegree;
+	
 	UpdateWorldMatrix();
+}
+
+void Transform::SetRotation(const Matrix& InMatrix)
+{
+	Quaternion Quat = Quaternion::CreateFromRotationMatrix(InMatrix);
+	EulerAngleInDegree = Quat.ToEulerAnglesInDegrees();
+	EulerAngleInRadian = Math::DegToRadian * EulerAngleInDegree;
+	
+	const Matrix Translation = Matrix::CreateTranslation(Position);
+	const Matrix Scale = Matrix::CreateScale(this->Scale);
+	WorldTransform_Data.World = Scale * InMatrix * Translation;
 }
 
 void Transform::SetScale( const Vector & InScale )
@@ -111,11 +132,8 @@ void Transform::SetTRS( const Vector & InPosition, const Quaternion & InRotation
 void Transform::UpdateWorldMatrix()
 {
 	const Matrix Translation = Matrix::CreateTranslation(Position);
-	const Matrix Rotation = Matrix::CreateFromYawPitchRoll(EulerAngleInRadian.Z, EulerAngleInRadian.Y, EulerAngleInRadian.X);
+	const Matrix Rotation = Matrix::CreateFromEulerAngleInRadian(EulerAngleInRadian);
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
 	WorldTransform_Data.World = Scale * Rotation * Translation;
-
-	if (ref_WorldMatrix != nullptr)
-		memcpy((void *)ref_WorldMatrix, &WorldTransform_Data.World, sizeof(Matrix));
 }

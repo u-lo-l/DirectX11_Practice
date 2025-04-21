@@ -78,7 +78,7 @@ public:
 	static Quaternion Negative( const Quaternion & quaternion);
 
 	static Quaternion CreateFromAxisAngle( const Vector & axis, float angle);
-	static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll);
+	static Quaternion CreateFromEulerAngleInRadian(const Vector& EulerAngle);
 	static Quaternion CreateFromRotationMatrix( const Matrix & matrix);
 
 	static float Dot( const Quaternion & quaternion1, const Quaternion & quaternion2);

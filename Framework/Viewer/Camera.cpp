@@ -4,7 +4,7 @@
 Camera::Camera()
 {
 	Tf = new Transform();
-	Proj = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 1000.f, Math::Pi / 4);
+	Proj = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi / 4);
 }
 
 Camera::~Camera()
@@ -22,8 +22,22 @@ void Camera::Tick()
 	const Vector & Right = Tf->GetRight();
 	const Vector & Up = Tf->GetUp();
 
+	static float Roll = 0.f;
+	static float Pitch = 0.f;
+	static float Yaw = 0.f;
+	ImGui::SliderFloat("RollTEST", &Roll, -Math::Pi, Math::Pi, "%.2f");
+	ImGui::SliderFloat("PitchTEST", &Pitch, -Math::Pi * 0.45f, Math::Pi * 0.45f, "%.2f");
+	ImGui::SliderFloat("YawTEST", &Yaw, -Math::Pi, Math::Pi, "%.2f");
+
 	if (sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
 	{
+		Vector Euler = Tf->GetRotationInRadian();
+		const Matrix Rotation = Matrix::CreateFromEulerAngleInRadian({30 * Math::DegToRadian, 0, 0});
+		Matrix DeltaRotation = Matrix::CreateFromEulerAngleInRadian({Roll, Pitch, Yaw});
+		const Matrix DeltaYaw = Matrix::CreateRotationZ(Yaw); 
+		const Matrix DeltaPitch = Matrix::CreateRotationY(Pitch); 
+		const Matrix DeltaRoll = Matrix::CreateRotationX(Roll); 
+		Tf->SetRotation(Rotation * DeltaYaw * DeltaPitch * DeltaRoll);
 		return;
 	}
 	if (Keyboard::Get()->IsPressed('W') == true)
@@ -58,14 +72,11 @@ void Camera::Tick()
 	{
 		MoveSpeed = DefaultMoveSpeed;
 	}
-
-	const Vector Delta = sdt::Mouse::Get()->GetMoveDelta();
-	Vector Euler = Tf->GetRotationInDegree();
-	Euler.X += Delta.Y * RotationSpeed * DeltaTime;
-	Euler.Y += -Delta.X * RotationSpeed * DeltaTime;
-	Euler.Z += 0;
-
-	Tf->SetRotation(Euler);
+	// const Vector Delta = sdt::Mouse::Get()->GetMoveDelta() * DeltaTime * 1;
+	// Vector Euler = Tf->GetRotationInRadian();
+	// const Matrix Rotation = Matrix::CreateFromEulerAngleInRadian(Euler);
+	// Matrix DeltaRotation = Matrix::CreateFromEulerAngleInRadian({Roll, Pitch, Yaw});
+	// Tf->SetRotation(Rotation * DeltaRotation);
 	Tf->SetPosition(Tf->GetPosition() + DeltaPosition);
 }
 
@@ -76,9 +87,7 @@ const Vector& Camera::GetPosition() const
 
 Matrix Camera::GetViewMatrix() const
 {
-	Matrix Mat = Tf->GetMatrix();
-	Mat.Invert(true);
-	return Mat;
+	return Matrix::Invert(Tf->GetMatrix(), true);
 }
 
 Matrix Camera::GetProjectionMatrix() const

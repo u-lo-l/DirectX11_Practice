@@ -88,7 +88,8 @@ public:
 	static void CreateLookAt(Matrix & outMatrix, const Vector & cameraPosition, const Vector & cameraTarget, const Vector & cameraUpVector);
 	static Matrix CreateWorld(Vector position, Vector forward, Vector up);
 	static Matrix CreateFromQuaternion(Quaternion quaternion);
-	static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll);
+	static Matrix CreateFromEulerAngleInRadian(const Vector& EulerAngle);
+	static Matrix CreateFromZYXEulerAngle(const Vector & EulerAngleInDegree);
 	static Matrix CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane);
 	static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
 	static Matrix Transform(const Matrix & value, const Quaternion & rotation);

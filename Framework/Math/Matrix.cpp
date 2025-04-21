@@ -964,15 +964,52 @@ Matrix Matrix::CreateFromQuaternion(Quaternion quaternion)
 	return matrix;
 }
 
-Matrix Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+Matrix Matrix::CreateFromEulerAngleInRadian(const Vector& EulerAngle)
 {
 	Quaternion result1;
-	result1 = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
+	result1 = Quaternion::CreateFromEulerAngleInRadian(EulerAngle);
 
 	Matrix result2;
 	result2 = CreateFromQuaternion(result1);
 
 	return result2;
+}
+
+Matrix Matrix::CreateFromZYXEulerAngle(const Vector& EulerAngleInDegree)
+{
+	float Cz = cos(EulerAngleInDegree.Z);
+	float Sz = sin(EulerAngleInDegree.Z);
+	float Cy = cos(EulerAngleInDegree.Y);
+	float Sy = sin(EulerAngleInDegree.Y);
+	float Cx = cos(EulerAngleInDegree.X);
+	float Sx = sin(EulerAngleInDegree.X);
+
+	Matrix matrix;
+
+	matrix.M11 = Cy * Cz;           
+	matrix.M12 = -Cy * Sz;          
+	matrix.M13 = Sy;                
+	matrix.M14 = 0.0f;              
+
+	// Row 1 (corresponds to m[1][y])
+	matrix.M21 = Cx * Sz + Sx * Sy * Cz; 
+	matrix.M22 = Cx * Cz - Sx * Sy * Sz; 
+	matrix.M23 = -Sx * Cy;          
+	matrix.M24 = 0.0f;              
+
+	// Row 2 (corresponds to m[2][y])
+	matrix.M31 = Sx * Sz - Cx * Sy * Cz; 
+	matrix.M32 = Sx * Cz + Cx * Sy * Sz; 
+	matrix.M33 = Cx * Cy;           
+	matrix.M34 = 0.0f;              
+
+	// Row 3 (corresponds to m[3][y] for 4x4 homogeneous matrix)
+	matrix.M41 = 0.0f;              
+	matrix.M42 = 0.0f;           
+	matrix.M43 = 0.0f;              
+	matrix.M44 = 1.0f;              
+
+	return matrix;
 }
 
 Matrix Matrix::CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane)

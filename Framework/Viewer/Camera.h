@@ -37,10 +37,5 @@ private :
 	float RotationSpeed = 30.f;
 
 private:
-	// Vector Position = {0.f, 0.f, 0.f};
-	// Vector EulerAngle = { 0.f,0.f, 0.f };
-	// Vector Forward = {0.f, 0.f, 1.f };
-	// Vector Up = { 0.f, 1.f, 0.f };
-	// Vector Right = { 1.f, 0.f, 0.f };
 	Vector At() const;
 };

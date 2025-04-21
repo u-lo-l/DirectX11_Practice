@@ -444,17 +444,17 @@ Quaternion Quaternion::CreateFromAxisAngle( const Vector & axis, float angle)
 	return quaternion;
 }
 
-Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+Quaternion Quaternion::CreateFromEulerAngleInRadian(const Vector & EulerAngle)
 {
-	float value = roll * 0.5f;
+	float value = EulerAngle.Z * 0.5f;
 	float value1 = sinf(value);
 	float value2 = cosf(value);
 
-	float value3 = pitch * 0.5f;
+	float value3 = EulerAngle.X * 0.5f;
 	float value4 = sinf(value3);
 	float value5 = cosf(value3);
 
-	float value6 = yaw * 0.5f;
+	float value6 = EulerAngle.Y * 0.5f;
 	float value7 = sinf(value6);
 	float value8 = cosf(value6);
 
@@ -466,7 +466,6 @@ Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll
 
 	return quaternion;
 }
-
 
 Quaternion Quaternion::CreateFromRotationMatrix( const Matrix & matrix)
 {
