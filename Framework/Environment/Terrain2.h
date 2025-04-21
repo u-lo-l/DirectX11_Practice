@@ -1,0 +1,62 @@
+﻿#pragma once
+#include "Renders/Shader/HlslShader.h"
+
+class ConstantBuffer;
+class Transform;
+class IndexBuffer;
+class Texture;
+class VertexBuffer;
+struct VertexTextureNormal;
+
+class Terrain2
+{
+	using VertexType = VertexTextureNormal;
+	struct WVPDesc
+	{
+		Matrix World;
+		Matrix View;
+		Matrix Projection;
+	};
+	struct TerrainTessDesc
+	{
+		float HeightScaler = 1.f;
+		float TriSize = 4.f;
+		float ScreenDistance;
+		float ScreenDiagonal;
+		
+		Vector CameraPosition;
+		float Padding;
+	};
+public:
+	explicit Terrain2(const wstring & InHeightMapFilename, UINT PatchSize = 16);
+	~Terrain2();
+
+	void Tick();
+	void Render() const;
+
+	UINT GetWidth() const;
+	UINT GetHeight() const;
+	float GetAltitude(const Vector2D & InPositionXZ) const;
+	UINT GetPatchSize() const;
+	// void SetPatchSize(UINT InPatchSize);
+private:
+	void CreateVertex();
+	void CreateIndex();
+
+	UINT PatchSize = 4;
+	vector<VertexType> Vertices;
+	vector<UINT> Indices;
+	WVPDesc WVP;
+	TerrainTessDesc TerrainTessData;
+	
+	HlslShader<VertexType> * Shader;
+	Texture * HeightMap;
+	VertexBuffer * VBuffer = nullptr;
+	IndexBuffer * IBuffer = nullptr;
+
+	Transform * Tf;
+	ConstantBuffer * WVPCBuffer = nullptr;
+	ConstantBuffer * HeightScalerCBuffer= nullptr;
+};
+
+

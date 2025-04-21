@@ -9,7 +9,7 @@ Shadow::Shadow(const Vector& InPosition, float InRadius, UINT InWidth, UINT InHe
 	ShadowViewport = new ViewPort(static_cast<float>(InWidth), static_cast<float>(InHeight));
 	ShadowData_PS = {
 		{static_cast<float>(InWidth), static_cast<float>(InHeight)},
-		0.01,
+		0.01f,
 		0
 	};
 	

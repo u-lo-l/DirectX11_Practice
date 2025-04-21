@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "framework.h"
-
 #include <fstream>
-
 #include "Utilites/String.h"
 
 template <class T>
@@ -54,6 +52,12 @@ HlslShader<T>::HlslShader
 {
 	if (ShaderFileName.empty() == true)
 		return ;
+	for (UINT i = 0; i < (UINT)SamplerStateType::Max; i++)
+	{
+		SamplerStates[i].first = nullptr;
+		SamplerStates[i].second = 0;
+	}
+	
 	FileName = W_SHADER_PATH + ShaderFileName;
 	
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
@@ -77,7 +81,10 @@ HlslShader<T>::~HlslShader()
 	SAFE_RELEASE(InputLayout);
 	
 	SAFE_RELEASE(RasterizerState);
-	SAFE_RELEASE(SamplerState);
+	for (UINT i = 0 ; i < (UINT)SamplerStateType::Max ; i++)
+	{
+		SAFE_RELEASE(SamplerStates[i].first);
+	}
 	SAFE_RELEASE(BlendState);
 	SAFE_RELEASE(DepthStencilState);
 	
@@ -254,7 +261,7 @@ HRESULT HlslShader<T>::CreateRasterizerState( const D3D11_RASTERIZER_DESC * RSDe
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Anisotropic()
+HRESULT HlslShader<T>::CreateSamplerState_Anisotropic(UINT InTargetShade)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -268,11 +275,11 @@ HRESULT HlslShader<T>::CreateSamplerState_Anisotropic()
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;
 
-	return this->CreateSamplerState(&SamplerDesc, PS_Anisotropic);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShade);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler()
+HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler(UINT InTargetShade)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -286,11 +293,11 @@ HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler()
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;
 
-	return this->CreateSamplerState(&SamplerDesc, PS_Shadow);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Shadow, InTargetShade);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Linear()
+HRESULT HlslShader<T>::CreateSamplerState_Linear(UINT InTargetShade)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -303,15 +310,15 @@ HRESULT HlslShader<T>::CreateSamplerState_Linear()
 	SamplerDesc.MinLOD = 0;
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	return this->CreateSamplerState(&SamplerDesc, PS_Linear);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear, InTargetShade);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc, const SamplerSlot SlotNum )
+HRESULT HlslShader<T>::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc, const SamplerStateType SamplerType, UINT InTargetShader)
 {
-	SAFE_RELEASE(SamplerState);
-	SamplerSlotNum = SlotNum;
-	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerState);
+	SAFE_RELEASE(SamplerStates[(UINT)SamplerType].first);
+	SamplerStates[static_cast<UINT>(SamplerType)].second = InTargetShader;
+	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerStates[static_cast<UINT>(SamplerType)].first);
 }
 
 template <class T>
@@ -526,7 +533,7 @@ void HlslShader<T>::CompileShader
 		std::streamsize FileSize = file.tellg();
 		file.seekg(0, std::ios::beg);
 
-		hr = D3DCreateBlob(FileSize, &ShaderBlob);
+		hr = D3DCreateBlob(static_cast<SIZE_T>(FileSize), &ShaderBlob);
 		file.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
 		file.close();
 		if (SUCCEEDED(hr))
@@ -676,11 +683,6 @@ void HlslShader<T>::BeginDraw()
 	
 	if (!!PixelShader)
 		DeviceContext->PSSetShader(PixelShader, nullptr, 0);
-	if (!!PixelShader && !!SamplerState)
-	{
-		DeviceContext->PSGetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &Prev_SamplerState);
-		DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &SamplerState);
-	}
 	if (!!PixelShader && !!BlendState)
 	{
 		float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -691,6 +693,25 @@ void HlslShader<T>::BeginDraw()
 	{
 		DeviceContext->OMGetDepthStencilState(&Prev_DepthStencilState, nullptr);
 		DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+	}
+
+	for (UINT i = 0 ; i < (UINT)SamplerStateType::Max ; i++)
+	{
+		ID3D11SamplerState * TargetSampler = (SamplerStates + i)->first;
+		UINT TargetShaderType = (SamplerStates + i)->second;
+		if (!!TargetSampler)
+		{
+			if (TargetShaderType | (UINT)ShaderType::VertexShader)
+				DeviceContext->VSSetSamplers(i, 1, &TargetSampler);
+			if (TargetShaderType | (UINT)ShaderType::HullShader)
+				DeviceContext->HSSetSamplers(i, 1, &TargetSampler);
+			if (TargetShaderType | (UINT)ShaderType::DomainShader)
+				DeviceContext->DSSetSamplers(i, 1, &TargetSampler);
+			if (TargetShaderType | (UINT)ShaderType::GeometryShader)
+				DeviceContext->GSSetSamplers(i, 1, &TargetSampler);
+			if (TargetShaderType | (UINT)ShaderType::PixelShader)
+				DeviceContext->PSSetSamplers(i, 1, &TargetSampler);
+		}
 	}
 }
 
@@ -703,11 +724,11 @@ void HlslShader<T>::EndDraw()
 		DeviceContext->RSSetState(Prev_RasterizerState);
 		SAFE_RELEASE(Prev_RasterizerState);
 	}
-	if (!!Prev_SamplerState)
-	{
-		DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &Prev_SamplerState);
-		SAFE_RELEASE(Prev_SamplerState);
-	}
+	// if (!!Prev_SamplerState)
+	// {
+	// 	DeviceContext->PSSetSamplers(static_cast<UINT>(SamplerSlotNum), 1, &Prev_SamplerState);
+	// 	SAFE_RELEASE(Prev_SamplerState);
+	// }
 	if (!!Prev_BlendState)
 	{
 		float BlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };

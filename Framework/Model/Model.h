@@ -19,14 +19,15 @@ private:
 	/*====================================================================================*/
 
 public:
-	explicit Model( const wstring & ModelFileName );
-	Model( const wstring & ModelFileName, const Vector& Pos, const Quaternion& Rot, const Vector& Scale);
+	explicit Model( const wstring & ModelFileName, bool bUseDisplacementMapping = false );
+	Model( const wstring & ModelFileName, const Vector& Pos, const Quaternion& Rot, const Vector& Scale, bool bUseDisplacementMapping = false);
 	~Model();
 
 	void Tick();
 	void RenderShadow() const;
 	void Render() const;
 	void SetTiling(const Vector2D& Tiling) const;
+	const map<string, Material<VertexType>*> * GetMaterials() const { return &MaterialsTable;}
 	/*====================================================================================*/
 
 private:

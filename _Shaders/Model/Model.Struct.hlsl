@@ -1,6 +1,7 @@
 #ifndef __MODEL_STRUCT_HLSL__
 # define __MODEL_STRUCT_HLSL__
 
+
 struct VertexInput
 {
     float4 Position  : POSITION;

@@ -17,7 +17,7 @@ CrossQuad::CrossQuad()
 	CHECK(SUCCEEDED(CrossQuadShader->CreateBlendState_AlphaBlendCoverage()));
 	CHECK(SUCCEEDED(CrossQuadShader->CreateDepthStencilState_Default()));
 	GS_ViewProjectionBuffer = new ConstantBuffer(
-		::ShaderType::GeometryShader,
+		(UINT)::ShaderType::GeometryShader,
 		GS_ViewProjection,
 		nullptr,
 		"ViewProjection",

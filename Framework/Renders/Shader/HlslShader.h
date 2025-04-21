@@ -14,6 +14,23 @@ enum class ShaderType : UINT
 	GeometryShader	= 1 << 2,
 	HullShader		= 1 << 3,
 	DomainShader	= 1 << 4,
+	
+	VP = PixelShader | VertexShader,
+	VGP = VertexShader | GeometryShader | PixelShader,
+	VD = VertexShader | DomainShader,
+	VDP = VertexShader | DomainShader | PixelShader,
+	VHDP = VertexShader | HullShader | DomainShader | PixelShader,
+	ALL = PixelShader | VertexShader | GeometryShader | HullShader | DomainShader
+};
+
+
+enum class SamplerStateType : UINT
+{
+	Linear = 0,
+	Anisotropic,
+	Point,
+	Shadow,
+	Max
 };
 
 template <class T>
@@ -56,12 +73,16 @@ public:
 	HRESULT CreateRasterizerState_Solid_NoCull();
 	HRESULT CreateRasterizerState_Solid_CW();
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
-	HRESULT CreateSamplerState_Anisotropic();
-	HRESULT CreateSamplerState_ShadowSampler();
 
 	// Sampler
-	HRESULT CreateSamplerState_Linear();
-	HRESULT CreateSamplerState(const D3D11_SAMPLER_DESC * SampDesc, SamplerSlot SlotNum = SamplerSlot::PS_Linear);
+	HRESULT CreateSamplerState_Linear(UINT InTargetShader = (UINT)ShaderType::PixelShader);
+	HRESULT CreateSamplerState_Anisotropic(UINT InTargetShader = (UINT)ShaderType::PixelShader);
+	HRESULT CreateSamplerState_ShadowSampler(UINT InTargetShader = (UINT)ShaderType::PixelShader);
+	HRESULT CreateSamplerState(
+		const D3D11_SAMPLER_DESC * SampDesc,
+		SamplerStateType SamplerType = SamplerStateType::Linear,
+		UINT InTargetShader = static_cast<UINT>(ShaderType::PixelShader)
+	);
 
 	// Blend
 	HRESULT CreateBlendState_NoBlend();
@@ -80,8 +101,6 @@ public:
 	HRESULT CreateDepthStencilState_Particle();
 	HRESULT CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC * DepthStencilDesc);
 private:
-	SamplerSlot SamplerSlotNum = SamplerSlot::PS_Linear;
-	// Draw
 
 // public:
 // 	ID3D11VertexShader * GetVertexShader() const { return VertexShader;}
@@ -108,7 +127,7 @@ private:
 	ID3D11InputLayout * InputLayout = nullptr;
 	
 	ID3D11RasterizerState * RasterizerState = nullptr;
-	ID3D11SamplerState * SamplerState = nullptr;
+	pair<ID3D11SamplerState *, UINT> SamplerStates[(UINT)SamplerStateType::Max];
 	ID3D11BlendState * BlendState = nullptr;
 	ID3D11DepthStencilState * DepthStencilState = nullptr;
 

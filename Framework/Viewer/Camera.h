@@ -1,6 +1,6 @@
 // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
 #pragma once
-#include "../Math/Matrix.h"
+
 class Camera
 {
 public:

@@ -17,7 +17,7 @@ Billboard::Billboard()
 	CHECK(BillboardShader->CreateBlendState_AlphaBlend() >= 0);
 
 	GS_ViewProjectionBuffer = new ConstantBuffer(
-		::ShaderType::GeometryShader,
+		(UINT)::ShaderType::GeometryShader,
 		GS_ViewProjection,
 		nullptr,
 		"ViewProjection",

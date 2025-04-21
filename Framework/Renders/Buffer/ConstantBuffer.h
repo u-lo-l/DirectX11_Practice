@@ -5,6 +5,14 @@ class ConstantBuffer final : public BufferBase
 {
 public:
 	explicit ConstantBuffer(
+		UINT TargetShaderType,
+		int RegisterIndex = 0,
+		void * InData = nullptr,
+		string InDataName = "",
+		UINT InDataSize = 0,
+		bool bStatic = false
+	);
+	explicit ConstantBuffer(
 		ShaderType TargetShaderType,
 		int RegisterIndex = 0,
 		void * InData = nullptr,
@@ -22,11 +30,11 @@ public:
 
 	void UpdateData(void * InData = nullptr, UINT InDataSize = 0);
 	void BindToGPU() override;
-	ShaderType GetTargetShaderType() const { return TargetShaderType; }
+	UINT GetTargetShaderType() const { return TargetShaderType; }
 private:
 	int RegisterIndex;
 	UINT DataSize = 0;
 	string DataName;
 	bool bIsStatic = false;
-	ShaderType TargetShaderType;
+	UINT TargetShaderType;
 };

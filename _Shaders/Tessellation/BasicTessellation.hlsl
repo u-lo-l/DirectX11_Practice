@@ -1,5 +1,5 @@
-#ifndef __DISPLACEMENT_HLSL__
-#define __DISPLACEMENT_HLSL__
+#ifndef __BASICTESSELLATION_HLSL__
+#define __BASICTESSELLATION_HLSL__
 
 #define WHITE (float4(1,1,1,1))
 
@@ -9,22 +9,13 @@
 # define HS_PARTITION "integer"
 # define HS_INPUT_PATCH_SIZE 3
 # define HS_OUTPUT_PATCH_SIZE 3
-struct HS_CONSTANT_OUTPUT
-{
-    float Edge[3] : SV_TessFactor;
-    float Inside : SV_InsideTessFactor;
-};
 #endif
+
 #ifdef QUAD
 # define DOMAIN "quad"
 # define HS_PARTITION "integer"
 # define HS_INPUT_PATCH_SIZE 4
 # define HS_OUTPUT_PATCH_SIZE 4
-struct HS_CONSTANT_OUTPUT
-{
-    float Edge[4] : SV_TessFactor;
-    float Inside[2] : SV_InsideTessFactor;
-};
 #endif
 
 
@@ -49,6 +40,18 @@ struct VS_INPUT
 struct VS_OUTPUT // HS_INPUT
 {
     float4 Position : POSITION;
+};
+
+struct HS_CONSTANT_OUTPUT
+{
+#ifdef TRI
+    float Edge[3] : SV_TessFactor;
+    float Inside : SV_InsideTessFactor;
+#endif
+#ifdef QUAD
+    float Edge[4] : SV_TessFactor;
+    float Inside[2] : SV_InsideTessFactor;
+#endif
 };
 
 struct HS_POINT_OUTPUT // DS_INPUT
@@ -76,18 +79,22 @@ HS_CONSTANT_OUTPUT HSConstant
 {
     HS_CONSTANT_OUTPUT output;
 
+    #ifdef TRI
     output.Edge[0] = EdgeTessellationFactor.x;
     output.Edge[1] = EdgeTessellationFactor.y;
     output.Edge[2] = EdgeTessellationFactor.z;
-    #ifdef TRI
     output.Inside = InnerTessellationFactor.x;
     #endif
 
     #ifdef QUAD
+    output.Edge[0] = EdgeTessellationFactor.x;
+    output.Edge[1] = EdgeTessellationFactor.y;
+    output.Edge[2] = EdgeTessellationFactor.z;
     output.Edge[3] = EdgeTessellationFactor.w;
     output.Inside[0] = InnerTessellationFactor.x;
     output.Inside[1] = InnerTessellationFactor.y;
     #endif
+
     return output;
 }
 
@@ -118,27 +125,27 @@ DS_OUTPUT DSMain(
     const OutputPatch<HS_POINT_OUTPUT, HS_OUTPUT_PATCH_SIZE> patch)
 {
     DS_OUTPUT output;
-#ifdef TRI
+#if defined(TRI)
     output.Position =
         patch[0].Position * barycentric.x +
         patch[1].Position * barycentric.y +
         patch[2].Position * barycentric.z;
-#endif
-#ifdef QUAD
-    float3 v1 = lerp(patch[0].Position.xyz, patch[1].Position.xyz, 1 - UV.y);
-    float3 v2 = lerp(patch[2].Position.xyz, patch[3].Position.xyz, 1 - UV.y);
-    float3 position = lerp(v1, v2, UV.x);
-    
+#elif defined(QUAD)
+    float3 v1 = lerp(patch[0].Position.xyz, patch[1].Position.xyz, UV.x);
+    float3 v2 = lerp(patch[3].Position.xyz, patch[2].Position.xyz, UV.x);
+    float3 position = lerp(v1, v2, UV.y);
     output.Position = float4(position, 1);
+#else
+#error "Either TRI or QUAD must be defined."
 #endif
-    output.Position = mul(output.Position, World);
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
 
-    return output;
+output.Position = mul(output.Position, World);
+output.Position = mul(output.Position, View);
+output.Position = mul(output.Position, Projection);
+return output;
 }
 
-float4 PSMain(VS_OUTPUT input) : SV_TARGET
+float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
     return WHITE;
 }

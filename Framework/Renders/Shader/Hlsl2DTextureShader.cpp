@@ -15,7 +15,7 @@ Hlsl2DTextureShader::Hlsl2DTextureShader(ID3D11ShaderResourceView * InSRV)
 	World = new Transform();
 
 	CBuffer = new ConstantBuffer(
-		ShaderType::VertexShader,
+		(UINT)ShaderType::VertexShader,
 		Const_ViewProjection_VS,
 		&Data,
 		"VP",

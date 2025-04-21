@@ -7,6 +7,7 @@ public:
 	virtual void Set(float InWidth, float InHeight, float InNear, float InFar, float InFOV);
 	virtual ~Projection() = 0;
 	const Matrix & GetMatrix() const { return ProjectionMatrix; }
+	float GetFOV() const { return FOV; }
 protected:
 	Projection();
 

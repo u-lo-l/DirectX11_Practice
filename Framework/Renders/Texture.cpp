@@ -15,9 +15,16 @@ Texture::~Texture()
 	SAFE_RELEASE(this->SRV);
 }
 
-void Texture::BindToGPU(UINT SlotNum) const
+void Texture::BindToGPU(UINT SlotNum, UINT InShaderType) const
 {
-	D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &this->SRV);
+	if(InShaderType & (UINT)ShaderType::VertexShader)
+		D3D::Get()->GetDeviceContext()->VSSetShaderResources(SlotNum, 1, &this->SRV);
+	if(InShaderType & (UINT)ShaderType::PixelShader)
+		D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &this->SRV);
+	if(InShaderType & (UINT)ShaderType::HullShader)
+		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &this->SRV);
+	if(InShaderType & (UINT)ShaderType::DomainShader)
+		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &this->SRV);
 }
 
 HRESULT Texture::LoadTextureAndCreateSRV(const wstring & FullPath)

@@ -5,10 +5,10 @@
 
 namespace sdt
 {
-	class DisplacementDemo final : public IExecutable
+	class PNTriangleDemo final : public IExecutable
 	{
 	private:
-		using VertexType = Vertex;		
+		using VertexType = VertexNormal;		
 	public:
 		void Initialize() override;
 		void Destroy() override;

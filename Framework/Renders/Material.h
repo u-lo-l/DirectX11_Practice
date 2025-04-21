@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Buffer/ConstantBuffer.h"
-#include "Renders/Shader/HlslShader.hpp"
+#include "Utilites/String.h"
+// #include "Renders/Shader/HlslShader.hpp"
 
 class String;
 
@@ -26,6 +27,7 @@ public:
 	void BindToGPU();
 
 	void SetShader(const wstring & InShaderFileName, const D3D_SHADER_MACRO * ShaderMacro = nullptr);
+	void SetShader(const HlslShader<VertexType> * InShader);
 	HlslShader<VertexType> * GetShader() const;
 	HlslShader<VertexType> * GetShadowShader() const;
 	void SetAmbient(const Color & InAmbient);
@@ -52,6 +54,7 @@ private:
 	};
 	
 private:
+	wstring ShaderFileName; 
 	HlslShader<VertexType> * Shader = nullptr;
 	HlslShader<VertexType> * ShadowShader = nullptr;
 	Colors ColorData;
@@ -111,16 +114,16 @@ void Material<TVertexType>::BindToGPU()
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	ColorData_CBuffer->BindToGPU();
 	DeviceContext->PSSetShaderResources(TextureSlot::PS_TextureMap, MaxTextureCount, SRVs);
+	// DeviceContext->DSSetShaderResources(TextureSlot::PS_TextureMap, 1, SRVs + 2);
 }
 
 template<class TVertexType>
 void Material<TVertexType>::CreateBuffer()
 {
-	if (!!ColorData_CBuffer)
-		SAFE_DELETE(ColorData_CBuffer);
+	SAFE_DELETE(ColorData_CBuffer);
 	
 	ColorData_CBuffer = new ConstantBuffer(
-		ShaderType::PixelShader,
+		(UINT)ShaderType::PixelShader,
 		PS_Material,
 		&ColorData,
 		"Material.ColorData",
@@ -134,23 +137,26 @@ void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D
 {
 	assert(InShaderFileName.length() > 0);
 	UINT TargetShaderFlag = static_cast<UINT>(ShaderType::VertexShader) | static_cast<UINT>(ShaderType::PixelShader);
-	
+
+	SAFE_DELETE(Shader);
+	ShaderFileName = InShaderFileName;
 	Shader = new HlslShader<VertexType>(
-		InShaderFileName,
+		ShaderFileName,
 		TargetShaderFlag,
 		"VSMain",
 		"PSMain",
 		"",
 		ShaderMacro
 	);
-	Shader->CreateRasterizerState_Solid();
+	// Shader->CreateRasterizerState_Solid();
+	Shader->CreateRasterizerState_WireFrame();
 	Shader->CreateSamplerState_Linear();
 	Shader->CreateSamplerState_Anisotropic();
 	Shader->CreateBlendState_NoBlend();
 
-	
+	SAFE_DELETE(ShadowShader);
 	ShadowShader = new HlslShader<VertexType>(
-		InShaderFileName,
+		ShaderFileName,
 		TargetShaderFlag,
 		"VSShadow",
 		"PSShadow",
@@ -162,6 +168,14 @@ void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D
 	ShadowShader->CreateBlendState_NoBlend();
 
 	CreateBuffer();
+}
+
+template <class TVertexType>
+void Material<TVertexType>::SetShader(const HlslShader<VertexType> * InShader)
+{
+	assert(!!InShader);
+	SAFE_DELETE(Shader);
+	Shader = InShader;
 }
 
 template<class TVertexType>

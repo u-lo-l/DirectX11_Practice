@@ -6,7 +6,7 @@
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "NormalMap" : [ "../_Models/Adam/Ch08_1001_Normal.png" ],
       "ShaderName" : "Model/Model.hlsl",
-      "Specular" : "0.500000,0.500000,0.500000,1.000000",
+      "Specular" : "0.500000,0.500000,0.500000,20.000000",
       "SpecularMap" : [ "../_Models/Adam/Ch08_1001_Specular.png" ]
    },
    "Ch08_body1" : {
@@ -16,7 +16,7 @@
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "NormalMap" : [ "../_Models/Adam/Ch08_1002_Normal.png" ],
       "ShaderName" : "Model/Model.hlsl",
-      "Specular" : "0.500000,0.500000,0.500000,1.000000",
+      "Specular" : "0.500000,0.500000,0.500000,20.000000",
       "SpecularMap" : [ "../_Models/Adam/Ch08_1002_Specular.png" ]
    },
    "Ch08_hair" : {
@@ -25,6 +25,6 @@
       "DiffuseMap" : [ "../_Models/Adam/Ch08_1003_Diffuse.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "ShaderName" : "Model/Model.hlsl",
-      "Specular" : "0.000000,0.000000,0.000000,1.000000"
+      "Specular" : "0.000000,0.000000,0.000000,20.000000"
    }
 }

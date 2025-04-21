@@ -2,13 +2,19 @@
 #include "Pch.h"
 #include "Main.h"
 
-#include "Execute/DisplacementMappingDemo/DisplacementDemo.h"
+#include "Execute/DisplacementMappingDemo/BasicTessellationDemo.h"
+#include "Execute/DisplacementMappingDemo/DisplacementMappingDemo.h"
+#include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
+#include "Execute/LODDemo/TerrainTessellationDemo.h"
 #include "Systems/Window.h"
 #include "Execute/Shadow/ShadowDemo.h"
 
 void Main::Initialize()
 {
-	PUSH_MAIN(sdt::DisplacementDemo);
+	// PUSH_MAIN(sdt::PNTriangleDemo);
+	// PUSH_MAIN(sdt::DisplacementMappingDemo);
+	// PUSH_MAIN(sdt::BasicTessellationDemo);
+	PUSH_MAIN(sdt::TerrainTessellationDemo);
 }
 
 
@@ -17,7 +23,6 @@ void Main::Destroy()
 	for (IExecutable* executable : Executables)
 	{
 		executable->Destroy();
-
 		SAFE_DELETE(executable)
 	}
 }

@@ -6,7 +6,7 @@ public:
 	explicit Texture(const wstring& FileName, bool bDefaultPath = false);
 	~Texture();
 public:
-	void BindToGPU(UINT SlotNum = 0) const;;
+	void BindToGPU(UINT SlotNum = 0, UINT InShaderType = (UINT)ShaderType::PixelShader) const;
 	UINT GetWidth() const { return TexMeta.width; }
 	UINT GetHeight() const { return TexMeta.height; }
 	ID3D11ShaderResourceView * GetSRV() const { return SRV; }

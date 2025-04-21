@@ -25,6 +25,7 @@
 //                                  t3    Normal Texture
 #define Texture_PS_Decal            t4 // Projector Texture
 #define Texture_PS_Shadow           t5
+#define Texture_DS_Normal           t6
 
 #define Sampler_PS_Linear           s0
 #define Sampler_PS_Anisotropic      s1

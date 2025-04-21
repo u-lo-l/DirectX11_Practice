@@ -1,4 +1,4 @@
-#include "framework.h"
+﻿#include "framework.h"
 #include "VertexBuffer.h"
 
 /*	CpuWrite과 GpuWrite
@@ -26,7 +26,6 @@ VertexBuffer::VertexBuffer
 	Stride = InStride;
 	
 	ID3D11Device * Device = D3D::Get()->GetDevice();
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
 	D3D11_BUFFER_DESC BufferDesc;
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));

@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "ConstantBuffer.h"
 
-ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, void * InData, string InDataName, UINT InDataSize, bool bStatic)
+ConstantBuffer::ConstantBuffer(UINT TargetShaderType, int RegisterIndex, void * InData, string InDataName, UINT InDataSize, bool bStatic)
  : RegisterIndex(RegisterIndex), DataSize(InDataSize), DataName(move(InDataName)), bIsStatic(bStatic), TargetShaderType(TargetShaderType)
 {
 	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
@@ -31,6 +31,13 @@ ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, v
 	}
 }
 
+ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, void* InData, string InDataName,
+	UINT InDataSize, bool bStatic)
+	: ConstantBuffer(static_cast<UINT>(TargetShaderType), RegisterIndex, InData, InDataName, InDataSize, bStatic)
+{
+	
+}
+
 void ConstantBuffer::UpdateData( void * InData, UINT InDataSize )
 {
 	if (bIsStatic == true)
@@ -52,25 +59,14 @@ void ConstantBuffer::BindToGPU()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
-	switch (TargetShaderType)
-	{
-	case ShaderType::VertexShader:
+	if (TargetShaderType & static_cast<UINT>(ShaderType::VertexShader))
 		DeviceContext->VSSetConstantBuffers(RegisterIndex, 1, &Buffer);
-		break;
-	case ShaderType::PixelShader:
+	if (TargetShaderType & static_cast<UINT>(ShaderType::PixelShader))
 		DeviceContext->PSSetConstantBuffers(RegisterIndex, 1, &Buffer);
-		break;
-	case ShaderType::HullShader:
+	if (TargetShaderType & static_cast<UINT>(ShaderType::HullShader))
 		DeviceContext->HSSetConstantBuffers(RegisterIndex, 1, &Buffer);
-		break;
-	case ShaderType::DomainShader:
+	if (TargetShaderType & static_cast<UINT>(ShaderType::DomainShader))
 		DeviceContext->DSSetConstantBuffers(RegisterIndex, 1, &Buffer);
-		break;
-	case ShaderType::GeometryShader:
+	if (TargetShaderType & static_cast<UINT>(ShaderType::GeometryShader))
 		DeviceContext->GSSetConstantBuffers(RegisterIndex, 1, &Buffer);
-		break;
-	default:
-		ASSERT(false, "Unknown Shader Type : ConstBuffer");
-		break;
-	}
 }

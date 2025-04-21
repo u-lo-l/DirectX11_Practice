@@ -3,12 +3,12 @@
 #include <string>
 #include <unordered_map>
 
-Model::Model(const wstring & ModelFileName)
-	: Model(ModelFileName, {0,0,0}, {0,0,0,1}, {1,1,1})
+Model::Model(const wstring & ModelFileName, bool bUseDisplacementMapping)
+	: Model(ModelFileName, {0,0,0}, {0,0,0,1}, {1,1,1}, bUseDisplacementMapping)
 {
 }
 
-Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale )
+Model::Model( const wstring & ModelFileName, const Vector & Pos, const Quaternion & Rot, const Vector & Scale, bool bUseDisplacementMapping )
 {
 	WorldTransform = new Transform();
 	WorldTransform->SetTRS(Pos,Rot,Scale);
@@ -194,7 +194,7 @@ void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 void Model::CreateAnimationBuffers()
 {
 	AnimationFrameData_CBuffer = new ConstantBuffer(
-		ShaderType::VertexShader,
+		(UINT)ShaderType::VertexShader,
 		ShaderSlot::VS_AnimationBlending,
 		&this->BlendingDatas,
 		"Instancing Animation Blending Description",

@@ -6,7 +6,7 @@
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "NormalMap" : [ "../_Models/Shannon/Ch38_1001_Normal.png" ],
       "ShaderName" : "Model/Model.hlsl",
-      "Specular" : "0.500000,0.500000,0.500000,1.000000",
+      "Specular" : "0.500000,0.500000,0.500000,20.000000",
       "SpecularMap" : [ "../_Models/Shannon/Ch38_1001_Specular.png" ]
    },
    "Ch38_hair" : {
@@ -15,6 +15,6 @@
       "DiffuseMap" : [ "../_Models/Shannon/Ch38_1002_Diffuse.png" ],
       "Emissive" : "0.000000,0.000000,0.000000,1.000000",
       "ShaderName" : "Model/Model.hlsl",
-      "Specular" : "0.000000,0.000000,0.000000,1.000000"
+      "Specular" : "0.000000,0.000000,0.000000,20.000000"
    }
 }

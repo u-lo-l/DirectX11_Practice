@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Environment\SkySphere.cpp" />
+    <ClCompile Include="Environment\Terrain2.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />
     <ClCompile Include="Math\Color.cpp" />
@@ -616,6 +617,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment\SkySphere.h" />
+    <ClInclude Include="Environment\Terrain2.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Environment\Weather\WeatherStructure.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
