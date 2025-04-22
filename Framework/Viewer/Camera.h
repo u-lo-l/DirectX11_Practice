@@ -17,16 +17,12 @@ public:
 	const Vector & GetEulerAngleInDegree() const;
 	const Vector & GetEulerAngleInRadian() const;
 	void SetRotation(float R, float P, float Y) const;
-	void SetRotation(const Vector & InEuler) const;
+	void SetRotation(const Vector & InEulerRadian) const;
 
 	void SetMoveSpeed(float InSpeed);
 	void SetRopSpeed(float InSpeed);
 
 	void SetPerspective(float Width, float Height, float Near, float Far, float VFOV) const;
-private :
-	// Camera Translation
-	//void SetMove();
-	// Camera Rotation
 
 private :
 	Transform * Tf;
@@ -34,7 +30,7 @@ private :
 	float DefaultMoveSpeed = 20.f;
 	float MaxMoveSpeed = 10000.f;
 	float MoveSpeed = 20.f;
-	float RotationSpeed = 30.f;
+	float RotationSpeed = 1.f;
 
 private:
 	Vector At() const;

@@ -57,12 +57,6 @@ void ModelMesh::Render(UINT InstanceCount) const
 	);
 }
 
-// 매 Tick마다 Model::Tick에서 호출되어서 Mesh의 WorldTransform을 넣어준다.
-void ModelMesh::SetWorldTransform( const Transform * InTransform) const
-{
-	ref_ModelWorldTransform->SetTRS(InTransform);
-}
-
 void ModelMesh::SetMaterialData( Material<VertexType> * InMaterial )
 {
 	MaterialData = InMaterial;

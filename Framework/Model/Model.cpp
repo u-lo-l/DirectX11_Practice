@@ -57,7 +57,7 @@ void Model::Tick()
 				for (int InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
 				{
 					SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
-					InstanceWorldTransforms[InstanceId]->SetRotation({0,0,Math::Random(-180.f, 180.f)});
+					InstanceWorldTransforms[InstanceId]->SetWorldRotation({0,0,Math::Random(-180.f, 180.f)});
 				}
 			}
 		}

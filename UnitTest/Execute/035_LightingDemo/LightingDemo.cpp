@@ -12,7 +12,7 @@ namespace sdt
 		float TextureWidth = 0.2f * D3D::GetDesc().Width;
 		float TextureHeight = 0.2f * D3D::GetDesc().Height;
 		TextureShader->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
-		TextureShader->GetTransform()->SetPosition({TextureWidth / 2,TextureHeight / 2, 0});
+		TextureShader->GetTransform()->SetWorldPosition({TextureWidth / 2,TextureHeight / 2, 0});
 
 
 		Camera * const MainCamera = Context::Get()->GetCamera();
@@ -158,10 +158,9 @@ namespace sdt
 		if (!!Plane)
 		{
 			Transform * tf = Plane->AddTransforms();
-			tf->SetPosition({300,0,0});
+			tf->SetWorldPosition({300,0,0});
 			tf->SetScale({2.5,1,2.5});
-			tf->SetRotation({0,0,90});
-			tf->UpdateWorldMatrix();
+			tf->SetWorldPosition({0,0,90});
 			ModelInstances_ForLighting.insert(ModelInstances_ForLighting.end(), {
 				{new Model(L"Cone"),{0.1f,0.1f,0.1f}, 15.f},
 				{new Model(L"Cylinder"),{0.1f,0.1f,0.1f}, 15.f},
@@ -190,10 +189,9 @@ namespace sdt
 		Plane = new Model(L"Plane");
 		Plane->SetTiling({5,5});
 		Transform * tf = Plane->AddTransforms();
-		tf->SetPosition({0,0,0});
+		tf->SetWorldPosition({0,0,0});
 		tf->SetScale({2.5,1,2.5});
-		tf->SetRotation({0,0,90});
-		tf->UpdateWorldMatrix();;
+		tf->SetWorldRotation({0,0,90});
 	}
 	void LightingDemo::SetModelsPosition_Square(const vector<ModelInstanceData> & Models, int MaxInstanceCount, float Stride, const Vector& Center ) const
 	{
@@ -217,9 +215,8 @@ namespace sdt
 					InstancePosition.X = static_cast<float>(W) * Stride;// - static_cast<float>(Width) * Stride / 2;
 					Transform * TF = Models[ModelIndex].Object->AddTransforms();
 					TF->SetScale(Models[ModelIndex].Scale);
-					TF->SetPosition(Offet + InstancePosition);
-					TF->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
-					TF->UpdateWorldMatrix();
+					TF->SetWorldPosition(Offet + InstancePosition);
+					TF->SetWorldRotation({0, 0, Math::Random(-180.f, 180.f)});
 
 					const int AnimationNum = Models[ModelIndex].Object->GetClipCount();
 					if (AnimationNum > 0)
@@ -251,9 +248,8 @@ namespace sdt
 				InstancePosition.Z = Stride * static_cast<float>(InstanceIndex);
 				Transform * TF = Models[ModelIndex].Object->AddTransforms();
 				TF->SetScale(Models[ModelIndex].Scale);
-				TF->SetPosition(Offet + InstancePosition);
-				TF->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
-				TF->UpdateWorldMatrix();
+				TF->SetWorldPosition(Offet + InstancePosition);
+				TF->SetWorldRotation({0, 0, Math::Random(-180.f, 180.f)});
 
 				const int AnimationNum = Models[ModelIndex].Object->GetClipCount();
 				if (AnimationNum > 0)

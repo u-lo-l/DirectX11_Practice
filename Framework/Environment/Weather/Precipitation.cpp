@@ -39,7 +39,7 @@ Precipitation::~Precipitation()
 
 void Precipitation::Tick()
 {
-	World->SetPosition(Context::Get()->GetCamera()->GetPosition());
+	World->SetWorldPosition(Context::Get()->GetCamera()->GetPosition());
 	World->Tick();
 
 	ViewProjectionData.View = Context::Get()->GetViewMatrix();

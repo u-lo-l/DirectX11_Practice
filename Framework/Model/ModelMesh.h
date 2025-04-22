@@ -32,7 +32,6 @@ protected:
 	virtual void Render(UINT InstanceCount) const;
 	virtual void CreateBuffers();
 	
-	void SetWorldTransform( const Transform * InTransform ) const;
 	
 protected :
 	string MeshName;

@@ -29,16 +29,16 @@ void Projector::Tick()
 {
 	ImGui::BeginGroup();
 	{
-		static Vector position = World->GetPosition();
-		static Vector rotation = World->GetRotationInDegree();
+		static Vector position = World->GetWorldPosition();
+		static Vector rotation = World->GetWorldZYXEulerAngleInDegree();
 		ImGui::SliderFloat("PositionX", &position.X, -30, +30);
 		ImGui::SliderFloat("PositionY", &position.Y, 0, 20);
 		ImGui::SliderFloat("PositionZ", &position.Z, -30, +30);
-		World->SetPosition(position);
+		World->SetWorldPosition(position);
 		ImGui::SliderFloat("Roll", &rotation.X, -90, +90);
 		ImGui::SliderFloat("Pitch", &rotation.Y, -90, +90);
 		ImGui::SliderFloat("Yaw", &rotation.Z, -90, +90);
-		World->SetRotation(rotation);
+		World->SetWorldRotation(rotation);
 
 		ImGui::InputFloat("Width", &Width, 1.0f);
 		ImGui::InputFloat("Height", &Height, 1.0f);
@@ -48,7 +48,7 @@ void Projector::Tick()
 	}
 	ImGui::EndGroup();
 	Proj->Set(Width, Height, Near, Far, 0);
-	ProjectorData.View = Matrix::CreateLookAt(World->GetPosition(), World->GetPosition() + World->GetForward(), World->GetUp());
+	ProjectorData.View = Matrix::CreateLookAt(World->GetWorldPosition(), World->GetWorldPosition() + World->GetForward(), World->GetUp());
 	ProjectorData.Projection = Proj->GetMatrix();
 	ProjectorCBuffer_VS->UpdateData(&ProjectorData, sizeof(ProjectorDesc));
 }
@@ -61,7 +61,7 @@ void Projector::Render()
 
 void Projector::SetPosition(const Vector& InPosition) const
 {
-	World->SetPosition(InPosition);
+	World->SetWorldPosition(InPosition);
 }
 
 void Projector::SetScale(const Vector& InScale) const
@@ -71,5 +71,5 @@ void Projector::SetScale(const Vector& InScale) const
 
 void Projector::SetRotation(const Vector& InEulerDegree) const
 {
-	World->SetRotation(InEulerDegree);
+	World->SetWorldRotation(InEulerDegree);
 }

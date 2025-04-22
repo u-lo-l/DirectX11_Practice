@@ -34,10 +34,10 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	ASSERT(WorldTransform != nullptr, "WorldTransform Not Valid")
 	vector<string> pString;
 	String::SplitString(&pString, Position.asString(), ",");
-	WorldTransform->SetPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+	WorldTransform->SetWorldPosition({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 
 	String::SplitString(&pString, Rotation.asString(), ",");
-	WorldTransform->SetRotation({stof(pString[0]), stof(pString[1]), stof(pString[2])});
+	WorldTransform->SetWorldRotation({stof(pString[0]), stof(pString[1]), stof(pString[2])});
 
 	String::SplitString(&pString, Scale.asString(), ",");
 	WorldTransform->SetScale({stof(pString[0]), stof(pString[1]), stof(pString[2])});

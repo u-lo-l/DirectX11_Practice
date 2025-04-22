@@ -6,7 +6,7 @@ namespace sdt
 	{
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 150, 50, -150 );
-		MainCamera->SetRotation( 0, 30, 0);
+		MainCamera->SetRotation( 0, 0, 0);
 		
 		Terrain = new Terrain2(L"DisplacementTest.png", 32);
 	}

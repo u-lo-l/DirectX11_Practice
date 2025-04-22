@@ -17,52 +17,38 @@ Camera::~Camera()
 void Camera::Tick()
 {
 	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
-	Vector DeltaPosition;
+	Vector DeltaPosition = {0, 0, 0};
 	const Vector & Forward = Tf->GetForward();
 	const Vector & Right = Tf->GetRight();
 	const Vector & Up = Tf->GetUp();
 
-	static float Roll = 0.f;
-	static float Pitch = 0.f;
-	static float Yaw = 0.f;
-	ImGui::SliderFloat("RollTEST", &Roll, -Math::Pi, Math::Pi, "%.2f");
-	ImGui::SliderFloat("PitchTEST", &Pitch, -Math::Pi * 0.45f, Math::Pi * 0.45f, "%.2f");
-	ImGui::SliderFloat("YawTEST", &Yaw, -Math::Pi, Math::Pi, "%.2f");
-
 	if (sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
 	{
-		Vector Euler = Tf->GetRotationInRadian();
-		const Matrix Rotation = Matrix::CreateFromEulerAngleInRadian({30 * Math::DegToRadian, 0, 0});
-		Matrix DeltaRotation = Matrix::CreateFromEulerAngleInRadian({Roll, Pitch, Yaw});
-		const Matrix DeltaYaw = Matrix::CreateRotationZ(Yaw); 
-		const Matrix DeltaPitch = Matrix::CreateRotationY(Pitch); 
-		const Matrix DeltaRoll = Matrix::CreateRotationX(Roll); 
-		Tf->SetRotation(Rotation * DeltaYaw * DeltaPitch * DeltaRoll);
 		return;
 	}
 	if (Keyboard::Get()->IsPressed('W') == true)
 	{
-		DeltaPosition += Forward * MoveSpeed * DeltaTime;
+		DeltaPosition += Vector::Forward;
 	}
 	if (Keyboard::Get()->IsPressed('S') == true)
 	{
-		DeltaPosition -= Forward * MoveSpeed * DeltaTime;
+		DeltaPosition -= Vector::Forward;
 	}
 	if (Keyboard::Get()->IsPressed('D') == true)
 	{
-		DeltaPosition += Right * MoveSpeed * DeltaTime;
+		DeltaPosition += Vector::Right;
 	}
 	if (Keyboard::Get()->IsPressed('A') == true)
 	{
-		DeltaPosition -= Right * MoveSpeed * DeltaTime;
+		DeltaPosition -= Vector::Right;
 	}
 	if (Keyboard::Get()->IsPressed('E') == true)
 	{
-		DeltaPosition += Up * MoveSpeed * DeltaTime;
+		DeltaPosition += Vector::Up;
 	}
 	if (Keyboard::Get()->IsPressed('Q') == true)
 	{
-		DeltaPosition -= Up * MoveSpeed * DeltaTime;
+		DeltaPosition -= Vector::Up;
 	}
 	if (Keyboard::Get()->IsPressed(VK_LSHIFT) == true)
 	{
@@ -72,17 +58,17 @@ void Camera::Tick()
 	{
 		MoveSpeed = DefaultMoveSpeed;
 	}
-	// const Vector Delta = sdt::Mouse::Get()->GetMoveDelta() * DeltaTime * 1;
-	// Vector Euler = Tf->GetRotationInRadian();
-	// const Matrix Rotation = Matrix::CreateFromEulerAngleInRadian(Euler);
-	// Matrix DeltaRotation = Matrix::CreateFromEulerAngleInRadian({Roll, Pitch, Yaw});
-	// Tf->SetRotation(Rotation * DeltaRotation);
-	Tf->SetPosition(Tf->GetPosition() + DeltaPosition);
+	Vector Delta = sdt::Mouse::Get()->GetMoveDelta();
+	float Roll = Delta.Y * RotationSpeed * DeltaTime;
+	float Pitch = Delta.X * RotationSpeed * DeltaTime;
+	Matrix DeltaRotation = Matrix::CreateFromZYXEulerAngle({-Roll, -Pitch, 0});
+	Tf->AddLocalRotation(DeltaRotation);
+	Tf->AddLocalTranslation(DeltaPosition * MoveSpeed * DeltaTime);
 }
 
 const Vector& Camera::GetPosition() const
 {
-	return Tf->GetPosition();
+	return Tf->GetWorldPosition();
 }
 
 Matrix Camera::GetViewMatrix() const
@@ -97,32 +83,32 @@ Matrix Camera::GetProjectionMatrix() const
 
 void Camera::SetPosition(float X, float Y, float Z) const
 {
-	Tf->SetPosition({X, Y, Z});
+	Tf->SetWorldPosition({X, Y, Z});
 }
 
 void Camera::SetPosition(const Vector& Vec) const
 {
-	Tf->SetPosition(Vec);
+	Tf->SetWorldPosition(Vec);
 }
 
 const Vector& Camera::GetEulerAngleInDegree() const
 {
-	return Tf->GetRotationInDegree();
+	return Tf->GetWorldZYXEulerAngleInDegree();
 }
 
 const Vector& Camera::GetEulerAngleInRadian() const
 {
-	return Tf->GetRotationInRadian();
+	return Tf->GetWorldZYXEulerAngle();
 }
 
 void Camera::SetRotation(float R, float P, float Y) const
 {
-	Tf->SetRotation({R, P, Y});
+	Tf->SetWorldRotation({R * Math::DegToRadian, P* Math::DegToRadian, Y* Math::DegToRadian});
 }
 
-void Camera::SetRotation(const Vector & InEuler) const
+void Camera::SetRotation(const Vector & InEulerRadian) const
 {
-	Tf->SetRotation(InEuler);
+	Tf->SetWorldRotation(InEulerRadian);
 }
 
 void Camera::SetMoveSpeed( float InSpeed )
@@ -142,5 +128,5 @@ void Camera::SetPerspective(float Width, float Height, float Near, float Far, fl
 
 Vector Camera::At() const
 {
-	return Tf->GetPosition() + Tf->GetForward();
+	return Tf->GetWorldPosition() + Tf->GetForward();
 }

@@ -33,7 +33,7 @@ SkySphere::~SkySphere()
 void SkySphere::Tick()
 {
 	Vector position = Context::Get()->GetCamera()->GetPosition();
-	World->SetPosition(position);
+	World->SetWorldPosition(position);
 	World->Tick();
 }
 
