@@ -18,9 +18,6 @@ void Camera::Tick()
 {
 	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 	Vector DeltaPosition = {0, 0, 0};
-	const Vector & Forward = Tf->GetForward();
-	const Vector & Right = Tf->GetRight();
-	const Vector & Up = Tf->GetUp();
 
 	if (sdt::Mouse::Get()->IsPress(MouseButton::Right) == false)
 	{
@@ -58,12 +55,16 @@ void Camera::Tick()
 	{
 		MoveSpeed = DefaultMoveSpeed;
 	}
-	Vector Delta = sdt::Mouse::Get()->GetMoveDelta();
-	float Roll = Delta.Y * RotationSpeed * DeltaTime;
-	float Pitch = Delta.X * RotationSpeed * DeltaTime;
-	Matrix DeltaRotation = Matrix::CreateFromZYXEulerAngle({-Roll, -Pitch, 0});
-	Tf->AddLocalRotation(DeltaRotation);
-	Tf->AddLocalTranslation(DeltaPosition * MoveSpeed * DeltaTime);
+	DeltaPosition *= MoveSpeed * DeltaTime;
+	const Vector & Delta = sdt::Mouse::Get()->GetMoveDelta();
+	const float Roll = Delta.Y * RotationSpeed * DeltaTime;
+	const float Pitch = Delta.X * RotationSpeed * DeltaTime;
+	Quaternion QuatY = Quaternion::CreateFromAxisAngle(Vector::Up, Pitch);
+	Quaternion QuatX = Quaternion::CreateFromAxisAngle(Vector::Right, Roll);
+	
+	Tf->AddWorldRotation(QuatY);
+	Tf->AddLocalRotation(QuatX);
+	Tf->AddLocalTranslation(DeltaPosition);
 }
 
 const Vector& Camera::GetPosition() const
