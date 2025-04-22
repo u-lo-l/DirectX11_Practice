@@ -223,7 +223,11 @@ float Vector::LengthSquared() const
 void Vector::Normalize()
 {
 	float x = X * X + Y * Y + Z * Z;
-	float single = 1.0f / sqrtf(x);
+	float single;
+	if (x < Math::Epsilon)
+		single = 0;
+	else
+		single = 1.0f / sqrtf(x);
 
 	X *= single;
 	Y *= single;

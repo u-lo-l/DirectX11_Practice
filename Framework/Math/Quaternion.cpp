@@ -432,6 +432,9 @@ Quaternion Quaternion::Negative( const Quaternion & quaternion)
 
 Quaternion Quaternion::CreateFromAxisAngle( const Vector & axis, float angle)
 {
+	if (axis.Length() < Math::Epsilon || abs(angle) < Math::Epsilon)
+		return {1,0,0,0};
+	
 	float value = angle * 0.5f;
 	float value1 = sinf(value);
 	float value2 = cosf(value);
