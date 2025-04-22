@@ -4,9 +4,14 @@
 Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 	: PatchSize(PatchSize)
 {
+	vector<D3D_SHADER_MACRO> Macros = { {"TYPE01", "0"}, {nullptr,}};
 	Shader = new HlslShader<VertexType>(
 		L"Tessellation/TerrainTessellation.hlsl",
-		static_cast<UINT>(ShaderType::VHDP)
+		static_cast<UINT>(ShaderType::VHDP),
+		"VSMain",
+		"PSMain",
+		"",
+		Macros.data()
 	);
 	Shader->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear(static_cast<UINT>(ShaderType::VDP))));
@@ -69,7 +74,7 @@ void Terrain2::Tick()
 	ImGui::SliderFloat("Height Scaler", &TerrainTessData.HeightScaler, 1.f, 100.f, "%.0f");
 	ImGui::SliderFloat("TriSize", &TerrainTessData.TriSize, 4.f, 12.f, "%.0f");
 	TerrainTessData.ScreenDistance = D3D::GetDesc().Height * 0.5f / tanf(Math::Pi * 0.25f / 2);
-	TerrainTessData.ScreenDiagonal = sqrt(D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width);
+	TerrainTessData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
 	TerrainTessData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
 	HeightScalerCBuffer->UpdateData(&TerrainTessData, sizeof(TerrainTessDesc));
 }
@@ -104,11 +109,6 @@ UINT Terrain2::GetPatchSize() const
 {
 	return PatchSize;
 }
-
-// void Terrain2::SetPatchSize(UINT InPatchSize)
-// {
-// 	PatchSize = InPatchSize < 2 ? 2 : InPatchSize;
-// }
 
 void Terrain2::CreateVertex()
 {
