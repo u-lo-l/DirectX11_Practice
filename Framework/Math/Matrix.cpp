@@ -964,10 +964,10 @@ Matrix Matrix::CreateFromQuaternion(Quaternion quaternion)
 	return matrix;
 }
 
-Matrix Matrix::CreateFromEulerAngleInRadian(const Vector& EulerAngle)
+Matrix Matrix::CreateFromEulerAngleInRadian(const Vector& EulerRadian)
 {
 	Quaternion result1;
-	result1 = Quaternion::CreateFromEulerAngleInRadian(EulerAngle);
+	result1 = Quaternion::CreateFromEulerAngleInRadian(EulerRadian);
 
 	Matrix result2;
 	result2 = CreateFromQuaternion(result1);

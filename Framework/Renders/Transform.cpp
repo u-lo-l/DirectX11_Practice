@@ -190,6 +190,9 @@ void Transform::SetWorldRotation(const Matrix& InRotation)
 void Transform::SetWorldRotation(const Quaternion& InQuat)
 {
 	Rotation = InQuat;
+	RotationMat = Matrix::CreateFromQuaternion(InQuat);
+	EulerAngleInDegree = InQuat.ToEulerAnglesInDegrees();
+	EulerAngleInRadian = InQuat.ToEulerAnglesInRadian();
 	UpdateMatrix();
 }
 
@@ -227,7 +230,7 @@ const Quaternion & Transform::GetWorldRotation() const
 
 const Vector & Transform::GetWorldZYXEulerAngle() const
 {
-	return EulerAngleInDegree;
+	return EulerAngleInRadian;
 }
 
 const Vector& Transform::GetWorldZYXEulerAngleInDegree() const
@@ -282,7 +285,7 @@ void Transform::AddLocalRotation(const Matrix& InRotationMat)
 void Transform::AddWorldRotation(const Quaternion& InRotation)
 {
 	Rotation = InRotation * Rotation;
-	EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();		
+	EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();
 	EulerAngleInRadian= Rotation.ToEulerAnglesInRadian();
 	RotationMat = Matrix::CreateFromQuaternion(Rotation);
 	UpdateMatrix();
@@ -291,7 +294,7 @@ void Transform::AddWorldRotation(const Quaternion& InRotation)
 void Transform::AddLocalRotation(const Quaternion& InRotation)
 {
 	Rotation = Rotation * InRotation;
-	EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();		
+	EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();
 	EulerAngleInRadian= Rotation.ToEulerAnglesInRadian();
 	RotationMat = Matrix::CreateFromQuaternion(Rotation);
 	UpdateMatrix();
