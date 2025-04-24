@@ -151,6 +151,7 @@ Color Model::JsonStringToColor( const Json::String & InJson )
 Transform * Model::AddTransforms()
 {
 	const int Index = InstanceWorldTransforms.size();
+	
 	Transform * NewTransform = new Transform(&WorldTFMatrix[Index]);
 	InstanceWorldTransforms.push_back(NewTransform);
 	

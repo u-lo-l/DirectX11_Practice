@@ -32,12 +32,8 @@ protected:
 	virtual void Render(UINT InstanceCount) const;
 	virtual void CreateBuffers();
 	
-	void SetWorldTransform( const Transform * InTransform ) const;
-	
 protected :
 	string MeshName;
-
-	Transform * ref_ModelWorldTransform = nullptr;
 
 public:
 	void SetMaterialData(Material<VertexType> * InMaterial);

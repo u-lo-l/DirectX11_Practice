@@ -1,23 +1,37 @@
 ﻿#include "framework.h"
 #include "Transform.h"
 
-Transform::Transform(const Matrix * InMatrix )
-	: CBuffer(nullptr)
-	, Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}, Scale{1,1,1}
-	, ref_WorldMatrix(InMatrix)
+Transform::Transform(Matrix * InMatrix)
+	: WorldTF(InMatrix)
+	, CBuffer(nullptr), Position{0,0,0}, EulerAngleInDegree{0,0,0}, EulerAngleInRadian{0,0,0}
+	, Scale{1,1,1}
 {
-	WorldTransform_Data.World = InMatrix == nullptr ? Matrix::Identity : *InMatrix;
-	CBuffer = new ConstantBuffer(ShaderType::VertexShader, ShaderSlot::VS_World, &WorldTransform_Data, "Transform World Mat", sizeof(ThisClass::CBufferDesc));
+	if (!WorldTF)
+	{
+		bShouldWorldTFDeleted = true;
+		WorldTF = new Matrix();
+		*WorldTF = Matrix::Identity;
+	}
+	CBuffer = new ConstantBuffer(
+		ShaderType::VertexShader,
+		ShaderSlot::VS_World,
+		WorldTF,
+		"Transform World Mat",
+		sizeof(Matrix),
+		false
+	);
 }
 
 Transform::~Transform()
 {
+	if (!bShouldWorldTFDeleted)
+		SAFE_DELETE(WorldTF);
 	SAFE_DELETE(CBuffer);
 }
 
 void Transform::Tick()
 {
-	CBuffer->UpdateData( &WorldTransform_Data, sizeof(CBufferDesc));
+	CBuffer->UpdateData( WorldTF, sizeof(Matrix));
 }
 
 void Transform::BindToGPU()
@@ -28,17 +42,17 @@ void Transform::BindToGPU()
 
 Vector Transform::GetForward() const
 {
-	return WorldTransform_Data.World.Forward();
+	return WorldTF->Forward();
 }
 
 Vector Transform::GetUp() const
 {
-	return WorldTransform_Data.World.Up();
+	return WorldTF->Up();
 }
 
 Vector Transform::GetRight() const
 {
-	return WorldTransform_Data.World.Right();
+	return WorldTF->Right();
 }
 
 const Vector & Transform::GetPosition() const
@@ -114,8 +128,5 @@ void Transform::UpdateWorldMatrix()
 	const Matrix Rotation = Matrix::CreateFromYawPitchRoll(EulerAngleInRadian.Z, EulerAngleInRadian.Y, EulerAngleInRadian.X);
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
 
-	WorldTransform_Data.World = Scale * Rotation * Translation;
-
-	if (ref_WorldMatrix != nullptr)
-		memcpy((void *)ref_WorldMatrix, &WorldTransform_Data.World, sizeof(Matrix));
+	*WorldTF = Scale * Rotation * Translation;
 }

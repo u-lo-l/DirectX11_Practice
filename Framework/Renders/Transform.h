@@ -8,7 +8,7 @@ class Transform
 private:
 	using ThisClass = Transform;
 public:
-	explicit Transform(const Matrix * InMatrix = nullptr);
+	explicit Transform(Matrix * InMatrix = nullptr);
 	~Transform();
 
 	void Tick();
@@ -31,16 +31,14 @@ public:
 	void SetTRS( const Vector & InPosition, const Quaternion & InRotation, const Vector & InScale );
 
 public:
-	const Matrix & GetMatrix() const {return WorldTransform_Data.World; }
+	Matrix GetMatrix() const {return *WorldTF;}
 	
 public:
 	void UpdateWorldMatrix();
 	
 private :
-	struct CBufferDesc
-	{
-		Matrix World;
-	};
+	bool bShouldWorldTFDeleted = false;
+	Matrix * WorldTF;
 private:
 	ConstantBuffer * CBuffer;
 	// IECB_t * ECB_CBuffer;
@@ -50,9 +48,4 @@ private:
 	Vector EulerAngleInDegree;
 	Vector EulerAngleInRadian;
 	Vector Scale;
-	CBufferDesc WorldTransform_Data;
-
-#pragma region Instancing
-	const Matrix * ref_WorldMatrix;
-#pragma endregion Instancing
 };
