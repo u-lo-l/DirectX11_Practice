@@ -1,7 +1,6 @@
 ﻿#include "framework.h"
 #include "Model.h"
 #include <string>
-#include <unordered_map>
 
 Model::Model(const wstring & ModelFileName, bool bUseDisplacementMapping)
 	: Model(ModelFileName, {0,0,0}, {0,0,0,1}, {1,1,1}, bUseDisplacementMapping)
@@ -57,7 +56,7 @@ void Model::Tick()
 				for (int InstanceId = 0; InstanceId < InstanceCount ; InstanceId++)
 				{
 					SetClipIndex(InstanceId, Math::Random(0, Animations.size()));
-					InstanceWorldTransforms[InstanceId]->SetWorldRotation({0,0,Math::Random(-180.f, 180.f)});
+					InstanceWorldTransforms[InstanceId]->SetWorldRotation({0,Math::Random(-Math::Pi, Math::Pi), 0});
 				}
 			}
 		}

@@ -5,7 +5,7 @@ class Transform
 private:
 	using ThisClass = Transform;
 public:
-	explicit Transform(const Matrix * InMatrix = nullptr);
+	explicit Transform(Matrix * InMatrix = nullptr);
 	~Transform();
 
 	void Tick();
@@ -17,7 +17,7 @@ public:
 	void SetWorldRotation(const Vector & ZYXEulerRadian);
 	void SetScale(const Vector & InScale);
 
-	const Matrix & GetMatrix() const;
+	Matrix GetMatrix() const;
 	const Vector & GetWorldPosition() const;
 	const Matrix & GetWorldRotationMat() const;
 	const Quaternion & GetWorldRotation() const;
@@ -41,10 +41,8 @@ public:
 
 private :
 	void UpdateMatrix();
-	struct CBufferDesc
-	{
-		Matrix World;
-	} CBufferData;
+	bool bWorldTFAllocated = false;
+	Matrix * WorldTF;
 	ConstantBuffer * CBuffer;
 
 private:

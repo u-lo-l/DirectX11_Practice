@@ -12,7 +12,7 @@ namespace sdt
 		float TextureHeight = 0.1f * ShadowMap->GetHeight();
 		
 		DepthDrawer->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
-		DepthDrawer->GetTransform()->SetPosition({TextureWidth,TextureHeight, 0});
+		DepthDrawer->GetTransform()->SetWorldPosition({TextureWidth,TextureHeight, 0});
 
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 150, 150, 20 );
@@ -115,10 +115,9 @@ namespace sdt
 		Plane = new Model(L"Plane");
 		Plane->SetTiling({10,10});
 		Transform * tf = Plane->AddTransforms();
-		tf->SetPosition({0,0,0});
+		tf->SetWorldPosition({0,0,0});
 		tf->SetScale({2.5,1,2.5});
-		tf->SetRotation({0,0,90});
-		tf->UpdateWorldMatrix();;
+		tf->SetWorldRotation({0, Math::PiOver2,0});
 	}
 	
 	void ShadowDemo::SetModelsPosition_Square(const vector<ModelInstanceData> & Models, int MaxInstanceCount, float Stride, const Vector& Center ) const
@@ -143,9 +142,8 @@ namespace sdt
 					InstancePosition.X = static_cast<float>(W) * Stride;// - static_cast<float>(Width) * Stride / 2;
 					Transform * TF = Models[ModelIndex].Object->AddTransforms();
 					TF->SetScale(Models[ModelIndex].Scale);
-					TF->SetPosition(Offet + InstancePosition);
-					TF->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
-					TF->UpdateWorldMatrix();
+					TF->SetWorldPosition(Offet + InstancePosition);
+					TF->SetWorldRotation({0, Math::Random(-Math::Pi, Math::Pi), 0});
 
 					const int AnimationNum = Models[ModelIndex].Object->GetClipCount();
 					if (AnimationNum > 0)
@@ -177,9 +175,8 @@ namespace sdt
 				InstancePosition.Z = Stride * static_cast<float>(InstanceIndex);
 				Transform * TF = Models[ModelIndex].Object->AddTransforms();
 				TF->SetScale(Models[ModelIndex].Scale);
-				TF->SetPosition(Offet + InstancePosition);
-				TF->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
-				TF->UpdateWorldMatrix();
+				TF->SetWorldPosition(Offet + InstancePosition);
+				TF->SetWorldRotation({0, Math::Random(-Math::Pi, Math::Pi), 0});
 
 				const int AnimationNum = Models[ModelIndex].Object->GetClipCount();
 				if (AnimationNum > 0)

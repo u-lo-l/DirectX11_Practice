@@ -3,7 +3,6 @@
 #include "SkeletalMesh.h"
 
 ModelMesh::ModelMesh()
-	: ref_ModelWorldTransform(new Transform())
 {
 	WorldTF = new Transform();
 }

@@ -38,7 +38,7 @@ void Projector::Tick()
 		ImGui::SliderFloat("Roll", &rotation.X, -90, +90);
 		ImGui::SliderFloat("Pitch", &rotation.Y, -90, +90);
 		ImGui::SliderFloat("Yaw", &rotation.Z, -90, +90);
-		World->SetWorldRotation(rotation);
+		World->SetWorldRotation(rotation * Math::DegToRadian);
 
 		ImGui::InputFloat("Width", &Width, 1.0f);
 		ImGui::InputFloat("Height", &Height, 1.0f);

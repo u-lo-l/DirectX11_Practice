@@ -1,7 +1,8 @@
 ﻿#include "framework.h"
 #include "Transform.h"
 
-Transform::Transform(const Matrix* InMatrix)
+Transform::Transform(Matrix * InMatrix)
+	: WorldTF(InMatrix)
 {
 	CBuffer = new ConstantBuffer
 	(
@@ -9,28 +10,41 @@ Transform::Transform(const Matrix* InMatrix)
 		0,
 		nullptr,
 		"WorldTransform",
-		sizeof(CBufferDesc),
+		sizeof(Matrix),
 		false
 	);
 
 	if (!!InMatrix)
 	{
 		InMatrix->Decompose(Position, Rotation, Scale);
+		EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();
+		EulerAngleInRadian= Rotation.ToEulerAnglesInRadian();
+		RotationMat = Matrix::CreateFromQuaternion(Rotation);
+		UpdateMatrix();
 	}
-	EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();		
-	EulerAngleInRadian= Rotation.ToEulerAnglesInRadian();
-	RotationMat = Matrix::CreateFromQuaternion(Rotation);
-	UpdateMatrix();
+	else
+	{
+		bWorldTFAllocated = true;
+		WorldTF = new Matrix(
+			1,0,0,0,
+			0,1,0,0,
+			0,0,1,0,
+			0,0,0,1
+		);
+	}
 }
 
 Transform::~Transform()
 {
+	if (bWorldTFAllocated)
+		SAFE_DELETE(WorldTF);
 	SAFE_DELETE(CBuffer);
 }
 
 void Transform::Tick()
 {
-	CBuffer->UpdateData(&CBufferData, sizeof(CBufferDesc));
+	ASSERT(!!WorldTF, "World Transform Not Assigned")
+	CBuffer->UpdateData(WorldTF, sizeof(Matrix));
 }
 
 void Transform::BindToGPU() const
@@ -71,9 +85,10 @@ void Transform::SetScale(const Vector& InScale)
 	UpdateMatrix();
 }
 
-const Matrix& Transform::GetMatrix() const
+Matrix Transform::GetMatrix() const
 {
-	return CBufferData.World;
+	ASSERT(!!WorldTF, "World Transform Not Assigned")
+	return *WorldTF;
 }
 
 const Vector & Transform::GetWorldPosition() const
@@ -108,17 +123,20 @@ const Vector & Transform::GetScale() const
 
 Vector Transform::GetForward() const
 {
-	return CBufferData.World.Forward();
+	ASSERT(!!WorldTF, "World Transform Not Assigned")
+	return WorldTF->Forward();
 }
 
 Vector Transform::GetUp() const
 {
-	return CBufferData.World.Up();
+	ASSERT(!!WorldTF, "World Transform Not Assigned")
+	return WorldTF->Up();
 }
 
 Vector Transform::GetRight() const
 {
-	return CBufferData.World.Right();
+	ASSERT(!!WorldTF, "World Transform Not Assigned")
+	return WorldTF->Right();
 }
 
 void Transform::AddWorldTranslation(const Vector& InTranslation)
@@ -194,7 +212,8 @@ void Transform::SetTRS(const Vector& Pos, const Quaternion& Rot, const Vector& S
 
 void Transform::UpdateMatrix()
 {
+	ASSERT(!!WorldTF, "World Transform Not Assigned")
 	const Matrix Translation = Matrix::CreateTranslation(Position);
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
-	CBufferData.World = Scale * RotationMat * Translation;
+	*WorldTF = Scale * RotationMat * Translation;
 }

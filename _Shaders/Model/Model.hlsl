@@ -39,11 +39,12 @@ VertexOutput VSMain(VertexInput Input)
     VertexOutput output;
 
     matrix ModelWorldTF = Input.Transform;
+    output.Normal = mul(Input.Normal, (float3x3) ModelWorldTF);
+    output.Tangent = mul(Input.Tangent, (float3x3) ModelWorldTF);
+
     ModelWorldTF = mul(BoneTransforms[BaseBoneIndex], ModelWorldTF);
 
     output.Uv = Input.Uv;
-    output.Normal = mul(Input.Normal, (float3x3) ModelWorldTF);
-    output.Tangent = mul(Input.Tangent, (float3x3) ModelWorldTF);
 
 #  ifdef USE_ANIMATION
     output.Position = SetAnimatedBoneToWorldTF_Instancing(Input);

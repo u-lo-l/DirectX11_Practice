@@ -16,8 +16,7 @@ namespace sdt
 
 
 		Camera * const MainCamera = Context::Get()->GetCamera();
-		MainCamera->SetPosition( 150, 150, 20 );
-		MainCamera->SetRotation( 225, 0, 180);
+		MainCamera->SetPosition( 0, 10, -50 );
 
 		PEffect = new PostEffect(L"PostEffect/PostEffect.hlsl", Diffuse_RT);
 		
@@ -25,9 +24,9 @@ namespace sdt
 		// Particle_Fire->SetScale(35.f);
 		// LoadWeather();
 		LoadSky();
-		LoadModel();
+		// LoadModel();
 		LoadCrossQuadGrass();
-		// LoadLightingDemo();
+		LoadLightingDemo();
 	}
 
 	void LightingDemo::Destroy()
@@ -146,7 +145,7 @@ namespace sdt
 			SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			// {new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
+			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
 			// {new Model(L"Sphere"),{0.1f,0.1f,0.1f}, 15.f},
 		});
 		SetModelsPosition_Square(ModelInstances, InstanceCount, Stride);
@@ -191,7 +190,7 @@ namespace sdt
 		Transform * tf = Plane->AddTransforms();
 		tf->SetWorldPosition({0,0,0});
 		tf->SetScale({2.5,1,2.5});
-		tf->SetWorldRotation({0,0,90});
+		tf->SetWorldRotation({0, 0, 0});
 	}
 	void LightingDemo::SetModelsPosition_Square(const vector<ModelInstanceData> & Models, int MaxInstanceCount, float Stride, const Vector& Center ) const
 	{
@@ -216,7 +215,7 @@ namespace sdt
 					Transform * TF = Models[ModelIndex].Object->AddTransforms();
 					TF->SetScale(Models[ModelIndex].Scale);
 					TF->SetWorldPosition(Offet + InstancePosition);
-					TF->SetWorldRotation({0, 0, Math::Random(-180.f, 180.f)});
+					TF->SetWorldRotation({0, Math::Random(-Math::Pi, Math::Pi), 0});
 
 					const int AnimationNum = Models[ModelIndex].Object->GetClipCount();
 					if (AnimationNum > 0)

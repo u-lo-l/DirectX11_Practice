@@ -103,7 +103,8 @@ const Vector& Camera::GetEulerAngleInRadian() const
 
 void Camera::SetRotation(float R, float P, float Y) const
 {
-	Tf->SetWorldRotation({R * Math::DegToRadian, P* Math::DegToRadian, Y* Math::DegToRadian});
+	Vector EulerDegree = {R, P, Y};
+	Tf->SetWorldRotation(EulerDegree * Math::DegToRadian);
 }
 
 void Camera::SetRotation(const Vector & InEulerRadian) const

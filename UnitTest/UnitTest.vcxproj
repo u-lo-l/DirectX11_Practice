@@ -25,6 +25,7 @@
     <ClCompile Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.cpp" />
     <ClCompile Include="Execute\DisplacementMappingDemo\PNTriangleDemo.cpp" />
     <ClCompile Include="Execute\LODDemo\TerrainTessellationDemo.cpp" />
+    <ClCompile Include="Execute\Shadow\ShadowDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -37,6 +38,7 @@
     <ClInclude Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.h" />
     <ClInclude Include="Execute\DisplacementMappingDemo\PNTriangleDemo.h" />
     <ClInclude Include="Execute\LODDemo\TerrainTessellationDemo.h" />
+    <ClInclude Include="Execute\Shadow\ShadowDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
