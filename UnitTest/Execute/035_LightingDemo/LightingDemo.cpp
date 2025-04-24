@@ -27,7 +27,7 @@ namespace sdt
 		LoadSky();
 		LoadModel();
 		LoadCrossQuadGrass();
-		LoadLightingDemo();
+		// LoadLightingDemo();
 	}
 
 	void LightingDemo::Destroy()
@@ -140,14 +140,14 @@ namespace sdt
 
 	void LightingDemo::LoadModel()
 	{
-		constexpr UINT InstanceCount = 36;
+		constexpr UINT InstanceCount = 4;
 		constexpr float Stride = 40.f;
 		if (!Plane)
 			SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
-			{new Model(L"Sphere"),{0.1f,0.1f,0.1f}, 15.f},
+			// {new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
+			// {new Model(L"Sphere"),{0.1f,0.1f,0.1f}, 15.f},
 		});
 		SetModelsPosition_Square(ModelInstances, InstanceCount, Stride);
 	}

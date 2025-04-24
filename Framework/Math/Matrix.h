@@ -31,7 +31,7 @@ public:
 	void Transpose();
 	void Invert(bool bIsTransform = false);
 private :
-	void NormalInvert();
+	void GeneralInvert();
 	void TransformInvert();
 public:
 	bool operator ==(const Matrix& matrix2) const;

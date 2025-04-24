@@ -1150,7 +1150,7 @@ void Matrix::Invert(bool bIsTransform)
 {
 	if (bIsTransform == false)
 	{
-		this->NormalInvert();
+		this->GeneralInvert();
 	}
 	else
 	{
@@ -1158,7 +1158,7 @@ void Matrix::Invert(bool bIsTransform)
 	}
 }
 
-void Matrix::NormalInvert()
+void Matrix::GeneralInvert()
 {
 	float value5 = this->M11; float value4 = this->M12; float value3 = this->M13; float value2 = this->M14;
 	float value9 = this->M21; float value8 = this->M22; float value7 = this->M23; float value6 = this->M24;
@@ -1212,6 +1212,7 @@ void Matrix::NormalInvert()
 	this->M44 = (((value5 * value27) - (value4 * value25)) + (value3 * value24)) * value;
 }
 
+// Matrix가 Transform Matrix라면 최적화 가능
 void Matrix::TransformInvert()
 {
 	// -T

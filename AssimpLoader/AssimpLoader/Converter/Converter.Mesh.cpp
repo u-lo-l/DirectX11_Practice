@@ -68,7 +68,8 @@ namespace sdt
 		
 		WriteAndClearBonesAndMeshes(FullFileName);
 	}
-	
+
+	// 모든 Bone의 Root기준 Transform을 계산한다. 재귀적으로.
 	void Converter::ReadBoneData( const aiNode * InNode, int InIndex, int InParent )
 	{
 		BoneData * Bone = new BoneData();
@@ -108,8 +109,12 @@ namespace sdt
 			const aiMesh * const AiMesh = Scene->mMeshes[i];
 			const aiNode * MeshNode = Scene->mRootNode->FindNode(AiMesh->mName);
 			aiMatrix4x4 MeshTransform = aiMatrix4x4();
+
+			// MeshNode의 ParentNode가 Bone임을 가정. 아니면 UB
+			// 실제론 ParentNode가 Bone임을 보장하지 않음.
 			if (MeshNode != nullptr)
 				MeshTransform = MeshNode->mTransformation;
+			
 			// Read Material Data
 			const UINT MatIndex = AiMesh->mMaterialIndex;
 			Meshes[i]->MaterialName = Scene->mMaterials[MatIndex]->GetName().C_Str();

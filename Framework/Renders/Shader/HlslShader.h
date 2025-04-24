@@ -77,6 +77,7 @@ public:
 	// Sampler
 	HRESULT CreateSamplerState_Linear(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState_Anisotropic(UINT InTargetShader = (UINT)ShaderType::PixelShader);
+	HRESULT CreateSamplerState_Anisotropic_Border(UINT InTargetShade);
 	HRESULT CreateSamplerState_ShadowSampler(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState(
 		const D3D11_SAMPLER_DESC * SampDesc,

@@ -9,6 +9,10 @@
 matrix GetClipTransformMatrix(int BoneIndex, int TargetFrame, int ClipIndex);
 matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params, int InstanceID = 0);
 
+// Input으로 들어오는 Vertex의 Position은 Model의 Root-Coordinate를 기준으로하는 정보.
+// 이를 Mesh의 기준 Bone의 Coordinate으로 변환한 후 처리해야 한다.
+// BindPoseLocalPosition이란, BindPose(T-Pose or A-Pose)상태에서의 Vertex의 위치(Root 기준)를 의미한다.
+// 
 float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
 {
     int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };

@@ -50,6 +50,14 @@ Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 		sizeof(TerrainTessDesc),
 		false
 	);
+	LightDirectionCBuffer = new ConstantBuffer(
+		ShaderType::PixelShader,
+		2,
+		nullptr,
+		"Height Scaler",
+		sizeof(LightDirectionDesc),
+		false
+	);
 }
 
 Terrain2::~Terrain2()
@@ -65,7 +73,6 @@ Terrain2::~Terrain2()
 
 void Terrain2::Tick()
 {
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	WVP.World = Tf->GetMatrix();
 	WVP.View = Context::Get()->GetViewMatrix();
 	WVP.Projection = Context::Get()->GetProjectionMatrix();
@@ -73,10 +80,13 @@ void Terrain2::Tick()
 	
 	ImGui::SliderFloat("Height Scaler", &TerrainTessData.HeightScaler, 1.f, 100.f, "%.0f");
 	ImGui::SliderFloat("TriSize", &TerrainTessData.TriSize, 4.f, 12.f, "%.0f");
-	TerrainTessData.ScreenDistance = D3D::GetDesc().Height * 0.5f / tanf(Math::Pi * 0.25f / 2);
+	TerrainTessData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
 	TerrainTessData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
 	TerrainTessData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
 	HeightScalerCBuffer->UpdateData(&TerrainTessData, sizeof(TerrainTessDesc));
+
+	LightDirectionData.Direction = Context::Get()->GetLightDirection();
+	LightDirectionCBuffer->UpdateData(&LightDirectionData, sizeof(LightDirectionDesc));
 }
 
 void Terrain2::Render() const
@@ -86,6 +96,8 @@ void Terrain2::Render() const
 	if (!!IBuffer) IBuffer->BindToGPU();
 	if (!!WVPCBuffer) WVPCBuffer->BindToGPU();
 	if (!!HeightScalerCBuffer) HeightScalerCBuffer->BindToGPU();
+	if (!!LightDirectionCBuffer) LightDirectionCBuffer->BindToGPU();
+
 	if (!!HeightMap) HeightMap->BindToGPU(0, static_cast<UINT>(ShaderType::VDP));
 	Shader->DrawIndexed(Indices.size());
 }

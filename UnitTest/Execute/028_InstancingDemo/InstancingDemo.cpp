@@ -7,21 +7,21 @@ namespace sdt
 	{
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		 
-		MainCamera->SetPosition( 0, 10, 0 );
-		MainCamera->SetRotation( 210, 135, 180);
+		MainCamera->SetPosition( 0, 0, 0 );
+		MainCamera->SetRotation( 0, 0, 0);
 		SetPlane();
 		
 		ModelInstances.insert(ModelInstances.end(), {
-			{new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
-			{new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
-			{new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
+			// {new Model(L"Cube"),{0.2f,0.2f,0.2f}, 10.f},
+			// {new Model(L"Airplane"),{0.01f,0.01f,0.01f}, 2.f},
+			// {new Model(L"Sphere"),{0.2f,0.2f,0.2f}, 10.f},
 			// {new Model(L"Kachujin"),{0.2f,0.2f,0.2f}, 15.f},
-			{new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
+			// {new Model(L"Adam"),{0.2f,0.2f,0.2f}, 15.f},
 		});
-		
-		constexpr UINT InstanceCount = 169;
-		constexpr float Stride = 40.f;
-		SetModelsPosition(InstanceCount, Stride);
+		//
+		// constexpr UINT InstanceCount = 1;
+		// constexpr float Stride = 40.f;
+		// SetModelsPosition(InstanceCount, Stride);
 	}
 
 	void InstancingDemo::Destroy()
@@ -53,10 +53,9 @@ namespace sdt
 	{
 		Plane = new Model(L"Plane");
 		Transform * tf = Plane->AddTransforms();
-		tf->SetPosition({0,-10,0});
+		tf->SetWorldPosition({0,-10,0});
 		tf->SetScale({5,1,5});
-		tf->SetRotation({0,0,90});
-		tf->UpdateWorldMatrix();;
+		tf->SetWorldRotation({0,0,90});
 	}
 
 	void InstancingDemo::SetModelsPosition( int MaxInstanceCount, float Stride )
@@ -80,9 +79,8 @@ namespace sdt
 					InstancePosition.X = static_cast<float>(W) * Stride - static_cast<float>(Width) * Stride / 2;
 					Transform * TF = ModelInstances[ModelIndex].Object->AddTransforms();
 					TF->SetScale(ModelInstances[ModelIndex].Scale);
-					TF->SetPosition(InstancePosition);
-					TF->SetRotation({0, 0, Math::Random(-180.f, 180.f)});
-					TF->UpdateWorldMatrix();
+					TF->SetWorldPosition(InstancePosition);
+					TF->SetWorldRotation({0, 0, Math::Random(-180.f, 180.f)});
 
 					const int AnimationNum = ModelInstances[ModelIndex].Object->GetClipCount();
 					if (AnimationNum > 0)

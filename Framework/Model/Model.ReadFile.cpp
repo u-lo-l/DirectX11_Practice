@@ -189,7 +189,8 @@ void Model::CreateAnimationTextureAndSRV()
 	for (UINT i = 0; i < AnimationCount; i++)
 	{
 		// 각 애니메이션의 Transform정보를 Table에 저장.
-		ClipTFTables.push_back (Animations[i]->CalcClipTransform(this->SkeletonData));		
+		// ClipTFTable에 들어가는 행렬들은, Bone의 Root기준 Transform이다.
+		ClipTFTables.push_back (Animations[i]->CalcClipTransform(this->SkeletonData));
 	}
 	
 	constexpr UINT PixelChannel = 4; // 그래서 Format == DXGI_FORMAT_R32G32B32A32_FLOAT이다.
@@ -235,7 +236,7 @@ void Model::CreateAnimationTextureAndSRV()
 			memcpy(CurrentFrameAddressInPage, ClipTFTables[PageIndex]->TransformMats[FrameIndex], SkeletalMesh::MaxBoneCount * sizeof(Matrix));
 		}
 	}
-		
+
 #pragma region SSD to VRAM
 	// GPU에 텍스처 업로드
 	D3D11_SUBRESOURCE_DATA * SubResources = new D3D11_SUBRESOURCE_DATA[AnimationCount];
@@ -251,15 +252,15 @@ void Model::CreateAnimationTextureAndSRV()
 	CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, SubResources, &ClipTexture) >= 0);
 	SAFE_DELETE_ARR(SubResources);
 #pragma endregion
-		
+
 #pragma region Clear Memory
 	for (ModelAnimation::KeyFrameTFTable * TFTable : ClipTFTables)
 	{
-		SAFE_DELETE(TFTable);			
+		SAFE_DELETE(TFTable);
 	}
 	VirtualFree(ReservedVirtualMemory , 0, MEM_RELEASE);
 #pragma endregion
-		
+
 #pragma region Create SRV // 셰이더 리소스 뷰 생성
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 	SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

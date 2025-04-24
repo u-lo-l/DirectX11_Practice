@@ -2,6 +2,8 @@
 #include "Pch.h"
 #include "Main.h"
 
+#include "Execute/028_InstancingDemo/InstancingDemo.h"
+#include "Execute/035_LightingDemo/LightingDemo.h"
 #include "Execute/DisplacementMappingDemo/BasicTessellationDemo.h"
 #include "Execute/DisplacementMappingDemo/DisplacementMappingDemo.h"
 #include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
@@ -14,7 +16,8 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::PNTriangleDemo);
 	// PUSH_MAIN(sdt::DisplacementMappingDemo);
 	// PUSH_MAIN(sdt::BasicTessellationDemo);
-	PUSH_MAIN(sdt::TerrainTessellationDemo);
+	// PUSH_MAIN(sdt::TerrainTessellationDemo);
+	PUSH_MAIN(sdt::LightingDemo);
 }
 
 

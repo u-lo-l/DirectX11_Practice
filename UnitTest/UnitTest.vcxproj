@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Execute\028_InstancingDemo\InstancingDemo.cpp" />
     <ClCompile Include="Execute\035_LightingDemo\LightingDemo.cpp" />
     <ClCompile Include="Execute\DisplacementMappingDemo\BasicTessellationDemo.cpp" />
     <ClCompile Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.cpp" />
@@ -30,6 +31,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Execute\028_InstancingDemo\InstancingDemo.h" />
     <ClInclude Include="Execute\035_LightingDemo\LightingDemo.h" />
     <ClInclude Include="Execute\DisplacementMappingDemo\BasicTessellationDemo.h" />
     <ClInclude Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.h" />

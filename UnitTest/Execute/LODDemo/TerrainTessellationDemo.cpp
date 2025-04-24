@@ -5,10 +5,10 @@ namespace sdt
 	void TerrainTessellationDemo::Initialize()
 	{
 		Camera * const MainCamera = Context::Get()->GetCamera();
-		MainCamera->SetPosition( 150, 50, -150 );
-		MainCamera->SetRotation( 0, 0, 0);
+		MainCamera->SetPosition( 419, 13, 455 );
+		MainCamera->SetRotation( 177, -33, -180);
 		
-		Terrain = new Terrain2(L"DisplacementTest.png", 32);
+		Terrain = new Terrain2(L"Terrain/Gray512.png", 64);
 	}
 
 	void TerrainTessellationDemo::Destroy()

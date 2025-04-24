@@ -13,7 +13,6 @@ Camera::~Camera()
 	SAFE_DELETE(Proj);
 }
 
-
 void Camera::Tick()
 {
 	const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();

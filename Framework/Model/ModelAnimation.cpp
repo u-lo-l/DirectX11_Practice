@@ -132,8 +132,6 @@ std::pair<int, int> ModelAnimation::GetCurrentAndNextFrame( float CurrentTime ) 
  */
 ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const Skeleton * InSkeleton ) const
 {
-	vector<Matrix> TempHipAnimMatrix;
-	
 	KeyFrameTFTable * TransformTableToReturn = new KeyFrameTFTable();
 	
 #pragma region Configure Temp FrameNameBinTree
@@ -164,6 +162,7 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const Skele
 			const KeyFrameData * const TargetKeyFrameData = It->second;
 			
 			// 현재 Bone에 대한 NodeData를 찾았다면 해당 Bone의 F번쨰 프레임의 TRS를 가져온다.
+			// 이 TRS는 Parent-Coordinate기준 정보다.
 			const Vector & Pos     = TargetKeyFrameData->Positions.size() == 1 ? TargetKeyFrameData->Positions[0].Value : TargetKeyFrameData->Positions[CurrentFrame].Value;
 			const Vector & Scale   = TargetKeyFrameData->Scales.size()    == 1 ? TargetKeyFrameData->Scales[0].Value    : TargetKeyFrameData->Scales[CurrentFrame].Value;
 			const Quaternion & Rot = TargetKeyFrameData->Rotations.size() == 1 ? TargetKeyFrameData->Rotations[0].Value : TargetKeyFrameData->Rotations[CurrentFrame].Value;
@@ -180,7 +179,7 @@ ModelAnimation::KeyFrameTFTable * ModelAnimation::CalcClipTransform( const Skele
 			else
 			{
 				const Matrix & ParentMat = BoneMatrixUpdatingArr[TargetBone->ParentIndex]; // W_T_A. 이미 업데이트 된 부모노드의 World-Transform.
-				BoneMatrixUpdatingArr[BoneNum] =  AnimationMatrix * ParentMat;// W_T_B = A_T_B * W_T_A
+				BoneMatrixUpdatingArr[BoneNum] = AnimationMatrix * ParentMat;// W_T_B = A_T_B * W_T_A
 			}
 		} // for(b)
 	} // for(f)

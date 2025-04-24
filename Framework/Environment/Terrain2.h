@@ -19,7 +19,7 @@ class Terrain2
 	};
 	struct TerrainTessDesc
 	{
-		float HeightScaler = 1.f;
+		float HeightScaler = 70.f;
 		float TriSize = 4.f;
 		float ScreenDistance;
 		float ScreenDiagonal;
@@ -27,6 +27,12 @@ class Terrain2
 		Vector CameraPosition;
 		float Padding;
 	};
+	struct LightDirectionDesc
+	{
+		Vector Direction;
+		float Padding;
+	};
+	
 public:
 	explicit Terrain2(const wstring & InHeightMapFilename, UINT PatchSize = 16);
 	~Terrain2();
@@ -48,6 +54,7 @@ private:
 	vector<UINT> Indices;
 	WVPDesc WVP;
 	TerrainTessDesc TerrainTessData;
+	LightDirectionDesc LightDirectionData;
 	
 	HlslShader<VertexType> * Shader;
 	Texture * HeightMap;
@@ -57,6 +64,7 @@ private:
 	Transform * Tf;
 	ConstantBuffer * WVPCBuffer = nullptr;
 	ConstantBuffer * HeightScalerCBuffer= nullptr;
+	ConstantBuffer * LightDirectionCBuffer= nullptr;
 };
 
 

@@ -35,7 +35,6 @@ void Context::Tick()
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 }
 
-
 /**
  *	@brief :
  *	1. Displays information such as FPS and Camera transform using GUI.
@@ -81,9 +80,6 @@ Context::Context()
 	Vp = new ViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
 	Projection = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi * 0.25f);
 	
-	MainCamera->SetPosition(0, 0, 10);
-	MainCamera->SetRotation(180, 0, 0);
-
 	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
 
 	ShadowMap = new Shadow({0,0,0}, 100, 1024, 1024);
