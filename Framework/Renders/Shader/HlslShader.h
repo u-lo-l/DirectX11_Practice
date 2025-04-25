@@ -77,7 +77,7 @@ public:
 	// Sampler
 	HRESULT CreateSamplerState_Linear(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState_Anisotropic(UINT InTargetShader = (UINT)ShaderType::PixelShader);
-	HRESULT CreateSamplerState_Anisotropic_Border(UINT InTargetShade);
+	HRESULT CreateSamplerState_Anisotropic_Clamp(UINT InTargetShade);
 	HRESULT CreateSamplerState_ShadowSampler(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState(
 		const D3D11_SAMPLER_DESC * SampDesc,
@@ -128,7 +128,7 @@ private:
 	ID3D11InputLayout * InputLayout = nullptr;
 	
 	ID3D11RasterizerState * RasterizerState = nullptr;
-	pair<ID3D11SamplerState *, UINT> SamplerStates[(UINT)SamplerStateType::Max];
+	pair<ID3D11SamplerState *, UINT> SamplerStates[static_cast<UINT>(SamplerStateType::Max)];
 	ID3D11BlendState * BlendState = nullptr;
 	ID3D11DepthStencilState * DepthStencilState = nullptr;
 

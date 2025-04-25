@@ -19,20 +19,22 @@ class Terrain2
 	};
 	struct TerrainTessDesc
 	{
-		float HeightScaler = 70.f;
-		float TriSize = 4.f;
+		Vector CameraPosition;
+		float HeightScaler = 30.f;
+		
+		Vector2D LODRange;
+		Vector2D TexelSize;
+		
 		float ScreenDistance;
 		float ScreenDiagonal;
-		
-		Vector CameraPosition;
-		float Padding;
+		float Padding[2];
 	};
 	struct LightDirectionDesc
 	{
 		Vector Direction;
 		float Padding;
 	};
-	
+	Vector2D LODRange;
 public:
 	explicit Terrain2(const wstring & InHeightMapFilename, UINT PatchSize = 16);
 	~Terrain2();

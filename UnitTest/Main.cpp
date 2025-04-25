@@ -15,8 +15,8 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::PNTriangleDemo);
 	// PUSH_MAIN(sdt::DisplacementMappingDemo);
 	// PUSH_MAIN(sdt::BasicTessellationDemo);
-	// PUSH_MAIN(sdt::TerrainTessellationDemo);
-	PUSH_MAIN(sdt::ShadowDemo);
+	PUSH_MAIN(sdt::TerrainTessellationDemo);
+	// PUSH_MAIN(sdt::ShadowDemo);
 }
 
 

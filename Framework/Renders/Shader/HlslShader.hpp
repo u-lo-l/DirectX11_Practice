@@ -279,16 +279,16 @@ HRESULT HlslShader<T>::CreateSamplerState_Anisotropic(UINT InTargetShade)
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Border(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Clamp(UINT InTargetShade)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 			
-	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;  // 주소 모드 설정 (기본값: 반복)
-	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 			
-	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	SamplerDesc.MinLOD = 0;
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;

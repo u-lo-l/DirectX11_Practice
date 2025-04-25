@@ -6,8 +6,6 @@ namespace sdt
 {
 	class TerrainTessellationDemo final : public IExecutable
 	{
-	private:
-		using VertexType = VertexTextureNormal;		
 	public:
 		void Initialize() override;
 		void Destroy() override;

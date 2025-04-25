@@ -15,13 +15,34 @@ Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 	);
 	Shader->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear(static_cast<UINT>(ShaderType::VDP))));
+	CHECK(SUCCEEDED(Shader->CreateSamplerState_Anisotropic_Clamp(static_cast<UINT>(ShaderType::VDP))));
 	CHECK(SUCCEEDED(Shader->CreateBlendState_Opaque()));
 	CHECK(SUCCEEDED(Shader->CreateDepthStencilState_Default()));
-	CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
-	
+	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid()));
+	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
+
 	HeightMap = new Texture(InHeightMapFilename, true);
 	Tf = new Transform();
-
+	TerrainTessData.TexelSize = {
+		1.f / static_cast<float>(HeightMap->GetWidth()),
+		1.f / static_cast<float>(HeightMap->GetHeight())
+	};
+	if (Macros[0].Name == "TYPE03")
+	{
+		TerrainTessData.LODRange = {
+			10,
+			256
+		};
+		LODRange = {100, 1000};
+	}
+	else
+	{
+		TerrainTessData.LODRange = {
+			1.f,
+			10
+		};
+		LODRange = {1, 10};
+	}
 	CreateVertex();
 	CreateIndex();
 	
@@ -78,8 +99,9 @@ void Terrain2::Tick()
 	WVP.Projection = Context::Get()->GetProjectionMatrix();
 	WVPCBuffer->UpdateData(&WVP, sizeof(WVPDesc));
 	
-	ImGui::SliderFloat("Height Scaler", &TerrainTessData.HeightScaler, 1.f, 100.f, "%.0f");
-	ImGui::SliderFloat("TriSize", &TerrainTessData.TriSize, 4.f, 12.f, "%.0f");
+	ImGui::SliderFloat("Height Scaler", &TerrainTessData.HeightScaler, 0.f, 100.f, "%.0f");
+	ImGui::SliderFloat("LOD Power", &TerrainTessData.LODRange.X, 0.1f, 3.f, "%.1f");
+	ImGui::SliderFloat("Min Screen Diagonal", &TerrainTessData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
 	TerrainTessData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
 	TerrainTessData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
 	TerrainTessData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
@@ -141,8 +163,8 @@ void Terrain2::CreateVertex()
 			Vertices[Index].Position.Y = 0;
 			Vertices[Index].Position.Z = static_cast<float>(Z * PatchSize);
 			Vertices[Index].Normal = {0, 1, 0};
-			Vertices[Index].UV.X = (X * PatchSize) / static_cast<float>(Width - 1);
-			Vertices[Index].UV.Y = (Z * PatchSize) / static_cast<float>(Height - 1);
+			Vertices[Index].UV.X = (X * PatchSize) / static_cast<float>(Width);
+			Vertices[Index].UV.Y = (Z * PatchSize) / static_cast<float>(Height);
 		}
 	}
 }

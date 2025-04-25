@@ -7,8 +7,9 @@ namespace sdt
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 419, 13, 455 );
 		MainCamera->SetRotation( 177, -33, -180);
-		
-		Terrain = new Terrain2(L"Terrain/Gray512.png", 64);
+
+		Terrain = new Terrain2(L"Terrain/Gray512.png", 16);
+		// Terrain = new Terrain2(L"DisplacementTest.png", 32);
 	}
 
 	void TerrainTessellationDemo::Destroy()
