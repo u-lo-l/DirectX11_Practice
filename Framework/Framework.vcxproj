@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Environment\Foliage.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Terrain2.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
@@ -616,6 +617,7 @@
     <ClCompile Include="Viewer\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Environment\Foliage.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Terrain2.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />

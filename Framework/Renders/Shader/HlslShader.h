@@ -16,11 +16,12 @@ enum class ShaderType : UINT
 	DomainShader	= 1 << 4,
 	
 	VP = PixelShader | VertexShader,
+	VG = VertexShader | GeometryShader,
 	VGP = VertexShader | GeometryShader | PixelShader,
 	VD = VertexShader | DomainShader,
 	VDP = VertexShader | DomainShader | PixelShader,
 	VHDP = VertexShader | HullShader | DomainShader | PixelShader,
-	ALL = PixelShader | VertexShader | GeometryShader | HullShader | DomainShader
+	ALL = PixelShader | VertexShader | GeometryShader | HullShader | DomainShader,
 };
 
 

@@ -98,6 +98,7 @@ using namespace std;
 	#include "Environment/Terrain.h"
 	#include "Environment/Terrain2.h"
 	#include "Environment/SkySphere.h"
+	#include "Environment/Foliage.h"
 
 	#include "ParticleSystem/ParticleSystem.h"
 
@@ -107,7 +108,7 @@ using namespace std;
 	#include "Objects/CrossQuad/CrossQuad.h"
 	#include "Objects/PostEffect/PostEffect.h"
 	#include "Objects/Projector/Projector.h"
-	#include "Objects//Shadow/Shadow.h"
+	#include "Objects/Shadow/Shadow.h"
 
 #pragma endregion
 

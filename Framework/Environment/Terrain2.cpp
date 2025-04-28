@@ -6,7 +6,7 @@ Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 {
 	vector<D3D_SHADER_MACRO> Macros = { {"TYPE01", "0"}, {nullptr,}};
 	Shader = new HlslShader<VertexType>(
-		L"Tessellation/TerrainTessellation.hlsl",
+		L"Terrain/TerrainTessellation.hlsl",
 		static_cast<UINT>(ShaderType::VHDP),
 		"VSMain",
 		"PSMain",
@@ -18,8 +18,8 @@ Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 	CHECK(SUCCEEDED(Shader->CreateSamplerState_Anisotropic_Clamp(static_cast<UINT>(ShaderType::VDP))));
 	CHECK(SUCCEEDED(Shader->CreateBlendState_Opaque()));
 	CHECK(SUCCEEDED(Shader->CreateDepthStencilState_Default()));
-	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid()));
-	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
+	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid()));
+	CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
 
 	HeightMap = new Texture(InHeightMapFilename, true);
 	Tf = new Transform();
@@ -38,8 +38,8 @@ Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 	else
 	{
 		TerrainTessData.LODRange = {
-			1.f,
-			10
+			2.f,
+			5
 		};
 		LODRange = {1, 10};
 	}
@@ -75,7 +75,7 @@ Terrain2::Terrain2(const wstring& InHeightMapFilename, UINT PatchSize)
 		ShaderType::PixelShader,
 		2,
 		nullptr,
-		"Height Scaler",
+		"LightDirection",
 		sizeof(LightDirectionDesc),
 		false
 	);
@@ -114,8 +114,10 @@ void Terrain2::Tick()
 void Terrain2::Render() const
 {
 	if (!Shader) return;
+	
 	if (!!VBuffer) VBuffer->BindToGPU();
 	if (!!IBuffer) IBuffer->BindToGPU();
+	
 	if (!!WVPCBuffer) WVPCBuffer->BindToGPU();
 	if (!!HeightScalerCBuffer) HeightScalerCBuffer->BindToGPU();
 	if (!!LightDirectionCBuffer) LightDirectionCBuffer->BindToGPU();
@@ -144,13 +146,23 @@ UINT Terrain2::GetPatchSize() const
 	return PatchSize;
 }
 
+const Texture* Terrain2::GetHeightMap() const
+{
+	return HeightMap;
+}
+
+float Terrain2::GetHeightScale() const
+{
+	return TerrainTessData.HeightScaler;
+}
+
 void Terrain2::CreateVertex()
 {
 	const UINT Width = GetWidth();
 	const UINT Height = GetHeight();
 
-	const UINT PatchWidth = Width / PatchSize;
-	const UINT PatchHeight = Height / PatchSize;
+	const UINT PatchWidth = Width / PatchSize + 1;
+	const UINT PatchHeight = Height / PatchSize + 1;
 
 	Vertices.clear();
 	Vertices.resize(PatchWidth * PatchHeight);
@@ -174,8 +186,8 @@ void Terrain2::CreateIndex()
 	const UINT Width = GetWidth();
 	const UINT Height = GetHeight();
 
-	const UINT PatchWidth = Width / PatchSize;
-	const UINT PatchHeight = Height / PatchSize;
+	const UINT PatchWidth = Width / PatchSize + 1;
+	const UINT PatchHeight = Height / PatchSize + 1;
 	
 	const UINT IndexCount = (PatchWidth - 1) * (PatchHeight - 1) * 4;
 

@@ -4,6 +4,8 @@
 #include "Systems/IExecutable.h"
 #include "Renders/Shader/Hlsl2DTextureShader.h"
 
+class SkySphere;
+
 namespace sdt
 {
 	class LightingDemo final : public IExecutable

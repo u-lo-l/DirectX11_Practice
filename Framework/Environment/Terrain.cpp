@@ -62,7 +62,7 @@ void Terrain::Render() const
 	Shader->DrawIndexed(IndexCount);
 }
 
-void Terrain::GetPositionY(Vector & InPosition ) const
+void Terrain::GetAltitude(Vector & InPosition ) const
 {
 	InPosition.Y = Math::FloatMinValue; 
 	const UINT X = static_cast<UINT>(InPosition.X);

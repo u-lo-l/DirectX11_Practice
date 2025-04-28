@@ -13,7 +13,7 @@ public:
 	void SetPass( const int InPass ) { Pass = InPass; }
 	UINT GetWidth() const { return Width; }
 	UINT GetHeight() const { return Height; }
-	void GetPositionY(Vector& InPosition) const;
+	void GetAltitude(Vector& InPosition) const;
 	
 private:
 	void CreateVertexData();

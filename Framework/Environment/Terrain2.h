@@ -20,7 +20,7 @@ class Terrain2
 	struct TerrainTessDesc
 	{
 		Vector CameraPosition;
-		float HeightScaler = 30.f;
+		float HeightScaler = 60.f;
 		
 		Vector2D LODRange;
 		Vector2D TexelSize;
@@ -46,6 +46,8 @@ public:
 	UINT GetHeight() const;
 	float GetAltitude(const Vector2D & InPositionXZ) const;
 	UINT GetPatchSize() const;
+	const Texture * GetHeightMap() const;
+	float GetHeightScale() const;
 	// void SetPatchSize(UINT InPatchSize);
 private:
 	void CreateVertex();

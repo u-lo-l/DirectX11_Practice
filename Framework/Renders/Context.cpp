@@ -55,7 +55,7 @@ void Context::Render() const
 
 void Context::ResizeScreen()
 {
-	Projection->Set(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi * 0.25f);
+	Projection->Set(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Projection->GetFOV());
 	Vp->SetViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
 }
 
@@ -78,7 +78,7 @@ Context::Context()
  : MainCamera(new Camera())
 {
 	Vp = new ViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
-	Projection = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi * 0.25f);
+	Projection = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi * 0.3f);
 	
 	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
 

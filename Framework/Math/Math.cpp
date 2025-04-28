@@ -239,11 +239,15 @@ float Math::Gauss(float amplitude, float x, float y, float centerX, float center
 
 int Math::Random( int min, int max )
 {
+	if (min == max)
+		return min;
 	return min + rand() % (max - min);
 }
 
 float Math::Random( float min, float max )
 {
+	if (max - min <= Math::Epsilon)
+		return min;
 	float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	float diff = max - min;
 	float val = random * diff;

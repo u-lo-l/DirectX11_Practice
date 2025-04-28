@@ -20,8 +20,6 @@ cbuffer CB_ViewProjection : register(Const_GS_VieProjection)
 struct VertexInput
 {
     float4 Position : POSITION;
-    //float3 Normal : NORMAL
-    //float3 Tangent : TANGENT
     float2 Scale    : SCALE;
     uint   MapIndex : MAPINDEX;
     

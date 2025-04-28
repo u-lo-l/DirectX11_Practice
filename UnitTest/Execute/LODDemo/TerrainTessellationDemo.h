@@ -14,5 +14,6 @@ namespace sdt
 		void Render() override;
 	private:
 		Terrain2 * Terrain = nullptr;
+		Foliage * Grasses = nullptr;
 	};
 }
