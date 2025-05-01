@@ -12,11 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Environment\Foliage.cpp" />
+    <ClCompile Include="Environment\TerrainQuadTree.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Terrain2.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />
+    <ClCompile Include="Math\Box.cpp" />
     <ClCompile Include="Math\Color.cpp" />
+    <ClCompile Include="Math\Frustum.cpp" />
     <ClCompile Include="Math\Math.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
     <ClCompile Include="Math\Plane.cpp" />
@@ -618,13 +621,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment\Foliage.h" />
+    <ClInclude Include="Environment\TerrainQuadTree.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Terrain2.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Environment\Weather\WeatherStructure.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
     <ClInclude Include="Ligthing\LigthtingStruct.h" />
+    <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Frustum.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Plane.h" />

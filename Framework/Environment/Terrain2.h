@@ -10,6 +10,7 @@ struct VertexTextureNormal;
 
 class Terrain2
 {
+	friend class TerrainQuadTree;
 	using VertexType = VertexTextureNormal;
 	struct WVPDesc
 	{
@@ -48,7 +49,7 @@ public:
 	UINT GetPatchSize() const;
 	const Texture * GetHeightMap() const;
 	float GetHeightScale() const;
-	// void SetPatchSize(UINT InPatchSize);
+
 private:
 	void CreateVertex();
 	void CreateIndex();

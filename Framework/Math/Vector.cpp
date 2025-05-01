@@ -136,6 +136,17 @@ Vector Vector::operator*(const float& scaleFactor) const
 	return vector3;
 }
 
+Vector Vector::operator*(const Matrix& Matrix) const
+{
+	Vector Result;
+
+	Result.X = Matrix.M11 * X + Matrix.M21 * Y + Matrix.M31 * Z + Matrix.M41;
+	Result.Y = Matrix.M12 * X + Matrix.M22 * Y + Matrix.M32 * Z + Matrix.M42;
+	Result.Z = Matrix.M13 * X + Matrix.M23 * Y + Matrix.M33 * Z + Matrix.M43;
+
+	return Result;
+}
+
 Vector Vector::operator/(const Vector& value2) const
 {
 	Vector vector3;

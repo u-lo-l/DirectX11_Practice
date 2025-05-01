@@ -19,7 +19,7 @@ Plane::Plane(void)
 ///@param a : 노멀축 X
 ///@param b : 노멀축 Y
 ///@param c : 노멀축 Z
-///@param d : 거리값
+///@param d : 부호 있는, 원점까지의 거리.
 //////////////////////////////////////////////////////////////////////////
 Plane::Plane(float a, float b, float c, float d)
 {
@@ -35,7 +35,7 @@ Plane::Plane(float a, float b, float c, float d)
 //////////////////////////////////////////////////////////////////////////
 ///@brief 생성자
 ///@param normal : 노멀 벡터
-///@param d : 거리값
+///@param d : 부호 있는, 원점까지의 거리.
 //////////////////////////////////////////////////////////////////////////
 Plane::Plane( const Vector& normal, float d)
 {
@@ -48,7 +48,7 @@ Plane::Plane( const Vector& normal, float d)
 
 //////////////////////////////////////////////////////////////////////////
 ///@brief 생성자
-///@param value : 4D 벡터(XYZ, W=거리)
+///@param value : 4D 벡터(평면의 방정식의 각 계수)
 //////////////////////////////////////////////////////////////////////////
 Plane::Plane( const Vector4& value)
 {
@@ -163,6 +163,32 @@ void Plane::Normalize()
 
 	D *= single;
 }
+
+void Plane::Transform(const Matrix& InMatrix)
+{
+	Vector Origin = Normal * D;
+	
+	Normal = Normal * InMatrix;
+	
+}
+
+Vector Plane::GetNormal() const
+{
+	return Normal;
+}
+
+Vector Plane::GetOrigin() const
+{
+	return Normal * D;
+}
+
+/// @param Point 임의의 점 P(x,y,z). 
+/// @return ax + by + cz + d
+float Plane::GetDistance(const Vector& Point) const
+{
+	return Vector::Dot(Normal, Point) + D;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 

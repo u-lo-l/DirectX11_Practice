@@ -23,7 +23,7 @@ public:
 	void SetRopSpeed(float InSpeed);
 
 	void SetPerspective(float Width, float Height, float Near, float Far, float VFOV) const;
-
+	const Frustum * GetViewFrustum() const;
 private :
 	Transform * Tf;
 	Projection * Proj;
@@ -34,4 +34,6 @@ private :
 
 private:
 	Vector At() const;
+
+	Frustum * ViewFrustum = nullptr;
 };

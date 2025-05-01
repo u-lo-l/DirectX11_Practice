@@ -5,6 +5,7 @@ Camera::Camera()
 {
 	Tf = new Transform();
 	Proj = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi / 4);
+	
 }
 
 Camera::~Camera()
@@ -125,6 +126,11 @@ void Camera::SetRopSpeed( float InSpeed )
 void Camera::SetPerspective(float Width, float Height, float Near, float Far, float VFOV) const
 {
 	Proj->Set(Width, Height, Near, Far, VFOV);
+}
+
+const Frustum* Camera::GetViewFrustum() const
+{
+	return ViewFrustum;
 }
 
 Vector Camera::At() const

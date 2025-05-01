@@ -31,6 +31,7 @@ public:
 	Vector operator -(const Vector& value2) const;
 	Vector operator *(const Vector& value2) const;
 	Vector operator *(const float& scaleFactor) const;
+	Vector operator *(const Matrix& Matrix) const;
 	Vector operator /(const Vector& value2) const;
 	Vector operator /(const float& divider) const;
 

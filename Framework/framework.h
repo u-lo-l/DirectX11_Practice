@@ -53,6 +53,8 @@ using namespace std;
 	#include "Math/Plane.h"
 	#include "Math/Point.h"
 	#include "Math/Color.h"
+	#include "Math/Box.h"
+	#include "Math/Frustum.h"
 	#include "Math/Math.h"
 #pragma endregion
 
