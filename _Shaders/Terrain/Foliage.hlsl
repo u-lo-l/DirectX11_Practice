@@ -144,6 +144,7 @@ float3 CalculateNormal(float2 UV);
 float4 PSMain(GS_OUTPUT input) : SV_Target
 {
     const float ScaleFactor = 1.75f;
+    Folia
     float4 Color = FoliageTextures.Sample(LinearSampler, float3(input.TexCord, input.MapIndex));
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
     return float4(Color.rgb * LDotN * ScaleFactor, Color.a);

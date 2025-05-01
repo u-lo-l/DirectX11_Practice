@@ -8,14 +8,14 @@ private:
 	constexpr static int Sampler_Linear_PS = 0;
 	using VertexType = VertexTexture;
 public:
-	explicit Hlsl2DTextureShader(ID3D11ShaderResourceView* InSRV);
+	explicit Hlsl2DTextureShader(ID3D11ShaderResourceView* InSRV, const wstring & InName = L"2D/Renderer2D.hlsl");
 	~Hlsl2DTextureShader();
 
 	void Tick();
 	void Render();
 	void SetSRV(ID3D11ShaderResourceView * InSRV);
 
-	Transform * GetTransform() const { return World; }
+	class Transform * GetTransform() const { return World; }
 
 private:
 	HlslShader<VertexTexture> * Shader;
@@ -25,9 +25,9 @@ private:
 		Matrix View;
 		Matrix Projection;
 	} Data;
-	ConstantBuffer * CBuffer;
+	class ConstantBuffer * CBuffer;
 	
-	Transform* World;
-	VertexBuffer* VBuffer;
+	Transform * World;
+	class VertexBuffer* VBuffer;
 	ID3D11ShaderResourceView * SRV;
 };

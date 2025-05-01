@@ -25,6 +25,7 @@ Transform::Transform(Matrix * InMatrix)
 	else
 	{
 		bWorldTFAllocated = true;
+		RotationMat = Matrix::Identity;
 		WorldTF = new Matrix(
 			1,0,0,0,
 			0,1,0,0,

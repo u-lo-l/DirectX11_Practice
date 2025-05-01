@@ -50,7 +50,7 @@ private:
 	
 	Vector EulerAngleInDegree;
 	Vector EulerAngleInRadian;
-	Matrix RotationMat;	// World Rotation
+	Matrix RotationMat = Matrix::Identity;	// World Rotation
 	Quaternion Rotation;
 	
 	Vector Scale = {1,1,1};;

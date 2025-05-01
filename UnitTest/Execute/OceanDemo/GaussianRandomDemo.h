@@ -4,6 +4,8 @@
 
 #include "Systems/IExecutable.h"
 
+class Hlsl2DTextureShader;
+
 namespace sdt
 {
 	class GaussianRandomDemo : public IExecutable
@@ -17,7 +19,7 @@ namespace sdt
 		void Render() override;
 
 	private:
-
-		array<array<std::complex<float>, Size>, Size> GaussianRandomArray = {};
+		Texture * GaussianRandom = nullptr;
+		Hlsl2DTextureShader * Shader = nullptr;
 	};
 }

@@ -76,6 +76,8 @@ using namespace std;
 	#include "Renders/Shader/VertexLayout.h"
 	#include "Renders/Shader/HlslShader.h"
 	#include "Renders/Shader/HlslComputeShader.h"
+	#include "Renders/Shader/Hlsl2DTextureShader.h"
+
 	#include "Renders/Texture.h"
 	#include "Renders/TextureArray.h"
 	#include "Renders/Material.h"

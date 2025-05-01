@@ -1,6 +1,7 @@
 ﻿#include "framework.h"
 #include "Texture.h"
 
+
 Texture::Texture( const wstring & FileName, bool bDefaultPath )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
@@ -10,6 +11,33 @@ Texture::Texture( const wstring & FileName, bool bDefaultPath )
 	CHECK(LoadTextureAndCreateSRV(FullPath) >= 0);
 }
 
+Texture::Texture(ID3D11Texture2D* InTexture, const D3D11_TEXTURE2D_DESC& Desc)
+{
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = Desc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	HRESULT Hr = Device->CreateShaderResourceView(
+		InTexture,
+		&srvDesc,
+		&this->SRV
+	);
+
+	TexMeta.width = Desc.Width;
+	TexMeta.height = Desc.Height;
+	TexMeta.depth = 1;
+	TexMeta.mipLevels = 1;
+	TexMeta.arraySize = 1;
+	TexMeta.format = Desc.Format;
+
+	CHECK(SUCCEEDED(Hr));
+}
+
 Texture::~Texture()
 {
 	SAFE_RELEASE(this->SRV);
@@ -17,13 +45,13 @@ Texture::~Texture()
 
 void Texture::BindToGPU(UINT SlotNum, UINT InShaderType) const
 {
-	if(InShaderType & (UINT)ShaderType::VertexShader)
+	if(InShaderType & static_cast<UINT>(ShaderType::VertexShader))
 		D3D::Get()->GetDeviceContext()->VSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & (UINT)ShaderType::PixelShader)
+	if(InShaderType & static_cast<UINT>(ShaderType::PixelShader))
 		D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & (UINT)ShaderType::HullShader)
+	if(InShaderType & static_cast<UINT>(ShaderType::HullShader))
 		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & (UINT)ShaderType::DomainShader)
+	if(InShaderType & static_cast<UINT>(ShaderType::DomainShader))
 		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &this->SRV);
 }
 
