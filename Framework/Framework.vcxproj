@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Environment\Foliage.cpp" />
+    <ClCompile Include="Environment\Ocean.cpp" />
     <ClCompile Include="Environment\TerrainQuadTree.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Terrain2.cpp" />
@@ -621,6 +622,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment\Foliage.h" />
+    <ClInclude Include="Environment\Ocean.h" />
     <ClInclude Include="Environment\TerrainQuadTree.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Terrain2.h" />

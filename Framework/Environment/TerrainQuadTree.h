@@ -14,7 +14,7 @@ class TerrainQuadTree
 		Box    BoundingBox;
 		float  SphereRadius = 0;
 
-		VertexBuffer<VertexType> * VBuffer = nullptr;
+		VertexBuffer * VBuffer = nullptr;
 		IndexBuffer * IBuffer = nullptr;
 
 		TerrainQuadTreeNode * Children[4] = {nullptr, };
