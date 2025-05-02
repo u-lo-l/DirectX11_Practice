@@ -14,6 +14,7 @@ enum class ShaderType : UINT
 	GeometryShader	= 1 << 2,
 	HullShader		= 1 << 3,
 	DomainShader	= 1 << 4,
+	ComputeShader	= 1 << 5,
 	
 	VP = PixelShader | VertexShader,
 	VG = VertexShader | GeometryShader,

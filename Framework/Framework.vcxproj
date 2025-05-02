@@ -441,6 +441,7 @@
     <ClCompile Include="Renders\Projector\Orthographic.cpp" />
     <ClCompile Include="Renders\Projector\Perspective.cpp" />
     <ClCompile Include="Renders\Projector\Projection.cpp" />
+    <ClCompile Include="Renders\RWTexture2D.cpp" />
     <ClCompile Include="Renders\Shader\HlslComputeShader.cpp" />
     <ClCompile Include="Renders\Shader\HlslShader.hpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -671,6 +672,7 @@
     <ClInclude Include="Renders\Projector\Orthographic.h" />
     <ClInclude Include="Renders\Projector\Perspective.h" />
     <ClInclude Include="Renders\Projector\Projection.h" />
+    <ClInclude Include="Renders\RWTexture2D.h" />
     <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
     <ClInclude Include="Renders\Shader\HlslShader.h" />
     <ClInclude Include="Renders\Shader\Hlsl2DTextureShader.h" />

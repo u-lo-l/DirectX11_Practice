@@ -44,20 +44,8 @@ RenderTarget::~RenderTarget()
 
 void RenderTarget::SaveTexture(const wstring& InTextureFileName) const
 {
-	ID3D11Device * const Device = D3D::Get()->GetDevice();
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-
-	DirectX::ScratchImage Image;
-	HRESULT Hr = DirectX::CaptureTexture(Device, DeviceContext, Texture, Image);
-	CHECK(SUCCEEDED(Hr));
-
-	Hr = DirectX::SaveToWICFile(
-		*(Image.GetImage(0,0,0)),
-		DirectX::WIC_FLAGS_NONE,
-		DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG),
-		(wstring(W_TEXTURE_PATH) + L"_RT_" + InTextureFileName + L".png").c_str()
-	);
-	CHECK(SUCCEEDED(Hr));
+	const wstring FileName = L"_RT_" + InTextureFileName;
+	Texture::SaveTextureAsFile(Texture, FileName);
 }
 
 void RenderTarget::SetRenderTarget(const DepthStencil* InDepthStencil) const

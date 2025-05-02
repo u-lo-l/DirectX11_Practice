@@ -26,6 +26,7 @@
     <ClCompile Include="Execute\DisplacementMappingDemo\PNTriangleDemo.cpp" />
     <ClCompile Include="Execute\LODDemo\TerrainTessellationDemo.cpp" />
     <ClCompile Include="Execute\OceanDemo\GaussianRandomDemo.cpp" />
+    <ClCompile Include="Execute\OceanDemo\TextureTransposeDemo.cpp" />
     <ClCompile Include="Execute\Shadow\ShadowDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -40,6 +41,7 @@
     <ClInclude Include="Execute\DisplacementMappingDemo\PNTriangleDemo.h" />
     <ClInclude Include="Execute\LODDemo\TerrainTessellationDemo.h" />
     <ClInclude Include="Execute\OceanDemo\GaussianRandomDemo.h" />
+    <ClInclude Include="Execute\OceanDemo\TextureTransposeDemo.h" />
     <ClInclude Include="Execute\Shadow\ShadowDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />

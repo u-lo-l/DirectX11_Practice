@@ -8,6 +8,7 @@
 #include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
 #include "Execute/LODDemo/TerrainTessellationDemo.h"
 #include "Execute/OceanDemo/GaussianRandomDemo.h"
+#include "Execute/OceanDemo/TextureTransposeDemo.h"
 #include "Systems/Window.h"
 #include "Execute/Shadow/ShadowDemo.h"
 
@@ -18,7 +19,7 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::BasicTessellationDemo);
 	// PUSH_MAIN(sdt::TerrainTessellationDemo);
 	// PUSH_MAIN(sdt::ShadowDemo);
-	PUSH_MAIN(sdt::GaussianRandomDemo);
+	PUSH_MAIN(sdt::TextureTransposeDemo);
 }
 
 

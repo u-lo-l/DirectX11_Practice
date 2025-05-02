@@ -80,6 +80,7 @@ using namespace std;
 
 	#include "Renders/Texture.h"
 	#include "Renders/TextureArray.h"
+	#include "Renders/RWTexture2D.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"
 	#include "Renders/Buffer/Buffers.h"

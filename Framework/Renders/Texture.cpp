@@ -2,6 +2,25 @@
 #include "Texture.h"
 
 
+void Texture::SaveTextureAsFile(ID3D11Texture2D * InTexture, const wstring& FileName)
+{
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	DirectX::ScratchImage Image;
+	// 내부적으로 InTexture를 Staging으로 변환한다.
+	HRESULT Hr = DirectX::CaptureTexture(Device, DeviceContext, InTexture, Image);
+	CHECK(SUCCEEDED(Hr));
+	
+	Hr = DirectX::SaveToWICFile(
+		*(Image.GetImage(0,0,0)),
+		DirectX::WIC_FLAGS_NONE,
+		DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG),
+		(wstring(W_TEXTURE_PATH) + FileName + L".png").c_str()
+	);
+	CHECK(SUCCEEDED(Hr));
+}
+
 Texture::Texture( const wstring & FileName, bool bDefaultPath )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
@@ -53,6 +72,8 @@ void Texture::BindToGPU(UINT SlotNum, UINT InShaderType) const
 		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &this->SRV);
 	if(InShaderType & static_cast<UINT>(ShaderType::DomainShader))
 		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &this->SRV);
+	if(InShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &this->SRV);
 }
 
 HRESULT Texture::LoadTextureAndCreateSRV(const wstring & FullPath)

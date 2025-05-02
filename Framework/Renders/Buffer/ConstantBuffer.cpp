@@ -69,4 +69,6 @@ void ConstantBuffer::BindToGPU()
 		DeviceContext->DSSetConstantBuffers(RegisterIndex, 1, &Buffer);
 	if (TargetShaderType & static_cast<UINT>(ShaderType::GeometryShader))
 		DeviceContext->GSSetConstantBuffers(RegisterIndex, 1, &Buffer);
+	if (TargetShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+		DeviceContext->CSSetConstantBuffers(RegisterIndex, 1, &Buffer);
 }

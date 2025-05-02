@@ -19,7 +19,7 @@ private:
 	UINT Width;
 	UINT Height;
 	DXGI_FORMAT Format;
-	ID3D11Texture2D *Texture;
+	ID3D11Texture2D * Texture;
 	ID3D11RenderTargetView *RTV;
 	ID3D11ShaderResourceView *SRV;
 };

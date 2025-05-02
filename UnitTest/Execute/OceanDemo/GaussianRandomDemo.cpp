@@ -1,6 +1,7 @@
 ﻿#include "Pch.h"
 #include "GaussianRandomDemo.h"
 
+#include <complex>
 #include <random>
 
 void sdt::GaussianRandomDemo::Initialize()
@@ -14,7 +15,7 @@ void sdt::GaussianRandomDemo::Initialize()
 	std::vector<std::complex<float>> GaussianRandomArray(Size * Size);
 	for (int i = 0 ; i < Size * Size ; i++)
 	{
-		std::complex<float> & Element = GaussianRandomArray[i];
+		complex<float> & Element = GaussianRandomArray[i];
 		float GaussianRandom = Math::Clamp(distribution(generator), -3, 3);
 		GaussianRandom = (GaussianRandom + 3.f) / 6.f;
 		float Magnitude = Math::Lerp(0.1f, 1.f, GaussianRandom);
@@ -58,7 +59,6 @@ void sdt::GaussianRandomDemo::Initialize()
 	Shader = new Hlsl2DTextureShader(GaussianRandom->GetSRV(), L"2D/GaussianRandomTexture.hlsl");
 	float TextureHeight = 0.4f * D3D::GetDesc().Height;
 	Shader->GetTransform()->SetScale({TextureHeight, TextureHeight, 1});
-	// Shader->GetTransform()->SetScale({0.1f,0.1f,0.1f});
 	Shader->GetTransform()->SetWorldPosition({ D3D::GetDesc().Width * 0.5f,D3D::GetDesc().Height * 0.5f, 0});
 
 	Camera * const MainCamera = Context::Get()->GetCamera();
