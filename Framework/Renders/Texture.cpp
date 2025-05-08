@@ -30,7 +30,7 @@ Texture::Texture( const wstring & FileName, bool bDefaultPath )
 	CHECK(LoadTextureAndCreateSRV(FullPath) >= 0);
 }
 
-Texture::Texture(ID3D11Texture2D* InTexture, const D3D11_TEXTURE2D_DESC& Desc)
+Texture::Texture(ID3D11Texture2D * InTexture, const D3D11_TEXTURE2D_DESC& Desc)
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 

@@ -65,6 +65,16 @@ void Hlsl2DTextureShader::Render()
 	Shader->Draw(6);
 }
 
+void Hlsl2DTextureShader::Render(ID3D11ShaderResourceView ** InSRV)
+{
+	D3D::Get()->GetDeviceContext()->PSSetShaderResources(Texture_Texture_PS, 1, InSRV);
+	World->BindToGPU();
+	VBuffer->BindToGPU();
+	CBuffer->BindToGPU();
+
+	Shader->Draw(6);
+}
+
 void Hlsl2DTextureShader::SetSRV(ID3D11ShaderResourceView* InSRV)
 {
 	SRV = InSRV;

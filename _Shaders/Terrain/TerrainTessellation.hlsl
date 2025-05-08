@@ -170,8 +170,6 @@ HS_POINT_OUTPUT HSMain
     return output;
 }
 
-
-const static float MAXGRIDSIZE = 16;
 // DS
 [domain(DOMAIN)]
 DS_OUTPUT DSMain
@@ -215,7 +213,9 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
     // return lerp(float4(0.5, 1, 0.5, 1) * saturate(LDotN), input.Color, 0.5f);
-    return float4(0.5, 1, 0.5, 1) * saturate(LDotN);
+    // return float4(0.5, 1, 0.5, 1) * saturate(LDotN);
+    // return float4(0.5, 0.75, 1, 0.5f) * saturate(LDotN);
+    return float4(0.5, 0.75, 1, 0.5f);
 }
 
 /*======================================================================================*/

@@ -104,6 +104,7 @@ using namespace std;
 	#include "Environment/Terrain2.h"
 	#include "Environment/SkySphere.h"
 	#include "Environment/Foliage.h"
+	#include "Environment/Ocean/Ocean.h"
 
 	#include "ParticleSystem/ParticleSystem.h"
 

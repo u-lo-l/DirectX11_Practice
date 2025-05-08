@@ -38,8 +38,8 @@ void sdt::TextureTransposeDemo::Initialize()
 
 	CBuffer->BindToGPU();
 	InputTexture->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader));
-	TestOutTexture->BindToGPU(0);
-	TestComputeShader->Dispatch(ConstData.Width / ThreadX,ConstData.Height / ThreadY,1);
+	TestOutTexture->BindToGPUAsUAV(0);
+	TestComputeShader->Dispatch(ConstData.Width / ThreadX, ConstData.Height / ThreadY,1);
 	TestOutTexture->SaveOutputAsFile(L"Transposed");
 }
 

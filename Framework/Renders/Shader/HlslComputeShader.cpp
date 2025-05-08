@@ -57,6 +57,18 @@ HlslComputeShader::~HlslComputeShader()
 	SAFE_RELEASE(ComputeShader);
 }
 
+void HlslComputeShader::SetDispatchSize(UINT X, UINT Y, UINT Z)
+{
+	DispatchSize[0] = X;
+	DispatchSize[1] = Y;
+	DispatchSize[2] = Z;
+}
+
+void HlslComputeShader::Dispatch() const
+{
+	this->Dispatch(DispatchSize[0], DispatchSize[1], DispatchSize[2]);
+}
+
 void HlslComputeShader::Dispatch(const RawBuffer * InRawBuffer, UINT X, UINT Y, UINT Z) const
 {
 	if (!ComputeShader)
@@ -84,5 +96,10 @@ void HlslComputeShader::Dispatch(UINT X, UINT Y, UINT Z) const
 
 	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
 	DeviceContext->Dispatch(X, Y, Z);
+
+	ID3D11ShaderResourceView * NullSRV = nullptr;
+	DeviceContext->CSSetShaderResources(0, 1, &NullSRV);
+	ID3D11UnorderedAccessView * NullUAV = nullptr;
+	DeviceContext->CSSetUnorderedAccessViews(0,1, &NullUAV, nullptr);
 	DeviceContext->CSSetShader(nullptr, nullptr, 0);
 }

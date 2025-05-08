@@ -13,6 +13,7 @@ public:
 
 	void Tick();
 	void Render();
+	void Render(ID3D11ShaderResourceView ** InSRV);
 	void SetSRV(ID3D11ShaderResourceView * InSRV);
 
 	class Transform * GetTransform() const { return World; }

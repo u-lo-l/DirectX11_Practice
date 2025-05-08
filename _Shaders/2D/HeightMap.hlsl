@@ -1,21 +1,19 @@
-#define Slot_Const_World_VS b0
-#define Slot_Const_ViewProjection_VS b1
-#define Slot_Texture_Texture t0
-#define Slot_Sampler_Linear s0
+#ifndef __GAUSSIAN_RANDOM_TEXTURE_HLSL__
+#define __GAUSSIAN_RANDOM_TEXTURE_HLSL__
 
-cbuffer CB_World : register(Slot_Const_World_VS)
+cbuffer CB_World : register(b0)
 {
     matrix World;
-}
+};
 
-cbuffer CB_Render2D : register(Slot_Const_ViewProjection_VS)
+cbuffer CB_Render2D : register(b1)
 {
     matrix View2D;
     matrix Projection2D;
 };
 
-Texture2D Texture : register (Slot_Texture_Texture);
-SamplerState LinearSampler : register(Slot_Sampler_Linear);
+Texture2D<float> Texture : register (t0);
+SamplerState LinearSampler : register(s0);
 
 struct VertexInput
 {
@@ -32,7 +30,6 @@ struct VertexOutput
 VertexOutput VSMain(VertexInput input)
 {
     VertexOutput output;
-    
     output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View2D);
     output.Position = mul(output.Position, Projection2D);
@@ -41,10 +38,11 @@ VertexOutput VSMain(VertexInput input)
     return output;
 }
 
-
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float4 Color = Texture.Sample(LinearSampler, input.Uv);
-    // Color.rg *= 255;
-    return Color;
+    float mean = Texture.Sample(LinearSampler, input.Uv);
+    mean *= 255;
+    return float4(mean * 0.75f, mean * 0.75f, mean, 1);
 }
+
+#endif

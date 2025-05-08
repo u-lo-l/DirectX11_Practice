@@ -1,6 +1,7 @@
-#ifndef __GAUSSIAN_RANDOM_TEXTURE_HLSL__
-#define __GAUSSIAN_RANDOM_TEXTURE_HLSL__
+#ifndef __IFFT_RESULT_HLSL__
+#define __IFFT_RESULT_HLSL__
 #include "../ComputeShader/Math.hlsl"
+
 cbuffer CB_World : register(b0)
 {
     matrix World;
@@ -38,10 +39,13 @@ VertexOutput VSMain(VertexInput input)
     return output;
 }
 
-/*
- * 0.1f <= Mag <= 1.f
- * -Pi <= Ang <= Pi
+/* 
+ * Initial Spectrum = GausianNoise * sqrt(PhilipsSpectrum / 2)
+ * - 0 <= PhilipsSpectrum <= 0.000938 ( A : 1 일 때 )
+ * - 0 <= Mag <= 0.02165
+ * - -PI <= Ang <= PI
 */
+const static float MagMax = 0.7071f / 16.f;
 float4 PSMain(VertexOutput input) : SV_Target
 {
     float2 color = Texture.Sample(LinearSampler, input.Uv);
@@ -50,8 +54,8 @@ float4 PSMain(VertexOutput input) : SV_Target
     float Ang = atan2(color.y, color.x);
     
     float H = (Ang / (2.0f * PI)) + 0.5f;
-    float S = Mag;
-    float V = Mag;
+    float S = Mag / MagMax;
+    float V = 0.5f;
 
     if (S < EPSILON)
     {
