@@ -45,6 +45,9 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
     float PhilipsSpectrum = exp(-1 / pow(kMag * L , 2)) / pow(kMag, 4) * (pow(kDotw, 2));
     Complex xi = GaussianNoise[DTID.xy];
     InitialSpectrum[DTID.xy] = xi * sqrt(PhilipsSpectrum * 0.5f);
+
+    // H_Init이 1일 때 H_t가 DeltaFunction 형태여야 함.
+    // InitialSpectrum[DTID.xy] = float2(1, 0);
 }
 
 #endif

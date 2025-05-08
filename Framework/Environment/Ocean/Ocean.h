@@ -49,6 +49,8 @@ public:
 
 	void Tick();
 	void Render();
+	void SaveHeightMap();
+
 private:
 
 #pragma region Compute

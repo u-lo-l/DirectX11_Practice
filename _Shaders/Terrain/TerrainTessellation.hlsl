@@ -15,8 +15,8 @@ const static float RDRatio = 4;
 
 cbuffer CB_WVP : register(b0)  // VS DS HS PS
 {
-    matrix World : packoffset(c0);
-    matrix View : packoffset(c4);
+    matrix World      : packoffset(c0);
+    matrix View       : packoffset(c4);
     matrix Projection : packoffset(c8);
 }
 
@@ -37,8 +37,8 @@ cbuffer CB_DirectionalLight : register(b2) // PS
     float3 LightDirection;
 }
 
-SamplerState LinearSampler : register(s0); // VS DS PS
-SamplerState AnisotropicSampler : register(s1); // VS DS PS
+SamplerState LinearSampler_Border : register(s0); // VS DS PS
+SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
 Texture2D HeightMap : register(t0);        // VS DS PS
 
 struct VS_INPUT
@@ -84,10 +84,10 @@ VS_OUTPUT VSMain(VS_INPUT input)
 {
     VS_OUTPUT output;
     output.Position = input.Position.xyz;
-    output.UV = input.UV;
+    output.UV = input.UV * 2;
     output.Normal = input.Normal;
 
-    float Height = HeightMap.SampleLevel(LinearSampler, output.UV, 0).r;
+    float Height = HeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).r;
     output.Position.y = Height  * HeightScaler;
 
     return output;
@@ -140,7 +140,6 @@ HS_CONSTANT_OUTPUT HSConstant
         float4 Point2 = Points[j];
         float TessRatio = Density + CalculateTessellationFactor(Point1, Point2) * SSDWeight;
         output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
-        // output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, CalculateTessellationFactor(Point1, Point2));
     }
 
     output.Inside[0] = (output.Edge[0] + output.Edge[2]) * 0.5f;
@@ -196,14 +195,17 @@ DS_OUTPUT DSMain
 
     output.Normal = float3(0,1,0);
 
-    float Height = HeightMap.SampleLevel(AnisotropicSampler, output.UV, 0).r;
+    float Height = HeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).r;
     output.Position.y = Height * HeightScaler;
+    // output.Position.y = 0;
 
     output.Position = mul(output.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
 
     output.Normal = mul(output.Normal, (float3x3)World);
+
+    output.Color.r = Height;
 
     return output;
 }
@@ -214,8 +216,10 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
     // return lerp(float4(0.5, 1, 0.5, 1) * saturate(LDotN), input.Color, 0.5f);
     // return float4(0.5, 1, 0.5, 1) * saturate(LDotN);
-    // return float4(0.5, 0.75, 1, 0.5f) * saturate(LDotN);
-    return float4(0.5, 0.75, 1, 0.5f);
+    return float4(0.5, 0.75, 1, 0.5f) * saturate(LDotN);
+    // return float4(0.5, 0.75, 1, 0.5f);
+    // float Height = HeightMap.Sample(AnisotropicSampler_Wrap, input.UV).r * 255;
+    // return float4(0.5, 0.75, 1, 0.5f) * Height;
 }
 
 /*======================================================================================*/
@@ -235,7 +239,7 @@ float3 CalculateNormal(float2 UV)
     [unroll]
     for(int i = 0 ; i < 4 ; i++)
     {
-        height[i] = HeightMap.SampleLevel(AnisotropicSampler, UV + dUV[i], 0).r;
+        height[i] = HeightMap.SampleLevel(AnisotropicSampler_Wrap, UV + dUV[i], 0).r;
     }
 
     float StrideX = (UV.x - TexelSize.x < 0) || (UV.x + TexelSize.x > 1) ? 1.f : 2.f;

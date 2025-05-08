@@ -68,7 +68,7 @@ void Ocean::SetupResources()
 {
 	PhillipsInitData.Width = static_cast<float>(Size);
 	PhillipsInitData.Height = static_cast<float>(Size);
-	PhillipsInitData.Wind = {1, 1};
+	PhillipsInitData.Wind = {20, 20};
 
 	PhilipsUpdateData.Width = static_cast<float>(Size);
 	PhilipsUpdateData.Height = static_cast<float>(Size);
@@ -126,8 +126,8 @@ void Ocean::GenerateGaussianRandoms()
 	for (int i = 0 ; i < Size * Size ; i++)
 	{
 		complex<float> & Element = GaussianRandomArray[i];
-		Element.real(Math::Clamp(Distribution(Generator), -1, 1)); 
-		Element.imag(Math::Clamp(Distribution(Generator), -1, 1)); 
+		Element.real(Math::Clamp(Distribution(Generator), -3, 3)); 
+		Element.imag(Math::Clamp(Distribution(Generator), -3, 3)); 
 	}
 		
 	ID3D11Texture2D * GaussianRandomTexture = nullptr;

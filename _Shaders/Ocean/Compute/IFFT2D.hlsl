@@ -91,8 +91,13 @@ void CSMain(CSInput Input)
 	OutputSpectrum[uint2(Row, GTid)] = SharedData[GTid];
 	OutputSpectrum[uint2(Row, GTid + THREAD_GROUP_COUNT)] = SharedData[GTid + THREAD_GROUP_COUNT];
 	#elif defined (COLPASS)
-	HeightMap[uint2(Row, GTid)] = (SharedData[GTid].x) / (FFT_SIZE * FFT_SIZE) * 255;
-	HeightMap[uint2(Row, GTid + THREAD_GROUP_COUNT)] = (SharedData[GTid + THREAD_GROUP_COUNT].x) / (FFT_SIZE * FFT_SIZE) * 255;
+	
+	float Height = (SharedData[GTid].x) / (FFT_SIZE * FFT_SIZE);
+	HeightMap[uint2(Row, GTid)] = abs(Height);
+
+	Height = (SharedData[GTid + THREAD_GROUP_COUNT].x) / (FFT_SIZE * FFT_SIZE);
+	HeightMap[uint2(Row, GTid + THREAD_GROUP_COUNT)] = abs(Height);
+	
 	#else
 	#error "ROW or COL Not Defined"
 	#endif

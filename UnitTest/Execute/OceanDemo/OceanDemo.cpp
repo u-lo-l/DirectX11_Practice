@@ -5,7 +5,7 @@ namespace sdt
 {
 	void OceanDemo::Initialize()
 	{
-		Sea = new Ocean(2);
+		Sea = new Ocean(32);
 	}
 
 	void OceanDemo::Destroy()
@@ -16,6 +16,10 @@ namespace sdt
 	void OceanDemo::Tick()
 	{
 		Sea->Tick();
+		if (Keyboard::Get()->IsPressed(VK_SPACE))
+		{
+			Sea->SaveHeightMap();
+		}
 	}
 
 	void OceanDemo::Render()

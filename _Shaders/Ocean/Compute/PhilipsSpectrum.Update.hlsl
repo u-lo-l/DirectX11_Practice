@@ -55,8 +55,6 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
     H_t_Neg = ComplexMul(H_Init_neg, H_t_Neg);
 
     H_t[DTID.xy] = H_t_Pos + H_t_Neg;
-
-
 }
 
 #endif

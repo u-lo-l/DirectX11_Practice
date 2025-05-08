@@ -41,5 +41,4 @@ SamplerState LinearSampler : register(s0); // VS DS PS
 SamplerState AnisotropicSampler : register(s1); // VS DS PS
 Texture2D HeightMap : register(t0);        // VS DS PS
 
-
 #endif
