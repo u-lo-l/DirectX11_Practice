@@ -13,25 +13,12 @@ namespace sdt
 		void Tick() override;
 		void Render() override;
 	private:
-		// Texture * Original = nullptr;
-		// RWTexture2D * Transposed = nullptr;
-		// Hlsl2DTextureShader * OriginalShader = nullptr;
-		// Hlsl2DTextureShader * TransposedShader = nullptr;
-		// HlslComputeShader * TransposeComputeShader = nullptr;
-		// RawBuffer * TransposeBuffer = nullptr;
-
 		void SetupShaders();
 		void SetupResources();
 		void GenerateGaussianRandoms();
 		void GenerateInitialSpectrum() const;
 		void UpdateSpectrum() const;
 		void GetHeightMap() const;
-		// struct IFFTSizeDesc
-		// {
-		// 	UINT Width;
-		// 	UINT Height;
-		// 	UINT Padding[2];
-		// } IFFTSizeData = {};
 
 		struct PhillipsInitDesc
 		{

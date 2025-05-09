@@ -7,6 +7,7 @@ public:
 public:
 	explicit Texture(const wstring& FileName, bool bDefaultPath = false);
 	explicit Texture(ID3D11Texture2D * InTexture, const D3D11_TEXTURE2D_DESC & Desc);
+	explicit Texture(ID3D11ShaderResourceView * InSRV, const D3D11_TEXTURE2D_DESC & Desc);
 	~Texture();
 public:
 	void BindToGPU(UINT SlotNum = 0, UINT InShaderType = (UINT)ShaderType::PixelShader) const;

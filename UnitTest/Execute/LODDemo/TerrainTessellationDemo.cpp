@@ -9,7 +9,7 @@ namespace sdt
 		MainCamera->SetPosition( 420, 41, 304 );
 		MainCamera->SetRotation( 7,1,0);
 
-		Terrain = new Terrain2(L"Terrain/Gray512.png", 32);
+		Terrain = new LandScape(L"Terrain/Gray512.png", 32);
 		// Terrain = new Terrain2(L"Terrain/Terrain2.jpg", 32);
 		Grasses = new Foliage(Terrain);
 	}

@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "Foliage.h"
 
-Foliage::Foliage(const Terrain2* InTerrain)
+Foliage::Foliage(const LandScape * InTerrain, const float MinAltitude, const float MaxAltitude)
 	: ShaderName(L"Terrain/Foliage.hlsl")
 	, VertexCount(0)
 	, VBuffer(nullptr)
@@ -9,19 +9,22 @@ Foliage::Foliage(const Terrain2* InTerrain)
 	, Terrain(InTerrain)
 	, TerrainHeightCBuffer(nullptr)
 {
+	FoliageStride = 1.f;
 	ASSERT(InTerrain, "Height map must not be null");
-	
-	const vector<D3D_SHADER_MACRO> Macros{
-		{"TRIANGLE", "0"},
-		{nullptr,}
-	};
+	DensityDistanceData.MinAltitude = MinAltitude;
+	DensityDistanceData.MaxAltitude = MaxAltitude;
+
+	// const vector<D3D_SHADER_MACRO> Macros{
+	// 	{"TRIANGLE", "0"},
+	// 	{nullptr,}
+	// };
 	CrossQuadShader = new HlslShader<VertexType>(
 		ShaderName,
 		static_cast<UINT>(ShaderType::VGP),
 		"VSMain",
 		"PSMain",
 		"GSMain",
-		Macros.data()
+		nullptr
 	);
 	CrossQuadShader->SetTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));
@@ -134,7 +137,9 @@ void Foliage::CreateRandomFoliage()
 		return ;
 	if (!Terrain || !Terrain->GetHeightMap())
 		return;
-
+	const float TerrainHeightScaler = Terrain->GetHeightScale();
+	const Texture * HeightMap = Terrain->GetHeightMap();
+	
 	// UINT HorizontalCount = Terrain->GetWidth() / FoliageStride + 1;
 	// UINT VerticalCount = Terrain->GetHeight() / FoliageStride + 1;
 
@@ -157,6 +162,11 @@ void Foliage::CreateRandomFoliage()
 		}
 	}
 	UpdateVBuffer();
+}
+
+void Foliage::SetTerrainHeightScaler(float InTerrainHeightScaler)
+{
+	TerrainHeightData.HeightScaler = InTerrainHeightScaler;
 }
 
 void Foliage::UpdateVBuffer()

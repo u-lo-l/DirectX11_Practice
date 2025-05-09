@@ -4,8 +4,6 @@
 #include <complex>
 #include <random>
 
-#include "GaussianRandomDemo.h"
-
 namespace sdt
 {
 	void PhilipsSpectrumDemo::Initialize()
@@ -39,7 +37,7 @@ namespace sdt
 			Vector2D(-SizeSmall - SizeGap, -SizeSmall - SizeGap),
 			Vector2D(SizeBig + SizeGap, 0)
 		};
-		const Vector2D Center = Vector2D(D3D::GetDesc().Width * 0.5f, D3D::GetDesc().Height * 0.5f);
+		const Vector2D Center = {D3D::GetDesc().Width * 0.5f, D3D::GetDesc().Height * 0.5f};
 		for (int i = 0 ; i < 5 ; i++)
 		{
 			TextureDebugShader[i] = new Hlsl2DTextureShader(nullptr, EntryPoints[i]);
@@ -169,7 +167,7 @@ namespace sdt
 
 		PhillipsInitData.Width = static_cast<float>(Size);
 		PhillipsInitData.Height = static_cast<float>(Size);
-		PhillipsInitData.Wind = {1, 1};
+		PhillipsInitData.Wind = {-6, 0};
 
 		PhilipsUpdateData.Width = static_cast<float>(Size);
 		PhilipsUpdateData.Height = static_cast<float>(Size);
@@ -221,20 +219,15 @@ namespace sdt
 		ID3D11Device * const Device = D3D::Get()->GetDevice();
 
 		std::default_random_engine Generator(std::random_device{}());
-		std::normal_distribution<float> Distribution(0.0, 1.0);
+		std::normal_distribution<float> Distribution_real(0.0f, 1.0f);
+		std::normal_distribution<float> Distribution_imag(0.0f, 1.0f);
 
 		std::vector<complex<float>> GaussianRandomArray(Size * Size);
 		for (int i = 0 ; i < Size * Size ; i++)
 		{
 			complex<float> & Element = GaussianRandomArray[i];
-			float GaussianRandom = Math::Clamp(Distribution(Generator), -3, 3);
-			GaussianRandom = (GaussianRandom + 3.f) / 6.f; // -3~3 -> 0~1
-			float Magnitude = Math::Lerp(0.1f, 1.f, GaussianRandom);
-			GaussianRandom = Math::Clamp(Distribution(Generator), -3, 3);
-			GaussianRandom = (GaussianRandom + 3.f) / 6.f;
-			float Angle = Math::Lerp(-Math::Pi, Math::Pi, GaussianRandom);
-			Element.real(Magnitude * cosf(Angle));
-			Element.imag(Magnitude * sinf(Angle));
+			Element.real(Math::Clamp(Distribution_real(Generator), -3, 3)); 
+			Element.imag(Math::Clamp(Distribution_imag(Generator), -3, 3)); 
 		}
 		
 		ID3D11Texture2D * GaussianRandomTexture = nullptr;

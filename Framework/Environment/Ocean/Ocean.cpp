@@ -1,8 +1,20 @@
 ﻿#include "framework.h"
 #include "Ocean.h"
 
-Ocean::Ocean(const UINT InPatchSize) : PatchSize(InPatchSize)
+Ocean::Ocean(const OceanDesc& Desc)
+: PhillipsInitData()
+, PhilipsUpdateData()
+, TessellationData()
+, Shader(nullptr)
 {
+	Dimension[0] = Desc.Dimension_X;
+	Dimension[1] = Desc.Dimension_Z;
+	PatchSize = Desc.PatchSize;
+	Tf = new Transform();
+	Tf->SetWorldPosition({Desc.WorldPosition.X, Desc.SeaLevel, Desc.WorldPosition.Y});
+	SkyTexture = Desc.SkyTexture;
+	TerrainHeightMap = Desc.TerrainHeightMap;
+
 #pragma region Compute
 	SetupShaders();
 	SetupResources();
@@ -14,7 +26,7 @@ Ocean::Ocean(const UINT InPatchSize) : PatchSize(InPatchSize)
 #pragma region Render
 	const vector<D3D_SHADER_MACRO> Macros = { {"TYPE01", ""}, {nullptr,}};
 	Shader = new HlslShader<VertexType>(
-		L"Terrain/TerrainTessellation.hlsl",
+		L"Ocean/Ocean.hlsl",
 		static_cast<UINT>(ShaderType::VHDP),
 		"VSMain",
 		"PSMain",
@@ -28,8 +40,7 @@ Ocean::Ocean(const UINT InPatchSize) : PatchSize(InPatchSize)
 	CHECK(SUCCEEDED(Shader->CreateDepthStencilState_Default()));
 	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid()));
 	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
-	
-	Tf = new Transform();
+
 	TessellationData.TexelSize = {
 		1.f / static_cast<float>(HeightMapTexture2D->GetWidth()),
 		1.f / static_cast<float>(HeightMapTexture2D->GetHeight())
@@ -78,15 +89,12 @@ Ocean::Ocean(const UINT InPatchSize) : PatchSize(InPatchSize)
 		sizeof(TessellationDesc),
 		false
 	);
-	CB_LightDirection = new ConstantBuffer(
-		ShaderType::PixelShader,
-		2,
-		nullptr,
-		"LightDirection",
-		sizeof(LightDirectionDesc),
-		false
-	);
 #pragma endregion Render
+}
+
+Ocean::Ocean(const UINT Width, const UINT Height, const UINT InPatchSize)
+: Ocean({Width,Height, InPatchSize})
+{
 }
 
 Ocean::~Ocean()
@@ -128,18 +136,19 @@ void Ocean::Tick()
 	WVP.World = Tf->GetMatrix();
 	WVP.View = Context::Get()->GetViewMatrix();
 	WVP.Projection = Context::Get()->GetProjectionMatrix();
+	WVP.ViewInverse = Matrix::Invert(WVP.View, true);
 	CB_WVP->UpdateData(&WVP, sizeof(WVPDesc));
 
-	ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 100.f, "%.1f");
+	ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 200.f, "%.1f");
 	ImGui::SliderFloat("Ocean : LOD Power", &TessellationData.LODRange.X, 0.1f, 3.f, "%.1f");
 	ImGui::SliderFloat("Ocean : Min Screen Diagonal", &TessellationData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
 	TessellationData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
 	TessellationData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
 	TessellationData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
+	TessellationData.LightDirection = Context::Get()->GetLightDirection();
+	
 	CB_Tessellation->UpdateData(&TessellationData, sizeof(TessellationData));
 
-	LightDirectionData.Direction = Context::Get()->GetLightDirection();
-	CB_LightDirection->UpdateData(&LightDirectionData, sizeof(LightDirectionDesc));
 #pragma endregion Render
 }
 
@@ -153,9 +162,11 @@ void Ocean::Render()
 	
 	if (!!CB_WVP) CB_WVP->BindToGPU();
 	if (!!CB_Tessellation) CB_Tessellation->BindToGPU();
-	if (!!CB_LightDirection) CB_LightDirection->BindToGPU();
-	
-	HeightMapTexture2D->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
+
+	if (!!HeightMapTexture2D)
+		HeightMapTexture2D->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
+	if (!!SkyTexture)
+		SkyTexture->BindToGPU(1, static_cast<UINT>(ShaderType::PixelShader));
 	Shader->DrawIndexed(Indices.size());
 #pragma endregion Render
 }
@@ -171,8 +182,8 @@ void Ocean::CreateVertex()
 	const UINT Width = HeightMapTexture2D->GetWidth();
 	const UINT Height = HeightMapTexture2D->GetHeight();
 
-	const UINT PatchWidth = (Width / PatchSize) + 1;
-	const UINT PatchHeight = (Height / PatchSize) + 1;
+	const UINT PatchWidth = (Dimension[0] / PatchSize) + 1;
+	const UINT PatchHeight = (Dimension[1] / PatchSize) + 1;
 
 	Vertices.clear();
 	Vertices.resize(PatchWidth * PatchHeight);
@@ -181,9 +192,9 @@ void Ocean::CreateVertex()
 		for (UINT X = 0 ; X < PatchWidth ; X++)
 		{
 			const UINT Index = Z * PatchWidth + X;
-			Vertices[Index].Position.X = static_cast<float>(X * PatchSize) * 2.f;
+			Vertices[Index].Position.X = static_cast<float>(X * PatchSize);
 			Vertices[Index].Position.Y = 0;
-			Vertices[Index].Position.Z = static_cast<float>(Z * PatchSize) * 2.f;
+			Vertices[Index].Position.Z = static_cast<float>(Z * PatchSize);
 			Vertices[Index].Normal = {0, 1, 0};
 			Vertices[Index].UV.X = (X * PatchSize) / static_cast<float>(Width);
 			Vertices[Index].UV.Y = (Z * PatchSize) / static_cast<float>(Height);
@@ -193,11 +204,11 @@ void Ocean::CreateVertex()
 
 void Ocean::CreateIndex()
 {
-	const UINT Width = HeightMapTexture2D->GetWidth();
-	const UINT Height = HeightMapTexture2D->GetHeight();
+	// const UINT Width = HeightMapTexture2D->GetWidth();
+	// const UINT Height = HeightMapTexture2D->GetHeight();
 
-	const UINT PatchWidth = Width / PatchSize + 1;
-	const UINT PatchHeight = Height / PatchSize + 1;
+	const UINT PatchWidth = (Dimension[0] / PatchSize) + 1;
+	const UINT PatchHeight = (Dimension[1] / PatchSize) + 1;
 	
 	const UINT IndexCount = (PatchWidth - 1) * (PatchHeight - 1) * 4;
 

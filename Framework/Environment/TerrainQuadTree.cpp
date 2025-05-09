@@ -26,6 +26,6 @@ void TerrainQuadTree::TerrainQuadTreeNode::Render()
 }
 
 
-TerrainQuadTree::TerrainQuadTree(const Terrain2* InTerrain)
+TerrainQuadTree::TerrainQuadTree(const LandScape* InTerrain)
 {
 }

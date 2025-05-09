@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class Terrain2;
+class LandScape;
 
 class Foliage
 {
@@ -22,16 +22,19 @@ private:
 	struct DensityDistanceDesc
 	{
 		Vector CameraPosition;
+		float Padding;
+
+		float MinAltitude = 0;
+		float MaxAltitude = 0;
 		float Near = 100;
 		float Far = 400;
-		float Padding[3];
 	};
 	WVPDesc WVPData;
 	Matrix ViewInverse_GS;
 	TerrainHeightDesc TerrainHeightData;
 	DensityDistanceDesc DensityDistanceData;
 public:
-	explicit Foliage(const Terrain2 * InTerrain);
+	explicit Foliage(const LandScape * InTerrain, float MinAltitude = 0, float MaxAltitude = 100);
 	~Foliage();
 
 	void Tick();
@@ -41,11 +44,11 @@ public:
 	void Add(const Vector& InPosition, const Vector2D& InScale, UINT InMapIndex);
 	void AddTexture(const wstring& InPath);
 	void CreateRandomFoliage();
-
+	void SetTerrainHeightScaler(float InTerrainHeightScaler);
 private:
 	void UpdateVBuffer();
 
-	float FoliageStride = 0.75f;
+	float FoliageStride = 0.5f;
 
 	wstring ShaderName;
 	HlslShader<VertexType> * CrossQuadShader = nullptr;
@@ -57,7 +60,7 @@ private:
 	
 	vector<wstring> TextureNames;
 	TextureArray * CrossQuadTextures;
-	const Terrain2 * Terrain;
+	const LandScape * Terrain;
 	
 	ConstantBuffer * WVPBuffer;
 	ConstantBuffer * TerrainHeightCBuffer;

@@ -20,7 +20,7 @@ class TerrainQuadTree
 		TerrainQuadTreeNode * Children[4] = {nullptr, };
 	};
 public:
-	explicit TerrainQuadTree(const Terrain2 * InTerrain);
+	explicit TerrainQuadTree(const LandScape * InTerrain);
 	~TerrainQuadTree() = default;
 private:
 	TerrainQuadTreeNode * Root;

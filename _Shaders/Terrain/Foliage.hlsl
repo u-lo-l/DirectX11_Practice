@@ -26,9 +26,12 @@ cbuffer CB_Terrain : register(b1) // VS PS
 cbuffer CB_DensityDistance : register(b2) // GS
 {
     float3 CameraPosition;
+    float  Padding;
+
+    float MinAltitude;
+    float MaxAltitude;
     float Near;
     float Far;
-    float Padding[3];
 };
 
 SamplerState LinearSampler : register(s0);      // VS DS PS
@@ -86,13 +89,17 @@ void GSMain(point VS_OUTPUT input[1], inout TriangleStream<GS_OUTPUT> stream)
     {
         return ;
     }
+    [flatten] if (input[0].Position.y < MinAltitude || input[0].Position.y >= MaxAltitude)
+    {
+        return ;
+    }
 
     float DistanceFromCamera = length(ViewSpacePosition);
     float random_val = Rand(input[0].Position.xz);
     float RenderProbability = 0.0f;
 
-    RenderProbability = smoothstep(.5f, 1.f, (DistanceFromCamera) / (Near));
-    if (DistanceFromCamera <= Near && random_val <= RenderProbability)
+    // RenderProbability = smoothstep(.5f, 1.f, (DistanceFromCamera) / (Near));
+    if (DistanceFromCamera <= Near)
     {
         Foliage_Triangle(input[0], stream);
         return ;
@@ -115,27 +122,6 @@ void GSMain(point VS_OUTPUT input[1], inout TriangleStream<GS_OUTPUT> stream)
             Foliage_Billboard(input[0], stream);
         return ;
     }
-
-    // float RenderProbability = 0.0f;
-
-    // RenderProbability = smoothstep(.5f, 1.f, (DistanceFromCamera) / (Near));
-    // if (DistanceFromCamera <= Near && random_val <= RenderProbability)
-    // {
-    //     Foliage_Triangle(input[0], stream);
-    //     return;
-    // }
-    // RenderProbability = smoothstep(.3f, 0.6f, (Near - DistanceFromCamera) / (Far - Near));
-    // if(DistanceFromCamera <= Far && random_val <= RenderProbability)
-    // {
-    //     Foliage_CrossQuad(input[0], stream);
-    //     return ;
-    // }
-    // RenderProbability = smoothstep(0.f, 0.4f, (Far - DistanceFromCamera) / (1000.f - Far));
-    // if (DistanceFromCamera <= 1000.f && random_val <= RenderProbability)
-    // {
-    //     Foliage_Billboard(input[0], stream);
-    //     return ;
-    // }
 }
 
 // RasterizerState : Cull_NONE
@@ -144,7 +130,6 @@ float3 CalculateNormal(float2 UV);
 float4 PSMain(GS_OUTPUT input) : SV_Target
 {
     const float ScaleFactor = 1.75f;
-    Folia
     float4 Color = FoliageTextures.Sample(LinearSampler, float3(input.TexCord, input.MapIndex));
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
     return float4(Color.rgb * LDotN * ScaleFactor, Color.a);

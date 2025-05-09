@@ -101,8 +101,8 @@ using namespace std;
 	#include "Model/ModelAnimation.h"
 
 	#include "Environment/Terrain.h"
-	#include "Environment/Terrain2.h"
-	#include "Environment/SkySphere.h"
+	#include "Environment/LandScape.h"
+#include "Environment/SkySphere.h"
 	#include "Environment/Foliage.h"
 	#include "Environment/Ocean/Ocean.h"
 

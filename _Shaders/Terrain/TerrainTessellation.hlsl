@@ -40,6 +40,7 @@ cbuffer CB_DirectionalLight : register(b2) // PS
 SamplerState LinearSampler_Border : register(s0); // VS DS PS
 SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
 Texture2D HeightMap : register(t0);        // VS DS PS
+Texture2D DiffuseMap : register(t1);
 
 struct VS_INPUT
 {
@@ -74,7 +75,7 @@ struct DS_OUTPUT // PS_INPUT
     float2 UV : UV;
     float3 Normal : NORMAL;
 
-    float4 Color : COLOR;
+    uint LOD : LOD;
 };
 
 float3 CalculateNormal(float2 UV);
@@ -84,7 +85,7 @@ VS_OUTPUT VSMain(VS_INPUT input)
 {
     VS_OUTPUT output;
     output.Position = input.Position.xyz;
-    output.UV = input.UV * 2;
+    output.UV = input.UV;
     output.Normal = input.Normal;
 
     float Height = HeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).r;
@@ -119,7 +120,7 @@ HS_CONSTANT_OUTPUT HSConstant
     float3 Diag1 = (Points[2] - Points[0]).xyz;
     float3 Diag2 = (Points[3] - Points[1]).xyz;
     float3 PatchNormal = normalize(cross(Diag1, Diag2));
-    [flatten] if (PatchNormal.z > 0.5f)
+    [flatten] if (PatchNormal.z > 0.75f)
     {
         [unroll]
         for (int i = 0; i < 4; ++i)
@@ -188,10 +189,6 @@ DS_OUTPUT DSMain
     float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
     output.UV = lerp(u1, u2, UV.y);
 
-    output.Color = lerp(float4(0.5f, 0, 0, 1), float4(0, 0, 1, 1), input.Inside[0] / 64);
-    [flatten]
-    if (input.Inside[0] > 63)
-        output.Color = float4(0,1,1,1); // MAX
 
     output.Normal = float3(0,1,0);
 
@@ -205,7 +202,7 @@ DS_OUTPUT DSMain
 
     output.Normal = mul(output.Normal, (float3x3)World);
 
-    output.Color.r = Height;
+    output.LOD = (uint)(lerp(0, 5, input.Inside[0] / MaxTessFactor));
 
     return output;
 }
@@ -213,13 +210,21 @@ DS_OUTPUT DSMain
 // PS
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
+
+    float3 BaseColor = DiffuseMap.SampleLevel(LinearSampler_Border, input.UV, 0).rgb;
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
-    // return lerp(float4(0.5, 1, 0.5, 1) * saturate(LDotN), input.Color, 0.5f);
-    // return float4(0.5, 1, 0.5, 1) * saturate(LDotN);
-    return float4(0.5, 0.75, 1, 0.5f) * saturate(LDotN);
-    // return float4(0.5, 0.75, 1, 0.5f);
-    // float Height = HeightMap.Sample(AnisotropicSampler_Wrap, input.UV).r * 255;
-    // return float4(0.5, 0.75, 1, 0.5f) * Height;
+
+    const float3 LightColor = float3(1, 1, 1);
+    const float Specular = 0.1f;
+    const float Ambient = 0.1f;
+    const float Diffuse = (1 - Specular);
+
+    float3 Color = 
+                   BaseColor * Ambient
+                 + LightColor * Specular
+                 + BaseColor * saturate(LDotN) * Diffuse
+                ;
+    return float4(Color, 1.f);
 }
 
 /*======================================================================================*/

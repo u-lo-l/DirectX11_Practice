@@ -10,8 +10,8 @@
 void Ocean::SetupShaders()
 {
 	vector<D3D_SHADER_MACRO> ShaderMacros = {
-		{"THREAD_X", "16"},
-		{"THREAD_Y", "16"},
+		{"THREAD_X", "32"},
+		{"THREAD_Y", "32"},
 		{nullptr, }
 	};
 	// Init Spectrum
@@ -19,21 +19,21 @@ void Ocean::SetupShaders()
 		L"Ocean/Compute/PhilipsSpectrum.Initialize.hlsl",
 		ShaderMacros.data()
 	);
-	CS_SpectrumInitializer->SetDispatchSize(Size / 16, Size / 16 , 1);
+	CS_SpectrumInitializer->SetDispatchSize(Size / 32, Size / 32 , 1);
 
 	// Update
 	CS_SpectrumUpdater = new HlslComputeShader(
 		L"Ocean/Compute/PhilipsSpectrum.Update.hlsl",
 		ShaderMacros.data()
 	);
-	CS_SpectrumUpdater->SetDispatchSize(Size / 16, Size / 16 , 1);
+	CS_SpectrumUpdater->SetDispatchSize(Size / 32, (Size / 2) / 32 , 1);
 
 	// Transpose
 	CS_Transpose = new HlslComputeShader(
 		L"Ocean/Compute/TransposeTexture.hlsl",
 		ShaderMacros.data()
 	);
-	CS_Transpose->SetDispatchSize(Size / 16, Size / 16 , 1);
+	CS_Transpose->SetDispatchSize(Size / 32, Size / 32 , 1);
 
 	// RowPass
 	ShaderMacros = {
@@ -68,7 +68,7 @@ void Ocean::SetupResources()
 {
 	PhillipsInitData.Width = static_cast<float>(Size);
 	PhillipsInitData.Height = static_cast<float>(Size);
-	PhillipsInitData.Wind = {20, 20};
+	PhillipsInitData.Wind = {-50, -30};
 
 	PhilipsUpdateData.Width = static_cast<float>(Size);
 	PhilipsUpdateData.Height = static_cast<float>(Size);
@@ -115,23 +115,24 @@ void Ocean::SetupResources()
 	);
 }
 
+// 배열의 중앙을 (0,0)이라 할 때 G(-k) = G*(k). 켤례 대칭을 만족하도록 수정.
 void Ocean::GenerateGaussianRandoms()
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 
 	std::default_random_engine Generator(std::random_device{}());
-	std::normal_distribution<float> Distribution(0.0, 1.0);
+	std::normal_distribution<float> Distribution_real(0.0f, 1.0f);
+	std::normal_distribution<float> Distribution_imag(0.0f, 1.0f);
 
 	std::vector<complex<float>> GaussianRandomArray(Size * Size);
 	for (int i = 0 ; i < Size * Size ; i++)
 	{
 		complex<float> & Element = GaussianRandomArray[i];
-		Element.real(Math::Clamp(Distribution(Generator), -3, 3)); 
-		Element.imag(Math::Clamp(Distribution(Generator), -3, 3)); 
+		Element.real(Math::Clamp(Distribution_real(Generator), -3, 3)); 
+		Element.imag(Math::Clamp(Distribution_imag(Generator), -3, 3)); 
 	}
-		
-	ID3D11Texture2D * GaussianRandomTexture = nullptr;
 
+	ID3D11Texture2D * GaussianRandomTexture = nullptr;
 	D3D11_TEXTURE2D_DESC GaussianTextureDesc {0, };
 	GaussianTextureDesc.Width = Size;
 	GaussianTextureDesc.Height = Size;

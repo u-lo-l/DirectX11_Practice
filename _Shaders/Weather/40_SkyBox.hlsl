@@ -18,14 +18,15 @@ struct VertexInput
 struct VertexOutput
 {
     float4 Position : SV_Position;
-    float3 oPosition : Position1;
+    // SkyBox(or SkySphere)의 Local Vertex Position
+    float3 LocalPosition : Position1;
 };
 
 VertexOutput VSMain(VertexInput input)
 {    
     VertexOutput output;
     
-    output.oPosition = input.Position.xyz;
+    output.LocalPosition = input.Position.xyz;
     
     output.Position = mul(input.Position, WorldTF);
     output.Position = mul(output.Position, View);
@@ -39,5 +40,5 @@ TextureCube CubeMap : register(Texture_PS_CubeMap);
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    return CubeMap.Sample(LinearSampler, input.oPosition);
+    return CubeMap.Sample(LinearSampler, input.LocalPosition);
 }

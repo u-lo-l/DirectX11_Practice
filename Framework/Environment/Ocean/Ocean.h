@@ -2,6 +2,20 @@
 
 class Ocean
 {
+public:
+	struct OceanDesc
+	{
+		UINT Dimension_X;
+		UINT Dimension_Z;
+		UINT PatchSize;
+		Vector2D WorldPosition;
+		float SeaLevel;
+		const Texture * SkyTexture;
+		const Texture * TerrainHeightMap;
+		Vector2D TerrainPosition;
+		Vector2D TerrainDimension;
+		float    TerrainMaxHeight;
+	};
 private:
 	using VertexType = VertexTextureNormal;
 	struct WVPDesc
@@ -9,6 +23,7 @@ private:
 		Matrix World;
 		Matrix View;
 		Matrix Projection;
+		Matrix ViewInverse;
 	};
 	struct PhillipsInitDesc
 	{
@@ -26,7 +41,7 @@ private:
 	struct TessellationDesc
 	{
 		Vector CameraPosition;
-		float HeightScaler = 10.f;
+		float HeightScaler = 100.f;
 		
 		Vector2D LODRange;
 		Vector2D TexelSize;
@@ -34,23 +49,27 @@ private:
 		float ScreenDistance;
 		float ScreenDiagonal;
 		float Padding[2];
-	};
-	struct LightDirectionDesc
-	{
-		Vector Direction;
-		float Padding;
+		
+		Vector LightDirection;
+		float TerrainMaxHeight = 100;
+
+		Vector2D TerrainPosition;
+		Vector2D TerrainDimension;
 	};
 	UINT Size = 512;
+	UINT Dimension[2];
 	Vector2D LODRange;
 public:
-
-	Ocean(UINT InPatchSize = 4);
+	explicit Ocean(const OceanDesc & Desc);
+	explicit Ocean(UINT Width = 512, UINT Height = 512, UINT InPatchSize= 32);
 	~Ocean();
 
 	void Tick();
 	void Render();
 	void SaveHeightMap();
 
+	void SetWorldPosition(const Vector & Position) const { Tf->SetWorldPosition(Position); }
+	void SetWorldRotation(const Vector & RotationInDeg) const { Tf->SetWorldRotation(RotationInDeg * Math::DegToRadian); }
 private:
 
 #pragma region Compute
@@ -100,10 +119,11 @@ private:
 	// Resources
 	WVPDesc WVP;
 	TessellationDesc TessellationData;
-	LightDirectionDesc LightDirectionData;
 	ConstantBuffer * CB_WVP = nullptr;
 	ConstantBuffer * CB_Tessellation= nullptr;
-	ConstantBuffer * CB_LightDirection= nullptr;
+
+	const Texture * SkyTexture = nullptr;
+	const Texture * TerrainHeightMap = nullptr;
 
 	// Shader
 	HlslShader<VertexType> * Shader;

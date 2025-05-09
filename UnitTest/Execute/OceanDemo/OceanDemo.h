@@ -16,5 +16,8 @@ namespace sdt
 
 	private:
 		Ocean * Sea = nullptr;
+		SkySphere * Sky = nullptr;
+		LandScape * Terrain = nullptr;
+		Foliage * Grasses = nullptr;
 	};
 }

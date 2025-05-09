@@ -13,7 +13,7 @@ namespace sdt
 		void Tick() override;
 		void Render() override;
 	private:
-		Terrain2 * Terrain = nullptr;
+		LandScape * Terrain = nullptr;
 		Foliage * Grasses = nullptr;
 	};
 }

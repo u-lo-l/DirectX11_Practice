@@ -51,7 +51,6 @@ void CSMain(CSInput Input)
 	uint2 UV_Input  = uint2(Row, ReversedIndex1);
 	uint2 UV_Output = uint2(Row, GTid);
 	SharedData[GTid] = InputSpectrum[UV_Input];
-	GroupMemoryBarrierWithGroupSync();
 
 	UV_Input  = uint2(Row, ReversedIndex2);
 	UV_Output = uint2(Row, GTid + THREAD_GROUP_COUNT);
@@ -74,8 +73,9 @@ void CSMain(CSInput Input)
 		// 매번 cos, sin 계산하는 대신 CPU에서 미리 계산해서
 		// Structured Buffer나 Constant Buffer로 넘겨줄 수 있음.
 		Complex Twiddle;
-		Twiddle.x = cos(Angle * (float)k);
-		Twiddle.y = sin(Angle * (float)k);
+		Angle = (Angle * float(k)) % (2 * PI);
+		Twiddle.x = cos(Angle);
+		Twiddle.y = sin(Angle);
 		// const uint TwiddleIndex = (1 << (s - 1)) - 1 + k;
 		// Complex Twiddle = TwiddleFactor[TwiddleIndex];
 
@@ -92,11 +92,16 @@ void CSMain(CSInput Input)
 	OutputSpectrum[uint2(Row, GTid + THREAD_GROUP_COUNT)] = SharedData[GTid + THREAD_GROUP_COUNT];
 	#elif defined (COLPASS)
 	
+	// Flip the sign of odd indices
+	float perms[] = {1.0,-1.0};
+	int   index = (GTid + Row) % 2;
+	float perm = perms[index];
+
 	float Height = (SharedData[GTid].x) / (FFT_SIZE * FFT_SIZE);
-	HeightMap[uint2(Row, GTid)] = abs(Height);
+	HeightMap[uint2(Row, GTid)] = Height * perm;
 
 	Height = (SharedData[GTid + THREAD_GROUP_COUNT].x) / (FFT_SIZE * FFT_SIZE);
-	HeightMap[uint2(Row, GTid + THREAD_GROUP_COUNT)] = abs(Height);
+	HeightMap[uint2(Row, GTid + THREAD_GROUP_COUNT)] = Height * perm;
 	
 	#else
 	#error "ROW or COL Not Defined"

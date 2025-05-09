@@ -170,7 +170,7 @@
     </ClCompile>
     <ClCompile Include="Environment\TerrainQuadTree.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
-    <ClCompile Include="Environment\Terrain2.cpp" />
+    <ClCompile Include="Environment\LandScape.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />
     <ClCompile Include="Math\Box.cpp" />
@@ -781,7 +781,7 @@
     <ClInclude Include="Environment\Ocean\Ocean.h" />
     <ClInclude Include="Environment\TerrainQuadTree.h" />
     <ClInclude Include="Environment\SkySphere.h" />
-    <ClInclude Include="Environment\Terrain2.h" />
+    <ClInclude Include="Environment\LandScape.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Environment\Weather\WeatherStructure.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />

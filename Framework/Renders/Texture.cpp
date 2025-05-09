@@ -46,6 +46,7 @@ Texture::Texture(ID3D11Texture2D * InTexture, const D3D11_TEXTURE2D_DESC& Desc)
 		&srvDesc,
 		&this->SRV
 	);
+	CHECK(SUCCEEDED(Hr));
 
 	TexMeta.width = Desc.Width;
 	TexMeta.height = Desc.Height;
@@ -53,8 +54,17 @@ Texture::Texture(ID3D11Texture2D * InTexture, const D3D11_TEXTURE2D_DESC& Desc)
 	TexMeta.mipLevels = 1;
 	TexMeta.arraySize = 1;
 	TexMeta.format = Desc.Format;
+}
 
-	CHECK(SUCCEEDED(Hr));
+Texture::Texture(ID3D11ShaderResourceView * InSRV, const D3D11_TEXTURE2D_DESC & Desc)
+{
+	this->SRV = InSRV;
+	TexMeta.width = Desc.Width;
+	TexMeta.height = Desc.Height;
+	TexMeta.depth = 1;
+	TexMeta.mipLevels = Desc.MipLevels;
+	TexMeta.arraySize = Desc.ArraySize;
+	TexMeta.format = Desc.Format;
 }
 
 Texture::~Texture()

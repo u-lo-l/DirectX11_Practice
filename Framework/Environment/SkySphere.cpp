@@ -4,49 +4,50 @@
 SkySphere::SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount)
 	: Radius(InRadius), SliceCount(InSliceCount)
 {
-	SkyShader = new ShaderType(L"Weather/40_SkyBox.hlsl");
+	SkyShader = new HlslShader<VertexType>(L"Weather/40_SkyBox.hlsl");
 	CHECK(SkyShader->CreateSamplerState_Linear() >= 0);	
 	CHECK(SkyShader->CreateRasterizerState_Solid_CW() >= 0);
 	CHECK(SkyShader->CreateDepthStencilState_NoDepth() >= 0);
-	World = new Transform();
+	CameraTF = new Transform();
 
 	CreateVertexBuffer();
 	CreateIndexBuffer();
 
 	InFilePath = W_TEXTURE_PATH + InFilePath;
-
-	CHECK(Helper::CreateShaderResourceViewFromFile(D3D::Get()->GetDevice(), InFilePath, &SkyBoxSRV) >= 0);
+	
+	// CHECK(Helper::CreateShaderResourceViewFromFile(D3D::Get()->GetDevice(), InFilePath, &SkySRV) >= 0);
+	SkyTexture = new Texture(InFilePath, true);
 }
 
 SkySphere::~SkySphere()
 {
-	SAFE_RELEASE(SkyBoxSRV);
 
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
 
-	SAFE_DELETE(World);
+	SAFE_DELETE(CameraTF);
 
 	SAFE_DELETE(SkyShader);
+	SAFE_DELETE(SkyTexture);
 }
 
 void SkySphere::Tick()
 {
 	Vector position = Context::Get()->GetCamera()->GetPosition();
-	World->SetWorldPosition(position);
-	World->Tick();
+	CameraTF->SetWorldPosition(position);
+	CameraTF->Tick();
 }
 
 void SkySphere::Render()
 {
 	ID3D11DeviceContext * Context = D3D::Get()->GetDeviceContext();
-	World->BindToGPU();
+	CameraTF->BindToGPU();
 	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
 
-	Context->PSSetShaderResources(PS_SkyBox, 1, &SkyBoxSRV);
-	
+	// Context->PSSetShaderResources(PS_SkyBox, 1, &SkySRV);
+	SkyTexture->BindToGPU(PS_SkyBox, (UINT)(::ShaderType::PixelShader));
 	Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	SkyShader->DrawIndexed(IndexCount);
 }

@@ -4,13 +4,15 @@
 class SkySphere
 {
 	using VertexType = Vertex;
-	using ShaderType = HlslShader<VertexType>;
 public:
 	SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount = 20);
 	~SkySphere();
 
 	void Tick();
 	void Render();
+	// ID3D11ShaderResourceView * GetSRV() const { return SkyTexture->GetSRV(); }
+	const Texture * GetTexture() const { return SkyTexture; }
+
 private:
 	/*
 	 * Create Sphere VertexBuffer
@@ -19,9 +21,9 @@ private:
 	void CreateIndexBuffer();
 
 private:
-	ShaderType * SkyShader;
+	HlslShader<VertexType> * SkyShader;
 	
-	Transform * World;
+	Transform * CameraTF;
 
 	VertexBuffer * VBuffer;
 	UINT VertexCount;
@@ -32,5 +34,6 @@ private:
 	float Radius;
 	UINT SliceCount;
 private:
-	ID3D11ShaderResourceView * SkyBoxSRV;
+	Texture * SkyTexture;
+	// ID3D11ShaderResourceView * SkySRV;
 };
