@@ -150,7 +150,7 @@ void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D
 	);
 	Shader->CreateRasterizerState_Solid();
 	// Shader->CreateRasterizerState_WireFrame();
-	Shader->CreateSamplerState_Linear();
+	Shader->CreateSamplerState_Linear_Clamp();
 	Shader->CreateSamplerState_Anisotropic();
 	Shader->CreateBlendState_NoBlend();
 

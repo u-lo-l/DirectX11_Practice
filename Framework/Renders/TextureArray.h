@@ -8,7 +8,7 @@ public:
 	void BindToGPU(UINT SlotNum = 0) const;
 
 private:
-	vector<ID3D11Texture2D*> CreateTexture(const vector<wstring>& InNames, UINT InWidth, UINT InHeight, UINT InMipLevels);
+	static vector<ID3D11Texture2D*> CreateTextures(const vector<wstring>& InNames, UINT InWidth, UINT InHeight, UINT InMipLevels);
 
 private:
 	ID3D11ShaderResourceView* SRV;

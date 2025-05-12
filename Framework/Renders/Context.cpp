@@ -33,8 +33,9 @@ void Context::Tick()
 	if (!!ShadowMap)
 		ShadowMap->Tick();
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
+	// ImGui::ColorPicker4("LightColor", LightColor);
+	ImGui::ColorEdit4("LightColor", LightColor);
 }
-
 /**
  *	@brief :
  *	1. Displays information such as FPS and Camera transform using GUI.
@@ -72,6 +73,11 @@ const Vector & Context::GetLightDirection() const
 GlobalViewProjectionCBuffer * Context::GetViewProjectionCBuffer() const
 {
 	return VP_CBuffer_VS;
+}
+
+const Color& Context::GetLightColor() const
+{
+	return LightColor;
 }
 
 Context::Context()

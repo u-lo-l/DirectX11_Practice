@@ -9,7 +9,7 @@ Hlsl2DTextureShader::Hlsl2DTextureShader(ID3D11ShaderResourceView * InSRV, const
 	
 	Shader = new HlslShader<VertexType>(InName.c_str());
 	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid_NoCull()));
-	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear()));
+	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear_Clamp()));
 	CHECK(SUCCEEDED(Shader->CreateDepthStencilState_NoDepth()));
 
 	World = new Transform();

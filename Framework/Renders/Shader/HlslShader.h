@@ -77,10 +77,11 @@ public:
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 
 	// Sampler
-	HRESULT CreateSamplerState_Linear(UINT InTargetShader = (UINT)ShaderType::PixelShader);
+	HRESULT CreateSamplerState_Linear_Clamp(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState_Linear_Border(UINT InTargetShade);
 	HRESULT CreateSamplerState_Anisotropic(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState_Anisotropic_Clamp(UINT InTargetShade);
+	HRESULT CreateSamplerState_Anisotropic_Wrap(UINT InTargetShade);
 	HRESULT CreateSamplerState_ShadowSampler(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState(
 		const D3D11_SAMPLER_DESC * SampDesc,

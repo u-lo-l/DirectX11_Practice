@@ -11,17 +11,17 @@ namespace sdt
 		// Terrain = new Terrain2(L"Terrain/Gray512.png", 64);
 		// Terrain = new Terrain2(L"Terrain/Gray512.png", 64);
 		// Terrain = new LandScape(L"Terrain/GrandMountain/Height Map PNG.png", 32);
-		const LandScape::LandScapeDesc LandscapeDesc
-		{
-			L"Terrain/GrandMountain/Height Map TIF.tif",
-			L"Terrain/GrandMountain/Diffuse Map PNG.png",
-			L"",
-			L""
-			// L"Terrain/GrandMountain/Bump Map PNG.png",
-			// L"Terrain/GrandMountain/Normal Map PNG.png",
-		};
-		Terrain = new LandScape(LandscapeDesc, 32);
-		Terrain->SetHeightScale(1000);
+		// const LandScape::LandScapeDesc LandscapeDesc
+		// {
+		// 	L"Terrain/GrandMountain/Height Map TIF.tif",
+		// 	L"Terrain/GrandMountain/Bump Map TIF.tif",
+		// 	{},
+		// 	{}
+		// 	// L"Terrain/GrandMountain/Bump Map PNG.png",
+		// 	// L"Terrain/GrandMountain/Normal Map PNG.png",
+		// };
+		// Terrain = new LandScape(LandscapeDesc, 32);
+		// Terrain->SetHeightScale(1000);
 
 		// TODO : QuadTree로 공간 관리. Foliage
 		// Grasses = new Foliage(Terrain, SeaLevel + 2.f);

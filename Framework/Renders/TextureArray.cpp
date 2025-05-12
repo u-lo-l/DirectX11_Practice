@@ -15,10 +15,10 @@ TextureArray::TextureArray
 	for (const wstring & Name : InNames)
 		TempTextureNames.emplace_back(W_TEXTURE_PATH + Name);
 
-	vector<ID3D11Texture2D*> TempTextures = CreateTexture(TempTextureNames, InWidth, InHeight, InMipLevels);
+	vector<ID3D11Texture2D*> TempTextures = CreateTextures(TempTextureNames, InWidth, InHeight, InMipLevels);
 	
 	D3D11_TEXTURE2D_DESC TextureDesc;
-	TempTextures[0]->GetDesc(&TextureDesc); // 왜 0번째 Texture만?
+	TempTextures[0]->GetDesc(&TextureDesc); // 왜 0번째 Texture만? TextureArray에 들어가려면 포맷이 같아야 한다.
 	const UINT ArraySize = TempTextureNames.size();
 	TextureDesc.ArraySize = ArraySize;
 	TextureDesc.SampleDesc.Count = 1;
@@ -27,12 +27,15 @@ TextureArray::TextureArray
 	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
+	TextureDesc.MipLevels = InMipLevels;
 	
-	ID3D11Texture2D* Texture2DArray;
-	CHECK(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, nullptr, &Texture2DArray) >= 0);
+	ID3D11Texture2D * Texture2DArray;
+	CHECK(SUCCEEDED(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, nullptr, &Texture2DArray)));
 
 	for (UINT i = 0; i < TempTextures.size(); i++)
 	{
+
+		
 		for (UINT level = 0; level < TextureDesc.MipLevels; level++)
 		{
 			D3D11_MAPPED_SUBRESOURCE subResource;
@@ -50,7 +53,7 @@ TextureArray::TextureArray
 	ZeroMemory(&SRVDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 	SRVDesc.Format = TextureDesc.Format;
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	SRVDesc.Texture2DArray.MipLevels = TextureDesc.MipLevels;
+	SRVDesc.Texture2DArray.MipLevels = -1;
 	SRVDesc.Texture2DArray.ArraySize = ArraySize;
 	CHECK(D3D::Get()->GetDevice()->CreateShaderResourceView(Texture2DArray, &SRVDesc, &SRV) >= 0);
 
@@ -71,12 +74,12 @@ void TextureArray::BindToGPU(UINT SlotNum) const
 }
 
 // TODO : 깔끔하게 정리좀 하자.
-vector<ID3D11Texture2D*> TextureArray::CreateTexture
+vector<ID3D11Texture2D*> TextureArray::CreateTextures
 (
 	const vector<wstring>& InNames,
-	UINT InWidth,
-	UINT InHeight,
-	UINT InMipLevels
+	const UINT InWidth,
+	const UINT InHeight,
+	const UINT InMipLevels
 )
 {
 	vector<ID3D11Texture2D*> returnTextures;
@@ -87,16 +90,17 @@ vector<ID3D11Texture2D*> TextureArray::CreateTexture
 		HRESULT hr;
 
 		DirectX::TexMetadata metaData;
+		DirectX::ScratchImage image;
 		wstring ext = Path::GetExtension(InNames[i]);
 		if (ext == L"tga")
 		{
-			hr = GetMetadataFromTGAFile(InNames[i].c_str(), metaData);
-			CHECK(hr >= 0);
+			CHECK(SUCCEEDED(GetMetadataFromTGAFile(InNames[i].c_str(), metaData)));
+			CHECK(SUCCEEDED(LoadFromTGAFile(InNames[i].c_str(), &metaData, image)));
 		}
 		else if (ext == L"dds")
 		{
-			hr = GetMetadataFromDDSFile(InNames[i].c_str(), DirectX::DDS_FLAGS_NONE, metaData);
-			CHECK(hr >= 0);
+			CHECK(SUCCEEDED(GetMetadataFromDDSFile(InNames[i].c_str(), DirectX::DDS_FLAGS_NONE, metaData)));
+			CHECK(SUCCEEDED(LoadFromDDSFile(InNames[i].c_str(), DirectX::DDS_FLAGS_NONE, &metaData, image)));
 		}
 		else if (ext == L"hdr")
 		{
@@ -104,77 +108,64 @@ vector<ID3D11Texture2D*> TextureArray::CreateTexture
 		}
 		else
 		{
-			hr = GetMetadataFromWICFile(InNames[i].c_str(), DirectX::WIC_FLAGS_NONE, metaData);
-			CHECK(hr >= 0);
+			CHECK(SUCCEEDED(GetMetadataFromWICFile(InNames[i].c_str(), DirectX::WIC_FLAGS_NONE, metaData)));
+			CHECK(SUCCEEDED(LoadFromWICFile(InNames[i].c_str(), DirectX::WIC_FLAGS_NONE, &metaData, image)));
 		}
 
+		DirectX::ScratchImage ResizedImage;
+		CHECK(SUCCEEDED(Resize(
+			image.GetImages(),
+			image.GetImageCount(),
+			image.GetMetadata(),
+			InWidth,
+			InHeight,
+			DirectX::TEX_FILTER_DEFAULT,
+			ResizedImage
+		)));
 
-		DirectX::ScratchImage image;
-		if (ext == L"tga")
-		{
-			hr = LoadFromTGAFile(InNames[i].c_str(), &metaData, image);
-			CHECK(hr >= 0);
-		}
-		else if (ext == L"dds")
-		{
-			hr = LoadFromDDSFile(InNames[i].c_str(), DirectX::DDS_FLAGS_NONE, &metaData, image);
-			CHECK(hr >= 0);
-		}
-		else if (ext == L"hdr")
-		{
-			assert(false);
-		}
-		else
-		{
-			hr = LoadFromWICFile(InNames[i].c_str(), DirectX::WIC_FLAGS_NONE, &metaData, image);
-			CHECK(hr >= 0);
-		}
-
-
-		DirectX::ScratchImage resizedImage;
-		hr = Resize(image.GetImages(), image.GetImageCount(), image.GetMetadata(), InWidth, InHeight, DirectX::TEX_FILTER_DEFAULT, resizedImage);
-		CHECK(hr >= 0);
-
-
+		DirectX::ScratchImage MipmappedImage;
 		if (InMipLevels > 1)
 		{
-			DirectX::ScratchImage mipmapedImage;
-			hr = DirectX::GenerateMipMaps(resizedImage.GetImages(), resizedImage.GetImageCount(), resizedImage.GetMetadata(), DirectX::TEX_FILTER_POINT, InMipLevels, mipmapedImage);
-			CHECK(hr >= 0);
+			CHECK(SUCCEEDED(DirectX::GenerateMipMaps(
+				ResizedImage.GetImages(),
+				ResizedImage.GetImageCount(),
+				ResizedImage.GetMetadata(),
+				DirectX::TEX_FILTER_POINT,
+				InMipLevels,
+				MipmappedImage
+			)));
+		}
 
-			hr = DirectX::CreateTextureEx
-			(
-				D3D::Get()->GetDevice()
-				, mipmapedImage.GetImages()
-				, mipmapedImage.GetImageCount()
-				, mipmapedImage.GetMetadata()
-				, D3D11_USAGE_STAGING
-				, 0
-				, D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE
-				, 0
-				, false
-				, (ID3D11Resource**)&returnTextures[i]
-			);
-			CHECK(hr >= 0);
-		}
-		else
+		constexpr DXGI_FORMAT TargetFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		DirectX::ScratchImage * OriginalImage =  (InMipLevels > 1) ? &MipmappedImage : &ResizedImage;
+		DirectX::ScratchImage ConvertedImage;
+		if (OriginalImage->GetMetadata().format != TargetFormat)
 		{
-			hr = DirectX::CreateTextureEx
-			(
-				D3D::Get()->GetDevice()
-				, resizedImage.GetImages()
-				, resizedImage.GetImageCount()
-				, resizedImage.GetMetadata()
-				, D3D11_USAGE_STAGING
-				, 0
-				, D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE
-				, 0
-				, false
-				, (ID3D11Resource**)&returnTextures[i]
-			);
-			CHECK(hr >= 0);
+			CHECK(SUCCEEDED(DirectX::Convert(
+				OriginalImage->GetImages(),
+				OriginalImage->GetImageCount(),
+				OriginalImage->GetMetadata(),
+				TargetFormat,
+				DirectX::TEX_FILTER_DEFAULT,
+				0,
+				ConvertedImage
+			)));
 		}
-	}//for(i)
+		DirectX::ScratchImage * FinalImage = OriginalImage->GetMetadata().format != TargetFormat ? &ConvertedImage : OriginalImage;
+		CHECK(SUCCEEDED(DirectX::CreateTextureEx(
+			D3D::Get()->GetDevice(),
+			FinalImage->GetImages(),
+			FinalImage->GetImageCount(),
+			FinalImage->GetMetadata(),
+			D3D11_USAGE_STAGING,
+			0,
+			D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
+			0,
+			false,
+			reinterpret_cast<ID3D11Resource**>(&returnTextures[i])
+		)));
+	}
 
 	return returnTextures;
 }

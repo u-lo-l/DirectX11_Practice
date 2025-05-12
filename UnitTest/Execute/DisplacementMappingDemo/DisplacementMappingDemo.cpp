@@ -16,7 +16,7 @@ namespace sdt
 		DisplacementMappingShader->CreateBlendState_Opaque();
 		DisplacementMappingShader->CreateRasterizerState_WireFrame_NoCull();
 		DisplacementMappingShader->CreateDepthStencilState_Default();
-		DisplacementMappingShader->CreateSamplerState_Linear();
+		DisplacementMappingShader->CreateSamplerState_Linear_Clamp();
 		
 		HeightMap = new Texture(L"DisplacementTest.png", true);
 		float scaler = 2;

@@ -5,7 +5,7 @@ SkySphere::SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount)
 	: Radius(InRadius), SliceCount(InSliceCount)
 {
 	SkyShader = new HlslShader<VertexType>(L"Weather/40_SkyBox.hlsl");
-	CHECK(SkyShader->CreateSamplerState_Linear() >= 0);	
+	CHECK(SkyShader->CreateSamplerState_Linear_Clamp() >= 0);	
 	CHECK(SkyShader->CreateRasterizerState_Solid_CW() >= 0);
 	CHECK(SkyShader->CreateDepthStencilState_NoDepth() >= 0);
 	CameraTF = new Transform();

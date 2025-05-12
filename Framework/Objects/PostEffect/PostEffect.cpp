@@ -7,7 +7,7 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 	const wstring ShaderPath = wstring(W_SHADER_PATH) + L"PostEffect/PostEffect.hlsl";
 	Shader = new HlslShader<VertexType>(ShaderPath);
 	Shader->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear()));
+	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear_Clamp()));
 	CHECK(SUCCEEDED(Shader->CreateSamplerState_Anisotropic()));
 
 	vector<VertexType> Vertices(6);
@@ -51,19 +51,19 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 	UINT ShaderTarget = (UINT)ShaderType::VertexShader | (UINT)ShaderType::PixelShader;
 	Bloom_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_Bloom_Separate");
 	Bloom_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(Bloom_Shader[0]->CreateSamplerState_Linear()));
+	CHECK(SUCCEEDED(Bloom_Shader[0]->CreateSamplerState_Linear_Clamp()));
 
 	Bloom_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_Bloom_Combine");
 	Bloom_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(Bloom_Shader[1]->CreateSamplerState_Linear()));
+	CHECK(SUCCEEDED(Bloom_Shader[1]->CreateSamplerState_Linear_Clamp()));
 
 	GaussianBlur_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_GaussianBlur_X");
 	GaussianBlur_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(GaussianBlur_Shader[0]->CreateSamplerState_Linear()));
+	CHECK(SUCCEEDED(GaussianBlur_Shader[0]->CreateSamplerState_Linear_Clamp()));
 
 	GaussianBlur_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_GaussianBlur_Y");
 	GaussianBlur_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(GaussianBlur_Shader[1]->CreateSamplerState_Linear()));
+	CHECK(SUCCEEDED(GaussianBlur_Shader[1]->CreateSamplerState_Linear_Clamp()));
 }
 
 PostEffect::~PostEffect()

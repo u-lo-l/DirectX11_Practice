@@ -11,7 +11,7 @@ Precipitation::Precipitation(const Vector& InExtent, UINT InDrawCount, const wst
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::GeometryShader);
 	WeatherShader = new ShaderType(ShaderName, ShaderTypeFlag);
 	WeatherShader->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	CHECK(WeatherShader->CreateSamplerState_Linear() >= 0);
+	CHECK(WeatherShader->CreateSamplerState_Linear_Clamp() >= 0);
 	CHECK(WeatherShader->CreateRasterizerState_Solid_NoCull() >= 0);
 	CHECK(WeatherShader->CreateBlendState_AlphaBlendCoverage() >= 0);
 

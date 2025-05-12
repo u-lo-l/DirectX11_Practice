@@ -13,10 +13,12 @@ class LandScape
 public:
 	struct LandScapeDesc
 	{
+		float   HeightScaler;
+		UINT    PatchSize;
 		wstring HeightMapName;
-		wstring DiffuseMapName;
 		wstring BumpMapName;
-		wstring NormalMapName;
+		vector<wstring> DiffuseMapNames;
+		vector<wstring> NormalMapNames;
 	};
 private:
 	friend class TerrainQuadTree;
@@ -29,24 +31,50 @@ private:
 	};
 	struct TerrainTessDesc
 	{
-		Vector CameraPosition;
+		Vector CameraWorldPosition;
 		float HeightScaler = 100.f;
+		
+		Color LightColor;
+		
+		Vector LightDirection;
+		float BumpScaler = 0.1f;
 		
 		Vector2D LODRange;
 		Vector2D TexelSize;
 		
-		float ScreenDistance;
-		float ScreenDiagonal;
-		float Padding[2];
-	};
-	struct LightDirectionDesc
-	{
-		Vector Direction;
+		float  ScreenDistance;
+		float  ScreenDiagonal;
+		UINT   DiffuseMapCount = 0;
+		UINT   NormalMapCount  = 0;
+
+		float TerrainSize;
+		float GridSize;
+		float TextureSize;
 		float Padding;
+	};
+	struct TextureBlendingDesc
+	{
+		// Distance Based
+		float NearSize = 1.f;
+		float FarSize = 0.1f;
+		float StartOffset = -1000.f;
+		float Range = 5000.f;
+		// Perlin Noise
+		float NoiseAmount = 1.f;
+		float NoisePower  = 1.f;
+		// Slope Based
+		float SlopBias = 45;
+		float SlopSharpness = 3;
+		// Altitude Base
+		float LowHeight = 10;
+		float HighHeight = 100;
+		float HeightSharpness = 1;
+		// Padding
+		UINT bUseMacroVariation = 0;
 	};
 	Vector2D LODRange;
 public:
-	explicit LandScape(const LandScapeDesc & Desc, UINT PatchSize = 16);
+	explicit LandScape(const LandScapeDesc & Desc);
 	explicit LandScape(const wstring & InHeightMapFilename, UINT PatchSize = 16);
 	~LandScape();
 
@@ -61,30 +89,36 @@ public:
 	float GetHeightScale() const;
 	void SetHeightScale(float InHeightScale);
 private:
+	void SetupShaders();
+	void SetupResources(const LandScapeDesc& Desc);
 	void CreateVertex();
 	void CreateIndex();
-
+	void CreatePerlinNoiseMap();
+	
 	UINT PatchSize = 4;
 	vector<VertexType> Vertices;
 	vector<UINT> Indices;
 	WVPDesc WVP;
 	TerrainTessDesc TerrainTessData;
-	LightDirectionDesc LightDirectionData;
+	TextureBlendingDesc TextureBlendingData;
 	
 	HlslShader<VertexType> * Shader;
-
+	
 	Texture * HeightMap = nullptr;
-	Texture * DiffuseMap = nullptr;
 	Texture * BumpMap = nullptr;
-	Texture * NormalMap = nullptr;
+	// RWTexture2D * PerlinNoiseMap = nullptr;
+	Texture * PerlinNoiseMap = nullptr;
+	Texture * VariationMap = nullptr;
+	TextureArray * DetailDiffuseMaps = nullptr;
+	TextureArray * DetailNormalMaps = nullptr;
 	
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
 
 	Transform * Tf;
-	ConstantBuffer * WVPCBuffer = nullptr;
-	ConstantBuffer * HeightScalerCBuffer= nullptr;
-	ConstantBuffer * LightDirectionCBuffer= nullptr;
+	ConstantBuffer * CB_WVP = nullptr;
+	ConstantBuffer * CB_TerrainData = nullptr;
+	ConstantBuffer * CB_TextureBlending = nullptr;
 };
 
 

@@ -23,6 +23,7 @@ public:
 
 	Camera * GetCamera() const;// {return MainCamera;}
 	const Vector & GetLightDirection() const;// {return LightDirection;}
+	const Color & GetLightColor() const;
 	GlobalViewProjectionCBuffer * GetViewProjectionCBuffer() const;// { return VP_CBuffer_VS; }
 
 private:
@@ -43,6 +44,6 @@ private:
 	// Matrix Projection;
 	Perspective * Projection;
 	Vector LightDirection = {1, -1, 1};
-
+	Color LightColor = {1,1,1,1};
 	Shadow * ShadowMap = nullptr;
 };
