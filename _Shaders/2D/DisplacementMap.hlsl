@@ -1,5 +1,5 @@
-#ifndef __HEIGHT_MAP_HLSL__
-#define __HEIGHT_MAP_HLSL__
+#ifndef __DISPLACEMENTMAP_HLSL__
+#define __DISPLACEMENTMAP_HLSL__
 
 cbuffer CB_World : register(b0)
 {
@@ -12,7 +12,7 @@ cbuffer CB_Render2D : register(b1)
     matrix Projection2D;
 };
 
-Texture2D<float> Texture : register (t0);
+Texture2D<float4> Texture : register (t0);
 SamplerState LinearSampler : register(s0);
 
 struct VertexInput
@@ -40,9 +40,9 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float mean = Texture.Sample(LinearSampler, input.Uv);
-    mean *= 256;
-    return float4(mean * 0.75f, mean * 0.75f, mean, 1);
+    float3 Color = (Texture.Sample(LinearSampler, input.Uv).rgb + float3(1,1,1)) * 0.5f;
+    Color = pow(Color * 1.5f, 5);
+    return float4(Color, 1);
 }
 
 #endif

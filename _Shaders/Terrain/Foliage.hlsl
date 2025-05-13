@@ -17,10 +17,11 @@ cbuffer CB_WVP : register(b0)  // VS GS
 
 cbuffer CB_Terrain : register(b1) // VS PS
 {
-    float3  LightDirection;
-    float   HeightScaler;
-    float2  TerrainMapSize;
-    float2  TexelSize;
+    float4 LightColor;
+    float3 LightDirection;
+    float  HeightScaler;
+    float2 TerrainMapSize;
+    float2 TexelSize;
 };
 
 cbuffer CB_DensityDistance : register(b2) // GS
@@ -129,10 +130,20 @@ void GSMain(point VS_OUTPUT input[1], inout TriangleStream<GS_OUTPUT> stream)
 float3 CalculateNormal(float2 UV);
 float4 PSMain(GS_OUTPUT input) : SV_Target
 {
-    const float ScaleFactor = 1.75f;
-    float4 Color = FoliageTextures.Sample(LinearSampler, float3(input.TexCord, input.MapIndex));
+    const float Specular = 0.1f;
+    const float Ambient = 0.2f;
+    const float Diffuse = (1 - Specular);
+    
+    float4 FoliageColor = FoliageTextures.Sample(LinearSampler, float3(input.TexCord, input.MapIndex));
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
-    return float4(Color.rgb * LDotN * ScaleFactor, Color.a);
+
+    float3 Color = FoliageColor.rgb * Ambient
+                 + Specular * (LightColor).rgb
+                 + FoliageColor.rgb * saturate(LDotN) * Diffuse * (LightColor).rgb
+                ;
+
+    const float ScaleFactor = 1.f;
+    return float4(Color * ScaleFactor, FoliageColor.a);
 }
 
 

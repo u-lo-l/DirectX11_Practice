@@ -33,7 +33,7 @@ void Context::Tick()
 	if (!!ShadowMap)
 		ShadowMap->Tick();
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
-	// ImGui::ColorPicker4("LightColor", LightColor);
+	LightDirection.Y = -abs(LightDirection.Y);
 	ImGui::ColorEdit4("LightColor", LightColor);
 }
 /**

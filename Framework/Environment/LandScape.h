@@ -13,10 +13,11 @@ class LandScape
 public:
 	struct LandScapeDesc
 	{
+		UINT	TerrainDim_X;
+		UINT	TerrainDim_Z;
 		float   HeightScaler;
 		UINT    PatchSize;
 		wstring HeightMapName;
-		wstring BumpMapName;
 		vector<wstring> DiffuseMapNames;
 		vector<wstring> NormalMapNames;
 	};
@@ -37,7 +38,7 @@ private:
 		Color LightColor;
 		
 		Vector LightDirection;
-		float BumpScaler = 0.1f;
+		float BumpScaler = 0.001f;
 		
 		Vector2D LODRange;
 		Vector2D TexelSize;
@@ -63,14 +64,14 @@ private:
 		float NoiseAmount = 1.f;
 		float NoisePower  = 1.f;
 		// Slope Based
-		float SlopBias = 45;
+		float SlopBias = 60;
 		float SlopSharpness = 3;
 		// Altitude Base
-		float LowHeight = 10;
-		float HighHeight = 100;
+		float LowHeight = 5;
+		float HighHeight = 15;
 		float HeightSharpness = 1;
 		// Padding
-		UINT bUseMacroVariation = 0;
+		UINT Padding = 0;
 	};
 	Vector2D LODRange;
 public:
@@ -96,6 +97,7 @@ private:
 	void CreatePerlinNoiseMap();
 	
 	UINT PatchSize = 4;
+	UINT TerrainDimension[2] = {1024, 1024};
 	vector<VertexType> Vertices;
 	vector<UINT> Indices;
 	WVPDesc WVP;
@@ -105,7 +107,6 @@ private:
 	HlslShader<VertexType> * Shader;
 	
 	Texture * HeightMap = nullptr;
-	Texture * BumpMap = nullptr;
 	// RWTexture2D * PerlinNoiseMap = nullptr;
 	Texture * PerlinNoiseMap = nullptr;
 	Texture * VariationMap = nullptr;

@@ -1,7 +1,6 @@
 #ifndef __IFFT2D_HLSL__
 #define __IFFT2D_HLSL__
 # include "../../ComputeShader/Math.hlsl"
-# include "IFFT2D.hlsl"
 
 # ifndef FFT_SIZE
 #  define FFT_SIZE 512
@@ -15,6 +14,10 @@
 #  define LOG_N 9
 # endif
 
+# ifndef DISPLACEMENT_GRID
+# define HEIGHT_MAP 1
+# endif
+
 Texture2D<Complex>        InputSpectrum : register(t0);
 // StructuredBuffer<Complex> TwiddleFactor : register(t1);
 
@@ -23,7 +26,13 @@ groupshared Complex SharedData[FFT_SIZE]; // Shared Data Per ThreadGroup
 #if defined (ROWPASS)
 RWTexture2D<Complex> OutputSpectrum : register(u0);
 #elif defined (COLPASS)
+# if defined (DISPLACEMENT_GRID)
+RWTexture2D<float2> DisplacementGrid : register(u0);
+# elif defined (BOTH)
+RWTexture2D<float3> DisplacementMap : register(u0);
+# else
 RWTexture2D<float> HeightMap : register(u0);
+# endif
 #else
 #error "ROW or COL Not Defined"
 #endif
@@ -50,11 +59,20 @@ void CSMain(CSInput Input)
 
 	uint2 UV_Input  = uint2(Row, ReversedIndex1);
 	uint2 UV_Output = uint2(Row, GTid);
+#  ifdef HEIGHT_MAP
 	SharedData[GTid] = InputSpectrum[UV_Input];
-
+#  else
+	float 
+	SharedData[GTid] = InputSpectrum[UV_Input];
+#  endif
 	UV_Input  = uint2(Row, ReversedIndex2);
 	UV_Output = uint2(Row, GTid + THREAD_GROUP_COUNT);
+
+#  ifdef HEIGHT_MAP
 	SharedData[GTid + THREAD_GROUP_COUNT] = InputSpectrum[UV_Input];
+#  else
+	SharedData[GTid + THREAD_GROUP_COUNT] = InputSpectrum[UV_Input];
+#  endif
 	GroupMemoryBarrierWithGroupSync();
 
 	for(uint s = 1 ; s <= LOG_N ; s++)
@@ -87,6 +105,7 @@ void CSMain(CSInput Input)
 
 		GroupMemoryBarrierWithGroupSync();
 	}
+
 	#if defined (ROWPASS)
 	OutputSpectrum[uint2(Row, GTid)] = SharedData[GTid];
 	OutputSpectrum[uint2(Row, GTid + THREAD_GROUP_COUNT)] = SharedData[GTid + THREAD_GROUP_COUNT];

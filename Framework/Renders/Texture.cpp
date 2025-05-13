@@ -58,12 +58,38 @@ Texture::Texture(ID3D11Texture2D * InTexture, const D3D11_TEXTURE2D_DESC& Desc)
 
 Texture::Texture(ID3D11ShaderResourceView * InSRV, const D3D11_TEXTURE2D_DESC & Desc)
 {
-	this->SRV = InSRV;
+	ID3D11Resource* SourceResource = nullptr;
+	ID3D11Texture2D* SourceTexture = nullptr;
+
+	InSRV->GetResource(&SourceResource);
+	if (!SourceResource)
+	{
+		return; // 리소스 얻기 실패
+	}
+	HRESULT Hr = SourceResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&SourceTexture);
+	CHECK(SUCCEEDED(Hr));
+
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = Desc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	Hr = Device->CreateShaderResourceView(
+		SourceTexture,
+		&srvDesc,
+		&this->SRV
+	);
+	CHECK(SUCCEEDED(Hr));
+
 	TexMeta.width = Desc.Width;
 	TexMeta.height = Desc.Height;
 	TexMeta.depth = 1;
-	TexMeta.mipLevels = Desc.MipLevels;
-	TexMeta.arraySize = Desc.ArraySize;
+	TexMeta.mipLevels = 1;
+	TexMeta.arraySize = 1;
 	TexMeta.format = Desc.Format;
 }
 

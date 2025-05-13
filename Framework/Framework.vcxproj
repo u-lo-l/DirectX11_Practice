@@ -178,6 +178,7 @@
     <ClCompile Include="Math\Frustum.cpp" />
     <ClCompile Include="Math\Math.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\Noise.cpp" />
     <ClCompile Include="Math\Plane.cpp" />
     <ClCompile Include="Math\Point.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
@@ -597,6 +598,7 @@
     <ClCompile Include="Renders\Projector\Perspective.cpp" />
     <ClCompile Include="Renders\Projector\Projection.cpp" />
     <ClCompile Include="Renders\RWTexture2D.cpp" />
+    <ClCompile Include="Renders\RWTexture2DArray.cpp" />
     <ClCompile Include="Renders\Shader\HlslComputeShader.cpp" />
     <ClCompile Include="Renders\Shader\HlslShader.hpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -791,6 +793,7 @@
     <ClInclude Include="Math\Frustum.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Noise.h" />
     <ClInclude Include="Math\Plane.h" />
     <ClInclude Include="Math\Point.h" />
     <ClInclude Include="Math\Quaternion.h" />
@@ -828,6 +831,7 @@
     <ClInclude Include="Renders\Projector\Perspective.h" />
     <ClInclude Include="Renders\Projector\Projection.h" />
     <ClInclude Include="Renders\RWTexture2D.h" />
+    <ClInclude Include="Renders\RWTexture2DArray.h" />
     <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
     <ClInclude Include="Renders\Shader\HlslShader.h" />
     <ClInclude Include="Renders\Shader\Hlsl2DTextureShader.h" />

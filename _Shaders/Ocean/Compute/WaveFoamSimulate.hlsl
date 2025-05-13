@@ -1,0 +1,4 @@
+#ifndef __WAVE_FOAM_SIMULATION_HLSL__
+#define __WAVE_FOAM_SIMULATION_HLSL__
+
+#endif

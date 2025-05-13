@@ -19,7 +19,7 @@ Ocean::Ocean(const OceanDesc& Desc)
 	SetupShaders();
 	SetupResources();
 
-	GenerateGaussianRandoms();
+	GaussianRandomTexture2D = Noise::CreateGaussian2DNoise(Size);
 	GenerateInitialSpectrum();
 #pragma endregion Compute
 
@@ -42,8 +42,8 @@ Ocean::Ocean(const OceanDesc& Desc)
 	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
 
 	TessellationData.TexelSize = {
-		1.f / static_cast<float>(HeightMapTexture2D->GetWidth()),
-		1.f / static_cast<float>(HeightMapTexture2D->GetHeight())
+		1.f / static_cast<float>(DisplacementMap2D->GetWidth()),
+		1.f / static_cast<float>(DisplacementMap2D->GetHeight())
 	};
 	if (Macros[0].Name == "TYPE03")
 	{
@@ -104,9 +104,9 @@ Ocean::~Ocean()
 	SAFE_DELETE(GaussianRandomTexture2D);
 	SAFE_DELETE(InitialSpectrumTexture2D);
 	SAFE_DELETE(SpectrumTexture2D);
-	SAFE_DELETE(IFFT_Row);
-	SAFE_DELETE(IFFT_Row_Transposed);
-	SAFE_DELETE(HeightMapTexture2D);
+	SAFE_DELETE(IFFT_Row_Result);
+	SAFE_DELETE(IFFT_Transpose_Result);
+	SAFE_DELETE(DisplacementMap2D);
 	SAFE_DELETE(CB_PhillipsInit);
 	SAFE_DELETE(CB_PhillipsUpdate);
 		
@@ -129,7 +129,7 @@ void Ocean::Tick()
 	CB_PhillipsUpdate->UpdateData(&PhilipsUpdateData, sizeof(PhilipsUpdateDesc));
 		
 	UpdateSpectrum();
-	GetHeightMap();
+	GenerateHeightMap();
 #pragma endregion Compute
 
 #pragma region Render
@@ -146,7 +146,8 @@ void Ocean::Tick()
 	TessellationData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
 	TessellationData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
 	TessellationData.LightDirection = Context::Get()->GetLightDirection();
-	
+	TessellationData.LightColor = Context::Get()->GetLightColor();
+
 	CB_Tessellation->UpdateData(&TessellationData, sizeof(TessellationData));
 
 #pragma endregion Render
@@ -163,8 +164,10 @@ void Ocean::Render()
 	if (!!CB_WVP) CB_WVP->BindToGPU();
 	if (!!CB_Tessellation) CB_Tessellation->BindToGPU();
 
-	if (!!HeightMapTexture2D)
-		HeightMapTexture2D->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
+	// if (!!HeightMapTexture2D)
+	// 	HeightMapTexture2D->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
+	if (!!DisplacementMap2D)
+		DisplacementMap2D->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
 	if (!!SkyTexture)
 		SkyTexture->BindToGPU(1, static_cast<UINT>(ShaderType::PixelShader));
 	Shader->DrawIndexed(Indices.size());
@@ -173,14 +176,14 @@ void Ocean::Render()
 
 void Ocean::SaveHeightMap()
 {
-	HeightMapTexture2D->SaveOutputAsFile(L"OceanHeightMap");
+	DisplacementMap2D->SaveOutputAsFile(L"OceanHeightMap");
 }
 
 
 void Ocean::CreateVertex()
 {
-	const UINT Width = HeightMapTexture2D->GetWidth();
-	const UINT Height = HeightMapTexture2D->GetHeight();
+	const UINT Width = DisplacementMap2D->GetWidth();
+	const UINT Height = DisplacementMap2D->GetHeight();
 
 	const UINT PatchWidth = (Dimension[0] / PatchSize) + 1;
 	const UINT PatchHeight = (Dimension[1] / PatchSize) + 1;

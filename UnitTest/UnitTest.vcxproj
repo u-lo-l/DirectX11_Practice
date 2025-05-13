@@ -19,11 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Execute\028_InstancingDemo\InstancingDemo.cpp" />
-    <ClCompile Include="Execute\035_LightingDemo\LightingDemo.cpp" />
-    <ClCompile Include="Execute\DisplacementMappingDemo\BasicTessellationDemo.cpp" />
-    <ClCompile Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.cpp" />
-    <ClCompile Include="Execute\DisplacementMappingDemo\PNTriangleDemo.cpp" />
     <ClCompile Include="Execute\LandscapeDemo\LandScapeDemo.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -103,7 +98,7 @@
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="Execute\LODDemo\TerrainTessellationDemo.cpp" />
+    <ClCompile Include="Execute\OceanDemo\FoamDemo.cpp" />
     <ClCompile Include="Execute\OceanDemo\GaussianRandomDemo.cpp" />
     <ClCompile Include="Execute\OceanDemo\OceanDemo.cpp" />
     <ClCompile Include="Execute\OceanDemo\PhilipsSpectrumDemo.cpp" />
@@ -115,13 +110,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Execute\028_InstancingDemo\InstancingDemo.h" />
-    <ClInclude Include="Execute\035_LightingDemo\LightingDemo.h" />
-    <ClInclude Include="Execute\DisplacementMappingDemo\BasicTessellationDemo.h" />
-    <ClInclude Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.h" />
-    <ClInclude Include="Execute\DisplacementMappingDemo\PNTriangleDemo.h" />
     <ClInclude Include="Execute\LandscapeDemo\LandScapeDemo.h" />
-    <ClInclude Include="Execute\LODDemo\TerrainTessellationDemo.h" />
+    <ClInclude Include="Execute\OceanDemo\FoamDemo.h" />
     <ClInclude Include="Execute\OceanDemo\GaussianRandomDemo.h" />
     <ClInclude Include="Execute\OceanDemo\OceanDemo.h" />
     <ClInclude Include="Execute\OceanDemo\PhilipsSpectrumDemo.h" />

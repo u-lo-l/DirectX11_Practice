@@ -1,7 +1,13 @@
 ﻿#pragma once
 
+namespace sdt
+{
+	class FoamDemo;
+}
+
 class Ocean
 {
+	friend class sdt::FoamDemo;
 public:
 	struct OceanDesc
 	{
@@ -15,6 +21,7 @@ public:
 		Vector2D TerrainPosition;
 		Vector2D TerrainDimension;
 		float    TerrainMaxHeight;
+		Vector2D Wind = {50.f, 30.f};
 	};
 private:
 	using VertexType = VertexTextureNormal;
@@ -29,7 +36,7 @@ private:
 	{
 		float Width;
 		float Height;
-		Vector2D Wind = {1, 1};
+		Vector2D Wind = {50.f, 30.f};
 	};
 	struct PhilipsUpdateDesc
 	{
@@ -38,10 +45,17 @@ private:
 		float RunningTime;
 		float InitTime;
 	};
+	struct TransposeDesc
+	{
+		UINT Width = 1024;
+		UINT Height = 1024;
+		UINT ArraySize = 3;
+		UINT Padding;
+	};
 	struct TessellationDesc
 	{
 		Vector CameraPosition;
-		float HeightScaler = 100.f;
+		float HeightScaler = 60.f;
 		
 		Vector2D LODRange;
 		Vector2D TexelSize;
@@ -50,9 +64,11 @@ private:
 		float ScreenDiagonal;
 		float Padding[2];
 		
+		Color LightColor;
+
 		Vector LightDirection;
 		float TerrainMaxHeight = 100;
-
+		
 		Vector2D TerrainPosition;
 		Vector2D TerrainDimension;
 	};
@@ -66,6 +82,8 @@ public:
 
 	void Tick();
 	void Render();
+	const RWTexture2D * GetDisplacementMap() const { return DisplacementMap2D; }
+	
 	void SaveHeightMap();
 
 	void SetWorldPosition(const Vector & Position) const { Tf->SetWorldPosition(Position); }
@@ -75,24 +93,26 @@ private:
 #pragma region Compute
 	void SetupShaders();
 	void SetupResources();
-	void GenerateGaussianRandoms();
 	void GenerateInitialSpectrum() const;
 	void UpdateSpectrum() const;
-	void GetHeightMap() const;
+	void GenerateHeightMap() const;
 	// Resources
 	PhillipsInitDesc PhillipsInitData;
 	PhilipsUpdateDesc PhilipsUpdateData;
+	TransposeDesc TransposeData;
 	
 	Texture * GaussianRandomTexture2D = nullptr;
 
 	RWTexture2D * InitialSpectrumTexture2D = nullptr;	// H_init
 	RWTexture2D * SpectrumTexture2D = nullptr;			// H_t
-	RWTexture2D * IFFT_Row = nullptr;					// H_t -> IFFT(x)
-	RWTexture2D * IFFT_Row_Transposed = nullptr;		// H_t -> IFFT(x) -> Transposed
-	RWTexture2D * HeightMapTexture2D = nullptr;
+
+	RWTexture2DArray * IFFT_Row_Result = nullptr;
+	RWTexture2DArray * IFFT_Transpose_Result = nullptr;
+	RWTexture2D * DisplacementMap2D = nullptr;
 
 	ConstantBuffer * CB_PhillipsInit = nullptr;
 	ConstantBuffer * CB_PhillipsUpdate = nullptr;
+	ConstantBuffer * CB_Transpose = nullptr;
 		
 	// Shaders
 	HlslComputeShader * CS_SpectrumInitializer = nullptr;

@@ -3,9 +3,6 @@
 
 # define DOMAIN "quad"
 # define HS_PARTITION "integer"
-// # define HS_PARTITION "fractional_even"
-// # define HS_PARTITION "fractional_odd"
-// # define HS_PARTITION "pow2"
 # define HS_INPUT_PATCH_SIZE 4
 # define HS_OUTPUT_PATCH_SIZE 4
 
@@ -14,7 +11,7 @@ const static float MaxTessFactor = 64;
 const static float RDRatio = 4;
 
 const static float WaterRefractionIndex = 1.33f; // 굴절률
-const static float WaterR0 = 0.02f; // 수직 입사 반사 계수수
+const static float WaterR0 = 0.02f;              // 수직 입사 반사 계수
 
 cbuffer CB_WVP : register(b0)  // VS DS HS PS
 {
@@ -35,6 +32,8 @@ cbuffer CB_HeightScaler : register(b1)
     float  ScreenDistance;
     float  ScreenDiagonal;
     float2 Padding;
+
+    float4 LightColor;
 
     float3 LightDirection;
     float  TerrainHeightScaler;
@@ -84,7 +83,7 @@ struct DS_OUTPUT // PS_INPUT
     float3 Normal : NORMAL;
 
     float3 WorldPosition : POSITION;
-    float4 Color : COLOR;
+    float  LOD : LOD;
 };
 
 float3 CalculateNormal(float2 UV);
@@ -96,8 +95,6 @@ VS_OUTPUT VSMain(VS_INPUT input)
     output.Position = input.Position.xyz;
     output.UV = input.UV;
     output.Normal = input.Normal;
-
-    float Height = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).r;
 
     return output;
 }
@@ -123,35 +120,20 @@ HS_CONSTANT_OUTPUT HSConstant
         Points[i] = mul(float4(patch[i].Position, 1), WorldView);
     }
 
-    // // BackFace Culling을 시도해보았지만 성능이 더 안 좋음.
-    // float3 Diag1 = (Points[2] - Points[0]).xyz;
-    // float3 Diag2 = (Points[3] - Points[1]).xyz;
-    // float3 PatchNormal = normalize(cross(Diag1, Diag2));
-    // [flatten] if (PatchNormal.z > 0.5f)
-    // {
-    //     [unroll]
-    //     for (int i = 0; i < 4; ++i)
-    //         output.Edge[i] = 0;
-
-    //     [unroll]
-    //     for (int j = 0; j < 2; ++j)
-    //         output.Inside[j] = 0;
-
-    //     return output;
-    // }
-
-    float Density = CalculateDensity(patch) * DensityWeight;
     [unroll]
     for (int j = 0 ; j < 4 ; j++)
     {
         float4 Point1 = Points[((j - 1) + 4) % 4];
         float4 Point2 = Points[j];
-        float TessRatio = Density + CalculateTessellationFactor(Point1, Point2) * SSDWeight;
+        float TessRatio = CalculateTessellationFactor(Point1, Point2);
         output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
     }
 
-    output.Inside[0] = (output.Edge[0] + output.Edge[2]) * 0.5f;
-    output.Inside[1] = (output.Edge[1] + output.Edge[3]) * 0.5f;
+    float Density = lerp(MinTessFactor, MaxTessFactor, CalculateDensity(patch));
+    float TessFactor = (output.Edge[0] + output.Edge[2]) * 0.5f;
+    output.Inside[0] = Density * DensityWeight + TessFactor * SSDWeight;
+    TessFactor = (output.Edge[1] + output.Edge[3]) * 0.5f;
+    output.Inside[1] = Density * DensityWeight + TessFactor * SSDWeight;
     return output;
 }
 
@@ -195,25 +177,20 @@ DS_OUTPUT DSMain
     float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
     output.UV = lerp(u1, u2, UV.y);
 
-    output.Color = lerp(float4(0.5f, 0, 0, 1), float4(0, 0, 1, 1), input.Inside[0] / 64);
-    [flatten]
-    if (input.Inside[0] > 63)
-        output.Color = float4(0,1,1,1); // MAX
-
     output.Normal = float3(0,1,0);
 
     float Height = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).r;
     output.Position.y = Height * HeightScaler;
-    // output.Position.y = 0;
 
     output.Position = mul(output.Position, World);
-    output.Position = mul(output.Position, View);
     output.WorldPosition = output.Position.xyz;
+    output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
 
     output.Normal = mul(output.Normal, (float3x3)World);
 
-    output.Color.r = Height;
+    float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
+    output.LOD = (uint)(lerp(5, 0,  MeanTessFactor / MaxTessFactor));
 
     return output;
 }
@@ -226,28 +203,31 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     float3 Light = normalize(LightDirection);
     float LDotN = dot(-Light, Normal);
 
-    float3 BaseColor = float3(0.5, 0.75, 1);
+    float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
+    float3 DeepWaterColor = float3(0.1f, 0.25f, 0.75f);
 
-    const float3 CameraPosition = (ViewInverse)._41_42_43;
-    float3 ViewRay = normalize(input.WorldPosition - CameraPosition);
-    float3 ReflectedRay = reflect(ViewRay, Normal);
-    ReflectedRay = mul(ReflectedRay, (float3x3)View);
+
+    const float3 CameraPosition = ViewInverse._41_42_43;
+    float3 ViewRay = normalize(input.WorldPosition - CameraPosition); // WorldSpace
+    
     // Asume Distance to Sky : Infinity
+    float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
+    float RDotN = dot(ReflectedRay, Normal);
     float3 ReflectedEnvColor = SkyTexture.Sample(LinearSampler_Border, ReflectedRay).rgb;
-    ReflectedEnvColor *= 0.5f;
-
-    const float Ambient = 0.1f;
-    const float Specular = GetSpecularCoef(dot(-ViewRay, Normal));
+    const float Ambient = 0.3f;
+    const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) ;
     const float Transparency = 0.8f;
     const float Diffuse = (1 - Specular) * (1 - Transparency);
     const float Refraction = (1 - Specular) * (Transparency);
 
+    // float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 1 - facing);
+    float3 WaterColor = ShallowWaterColor;
     float3 Color = 
-                   BaseColor * Ambient
-                 + ReflectedEnvColor * Specular
-                 + BaseColor * saturate(LDotN) * Diffuse
+                   WaterColor * Ambient
+                 + ReflectedEnvColor * Specular * LightColor.rgb
+                 + WaterColor * saturate(LDotN) * Refraction * LightColor.rgb
                 ;
-    return float4(Color, Transparency);
+    return float4(Color * LightColor.rgb, 1);
 }
 
 /*======================================================================================*/
@@ -340,9 +320,11 @@ float CalculateDensity(InputPatch<VS_OUTPUT, HS_INPUT_PATCH_SIZE> patch)
 
 /*======================================================================================*/
 
+// Fresnel
 float GetSpecularCoef(float VDotN)
 {
-    return WaterR0 + (1 - WaterR0) * pow(1 - VDotN, 5);
+    VDotN = max(0, VDotN);
+    return (WaterR0 + (1 - WaterR0) * pow(1 - VDotN, 5));
 }
 
 #endif
