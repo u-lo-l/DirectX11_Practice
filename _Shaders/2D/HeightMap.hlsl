@@ -40,9 +40,9 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float mean = Texture.Sample(LinearSampler, input.Uv);
-    mean *= 256;
-    return float4(mean * 0.75f, mean * 0.75f, mean, 1);
+    float mean = (Texture.Sample(LinearSampler, input.Uv));
+    [flatten]if (mean < 0.1) return float4(0,0,0, 1);
+    return float4(mean, mean, mean, 1);
 }
 
 #endif

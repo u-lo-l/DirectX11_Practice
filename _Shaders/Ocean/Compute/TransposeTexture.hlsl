@@ -10,8 +10,8 @@
 # endif
 
 
-Texture2D<Complex> InputTexture : register(t0);
-RWTexture2D<Complex> Transposed : register(u0);
+Texture2D InputTexture : register(t0);
+RWTexture2D Transposed : register(u0);
 
 cbuffer CB_Const : register(b0)
 {

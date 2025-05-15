@@ -45,7 +45,7 @@ cbuffer CB_HeightScaler : register(b1)
 
 SamplerState LinearSampler_Border : register(s0); // VS DS PS
 SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
-Texture2D   WaterHeightMap  : register(t0);        // VS DS PS
+Texture2D<float4>   WaterHeightMap  : register(t0);        // VS DS PS
 TextureCube SkyTexture      : register(t1);        // PS
 Texture2D   GroundHeightMap : register(t2);
 
@@ -179,7 +179,7 @@ DS_OUTPUT DSMain
 
     output.Normal = float3(0,1,0);
 
-    float Height = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).r;
+    float Height = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).g;
     output.Position.y = Height * HeightScaler;
 
     output.Position = mul(output.Position, World);
@@ -247,7 +247,7 @@ float3 CalculateNormal(float2 UV)
     [unroll]
     for(int i = 0 ; i < 4 ; i++)
     {
-        height[i] = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV + dUV[i], 0).r;
+        height[i] = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV + dUV[i], 0).g;
     }
 
     float StrideX = (UV.x - TexelSize.x < 0) || (UV.x + TexelSize.x > 1) ? 1.f : 2.f;

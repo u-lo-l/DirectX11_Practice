@@ -11,55 +11,49 @@
 
 const static float Gravity = 9.81f;
 
+// ========== INPUT ==========
+Texture2D<float4>           H_Init : register(t0);
 cbuffer CB_Const : register(b0)
 {
-    uint  Width;
-    uint  Height;
+    float Width;
+    float Height;
     float Time;
     float Padding;
 };
 
-Texture2D<float2> H_Init : register(t0);
-RWTexture2D<float2> H_t  : register(u0);
+// ========== OUTPUT =========
 
-// Dispatch(Size / THREAD_X, Size * 0.5f / THREAD_Y, 1)
+const static uint T_HT = 0;
+const static uint T_DISP_X = 1;
+const static uint T_DISP_Z = 2;
+
+RWTexture2DArray<float2> H_t : register(u0); // Size : 9
+
+// Dispatch(Size / THREAD_X, Size / THREAD_Y, 1)
 [numthreads(THREAD_X, THREAD_Y, 1)]
 void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 {
     if (Width == 0 || Height == 0)
         return ;
 
-    // Pos Frequency
-    float2 H_Init_pos = H_Init[DTID.xy];
-    
-    float2 Position = float2(DTID.x - (float)Width * 0.5f, DTID.y - (float)Height * 0.5f);
-    float2 k = 2 * PI * float2(Position.x / Width, Position.y / Height);
-    float omega = sqrt(Gravity * length(k));
-    float angle = omega * Time;
+    const Complex H0              = H_Init[DTID.xy].xy;
+    const Complex H0_minus_k_conj = H_Init[DTID.xy].zw;
 
-    float2 H_t_Pos = float2(cos(angle), sin(angle));
-    H_t_Pos = ComplexMul(H_Init_pos, H_t_Pos);
-    
-    // Neg Frequency
-    uint2 DTID_Neg;
-    DTID_Neg.x = (Width - DTID.x) % Width;
-    DTID_Neg.y = (Height - DTID.y) % Height;
-    Complex H_Init_neg = H_Init[DTID_Neg.xy];
-    H_Init_neg.y = -H_Init_neg.y; // conj
+    const float2 Position = float2(DTID.x - Width * 0.5f, DTID.y - Height * 0.5f);
+    const float2 k = float2(Position.x / Width, Position.y / Height) * 2 * PI;
+    const float  OneOverLenghtK = 1 / (length(k) + 0.001);
+    const float omega = sqrt(Gravity * length(k));
+    const float angle = omega * Time;
+    const Complex Exponent = Complex(cos(angle), sin(angle));
 
-    Complex H_t_Neg = Complex(cos(-angle), sin(-angle));
-    H_t_Neg = ComplexMul(H_Init_neg, H_t_Neg);
+    Complex Ht = ComplexMul(H0, Exponent) + ComplexMul(H0_minus_k_conj, ComplexConj(Exponent));
+    Complex iHt  = Complex(-Ht.y, Ht.x);
 
-    Complex Ht = H_t_Pos + H_t_Neg;
 
-    if (DTID.y > DTID_Neg.y)
-        return ;
-    if (DTID.x == Width / 2 || DTID.y == Height / 2)
-    {
-        Ht.y = 0;
-    }
-    H_t[DTID.xy] = Ht;
-    H_t[DTID_Neg] = Complex(Ht.x, -Ht.y);
+    const uint2 UV = DTID.xy;
+    H_t[uint3(UV, T_HT)] = Ht;
+    H_t[uint3(UV, T_DISP_X)] = iHt * k.x * (-OneOverLenghtK);
+    H_t[uint3(UV, T_DISP_Z)] = iHt * k.y * (-OneOverLenghtK);
 }
 
 #endif

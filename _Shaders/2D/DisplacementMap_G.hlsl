@@ -39,23 +39,20 @@ VertexOutput VSMain(VertexInput input)
 }
 
 const static float3 White = float3(1, 1, 1);
-const static float3 PosX = float3(1, 0, 0);
-const static float3 NegX = White - PosX;
 const static float3 PosY = float3(0, 1, 0);
 const static float3 NegY = White - PosY;
-const static float3 PosZ = float3(0, 0, 1);
-const static float3 NegZ = White - PosZ;
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    // float3 Color = Texture.Sample(LinearSampler, input.Uv).rgb;
-    // float3 Red =   pow(abs(Color.r) * 10 , 0.75f)* (Color.r < 0 ?  NegX : PosX);
-    // float3 Green = pow(abs(Color.g) * 10 , 0.75f)* (Color.g < 0 ?  NegY : PosY);
-    // float3 Blue =  pow(abs(Color.b) * 10 , 0.75f)* (Color.b < 0 ?  NegZ : PosZ);
-    // return float4(Red + Green + Blue, 1);
+    // float Color = Texture.Sample(LinearSampler, input.Uv).g;
+    // float3 Green = pow(abs(Color) * 10 , 0.75f)* (Color < 0 ?  NegY : PosY);
 
-    float3 Color = Texture.Sample(LinearSampler, input.Uv).rgb * sqrt(20*20 + 20*20) / 2;
+    // return float4(Green, 1);
+
+    float Color = Texture.Sample(LinearSampler, input.Uv).g * sqrt(20*20 + 20*20) / 2;
     Color = (Color + 1) / 2;
-    return float4(Color, 1);
+    float3 Green = float3(Color, Color, Color);
+
+    return float4(Green, 1);
 }
 
 #endif

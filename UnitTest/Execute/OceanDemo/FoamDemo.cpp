@@ -16,51 +16,58 @@ void sdt::FoamDemo::Initialize()
 		{0, 0},
 		{0, 0},
 		0,
-		{100.f, 70.f}
+		{-15, -20}
 	};
 	Sea = new Ocean(OceanDesc);
 
-	const vector<wstring> EntryPoints {
-		L"2D/WaveSpectrum.hlsl",	// Specturm
+	const vector<wstring> ShaderNames {
+		L"2D/WaveSpectrum4.hlsl",	// Specturm
 		
-		L"2D/IFFTResult.hlsl",		// IFFT x
-		L"2D/IFFTResult.hlsl",		// IFFT y
-		L"2D/IFFTResult.hlsl",		// IFFT z
+		L"2D/WaveSpectrum.hlsl",		// H
+		L"2D/WaveSpectrum.hlsl",		// dH_x
+		L"2D/WaveSpectrum.hlsl",		// dH_z
+		
+		L"2D/DisplacementMap_R.hlsl",	// Height Map
+		L"2D/DisplacementMap_G.hlsl",	// dX Map
+		L"2D/DisplacementMap_B.hlsl",	// dZ Map
 
-		L"2D/IFFTResult.hlsl",		// IFFT Transposed x
-		L"2D/IFFTResult.hlsl",		// IFFT Transposed y
-		L"2D/IFFTResult.hlsl",		// IFFT Transposed z
+		L"2D/DisplacementMap.hlsl",		// Displacement Map
 
-		L"2D/DisplacementMap.hlsl",
+		L"2D/HeightMap.hlsl",	// Foam
+		L"2D/DisplacementMap_R.hlsl"	// Normal
 	};
-	TextureDebugShaders.resize(EntryPoints.size());
+	TextureDebugShaders.resize(ShaderNames.size());
 	float SizeSmall = 0.25f * D3D::GetDesc().Height * 0.5f;
 	float SizeGap = SizeSmall * 0.1f;
-	float SizeBig =  SizeSmall * 2.f + SizeGap;
+	float SizeBig =  SizeSmall * 1.5f;
 	const vector<float> Sizes{
 		SizeSmall,
 		SizeSmall, SizeSmall, SizeSmall,
 		SizeSmall, SizeSmall, SizeSmall,
-		SizeBig
+		SizeSmall,
+		SizeSmall, SizeSmall
 	};
 	const vector<Vector2D> Offsets {
-		Vector2D(-SizeSmall * 5 - SizeGap * 3, 0),
+		Vector2D(-SizeSmall * 5.f - SizeGap * 5.f, +SizeSmall * 1.5f + SizeGap * 1.f),
 
-		Vector2D(-SizeSmall * 3 - SizeGap , 2 * SizeSmall + SizeGap),
-		Vector2D(-SizeSmall * 3 - SizeGap , 0),
-		Vector2D(-SizeSmall * 3 - SizeGap , -2 * SizeSmall - SizeGap),
+		Vector2D(SizeSmall * -3.f - SizeGap * 3, +SizeSmall * 2.f + SizeGap * 2),
+		Vector2D(SizeSmall * -3.f - SizeGap * 3, 0),
+		Vector2D(SizeSmall * -3.f - SizeGap * 3, -SizeSmall * 2.f - SizeGap * 2),
 
-		Vector2D(-SizeSmall * 0.5f, 2 * SizeSmall + SizeGap),
-		Vector2D(-SizeSmall * 0.5f, 0),
-		Vector2D(-SizeSmall * 0.5f, -2 * SizeSmall - SizeGap),
+		Vector2D(SizeSmall * -1.f - SizeGap * 1, +SizeSmall * 2.f + SizeGap * 2),
+		Vector2D(SizeSmall * -1.f - SizeGap * 1, 0),
+		Vector2D(SizeSmall * -1.f - SizeGap * 1, -SizeSmall * 2.f - SizeGap * 2),
+
+		Vector2D(SizeSmall *  1.f + SizeGap * 3, 0),
 		
-		Vector2D(SizeSmall + SizeGap + SizeBig, 0)
+		Vector2D(SizeSmall *  3.f + SizeGap * 9, +SizeSmall * 1.f + SizeGap * 1.f),
+		Vector2D(SizeSmall *  3.f + SizeGap * 9, -SizeSmall * 1.f - SizeGap * 1.f),
 	};
 	const Vector2D Center = {D3D::GetDesc().Width * 0.5f, D3D::GetDesc().Height * 0.5f};
 	
-	for (int i = 0 ; i < EntryPoints.size() ; i++)
+	for (UINT i = 0 ; i < ShaderNames.size() ; i++)
 	{
-		TextureDebugShaders[i] = new Hlsl2DTextureShader(nullptr, EntryPoints[i]);
+		TextureDebugShaders[i] = new Hlsl2DTextureShader(nullptr, ShaderNames[i]);
 		TextureDebugShaders[i]->GetTransform()->SetScale({Sizes[i], Sizes[i], 1});
 		Vector2D Position = Center + Offsets[i];
 		TextureDebugShaders[i]->GetTransform()->SetWorldPosition({ Position.X, Position.Y, 0});
@@ -85,39 +92,30 @@ void sdt::FoamDemo::Tick()
 
 void sdt::FoamDemo::Render()
 {
-	ID3D11ShaderResourceView * SRV_Spectrum = Sea->SpectrumTexture2D->GetSRV();
+	ID3D11ShaderResourceView * SRV_Phillips = Sea->InitialSpectrumTexture2D->GetSRV();
+	UINT TextureIndex = 0;
+	TextureDebugShaders[TextureIndex++]->Render(&SRV_Phillips);		// Philips Spectrum * Noise
 
-	Sea->IFFT_Row_Result->UpdateSRV();
-	ID3D11ShaderResourceView * SRV_RowIFFTArray_X;
-	Sea->IFFT_Row_Result->GetSRV(0, &SRV_RowIFFTArray_X);
-	ID3D11ShaderResourceView * SRV_RowIFFTArray_Y;
-	Sea->IFFT_Row_Result->GetSRV(1, &SRV_RowIFFTArray_Y);
-	ID3D11ShaderResourceView * SRV_RowIFFTArray_Z;
-	Sea->IFFT_Row_Result->GetSRV(2, &SRV_RowIFFTArray_Z);
+	vector<ID3D11ShaderResourceView *> SRV_Spectrum;
+	SRV_Spectrum.resize((UINT)Ocean::SpectrumTextureType::MAX);
+	for (UINT i = 0 ; i < (UINT)Ocean::SpectrumTextureType::MAX ; i++)
+	{
+		Sea->SpectrumTexture2D->GetSRV(i, &SRV_Spectrum[i]);
+		TextureDebugShaders[TextureIndex++]->Render(&SRV_Spectrum[i]);
+	}
+	for (auto SRV : SRV_Spectrum)
+		SAFE_RELEASE(SRV);
 
-	Sea->IFFT_Transpose_Result->UpdateSRV();
-	ID3D11ShaderResourceView * SRV_RowIFFTTransposedArray_X;
-	Sea->IFFT_Transpose_Result->GetSRV(0, &SRV_RowIFFTTransposedArray_X);
-	ID3D11ShaderResourceView * SRV_RowIFFTTransposedArray_Y;
-	Sea->IFFT_Transpose_Result->GetSRV(1, &SRV_RowIFFTTransposedArray_Y);
-	ID3D11ShaderResourceView * SRV_RowIFFTTransposedArray_Z;
-	Sea->IFFT_Transpose_Result->GetSRV(2, &SRV_RowIFFTTransposedArray_Z);
-	ID3D11ShaderResourceView * SRV_Displacement = Sea->DisplacementMap2D->GetSRV();
-		
-	TextureDebugShaders[0]->Render(&SRV_Spectrum);
-	TextureDebugShaders[1]->Render(&SRV_RowIFFTArray_X);
-	TextureDebugShaders[2]->Render(&SRV_RowIFFTArray_Y);
-	TextureDebugShaders[3]->Render(&SRV_RowIFFTArray_Z);
-	TextureDebugShaders[4]->Render(&SRV_RowIFFTTransposedArray_X);
-	TextureDebugShaders[5]->Render(&SRV_RowIFFTTransposedArray_Y);
-	TextureDebugShaders[6]->Render(&SRV_RowIFFTTransposedArray_Z);
-	TextureDebugShaders[7]->Render(&SRV_Displacement);
+	ID3D11ShaderResourceView * SRV_Displacement = Sea->DisplacementMap->GetSRV();
+	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
+	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
+	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
+	
+	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
+
+	ID3D11ShaderResourceView * SRV_FoamGrid = Sea->FoamGrid->GetSRV();
+	TextureDebugShaders[TextureIndex++]->Render(&SRV_FoamGrid);
+	
 	// if (!!Sea)
 		// Sea->Render();
-	SAFE_RELEASE(SRV_RowIFFTArray_X);
-	SAFE_RELEASE(SRV_RowIFFTArray_Y);
-	SAFE_RELEASE(SRV_RowIFFTArray_Z);
-	SAFE_RELEASE(SRV_RowIFFTTransposedArray_X);
-	SAFE_RELEASE(SRV_RowIFFTTransposedArray_Y);
-	SAFE_RELEASE(SRV_RowIFFTTransposedArray_Z);
 }

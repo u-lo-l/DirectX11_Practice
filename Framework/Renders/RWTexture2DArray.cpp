@@ -87,18 +87,19 @@ void RWTexture2DArray::GetSRV(const UINT InSlice, ID3D11ShaderResourceView ** Ou
 	ID3D11Device * Device =  D3D::Get()->GetDevice();
 	*OutSRV = nullptr;
 	D3D11_TEXTURE2D_DESC TextureDesc = {};
-	ResultTextureArray->GetDesc(&TextureDesc);
+	OutputTextureArray->GetDesc(&TextureDesc);
 	if (InSlice < 0 || InSlice >= TextureDesc.ArraySize)
 	{
 		ASSERT(false, "InSlice Out Of Range")
 	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-	SRVDesc.Format = TextureFormat;
-	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	SRVDesc.Texture2D.MipLevels = -1;
+	SRVDesc.Format = TextureDesc.Format;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 	SRVDesc.Texture2DArray.FirstArraySlice = InSlice;
 	SRVDesc.Texture2DArray.MostDetailedMip = 0;
+	SRVDesc.Texture2DArray.ArraySize = 1;
+	SRVDesc.Texture2DArray.MipLevels = -1;
 
 	HRESULT Hr = Device->CreateShaderResourceView(OutputTextureArray, &SRVDesc, OutSRV);
 	CHECK(SUCCEEDED(Hr));

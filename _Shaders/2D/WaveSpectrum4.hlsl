@@ -13,7 +13,7 @@ cbuffer CB_Render2D : register(b1)
     matrix Projection2D;
 };
 
-Texture2D<float2> Texture : register (t0);
+Texture2D<float4> Texture : register (t0);
 SamplerState LinearSampler : register(s0);
 
 struct VertexInput
@@ -47,7 +47,8 @@ VertexOutput VSMain(VertexInput input)
 */
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float2 color = Texture.Sample(LinearSampler, input.Uv);
+    float3 color = Texture.Sample(LinearSampler, input.Uv).rgb;
+    return float4(color, 1);
 #if defined (USE_HSV)
     float Mag = length(color);
     float Ang = atan2(color.y, color.x);
@@ -80,7 +81,6 @@ float4 PSMain(VertexOutput input) : SV_Target
     else            
         return float4(V, p, q, 1);
 #else
-    return float4(color, 0, 1);
 #endif
 }
 

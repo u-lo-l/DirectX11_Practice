@@ -33,70 +33,86 @@ void Ocean::SetupShaders()
 		L"Ocean/Compute/TransposeTextureArray.hlsl",
 		ShaderMacros.data()
 	);
-	CS_Transpose->SetDispatchSize(Size / 32, Size / 32 , 3);
+	CS_Transpose->SetDispatchSize(Size / 32, Size / 32 , (UINT)SpectrumTextureType::MAX);
 
 	// RowPass
 	ShaderMacros = {
 		{"FFT_SIZE", "512"},
 		{"THREAD_GROUP_SIZE", "256"},
 		{"LOG_N", "9"},
-		{"ROWPASS", "0"},
 		{nullptr, }
 	};
 	CS_RowPassIFFT = new HlslComputeShader(
-		// L"Ocean/Compute/IFFT2D.hlsl",
-		L"Ocean/Compute/WaveDisplacement.hlsl",
+		L"Ocean/Compute/WaveIFFT_RowPass.hlsl",
 		ShaderMacros.data()
 	);
-	CS_RowPassIFFT->SetDispatchSize(Size, 1 , 1);
+	CS_RowPassIFFT->SetDispatchSize(Size, 1 , (UINT)SpectrumTextureType::MAX);
 
 	// ColPass
 	ShaderMacros = {
 		{"FFT_SIZE", "512"},
 		{"THREAD_GROUP_SIZE", "256"},
 		{"LOG_N", "9"},
-		{"COLPASS", "0"},
 		{nullptr, }
 	};
 	CS_ColPassIFFT = new HlslComputeShader(
-		// L"Ocean/Compute/IFFT2D.hlsl",
-		L"Ocean/Compute/WaveDisplacement.hlsl",
+		L"Ocean/Compute/WaveIFFT_ColPass.hlsl",
 		ShaderMacros.data()
 	);
-	CS_ColPassIFFT->SetDispatchSize(Size, 1 , 1);
+	CS_ColPassIFFT->SetDispatchSize(Size, 1 , (UINT)SpectrumTextureType::MAX);
+
+	ShaderMacros = {
+		{"THREAD_X", "32"},
+		{"THREAD_Y", "32"},
+		{nullptr, }
+	};
+	CS_SimulateFoam = new HlslComputeShader(
+		L"Ocean/Compute/WaveFoamSimulation.hlsl",
+		ShaderMacros.data()
+	);
+	CS_SimulateFoam->SetDispatchSize(Size / 32, Size / 32 , (UINT)SpectrumTextureType::MAX);
 }
 
 void Ocean::SetupResources()
 {
 	PhillipsInitData.Width = static_cast<float>(Size);
 	PhillipsInitData.Height = static_cast<float>(Size);
-	PhillipsInitData.Wind = {-50, -30};
 
 	PhilipsUpdateData.Width = static_cast<float>(Size);
 	PhilipsUpdateData.Height = static_cast<float>(Size);
 	PhilipsUpdateData.RunningTime = 0.f;
 	PhilipsUpdateData.InitTime = sdt::SystemTimer::Get()->GetRunningTime();
-		
+
+	FoamData.Width = static_cast<float>(Size);
+	FoamData.Height = static_cast<float>(Size);
+	FoamData.FoamMultiplier = 1.5f;
+	FoamData.FoamThreshold = 1.5f;
+	FoamData.FoamBlur = 1.f;
+	FoamData.FoamFade = 0.1f;
+	
 	InitialSpectrumTexture2D = new RWTexture2D(
 		Size, Size,
+		DXGI_FORMAT_R32G32B32A32_FLOAT
+	);
+	SpectrumTexture2D = new RWTexture2DArray(
+		(UINT)SpectrumTextureType::MAX, Size, Size,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
-	SpectrumTexture2D = new RWTexture2D(
-		Size, Size,
+	IFFT_Result = new RWTexture2DArray(
+		(UINT)SpectrumTextureType::MAX, Size, Size,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
-		
-	IFFT_Row_Result = new RWTexture2DArray(
-		3, Size, Size,
+	IFFT_Result_Transposed = new RWTexture2DArray(
+		(UINT)SpectrumTextureType::MAX, Size, Size,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
-	IFFT_Transpose_Result = new RWTexture2DArray(
-		3, Size, Size,
-		DXGI_FORMAT_R32G32_FLOAT
-	);
-	DisplacementMap2D = new RWTexture2D(
+	DisplacementMap = new RWTexture2D(
 		Size, Size,
 		DXGI_FORMAT_R32G32B32A32_FLOAT
+	);
+	FoamGrid = new RWTexture2D(
+		Size, Size,
+		DXGI_FORMAT_R32G32_FLOAT
 	);
 		
 	CB_PhillipsInit = new ConstantBuffer(
@@ -123,6 +139,14 @@ void Ocean::SetupResources()
 		sizeof(TransposeData),
 		true
 	);
+	CB_Foam = new ConstantBuffer(
+		ShaderType::ComputeShader,
+		0,
+		nullptr,
+		"IFFT Transpose",
+		sizeof(FoamDesc),
+		false
+	);
 }
 
 void Ocean::GenerateInitialSpectrum() const
@@ -145,29 +169,47 @@ void Ocean::UpdateSpectrum() const
 	SpectrumTexture2D->UpdateSRV();
 }
 
-void Ocean::GenerateHeightMap() const
+void Ocean::GenerateDisplacementMap() const
 {
 	// Row IFFT
 	CB_PhillipsInit->BindToGPU();
 	SpectrumTexture2D->BindToGPUAsSRV(0);
-	IFFT_Row_Result->BindToGPUAsUAV(0);
+	IFFT_Result->BindToGPUAsUAV(0);
 	CS_RowPassIFFT->Dispatch();
-	IFFT_Row_Result->UpdateSRV();
-		
+	IFFT_Result->UpdateSRV();
+
 	// Transpose
-	IFFT_Row_Result->BindToGPUAsSRV(0);
-	IFFT_Transpose_Result->BindToGPUAsUAV(0);
+	IFFT_Result->BindToGPUAsSRV(0);
+	IFFT_Result_Transposed->BindToGPUAsUAV(0);
 	CB_Transpose->BindToGPU();
 	CS_Transpose->Dispatch();
-	IFFT_Transpose_Result->UpdateSRV();
-
+	IFFT_Result_Transposed->UpdateSRV();
+	
 	// Col IFFT
 	CB_PhillipsInit->BindToGPU();
-	IFFT_Transpose_Result->BindToGPUAsSRV(0);
-	DisplacementMap2D->BindToGPUAsUAV(0);
+	IFFT_Result_Transposed->BindToGPUAsSRV(0);
+	DisplacementMap->BindToGPUAsUAV(0);
 	CS_ColPassIFFT->Dispatch();
-	DisplacementMap2D->UpdateSRV();
+	DisplacementMap->UpdateSRV();
+	
+	// // Transpose
+	// IFFT_Result->BindToGPUAsSRV(0);
+	// IFFT_Result_Transposed->BindToGPUAsUAV(0);
+	// CB_Transpose->BindToGPU();
+	// CS_Transpose->Dispatch();
+	// IFFT_Result_Transposed->UpdateSRV();
 }
 
+void Ocean::FoamSimulation() const
+{
+	if (CS_SimulateFoam == nullptr)
+		return ;
+	
+	CB_Foam->BindToGPU();
+	DisplacementMap->BindToGPUAsSRV(0);
+	FoamGrid->BindToGPUAsUAV(0);
+	CS_SimulateFoam->Dispatch();
+	FoamGrid->UpdateSRV();
+}
 
 #pragma endregion Compute

@@ -49,7 +49,7 @@ private:
 	{
 		UINT Width = 1024;
 		UINT Height = 1024;
-		UINT ArraySize = 3;
+		UINT ArraySize = (UINT)SpectrumTextureType::MAX;
 		UINT Padding;
 	};
 	struct TessellationDesc
@@ -72,6 +72,18 @@ private:
 		Vector2D TerrainPosition;
 		Vector2D TerrainDimension;
 	};
+	struct FoamDesc
+	{
+		float Width;
+		float Height;
+		float DeltaTime;
+		float Padding;
+
+		float FoamMultiplier = 1.5f;
+		float FoamThreshold = 1.5f;
+		float FoamBlur = 1.f;
+		float FoamFade = 0.1f;
+	};
 	UINT Size = 512;
 	UINT Dimension[2];
 	Vector2D LODRange;
@@ -82,7 +94,6 @@ public:
 
 	void Tick();
 	void Render();
-	const RWTexture2D * GetDisplacementMap() const { return DisplacementMap2D; }
 	
 	void SaveHeightMap();
 
@@ -95,31 +106,52 @@ private:
 	void SetupResources();
 	void GenerateInitialSpectrum() const;
 	void UpdateSpectrum() const;
-	void GenerateHeightMap() const;
+	void GenerateDisplacementMap() const;
+	void FoamSimulation() const;
 	// Resources
 	PhillipsInitDesc PhillipsInitData;
 	PhilipsUpdateDesc PhilipsUpdateData;
 	TransposeDesc TransposeData;
+	FoamDesc FoamData;
 	
 	Texture * GaussianRandomTexture2D = nullptr;
 
 	RWTexture2D * InitialSpectrumTexture2D = nullptr;	// H_init
-	RWTexture2D * SpectrumTexture2D = nullptr;			// H_t
 
-	RWTexture2DArray * IFFT_Row_Result = nullptr;
-	RWTexture2DArray * IFFT_Transpose_Result = nullptr;
-	RWTexture2D * DisplacementMap2D = nullptr;
+	enum class SpectrumTextureType
+	{
+		Height = 0,
+		Disp_X,
+		Disp_Y,
+		MAX
+	};
+	enum class WaveTextureType
+	{
+		Displacement = 0,
+		Normal,
+		Foam,
+		MAX
+	};
+	RWTexture2DArray * SpectrumTexture2D = nullptr;
 
+	RWTexture2DArray * IFFT_Result = nullptr;
+	RWTexture2DArray * IFFT_Result_Transposed = nullptr;
+	RWTexture2D * DisplacementMap = nullptr;
+	RWTexture2D * NormalMap = nullptr;
+	RWTexture2D * FoamGrid = nullptr;
+	
 	ConstantBuffer * CB_PhillipsInit = nullptr;
 	ConstantBuffer * CB_PhillipsUpdate = nullptr;
 	ConstantBuffer * CB_Transpose = nullptr;
-		
+	ConstantBuffer * CB_Foam = nullptr;
 	// Shaders
 	HlslComputeShader * CS_SpectrumInitializer = nullptr;
 	HlslComputeShader * CS_SpectrumUpdater = nullptr;
 	HlslComputeShader * CS_RowPassIFFT = nullptr;
 	HlslComputeShader * CS_Transpose = nullptr;
 	HlslComputeShader * CS_ColPassIFFT = nullptr;
+
+	HlslComputeShader * CS_SimulateFoam= nullptr;
 #pragma endregion Compute
 
 #pragma region Render
