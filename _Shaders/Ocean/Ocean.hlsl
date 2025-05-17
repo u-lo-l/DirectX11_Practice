@@ -6,6 +6,9 @@
 # define HS_INPUT_PATCH_SIZE 4
 # define HS_OUTPUT_PATCH_SIZE 4
 
+# define USE_DISTANCE_BASED_BLENDING
+
+# define NEAR_DISTANCE (500)
 # define FAR_DISTANCE (2500)
 
 const static float MinTessFactor = 1;
@@ -59,15 +62,15 @@ SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
 Texture2D<float4>   WaterHeightMap  : register(t0);  // VS DS PS
 TextureCube SkyTexture      : register(t1);          // PS
 Texture2D<float> FoamGrid   : register(t2);          // PS
-Texture2D<float> PerlinNoise : register(t3);         // VS DS PS
+// Texture2D<float> PerlinNoise : register(t3);         // VS DS PS
 
-const float GetPerlinRandom(float2 uv, uint LOD = 0)
-{
-    uv /= HeightMapTiling * 4;
+// const float GetPerlinRandom(float2 uv, uint LOD = 0)
+// {
+//     uv /= HeightMapTiling * 4;
     
-    float Random = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, uv, LOD); // 0 ~ 1
-    return Random;
-}
+//     float Random = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, uv, LOD); // 0 ~ 1
+//     return Random;
+// }
 struct VS_INPUT
 {
     float4 Position : POSITION;
@@ -106,7 +109,7 @@ struct DS_OUTPUT // PS_INPUT
     float  PerlinBlending : BLENDING;
 };
 
-float3 CalculateNormal(float2 UV, uint LOD);
+float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend);
 
 // VS
 VS_OUTPUT VSMain(VS_INPUT input)
@@ -117,12 +120,8 @@ VS_OUTPUT VSMain(VS_INPUT input)
     output.UV = input.UV;
     output.Normal = input.Normal;
 
-    // const float Random = GetPerlinRandom(input.UV);
-    // const float3 Displacement = Random * WaterHeightMap.SampleLevel(LinearSampler_Border, input.UV, 0).xyz;
-    // output.Position.y += Displacement.y;
     const float2 HeightMapUV = output.UV * HeightMapTiling;
     const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb ;
-
     output.Position.y += Displacement.y;
     return output;
 }
@@ -188,6 +187,33 @@ HS_POINT_OUTPUT HSMain
     return output;
 }
 
+float3 DistanceBasedDisp(float2 UV, float LOD, float Weight)
+{
+    float3 NearDisp = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 1.f, LOD).xyz;
+#ifndef USE_DISTANCE_BASED_BLENDING
+    return NearDisp;
+#endif
+    float3 FarHDisp  = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 0.2f, LOD).xyz;
+    return lerp(NearDisp, FarHDisp, Weight);
+}
+float  DistanceBasedHeight(float2 UV, float LOD, float Weight)
+{
+    float NearHeight = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 1.f, LOD).y;
+#ifndef USE_DISTANCE_BASED_BLENDING
+    return NearHeight;
+#endif
+    float FarHeight  = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 0.2f, LOD).y;
+    return lerp(NearHeight, FarHeight, Weight);
+}
+float  DistanceBasedFoam(float2 UV, float LOD, float Weight)
+{
+    float NearColor = FoamGrid.SampleLevel(AnisotropicSampler_Wrap, UV * 1.f, LOD).r;
+#ifndef USE_DISTANCE_BASED_BLENDING
+    return NearColor;
+#endif
+    float FarColor  = FoamGrid.SampleLevel(AnisotropicSampler_Wrap, UV * 0.2f, LOD).r;
+    return lerp(NearColor, FarColor, Weight);
+}
 // DS
 [domain(DOMAIN)]
 DS_OUTPUT DSMain
@@ -205,8 +231,8 @@ DS_OUTPUT DSMain
 
     const float3 CameraPosition = ViewInverse._41_42_43;
     const float Dist = length(CameraPosition - mul(output.Position, World).xyz);
-    float DetailAmount = saturate((FAR_DISTANCE - Dist) / FAR_DISTANCE);
-    output.LOD = GET_MIP_LEVEL(1 - DetailAmount);
+    float DistanceBasedBlending = saturate((Dist - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
+    output.LOD = GET_MIP_LEVEL(1 - DistanceBasedBlending);
 
     float2 u1 = lerp(patch[0].UV, patch[1].UV, UV.x);
     float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
@@ -216,16 +242,19 @@ DS_OUTPUT DSMain
 
     const float2 HeightMapUV = output.UV * HeightMapTiling;
     const float2 NoiseMapUV = output.UV * NoiseMapTiling;
-    float Noise = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, NoiseMapUV, 0).r;
-    Noise = lerp(0.5, 1, Noise);
-    Noise = saturate(pow(abs(Noise * NoiseScaler) , NoisePower));
-    output.PerlinBlending = lerp(Noise, 1.f, DetailAmount);
+
+    float3 Disp = DistanceBasedDisp(HeightMapUV, output.LOD, DistanceBasedBlending);
+
+    // float Noise = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, NoiseMapUV, 0).r;
+    // Noise = saturate(pow(abs(Noise * NoiseScaler) , NoisePower));
+    // Noise = lerp(0.75, 1.25, Noise);
+    // output.PerlinBlending = lerp(Noise, 1.f, DistanceBasedBlending);
+    output.PerlinBlending = 1;
     
-    const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb * output.PerlinBlending;
     const float Folding = abs(FoamGrid.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0)).r;
 
-    output.Position.y = Displacement.y * HeightScaler;
-    output.Position.xz += Displacement.xz * HeightScaler * (1 - Folding);
+    output.Position.y = Disp.y * HeightScaler;
+    output.Position.xz += Disp.xz * HeightScaler * (1 - Folding);
 
     output.Position = mul(output.Position, World);
     output.WorldPosition = output.Position.xyz;
@@ -234,26 +263,32 @@ DS_OUTPUT DSMain
 
     output.Normal = mul(output.Normal, (float3x3)World);
 
-
     return output;
 }
 
 // PS
 float GetSpecularCoef(float VDotL);
+float3 FogBlending(float3 Color, float Dist)
+{
+    float blend = saturate((Dist - 1000) / (5000 - 1000));
+    const float3 FogColor = 0.8f;
+    return lerp(Color, FogColor, blend);
+}
+
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
     const float3 CameraPosition = ViewInverse._41_42_43;
     float3 ViewRay = (input.WorldPosition - CameraPosition); // WorldSpace
-    float Distance = saturate(length(ViewRay) / FAR_DISTANCE);
+    const float Distance = length(ViewRay);
+    float DistanceBasedBlending = saturate((Distance - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
     ViewRay = normalize(ViewRay);
-
 
     // float LOD = 1 - input.LOD / MIPMAX;
     // return float4(LOD, LOD, LOD, 1);
     const float2 HeightMapUV = input.UV * HeightMapTiling;
     const float2 NoiseUV = input.UV * NoiseMapTiling;
 
-    const float3 Normal = CalculateNormal(HeightMapUV, input.LOD);
+    const float3 Normal = CalculateNormal(HeightMapUV, input.LOD, DistanceBasedBlending);
     const float3 Light = normalize(LightDirection);
     float LDotN = saturate(dot(-Light, Normal));
 
@@ -267,27 +302,28 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     float3 EnvColor = SkyTexture.Sample(LinearSampler_Border, ReflectedRay).rgb;
 
     const float Ambient = 0.3f;
-    const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(0.5f, 1.f, 1 - Distance);
+    const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(1, 0.75, DistanceBasedBlending);
     const float Refraction = (1 - Specular);
 
-    // float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 0.8f);
-    float3 WaterColor = DeepWaterColor;
-    float  Foam = (FoamGrid.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, input.LOD));
+    float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 0.7f);
+    float Foam = DistanceBasedFoam(HeightMapUV, input.LOD, DistanceBasedBlending);
+
     WaterColor = 
                    WaterColor * Ambient
                  + EnvColor * Specular * LightColor.rgb
                  + WaterColor * LDotN * Refraction * LightColor.rgb
                 ;
-    float3 FoamColor = Foam * LightColor.rgb * (Ambient + LDotN) * GetPerlinRandom(NoiseUV, input.LOD);
-    return float4(input.PerlinBlending, input.PerlinBlending, input.PerlinBlending, 1);
-    return float4((WaterColor + FoamColor) * input.PerlinBlending, 1);
+    float3 FoamColor = Foam * LightColor.rgb * (Ambient + LDotN);// * GetPerlinRandom(NoiseUV, input.LOD);
+    float3 Color = (WaterColor + FoamColor) * input.PerlinBlending; 
+    
+    return float4(FogBlending(Color, Distance), 1);
 }
 
 /*======================================================================================*/
 
 // PS에서 해도 되고 DS에서 해도 된다.
 // PS에서 하는 것이 더 정밀한 Normal을 얻을 수 있다.
-float3 CalculateNormal(float2 UV, uint LOD)
+float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend)
 {
     float2 dUV[4] = {
         float2(-TexelSize.x, 0), 
@@ -297,11 +333,11 @@ float3 CalculateNormal(float2 UV, uint LOD)
     };
     float height[4] = {0, 0, 0, 0};
 
-    const float Random = GetPerlinRandom(UV, LOD);
+    // const float Random = GetPerlinRandom(UV, LOD);
     [unroll]
     for(int i = 0 ; i < 4 ; i++)
     {
-        height[i] = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV + dUV[i], LOD).g * Random;
+        height[i] = DistanceBasedHeight(UV + dUV[i], LOD, DistanceBlend);// * Random;
     }
 
     float HeightDiffX = (height[1] - height[0]) / 2 * HeightScaler;
@@ -336,7 +372,7 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2)
     float LODNear = LODRange.x;
     float LODFar = LODRange.y;
 
-# if defined (TYPE02)
+# if defined (TYPE01)
     // SSD-Based
     const float MaxScreenDiagonal = sqrt((ScreenDiagonal)) / LODFar;
     float ThetaY = atan2(Center.y , Center.z);
@@ -346,7 +382,7 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2)
     Ssd = pow(L * SsdX, 2) + pow(L * SsdY, 2);
     TessRatio = pow(saturate((sqrt(Ssd) / (MaxScreenDiagonal))), LODNear);
 
-# elif defined (TYPE01) // Better
+# elif defined (TYPE02) // Better
     // Approax SSD-Based
     const float MaxScreenDiagonal = sqrt((ScreenDiagonal)) / LODFar;
     float SsdY = 2 * tan(PhiY);

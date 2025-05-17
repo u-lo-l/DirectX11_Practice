@@ -59,7 +59,7 @@ private:
 	struct TessellationDesc
 	{
 		Vector CameraPosition;
-		float HeightScaler = 60.f;
+		float HeightScaler = 1.f;
 
 		Vector2D LODRange;
 		Vector2D TexelSize;
@@ -85,7 +85,7 @@ private:
 		float Width;
 		float Height;
 		float DeltaTime;
-		float Padding;
+		float FoamSharpness = 1.f;
 
 		float FoamMultiplier = 1.5f;
 		float FoamThreshold = 1.f;

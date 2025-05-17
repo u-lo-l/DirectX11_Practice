@@ -23,7 +23,7 @@ cbuffer CB_TextureDim : register(b0)
 	float Width;
 	float Height;
 	float DeltaSeconds;
-	float Padding;
+	float FoamPower = 1.f;
 	
 	float FoamMultiplier = 1.f;
 	float FoamThreshold = 1.f;
@@ -66,6 +66,7 @@ void CSMain(uint3 Input : SV_DISPATCHTHREADID)
 	const float Det = (J._11 * J._22) - (J._12 * J._21);
 	const float MinEigen = (J._11 + J._22) - sqrt((J._11 + J._22) * (J._11 + J._22) - 4 * Det);
 	float FoamValue = FoamMultiplier * saturate(1 - MinEigen + FoamThreshold) * 10;
+	// FoamValue = pow(abs(FoamValue), FoamPower);
 
 	float PrevFoam = FoamTexture[UV];
 	float AccumulatedFoamValue = 0.f;

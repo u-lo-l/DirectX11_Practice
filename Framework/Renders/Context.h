@@ -1,5 +1,4 @@
 #pragma once
-#include "Projector/Perspective.h"
 #include "ViewPort/ViewPort.h"
 
 class Camera;
@@ -41,8 +40,6 @@ private:
 	Camera * MainCamera;
 	ViewPort * Vp;
 	GlobalViewProjectionCBuffer * VP_CBuffer_VS = nullptr;
-	// Matrix Projection;
-	Perspective * Projection;
 	Vector LightDirection = {1, -1, 1};
 	Color LightColor = {1,1,1,1};
 	Shadow * ShadowMap = nullptr;

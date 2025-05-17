@@ -87,10 +87,10 @@ void Ocean::SetupResources()
 
 	FoamData.Width = static_cast<float>(TextureSize);
 	FoamData.Height = static_cast<float>(TextureSize);
-	FoamData.FoamMultiplier = 5.f;
-	FoamData.FoamThreshold = 0.997;
+	FoamData.FoamMultiplier = 0.9f;
+	FoamData.FoamThreshold = 0.95f;
 	FoamData.FoamBlur = 50;
-	FoamData.FoamFade = 1;
+	FoamData.FoamFade = 0.8f;
 	
 	InitialSpectrumTexture2D = new RWTexture2D(
 		TextureSize, TextureSize,

@@ -56,7 +56,8 @@ void Context::Render() const
 
 void Context::ResizeScreen()
 {
-	Projection->Set(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 50000.f, Projection->GetFOV());
+	const Projection * const Proj = MainCamera->GetProjection();
+	MainCamera->SetPerspective(D3D::GetDesc().Width, D3D::GetDesc().Height, Proj->GetNear(), Proj->GetFar(), Proj->GetFOV());
 	Vp->SetViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
 }
 
@@ -83,11 +84,9 @@ const Color& Context::GetLightColor() const
 Context::Context()
  : MainCamera(new Camera())
 {
+	MainCamera->SetPerspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 5000.f, Math::ToRadians(60.f));
 	Vp = new ViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
-	Projection = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 50000.f, Math::Pi * 0.5f);
-	
 	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
-
 	ShadowMap = new Shadow({0,0,0}, 100, 1024, 1024);
 }
 

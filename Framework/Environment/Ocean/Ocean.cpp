@@ -52,8 +52,10 @@ Ocean::Ocean(const OceanDesc& Desc)
 	};
 	if (!!DisplacementMap)
 		TessellationData.HeightMapTiling =  Vector2D(Dimension[0], Dimension[1]) / (float)DisplacementMap->GetWidth();
+
 	if (!!PerlinNoise)
-		TessellationData.NoiseTiling =  Vector2D(Dimension[0], Dimension[1]) / (float)PerlinNoise->GetWidth();
+			TessellationData.NoiseTiling = TessellationData.HeightMapTiling / 16.f;
+			// TessellationData.NoiseTiling =  Vector2D( (float)PatchSize / (float)PerlinNoise->GetWidth(), (float)PatchSize / (float)PerlinNoise->GetHeight()) ;
 	if (Macros[0].Name == "TYPE03")
 	{
 		TessellationData.LODRange = {
@@ -70,6 +72,7 @@ Ocean::Ocean(const OceanDesc& Desc)
 		};
 		LODRange = {1, 10};
 	}
+	TessellationData.HeightScaler = 4.f;
 	TessellationData.NoiseScaler = 1.f;
 	TessellationData.NoisePower = 1.f;
 	CreateVertex();
@@ -145,8 +148,9 @@ void Ocean::Tick()
 	FoamData.Width = static_cast<float>(FoamGrid->GetWidth());
 	FoamData.Height = static_cast<float>(FoamGrid->GetHeight());
 	FoamData.DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
-	ImGui::SliderFloat("Ocean : Foam Multiplier", &FoamData.FoamMultiplier, 1.f, 5.f, "%.1f");
-	ImGui::SliderFloat("Ocean : Foam Threshold", &FoamData.FoamThreshold, 0.99f, 1.01f, "%.4f");
+	ImGui::SliderFloat("Ocean : Foam Sharpness", &FoamData.FoamSharpness, 0.1f, 5.f, "%.1f");
+	ImGui::SliderFloat("Ocean : Foam Multiplier", &FoamData.FoamMultiplier, 0.1f, 5.f, "%.1f");
+	ImGui::SliderFloat("Ocean : Foam Threshold", &FoamData.FoamThreshold, 0.95f, 1.01f, "%.4f");
 	ImGui::SliderFloat("Ocean : Foam Blur", &FoamData.FoamBlur, 0, 50, "%.0f");
 	ImGui::SliderFloat("Ocean : Foam Fade", &FoamData.FoamFade, 0, 1, "%.1f");
 	CB_Foam->UpdateData(&FoamData, sizeof(FoamDesc));
@@ -163,7 +167,7 @@ void Ocean::Tick()
 	WVP.ViewInverse = Matrix::Invert(WVP.View, true);
 	CB_WVP->UpdateData(&WVP, sizeof(WVPDesc));
 
-	ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 200.f, "%.1f");
+	ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 50.f, "%.1f");
 	ImGui::SliderFloat("Ocean : LOD Power", &TessellationData.LODRange.X, 0.1f, 3.f, "%.1f");
 	ImGui::SliderFloat("Ocean : Min Screen Diagonal", &TessellationData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
 	ImGui::SliderFloat("Ocean : Noise Scaler", &TessellationData.NoiseScaler, 0.1, 10, "%.1f");

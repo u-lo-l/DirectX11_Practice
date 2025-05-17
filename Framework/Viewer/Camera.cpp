@@ -133,6 +133,11 @@ const Frustum* Camera::GetViewFrustum() const
 	return ViewFrustum;
 }
 
+const Projection* Camera::GetProjection() const
+{
+	return Proj;
+}
+
 Vector Camera::At() const
 {
 	return Tf->GetWorldPosition() + Tf->GetForward();
