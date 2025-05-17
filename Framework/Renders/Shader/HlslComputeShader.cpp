@@ -69,11 +69,140 @@ void HlslComputeShader::Dispatch() const
 	this->Dispatch(DispatchSize[0], DispatchSize[1], DispatchSize[2]);
 }
 
+HRESULT HlslComputeShader::CreateSamplerState_Anisotropic()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+			
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	SamplerDesc.MaxAnisotropy = 4;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic);
+}
+
+HRESULT HlslComputeShader::CreateSamplerState_Anisotropic_Clamp()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+			
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	SamplerDesc.MaxAnisotropy = 4;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic);
+}
+
+HRESULT HlslComputeShader::CreateSamplerState_Anisotropic_Wrap()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+			
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	SamplerDesc.MaxAnisotropy = 4;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic);
+}
+
+HRESULT HlslComputeShader::CreateSamplerState_ShadowSampler()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+			
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+			
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	SamplerDesc.MaxAnisotropy = 4;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Shadow);
+}
+
+
+HRESULT HlslComputeShader::CreateSamplerState_Linear_Wrap()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear);
+}
+
+HRESULT HlslComputeShader::CreateSamplerState_Linear_Clamp()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear);
+}
+
+HRESULT HlslComputeShader::CreateSamplerState_Linear_Border()
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear);
+}
+
+HRESULT HlslComputeShader::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDesc, const SamplerStateType SamplerType)
+{
+	SAFE_RELEASE(SamplerStates[(UINT)SamplerType]);
+	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerStates[static_cast<UINT>(SamplerType)]);
+}
+
 void HlslComputeShader::Dispatch(const RawBuffer * InRawBuffer, UINT X, UINT Y, UINT Z) const
 {
 	if (!ComputeShader)
 		return ;
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	for (UINT i = 0 ; i < (UINT)SamplerStateType::Max ; i++)
+	{
+		ID3D11SamplerState * TargetSampler = (SamplerStates[i]);
+		DeviceContext->CSSetSamplers(i, 1, &TargetSampler);
+	}
 	
 	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
 	InRawBuffer->BindInputToGPU();
@@ -95,6 +224,12 @@ void HlslComputeShader::Dispatch(UINT X, UINT Y, UINT Z) const
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 
 	DeviceContext->CSSetShader(ComputeShader, nullptr, 0);
+	for (UINT i = 0 ; i < (UINT)SamplerStateType::Max ; i++)
+	{
+		ID3D11SamplerState * TargetSampler = (SamplerStates[i]);
+		DeviceContext->CSSetSamplers(i, 1, &TargetSampler);
+	}
+	
 	DeviceContext->Dispatch(X, Y, Z);
 
 	ID3D11ShaderResourceView * NullSRV = nullptr;

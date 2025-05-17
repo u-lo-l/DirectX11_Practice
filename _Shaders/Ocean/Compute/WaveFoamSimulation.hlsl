@@ -17,27 +17,26 @@
 
 Texture2D<float4> DisplacementMap : register(t0);
 RWTexture2D<float> FoamTexture : register(u0);
-
+SamplerState LinearSampler_Wrap : register(s0);
 cbuffer CB_TextureDim : register(b0)
 {
-	uint Width;
-	uint Height;
-	float DeltaTime;
+	float Width;
+	float Height;
+	float DeltaSeconds;
 	float Padding;
 	
 	float FoamMultiplier = 1.f;
-	float FoamThreshold = 2.f;
+	float FoamThreshold = 1.f;
 	float FoamBlur = 1.f;
 	float FoamFade = 0.1f;
 };
 
-const static int SamplingSize = 2;
 const static int2 FoamSampleOffsets[5] = {
-	int2(0, 0),	// CENTER
-	int2(-SamplingSize / 2, 0),	// LEFT
-	int2( SamplingSize / 2, 0),	// RIGHT
-	int2(0, -SamplingSize / 2),	// TOP
-	int2(0,  SamplingSize / 2)	// BOTTOM
+	int2( 0,  0),	// CENTER
+	int2(-1,  0),	// LEFT
+	int2( 1,  0),	// RIGHT
+	int2( 0, -1),	// TOP
+	int2( 0,  1)	// BOTTOM
 };
 
 uint2 GetWrappedTexCord(uint2 UV, int2 Offset);
@@ -46,40 +45,38 @@ uint2 GetWrappedTexCord(uint2 UV, int2 Offset);
 void CSMain(uint3 Input : SV_DISPATCHTHREADID)
 {
 	int i = 0;
-	uint2 UV = Input.xy;
+	int2 UV = Input.xy;
 
 	// Get Current Foam Value By JacobianMat and EigenValue
-	uint2 TexCords[5];
 	float2 Horizontal_Disps[5];
 	[unroll] for (i = 0 ; i < 5 ; i++)
 	{
-		TexCords[i] = GetWrappedTexCord(UV, FoamSampleOffsets[i]);
-		Horizontal_Disps[i] = DisplacementMap[TexCords[i]].xz;
+		// float2 TexCord = float2(UV.x / Width, UV.y / Height) + TexelSize * FoamSampleOffsets[i];
+		// Horizontal_Disps[i] = DisplacementMap.SampleLevel(LinearSampler_Wrap, TexCord, 0).xz;
+
+		uint2 TexCord = GetWrappedTexCord(UV, FoamSampleOffsets[i]);
+		Horizontal_Disps[i] = DisplacementMap[TexCord].xz;
 	}
 
 	float2x2 J; // JacobianMat
-	J._11 = 1.f + (float)(Horizontal_Disps[RIGHT].x  - Horizontal_Disps[LEFT].x) / SamplingSize;
-	J._12 =       (float)(Horizontal_Disps[BOTTOM].x - Horizontal_Disps[TOP].x)  / SamplingSize;
-	J._21 =       (float)(Horizontal_Disps[RIGHT].y  - Horizontal_Disps[LEFT].y) / SamplingSize;
-	J._22 = 1.f + (float)(Horizontal_Disps[BOTTOM].y - Horizontal_Disps[TOP].y)  / SamplingSize;
+	J._11 = 1.f + (Horizontal_Disps[RIGHT].x  - Horizontal_Disps[LEFT].x) / 2;
+	J._12 =       (Horizontal_Disps[BOTTOM].x - Horizontal_Disps[TOP].x) / 2;
+	J._21 =       (Horizontal_Disps[RIGHT].y  - Horizontal_Disps[LEFT].y) / 2;
+	J._22 = 1.f + (Horizontal_Disps[BOTTOM].y - Horizontal_Disps[TOP].y) / 2;
 	const float Det = (J._11 * J._22) - (J._12 * J._21);
 	const float MinEigen = (J._11 + J._22) - sqrt((J._11 + J._22) * (J._11 + J._22) - 4 * Det);
-	float FoamValue = FoamMultiplier * (1 - MinEigen + FoamThreshold);
+	float FoamValue = FoamMultiplier * saturate(1 - MinEigen + FoamThreshold) * 10;
 
-	FoamTexture[UV] = FoamValue;
-	return ;
-
-	// Smooth Foam Value
 	float PrevFoam = FoamTexture[UV];
 	float AccumulatedFoamValue = 0.f;
 	[unroll] for(i = 1 ; i < 5 ; i++)
 	{
-		uint2 SamplePosition = GetWrappedTexCord(UV, FoamSampleOffsets[i]);
-		float SampleFoam = FoamTexture[SamplePosition];
+		uint2 TexCord = GetWrappedTexCord(UV, FoamSampleOffsets[i]);
+		float SampleFoam = FoamTexture[TexCord];
 		AccumulatedFoamValue += SampleFoam * 0.25f;
 	}
-	PrevFoam = lerp(PrevFoam, AccumulatedFoamValue, saturate(DeltaTime) * FoamBlur);
-	PrevFoam = saturate(PrevFoam - FoamFade * DeltaTime);
+	PrevFoam = lerp(PrevFoam, AccumulatedFoamValue, saturate(DeltaSeconds) * FoamBlur);
+	PrevFoam = saturate(PrevFoam - FoamFade * DeltaSeconds);
 	FoamValue = max(FoamValue, PrevFoam);
 
 	FoamTexture[UV] = FoamValue;
@@ -87,9 +84,12 @@ void CSMain(uint3 Input : SV_DISPATCHTHREADID)
 
 uint2 GetWrappedTexCord(uint2 UV, int2 Offset)
 {
-	int2 TexCord = (int2)(UV) + Offset;
-	TexCord.x = (TexCord.x + Width) % Width;
-	TexCord.y = (TexCord.y + Height) % Height;
-	return uint2(TexCord);
+	int2 wrapped = int2(UV) + Offset;
+
+	// 수동으로 wrap
+	wrapped.x = (wrapped.x + int(Width)) % (Width);
+	wrapped.y = (wrapped.y + int(Height)) % (Height);
+
+	return uint2(wrapped);
 }
 #endif

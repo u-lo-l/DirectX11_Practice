@@ -9,109 +9,111 @@
 
 void Ocean::SetupShaders()
 {
-	vector<D3D_SHADER_MACRO> ShaderMacros = {
-		{"THREAD_X", "32"},
-		{"THREAD_Y", "32"},
+	constexpr UINT TextureThreadGroupSize = 32;
+	const UINT TextureDispatchSize = TextureSize / TextureThreadGroupSize;
+	const string TextureThreadGroupSizeStr = std::to_string(TextureThreadGroupSize);
+
+	const string FFTSizeStr = to_string(TextureSize);
+	const string FFTThreadGroupLengthStr = to_string(TextureSize / 2);
+	const string FFTLogN = to_string(log2(TextureSize));
+
+	const vector<D3D_SHADER_MACRO> TextureShaderMacros = {
+		{"THREAD_X", TextureThreadGroupSizeStr.c_str()},
+		{"THREAD_Y", TextureThreadGroupSizeStr.c_str()},
+		{nullptr, }
+	};
+
+	const vector<D3D_SHADER_MACRO> FFTShaderMacros = {
+		{"FFT_SIZE", FFTSizeStr.c_str()},
+		{"THREAD_GROUP_SIZE", FFTThreadGroupLengthStr.c_str()},
+		{"LOG_N", FFTLogN.c_str()},
 		{nullptr, }
 	};
 	// Init Spectrum
 	CS_SpectrumInitializer = new HlslComputeShader(
 		L"Ocean/Compute/PhilipsSpectrum.Initialize.hlsl",
-		ShaderMacros.data()
+		TextureShaderMacros.data()
 	);
-	CS_SpectrumInitializer->SetDispatchSize(Size / 32, Size / 32 , 1);
+	CS_SpectrumInitializer->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , 1);
 
 	// Update
 	CS_SpectrumUpdater = new HlslComputeShader(
 		L"Ocean/Compute/PhilipsSpectrum.Update.hlsl",
-		ShaderMacros.data()
+		TextureShaderMacros.data()
 	);
-	CS_SpectrumUpdater->SetDispatchSize(Size / 32, Size / 32 , 1);
+	CS_SpectrumUpdater->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , 1);
 
 	// Transpose
 	CS_Transpose = new HlslComputeShader(
 		L"Ocean/Compute/TransposeTextureArray.hlsl",
-		ShaderMacros.data()
+		TextureShaderMacros.data()
 	);
-	CS_Transpose->SetDispatchSize(Size / 32, Size / 32 , (UINT)SpectrumTextureType::MAX);
+	CS_Transpose->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
 
 	// RowPass
-	ShaderMacros = {
-		{"FFT_SIZE", "512"},
-		{"THREAD_GROUP_SIZE", "256"},
-		{"LOG_N", "9"},
-		{nullptr, }
-	};
 	CS_RowPassIFFT = new HlslComputeShader(
 		L"Ocean/Compute/WaveIFFT_RowPass.hlsl",
-		ShaderMacros.data()
+		FFTShaderMacros.data()
 	);
-	CS_RowPassIFFT->SetDispatchSize(Size, 1 , (UINT)SpectrumTextureType::MAX);
+	CS_RowPassIFFT->SetDispatchSize(TextureSize, 1 , (UINT)SpectrumTextureType::MAX);
 
 	// ColPass
-	ShaderMacros = {
-		{"FFT_SIZE", "512"},
-		{"THREAD_GROUP_SIZE", "256"},
-		{"LOG_N", "9"},
-		{nullptr, }
-	};
 	CS_ColPassIFFT = new HlslComputeShader(
 		L"Ocean/Compute/WaveIFFT_ColPass.hlsl",
-		ShaderMacros.data()
+		FFTShaderMacros.data()
 	);
-	CS_ColPassIFFT->SetDispatchSize(Size, 1 , (UINT)SpectrumTextureType::MAX);
+	CS_ColPassIFFT->SetDispatchSize(TextureSize, 1 , (UINT)SpectrumTextureType::MAX);
 
-	ShaderMacros = {
-		{"THREAD_X", "32"},
-		{"THREAD_Y", "32"},
-		{nullptr, }
-	};
 	CS_SimulateFoam = new HlslComputeShader(
 		L"Ocean/Compute/WaveFoamSimulation.hlsl",
-		ShaderMacros.data()
+		TextureShaderMacros.data()
 	);
-	CS_SimulateFoam->SetDispatchSize(Size / 32, Size / 32 , (UINT)SpectrumTextureType::MAX);
+	CS_SimulateFoam->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
 }
 
 void Ocean::SetupResources()
 {
-	PhillipsInitData.Width = static_cast<float>(Size);
-	PhillipsInitData.Height = static_cast<float>(Size);
+	PhillipsInitData.Width = static_cast<float>(TextureSize);
+	PhillipsInitData.Height = static_cast<float>(TextureSize);
 
-	PhilipsUpdateData.Width = static_cast<float>(Size);
-	PhilipsUpdateData.Height = static_cast<float>(Size);
+	PhilipsUpdateData.Width = static_cast<float>(TextureSize);
+	PhilipsUpdateData.Height = static_cast<float>(TextureSize);
 	PhilipsUpdateData.RunningTime = 0.f;
 	PhilipsUpdateData.InitTime = sdt::SystemTimer::Get()->GetRunningTime();
 
-	FoamData.Width = static_cast<float>(Size);
-	FoamData.Height = static_cast<float>(Size);
-	FoamData.FoamMultiplier = 1.5f;
-	FoamData.FoamThreshold = 1.5f;
-	FoamData.FoamBlur = 1.f;
-	FoamData.FoamFade = 0.1f;
+	TransposeData.Width = (TextureSize);
+	TransposeData.Height = (TextureSize);
+	TransposeData.ArraySize = (UINT)SpectrumTextureType::MAX;
+
+	FoamData.Width = static_cast<float>(TextureSize);
+	FoamData.Height = static_cast<float>(TextureSize);
+	FoamData.FoamMultiplier = 5.f;
+	FoamData.FoamThreshold = 0.997;
+	FoamData.FoamBlur = 50;
+	FoamData.FoamFade = 1;
 	
 	InitialSpectrumTexture2D = new RWTexture2D(
-		Size, Size,
+		TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
 	SpectrumTexture2D = new RWTexture2DArray(
-		(UINT)SpectrumTextureType::MAX, Size, Size,
+		(UINT)SpectrumTextureType::MAX, TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
 	IFFT_Result = new RWTexture2DArray(
-		(UINT)SpectrumTextureType::MAX, Size, Size,
+		(UINT)SpectrumTextureType::MAX, TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
 	IFFT_Result_Transposed = new RWTexture2DArray(
-		(UINT)SpectrumTextureType::MAX, Size, Size,
+		(UINT)SpectrumTextureType::MAX, TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
 	DisplacementMap = new RWTexture2D(
-		Size, Size,
+		TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
 	FoamGrid = new RWTexture2D(
-		Size, Size,
+		TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
 		
@@ -208,6 +210,7 @@ void Ocean::FoamSimulation() const
 	CB_Foam->BindToGPU();
 	DisplacementMap->BindToGPUAsSRV(0);
 	FoamGrid->BindToGPUAsUAV(0);
+	CS_SimulateFoam->CreateSamplerState_Linear_Wrap();
 	CS_SimulateFoam->Dispatch();
 	FoamGrid->UpdateSRV();
 }

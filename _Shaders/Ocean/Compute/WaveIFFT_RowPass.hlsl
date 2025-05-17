@@ -27,11 +27,11 @@ uint BitReverse(uint x, uint LogN);
 /*
 * One ThreadGroup Per Row
 */
-[numthreads(THREAD_GROUP_COUNT, 1, 1)] // Dispatch(FFT_SIZE, 1, ArraySize)
+[numthreads(THREAD_GROUP_SIZE, 1, 1)] // Dispatch(FFT_SIZE, 1, 3)
 void CSMain(CSInput Input)
 {
 	uint3 DTID_1 = uint3(Input.GTid.x, Input.GroupId.x, Input.GroupId.z);
-	uint3 DTID_2 = uint3(Input.GTid.x + THREAD_GROUP_COUNT, Input.GroupId.x, Input.GroupId.z);
+	uint3 DTID_2 = uint3(Input.GTid.x + THREAD_GROUP_SIZE, Input.GroupId.x, Input.GroupId.z);
 
     float2 WaveVector = GetWaveVector(DTID_1.xy, float2(Width, Height));
 

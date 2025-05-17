@@ -26,8 +26,8 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::TextureTransposeDemo);
 	// PUSH_MAIN(sdt::PhilipsSpectrumDemo);
 	// PUSH_MAIN(sdt::LandScapeDemo);
-	// PUSH_MAIN(sdt::OceanDemo);
-	PUSH_MAIN(sdt::FoamDemo);
+	PUSH_MAIN(sdt::OceanDemo);
+	// PUSH_MAIN(sdt::FoamDemo);
 }
 
 

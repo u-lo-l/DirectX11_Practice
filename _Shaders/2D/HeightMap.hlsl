@@ -12,7 +12,7 @@ cbuffer CB_Render2D : register(b1)
     matrix Projection2D;
 };
 
-Texture2D<float> Texture : register (t0);
+Texture2D<float> FoamGrid : register (t0);
 SamplerState LinearSampler : register(s0);
 
 struct VertexInput
@@ -40,8 +40,7 @@ VertexOutput VSMain(VertexInput input)
 
 float4 PSMain(VertexOutput input) : SV_Target
 {
-    float mean = (Texture.Sample(LinearSampler, input.Uv));
-    [flatten]if (mean < 0.1) return float4(0,0,0, 1);
+    float mean = (FoamGrid.Sample(LinearSampler, input.Uv));
     return float4(mean, mean, mean, 1);
 }
 

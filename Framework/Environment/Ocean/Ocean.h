@@ -11,8 +11,9 @@ class Ocean
 public:
 	struct OceanDesc
 	{
-		UINT Dimension_X;
-		UINT Dimension_Z;
+		UINT SeaDimension_X;
+		UINT SeaDimension_Z;
+		UINT FFTSize;
 		UINT PatchSize;
 		Vector2D WorldPosition;
 		float SeaLevel;
@@ -25,6 +26,9 @@ public:
 	};
 private:
 	using VertexType = VertexTextureNormal;
+	UINT TextureSize = 512;
+	UINT Dimension[2];
+	Vector2D LODRange;
 	struct WVPDesc
 	{
 		Matrix World;
@@ -42,13 +46,13 @@ private:
 	{
 		float Width;
 		float Height;
-		float RunningTime;
-		float InitTime;
+		float RunningTime = 0.f;
+		float InitTime = 0.f;
 	};
 	struct TransposeDesc
 	{
-		UINT Width = 1024;
-		UINT Height = 1024;
+		UINT Width;
+		UINT Height;
 		UINT ArraySize = (UINT)SpectrumTextureType::MAX;
 		UINT Padding;
 	};
@@ -56,14 +60,18 @@ private:
 	{
 		Vector CameraPosition;
 		float HeightScaler = 60.f;
-		
+
 		Vector2D LODRange;
 		Vector2D TexelSize;
-		
+
 		float ScreenDistance;
 		float ScreenDiagonal;
-		float Padding[2];
-		
+		float NoiseScaler = 1.f;
+		float NoisePower = 1.f;
+
+		Vector2D HeightMapTiling;
+		Vector2D NoiseTiling;
+
 		Color LightColor;
 
 		Vector LightDirection;
@@ -80,13 +88,11 @@ private:
 		float Padding;
 
 		float FoamMultiplier = 1.5f;
-		float FoamThreshold = 1.5f;
+		float FoamThreshold = 1.f;
 		float FoamBlur = 1.f;
 		float FoamFade = 0.1f;
 	};
-	UINT Size = 512;
-	UINT Dimension[2];
-	Vector2D LODRange;
+
 public:
 	explicit Ocean(const OceanDesc & Desc);
 	explicit Ocean(UINT Width = 512, UINT Height = 512, UINT InPatchSize= 32);
@@ -137,7 +143,6 @@ private:
 	RWTexture2DArray * IFFT_Result = nullptr;
 	RWTexture2DArray * IFFT_Result_Transposed = nullptr;
 	RWTexture2D * DisplacementMap = nullptr;
-	RWTexture2D * NormalMap = nullptr;
 	RWTexture2D * FoamGrid = nullptr;
 	
 	ConstantBuffer * CB_PhillipsInit = nullptr;
@@ -176,7 +181,7 @@ private:
 
 	const Texture * SkyTexture = nullptr;
 	const Texture * TerrainHeightMap = nullptr;
-
+	Texture * PerlinNoise = nullptr;
 	// Shader
 	HlslShader<VertexType> * Shader;
 #pragma endregion Render

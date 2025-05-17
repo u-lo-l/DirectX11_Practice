@@ -6,9 +6,16 @@
 # define HS_INPUT_PATCH_SIZE 4
 # define HS_OUTPUT_PATCH_SIZE 4
 
+# define FAR_DISTANCE (2500)
+
 const static float MinTessFactor = 1;
 const static float MaxTessFactor = 64;
 const static float RDRatio = 4;
+
+const static float MIPMIN = 0;
+const static float MIPMAX = 5;
+
+#define GET_MIP_LEVEL(x) (lerp(MIPMIN, MIPMAX, (x)))
 
 const static float WaterRefractionIndex = 1.33f; // 굴절률
 const static float WaterR0 = 0.02f;              // 수직 입사 반사 계수
@@ -31,7 +38,11 @@ cbuffer CB_HeightScaler : register(b1)
 
     float  ScreenDistance;
     float  ScreenDiagonal;
-    float2 Padding;
+    float  NoiseScaler = 1.f;
+    float  NoisePower = 1.f;
+
+    float2 HeightMapTiling;
+    float2 NoiseMapTiling;
 
     float4 LightColor;
 
@@ -43,12 +54,20 @@ cbuffer CB_HeightScaler : register(b1)
 }
 
 
-SamplerState LinearSampler_Border : register(s0); // VS DS PS
+SamplerState LinearSampler_Border : register(s0);    // VS DS PS
 SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
-Texture2D<float4>   WaterHeightMap  : register(t0);        // VS DS PS
-TextureCube SkyTexture      : register(t1);        // PS
-Texture2D   GroundHeightMap : register(t2);
+Texture2D<float4>   WaterHeightMap  : register(t0);  // VS DS PS
+TextureCube SkyTexture      : register(t1);          // PS
+Texture2D<float> FoamGrid   : register(t2);          // PS
+Texture2D<float> PerlinNoise : register(t3);         // VS DS PS
 
+const float GetPerlinRandom(float2 uv, uint LOD = 0)
+{
+    uv /= HeightMapTiling * 4;
+    
+    float Random = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, uv, LOD); // 0 ~ 1
+    return Random;
+}
 struct VS_INPUT
 {
     float4 Position : POSITION;
@@ -58,9 +77,9 @@ struct VS_INPUT
 
 struct VS_OUTPUT // HS_INPUT
 {
-    float3 Position : POSITION;
-    float2 UV : UV;
-    float3 Normal : NORMAL;
+    float3 Position : POSITION0;
+    float2 UV       : UV;
+    float3 Normal   : NORMAL;
 };
 
 struct HS_CONSTANT_OUTPUT
@@ -72,30 +91,39 @@ struct HS_CONSTANT_OUTPUT
 struct HS_POINT_OUTPUT // DS_INPUT
 {
     float3 Position : POSITION;
-    float2 UV : UV;
+    float2 UV       : UV;
     float3 Normal : NORMAL;
 };
 
 struct DS_OUTPUT // PS_INPUT
 {
     float4 Position : SV_Position;
-    float2 UV : UV;
+    float2 UV       : UV;
     float3 Normal : NORMAL;
 
     float3 WorldPosition : POSITION;
     float  LOD : LOD;
+    float  PerlinBlending : BLENDING;
 };
 
-float3 CalculateNormal(float2 UV);
+float3 CalculateNormal(float2 UV, uint LOD);
 
 // VS
 VS_OUTPUT VSMain(VS_INPUT input)
 {
     VS_OUTPUT output;
+
     output.Position = input.Position.xyz;
     output.UV = input.UV;
     output.Normal = input.Normal;
 
+    // const float Random = GetPerlinRandom(input.UV);
+    // const float3 Displacement = Random * WaterHeightMap.SampleLevel(LinearSampler_Border, input.UV, 0).xyz;
+    // output.Position.y += Displacement.y;
+    const float2 HeightMapUV = output.UV * HeightMapTiling;
+    const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb ;
+
+    output.Position.y += Displacement.y;
     return output;
 }
 
@@ -129,11 +157,13 @@ HS_CONSTANT_OUTPUT HSConstant
         output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
     }
 
-    float Density = lerp(MinTessFactor, MaxTessFactor, CalculateDensity(patch));
+    // float Density = lerp(MinTessFactor, MaxTessFactor, CalculateDensity(patch));
     float TessFactor = (output.Edge[0] + output.Edge[2]) * 0.5f;
-    output.Inside[0] = Density * DensityWeight + TessFactor * SSDWeight;
+    // output.Inside[0] = Density * DensityWeight + TessFactor * SSDWeight;
+    output.Inside[0] = TessFactor;
     TessFactor = (output.Edge[1] + output.Edge[3]) * 0.5f;
-    output.Inside[1] = Density * DensityWeight + TessFactor * SSDWeight;
+    // output.Inside[1] = Density * DensityWeight + TessFactor * SSDWeight;
+    output.Inside[1] = TessFactor;
     return output;
 }
 
@@ -173,14 +203,29 @@ DS_OUTPUT DSMain
     float3 v2 = lerp(patch[3].Position, patch[2].Position, UV.x);
     output.Position = float4(lerp(v1, v2, UV.y), 1);
 
+    const float3 CameraPosition = ViewInverse._41_42_43;
+    const float Dist = length(CameraPosition - mul(output.Position, World).xyz);
+    float DetailAmount = saturate((FAR_DISTANCE - Dist) / FAR_DISTANCE);
+    output.LOD = GET_MIP_LEVEL(1 - DetailAmount);
+
     float2 u1 = lerp(patch[0].UV, patch[1].UV, UV.x);
     float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
     output.UV = lerp(u1, u2, UV.y);
 
     output.Normal = float3(0,1,0);
 
-    float Height = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, output.UV, 0).g;
-    output.Position.y = Height * HeightScaler;
+    const float2 HeightMapUV = output.UV * HeightMapTiling;
+    const float2 NoiseMapUV = output.UV * NoiseMapTiling;
+    float Noise = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, NoiseMapUV, 0).r;
+    Noise = lerp(0.5, 1, Noise);
+    Noise = saturate(pow(abs(Noise * NoiseScaler) , NoisePower));
+    output.PerlinBlending = lerp(Noise, 1.f, DetailAmount);
+    
+    const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb * output.PerlinBlending;
+    const float Folding = abs(FoamGrid.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0)).r;
+
+    output.Position.y = Displacement.y * HeightScaler;
+    output.Position.xz += Displacement.xz * HeightScaler * (1 - Folding);
 
     output.Position = mul(output.Position, World);
     output.WorldPosition = output.Position.xyz;
@@ -189,8 +234,6 @@ DS_OUTPUT DSMain
 
     output.Normal = mul(output.Normal, (float3x3)World);
 
-    float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
-    output.LOD = (uint)(lerp(5, 0,  MeanTessFactor / MaxTessFactor));
 
     return output;
 }
@@ -199,42 +242,52 @@ DS_OUTPUT DSMain
 float GetSpecularCoef(float VDotL);
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
-    float3 Normal = CalculateNormal(input.UV);
-    float3 Light = normalize(LightDirection);
-    float LDotN = dot(-Light, Normal);
+    const float3 CameraPosition = ViewInverse._41_42_43;
+    float3 ViewRay = (input.WorldPosition - CameraPosition); // WorldSpace
+    float Distance = saturate(length(ViewRay) / FAR_DISTANCE);
+    ViewRay = normalize(ViewRay);
+
+
+    // float LOD = 1 - input.LOD / MIPMAX;
+    // return float4(LOD, LOD, LOD, 1);
+    const float2 HeightMapUV = input.UV * HeightMapTiling;
+    const float2 NoiseUV = input.UV * NoiseMapTiling;
+
+    const float3 Normal = CalculateNormal(HeightMapUV, input.LOD);
+    const float3 Light = normalize(LightDirection);
+    float LDotN = saturate(dot(-Light, Normal));
 
     float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
-    float3 DeepWaterColor = float3(0.1f, 0.25f, 0.75f);
+    float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
 
-
-    const float3 CameraPosition = ViewInverse._41_42_43;
-    float3 ViewRay = normalize(input.WorldPosition - CameraPosition); // WorldSpace
     
     // Asume Distance to Sky : Infinity
     float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
     float RDotN = dot(ReflectedRay, Normal);
-    float3 ReflectedEnvColor = SkyTexture.Sample(LinearSampler_Border, ReflectedRay).rgb;
-    const float Ambient = 0.3f;
-    const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) ;
-    const float Transparency = 0.8f;
-    const float Diffuse = (1 - Specular) * (1 - Transparency);
-    const float Refraction = (1 - Specular) * (Transparency);
+    float3 EnvColor = SkyTexture.Sample(LinearSampler_Border, ReflectedRay).rgb;
 
-    // float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 1 - facing);
-    float3 WaterColor = ShallowWaterColor;
-    float3 Color = 
+    const float Ambient = 0.3f;
+    const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(0.5f, 1.f, 1 - Distance);
+    const float Refraction = (1 - Specular);
+
+    // float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 0.8f);
+    float3 WaterColor = DeepWaterColor;
+    float  Foam = (FoamGrid.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, input.LOD));
+    WaterColor = 
                    WaterColor * Ambient
-                 + ReflectedEnvColor * Specular * LightColor.rgb
-                 + WaterColor * saturate(LDotN) * Refraction * LightColor.rgb
+                 + EnvColor * Specular * LightColor.rgb
+                 + WaterColor * LDotN * Refraction * LightColor.rgb
                 ;
-    return float4(Color * LightColor.rgb, 1);
+    float3 FoamColor = Foam * LightColor.rgb * (Ambient + LDotN) * GetPerlinRandom(NoiseUV, input.LOD);
+    return float4(input.PerlinBlending, input.PerlinBlending, input.PerlinBlending, 1);
+    return float4((WaterColor + FoamColor) * input.PerlinBlending, 1);
 }
 
 /*======================================================================================*/
 
 // PS에서 해도 되고 DS에서 해도 된다.
 // PS에서 하는 것이 더 정밀한 Normal을 얻을 수 있다.
-float3 CalculateNormal(float2 UV)
+float3 CalculateNormal(float2 UV, uint LOD)
 {
     float2 dUV[4] = {
         float2(-TexelSize.x, 0), 
@@ -244,19 +297,18 @@ float3 CalculateNormal(float2 UV)
     };
     float height[4] = {0, 0, 0, 0};
 
+    const float Random = GetPerlinRandom(UV, LOD);
     [unroll]
     for(int i = 0 ; i < 4 ; i++)
     {
-        height[i] = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV + dUV[i], 0).g;
+        height[i] = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV + dUV[i], LOD).g * Random;
     }
 
-    float StrideX = (UV.x - TexelSize.x < 0) || (UV.x + TexelSize.x > 1) ? 1.f : 2.f;
-    float StrideZ = (UV.y - TexelSize.y < 0) || (UV.y + TexelSize.y > 1) ? 1.f : 2.f;
-    float HeightDiffX = (height[1] - height[0]) * HeightScaler;
-    float HeightDiffZ = (height[3] - height[2]) * HeightScaler;
+    float HeightDiffX = (height[1] - height[0]) / 2 * HeightScaler;
+    float HeightDiffZ = (height[3] - height[2]) / 2 * HeightScaler;
 
-    float3 tangent = normalize(float3(StrideX, HeightDiffX, 0));
-    float3 bitangent = normalize(float3(0, HeightDiffZ, StrideZ));
+    float3 tangent = normalize(float3(2, HeightDiffX, 0));
+    float3 bitangent = normalize(float3(0, HeightDiffZ, 2));
     return normalize(cross(bitangent, tangent));
 }
 
@@ -284,7 +336,7 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2)
     float LODNear = LODRange.x;
     float LODFar = LODRange.y;
 
-# if defined (TYPE01)
+# if defined (TYPE02)
     // SSD-Based
     const float MaxScreenDiagonal = sqrt((ScreenDiagonal)) / LODFar;
     float ThetaY = atan2(Center.y , Center.z);
@@ -294,7 +346,7 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2)
     Ssd = pow(L * SsdX, 2) + pow(L * SsdY, 2);
     TessRatio = pow(saturate((sqrt(Ssd) / (MaxScreenDiagonal))), LODNear);
 
-# elif defined (TYPE02) // Better
+# elif defined (TYPE01) // Better
     // Approax SSD-Based
     const float MaxScreenDiagonal = sqrt((ScreenDiagonal)) / LODFar;
     float SsdY = 2 * tan(PhiY);

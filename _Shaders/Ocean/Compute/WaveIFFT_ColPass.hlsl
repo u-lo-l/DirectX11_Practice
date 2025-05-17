@@ -2,23 +2,6 @@
 #define __WAVE_IFFT_COLPASS_HLSL__
 # include "../../ComputeShader/Math.hlsl"
 # include "WaveIFFT_Base.hlsl"
-
-# ifndef FFT_SIZE
-#  define FFT_SIZE 512
-# endif
-
-# ifndef THREAD_GROUP_COUNT
-#  define THREAD_GROUP_COUNT 256 // N / 2
-# endif
-
-# ifndef LOG_N
-#  define LOG_N 9
-# endif
-
-# ifndef DISPLACEMENT_GRID
-# define HEIGHT_MAP 1
-# endif
-
 cbuffer CB_IFFTSize : register(b0)
 {
     float  Width;
@@ -43,11 +26,11 @@ uint BitReverse(uint x, uint LogN);
 /*
 * One ThreadGroup Per Row
 */
-[numthreads(THREAD_GROUP_COUNT, 1, 1)] // Dispatch(FFT_SIZE, 1, 1)
+[numthreads(THREAD_GROUP_SIZE, 1, 1)] // Dispatch(FFT_SIZE, 1, 3)
 void CSMain(CSInput Input)
 {
 	uint2 DTID_1 = uint2(Input.GTid.x, Input.GroupId.x);
-	uint2 DTID_2 = uint2(Input.GTid.x + THREAD_GROUP_COUNT, Input.GroupId.x);
+	uint2 DTID_2 = uint2(Input.GTid.x + THREAD_GROUP_SIZE, Input.GroupId.x);
 
     float2 WaveVector = GetWaveVector(DTID_1.xy, float2(Width, Height));
 
@@ -90,7 +73,7 @@ void CSMain(CSInput Input)
 	float perms[] = {1.0,-1.0};
 	int   index = (DTID_1.x + DTID_1.y) % 2;
 	float perm = perms[index];
-	Displacement[DTID_1] *= perm;
-	Displacement[DTID_2] *= perm;
+	Displacement[DTID_1] *= perm * float(LOG_N);
+	Displacement[DTID_2] *= perm * float(LOG_N);
 }
 #endif

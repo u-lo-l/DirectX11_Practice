@@ -3,20 +3,24 @@
 
 void sdt::FoamDemo::Initialize()
 {
+	Sky = new SkySphere(L"Environments/SkyDawn.dds", 0.5f);
+
 	constexpr float SeaLevel = 4.f;
-	const Vector2D SeaSize = {4096, 4096};
+	const Vector2D SeaSize = {512, 512};
 	const Ocean::OceanDesc OceanDesc{
 		static_cast<UINT>(SeaSize.X),
 		static_cast<UINT>(SeaSize.Y),
-		32,
+		512,
+		16,
 		{0, 0},
 		SeaLevel,
-		nullptr,
+		Sky->GetTexture(),
 		nullptr,
 		{0, 0},
 		{0, 0},
 		0,
 		{-15, -20}
+		// {30, 0}
 	};
 	Sea = new Ocean(OceanDesc);
 
@@ -32,9 +36,7 @@ void sdt::FoamDemo::Initialize()
 		L"2D/DisplacementMap_B.hlsl",	// dZ Map
 
 		L"2D/DisplacementMap.hlsl",		// Displacement Map
-
 		L"2D/HeightMap.hlsl",	// Foam
-		L"2D/DisplacementMap_R.hlsl"	// Normal
 	};
 	TextureDebugShaders.resize(ShaderNames.size());
 	float SizeSmall = 0.25f * D3D::GetDesc().Height * 0.5f;
@@ -44,24 +46,21 @@ void sdt::FoamDemo::Initialize()
 		SizeSmall,
 		SizeSmall, SizeSmall, SizeSmall,
 		SizeSmall, SizeSmall, SizeSmall,
-		SizeSmall,
 		SizeSmall, SizeSmall
 	};
 	const vector<Vector2D> Offsets {
-		Vector2D(-SizeSmall * 5.f - SizeGap * 5.f, +SizeSmall * 1.5f + SizeGap * 1.f),
+		Vector2D(SizeSmall * -4.5f - SizeGap * 4.5f, +SizeSmall * 1.5f + SizeGap * 1.f),
 
-		Vector2D(SizeSmall * -3.f - SizeGap * 3, +SizeSmall * 2.f + SizeGap * 2),
-		Vector2D(SizeSmall * -3.f - SizeGap * 3, 0),
-		Vector2D(SizeSmall * -3.f - SizeGap * 3, -SizeSmall * 2.f - SizeGap * 2),
+		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, +SizeSmall * 2.f + SizeGap * 2),
+		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, 0),
+		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, -SizeSmall * 2.f - SizeGap * 2),
 
-		Vector2D(SizeSmall * -1.f - SizeGap * 1, +SizeSmall * 2.f + SizeGap * 2),
-		Vector2D(SizeSmall * -1.f - SizeGap * 1, 0),
-		Vector2D(SizeSmall * -1.f - SizeGap * 1, -SizeSmall * 2.f - SizeGap * 2),
+		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, +SizeSmall * 2.f + SizeGap * 2),
+		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, 0),
+		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, -SizeSmall * 2.f - SizeGap * 2),
 
-		Vector2D(SizeSmall *  1.f + SizeGap * 3, 0),
-		
-		Vector2D(SizeSmall *  3.f + SizeGap * 9, +SizeSmall * 1.f + SizeGap * 1.f),
-		Vector2D(SizeSmall *  3.f + SizeGap * 9, -SizeSmall * 1.f - SizeGap * 1.f),
+		Vector2D(SizeSmall *  4.5f + SizeGap * 4.5f, -SizeSmall * 1.5f - SizeGap * 1.f),
+		Vector2D(SizeSmall *  4.5f + SizeGap * 4.5f, +SizeSmall * 1.5f + SizeGap * 1.f),
 	};
 	const Vector2D Center = {D3D::GetDesc().Width * 0.5f, D3D::GetDesc().Height * 0.5f};
 	
@@ -76,6 +75,7 @@ void sdt::FoamDemo::Initialize()
 
 void sdt::FoamDemo::Destroy()
 {
+	SAFE_DELETE(Sky);
 	SAFE_DELETE(Sea);
 	for (auto TextureDebugShader : TextureDebugShaders)
 		SAFE_DELETE(TextureDebugShader);
@@ -83,7 +83,8 @@ void sdt::FoamDemo::Destroy()
 
 void sdt::FoamDemo::Tick()
 {
-	// heightMap
+	if (!!Sky)
+		Sky->Tick();
 	if (!!Sea)
 		Sea->Tick();
 	for (auto TextureDebugShader : TextureDebugShaders)
@@ -92,8 +93,14 @@ void sdt::FoamDemo::Tick()
 
 void sdt::FoamDemo::Render()
 {
-	ID3D11ShaderResourceView * SRV_Phillips = Sea->InitialSpectrumTexture2D->GetSRV();
+	if (!!Sky)
+		Sky->Render();
+	if (!!Sea)
+		Sea->Render();
+	
 	UINT TextureIndex = 0;
+	
+	ID3D11ShaderResourceView * SRV_Phillips = Sea->InitialSpectrumTexture2D->GetSRV();
 	TextureDebugShaders[TextureIndex++]->Render(&SRV_Phillips);		// Philips Spectrum * Noise
 
 	vector<ID3D11ShaderResourceView *> SRV_Spectrum;
@@ -110,12 +117,8 @@ void sdt::FoamDemo::Render()
 	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
 	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
 	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
-	
 	TextureDebugShaders[TextureIndex++]->Render(&SRV_Displacement);
 
 	ID3D11ShaderResourceView * SRV_FoamGrid = Sea->FoamGrid->GetSRV();
 	TextureDebugShaders[TextureIndex++]->Render(&SRV_FoamGrid);
-	
-	// if (!!Sea)
-		// Sea->Render();
 }

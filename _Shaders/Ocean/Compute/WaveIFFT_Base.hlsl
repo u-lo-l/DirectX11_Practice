@@ -6,8 +6,8 @@
 #  define FFT_SIZE 512
 # endif
 
-# ifndef THREAD_GROUP_COUNT
-#  define THREAD_GROUP_COUNT 256 // N / 2
+# ifndef THREAD_GROUP_SIZE
+#  define THREAD_GROUP_SIZE 256 // N / 2
 # endif
 
 # ifndef LOG_N
@@ -48,7 +48,7 @@ void GetFFTValues(
 {
 	uint FFTSize = 1 << Stage;
 	uint FFTStride = FFTSize >> 1;
-	uint GroupCount = 1 << (LOG_N - Stage);
+	uint GroupCount = 1 << (uint(LOG_N) - Stage);
 	uint Base = (X / FFTStride) % GroupCount * FFTSize;
 	uint k = X % FFTStride;
 

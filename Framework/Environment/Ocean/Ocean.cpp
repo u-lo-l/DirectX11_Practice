@@ -7,8 +7,9 @@ Ocean::Ocean(const OceanDesc& Desc)
 , TessellationData()
 , Shader(nullptr)
 {
-	Dimension[0] = Desc.Dimension_X;
-	Dimension[1] = Desc.Dimension_Z;
+	Dimension[0] = Desc.SeaDimension_X;
+	Dimension[1] = Desc.SeaDimension_Z;
+	TextureSize = Desc.FFTSize;
 	PatchSize = Desc.PatchSize;
 	Tf = new Transform();
 	Tf->SetWorldPosition({Desc.WorldPosition.X, Desc.SeaLevel, Desc.WorldPosition.Y});
@@ -20,7 +21,7 @@ Ocean::Ocean(const OceanDesc& Desc)
 	SetupShaders();
 	SetupResources();
 
-	GaussianRandomTexture2D = Noise::CreateGaussian2DNoise(Size);
+	GaussianRandomTexture2D = Noise::CreateGaussian2DNoise(TextureSize);
 	GenerateInitialSpectrum();
 #pragma endregion Compute
 
@@ -42,10 +43,17 @@ Ocean::Ocean(const OceanDesc& Desc)
 	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid()));
 	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
 
+	PerlinNoise = new Texture(L"PerlinNoise.png", true);
+	// PerlinNoise = new Texture(L"Terrain/T_Perlin_Noise.png", true);
+	
 	TessellationData.TexelSize = {
-		1.f / static_cast<float>(IFFT_Result->GetWidth()),
-		1.f / static_cast<float>(IFFT_Result->GetHeight())
+		1.f / static_cast<float>(TextureSize),
+		1.f / static_cast<float>(TextureSize)
 	};
+	if (!!DisplacementMap)
+		TessellationData.HeightMapTiling =  Vector2D(Dimension[0], Dimension[1]) / (float)DisplacementMap->GetWidth();
+	if (!!PerlinNoise)
+		TessellationData.NoiseTiling =  Vector2D(Dimension[0], Dimension[1]) / (float)PerlinNoise->GetWidth();
 	if (Macros[0].Name == "TYPE03")
 	{
 		TessellationData.LODRange = {
@@ -57,11 +65,13 @@ Ocean::Ocean(const OceanDesc& Desc)
 	else
 	{
 		TessellationData.LODRange = {
-			2.f,
-			5
+			1.f,
+			2
 		};
 		LODRange = {1, 10};
 	}
+	TessellationData.NoiseScaler = 1.f;
+	TessellationData.NoisePower = 1.f;
 	CreateVertex();
 	CreateIndex();
 	
@@ -90,6 +100,7 @@ Ocean::Ocean(const OceanDesc& Desc)
 		sizeof(TessellationDesc),
 		false
 	);
+	
 #pragma endregion Render
 }
 
@@ -109,7 +120,7 @@ Ocean::~Ocean()
 	SAFE_DELETE(IFFT_Result);
 	SAFE_DELETE(DisplacementMap);
 	SAFE_DELETE(FoamGrid);
-	SAFE_DELETE(NormalMap);
+	SAFE_DELETE(PerlinNoise);
 	SAFE_DELETE(CB_PhillipsInit);
 	SAFE_DELETE(CB_PhillipsUpdate);
 		
@@ -131,12 +142,12 @@ void Ocean::Tick()
 	PhilipsUpdateData.RunningTime = (sdt::SystemTimer::Get()->GetRunningTime() - PhilipsUpdateData.InitTime);
 	CB_PhillipsUpdate->UpdateData(&PhilipsUpdateData, sizeof(PhilipsUpdateDesc));
 
-	FoamData.Width = FoamGrid->GetWidth();
-	FoamData.Height = FoamGrid->GetHeight();
+	FoamData.Width = static_cast<float>(FoamGrid->GetWidth());
+	FoamData.Height = static_cast<float>(FoamGrid->GetHeight());
 	FoamData.DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 	ImGui::SliderFloat("Ocean : Foam Multiplier", &FoamData.FoamMultiplier, 1.f, 5.f, "%.1f");
-	ImGui::SliderFloat("Ocean : Foam Threshold", &FoamData.FoamThreshold, 0.5f, 2.f, "%.2f");
-	ImGui::SliderFloat("Ocean : Foam Blur", &FoamData.FoamBlur, 0, 10, "%.0f");
+	ImGui::SliderFloat("Ocean : Foam Threshold", &FoamData.FoamThreshold, 0.99f, 1.01f, "%.4f");
+	ImGui::SliderFloat("Ocean : Foam Blur", &FoamData.FoamBlur, 0, 50, "%.0f");
 	ImGui::SliderFloat("Ocean : Foam Fade", &FoamData.FoamFade, 0, 1, "%.1f");
 	CB_Foam->UpdateData(&FoamData, sizeof(FoamDesc));
 	
@@ -155,8 +166,11 @@ void Ocean::Tick()
 	ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 200.f, "%.1f");
 	ImGui::SliderFloat("Ocean : LOD Power", &TessellationData.LODRange.X, 0.1f, 3.f, "%.1f");
 	ImGui::SliderFloat("Ocean : Min Screen Diagonal", &TessellationData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
+	ImGui::SliderFloat("Ocean : Noise Scaler", &TessellationData.NoiseScaler, 0.1, 10, "%.1f");
+	ImGui::SliderFloat("Ocean : Noise Power", &TessellationData.NoisePower, 0.1, 5, "%.1f");
 	TessellationData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
 	TessellationData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
+
 	TessellationData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
 	TessellationData.LightDirection = Context::Get()->GetLightDirection();
 	TessellationData.LightColor = Context::Get()->GetLightColor();
@@ -175,10 +189,14 @@ void Ocean::Render()
 	if (!!CB_WVP) CB_WVP->BindToGPU();
 	if (!!CB_Tessellation) CB_Tessellation->BindToGPU();
 
-	if (!!IFFT_Result)
-		IFFT_Result->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
+	if (!!DisplacementMap)
+		DisplacementMap->BindToGPUAsSRV(0, static_cast<UINT>(ShaderType::VDP));
 	if (!!SkyTexture)
 		SkyTexture->BindToGPU(1, static_cast<UINT>(ShaderType::PixelShader));
+	if (!!FoamGrid)
+		FoamGrid->BindToGPUAsSRV(2, static_cast<UINT>(ShaderType::PixelShader));
+	if (!!PerlinNoise)
+		PerlinNoise->BindToGPU(3, static_cast<UINT>(ShaderType::VDP));
 	Shader->DrawIndexed(Indices.size());
 #pragma endregion Render
 }
@@ -191,8 +209,8 @@ void Ocean::SaveHeightMap()
 
 void Ocean::CreateVertex()
 {
-	const UINT Width = IFFT_Result->GetWidth();
-	const UINT Height = IFFT_Result->GetHeight();
+	const UINT Width = Dimension[0];
+	const UINT Height = Dimension[1];
 
 	const UINT PatchWidth = (Dimension[0] / PatchSize) + 1;
 	const UINT PatchHeight = (Dimension[1] / PatchSize) + 1;

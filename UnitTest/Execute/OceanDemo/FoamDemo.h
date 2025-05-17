@@ -16,6 +16,7 @@ namespace sdt
 
 	private:
 		Ocean * Sea = nullptr;
+		SkySphere * Sky = nullptr;
 		const RWTexture2D * DisplacementGrid = nullptr;
 		vector<Hlsl2DTextureShader*> TextureDebugShaders;
 	};
