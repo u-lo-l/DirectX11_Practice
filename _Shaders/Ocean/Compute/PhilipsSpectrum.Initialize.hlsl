@@ -19,13 +19,24 @@ cbuffer CB_Philips : register(b0)
 }
 
 Texture2D<Complex> GaussianNoise : register(t0);
-RWTexture2D<Complex> InitialSpectrum : register(u0);
+RWTexture2D<float4> InitialSpectrum : register(u0);
+
+float GetPhillipSpectrum(uint2 UV);
 
 // Dispatch(Size / THREAD_X, Size / THREAD_Y, 1)
 [numthreads(THREAD_X, THREAD_Y, 1)]
 void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 {
-    float2 Position = float2(DTID.x - Width * 0.5f, DTID.y - Height * 0.5f);
+    uint2 UV1 = DTID.xy;
+    uint2 UV2 = uint2((Width - DTID.x) % Width, (Height - DTID.y) % Height);
+    Complex H1 = GaussianNoise[UV1] * sqrt(GetPhillipSpectrum(UV1) * 0.5f);
+    Complex H2 = GaussianNoise[UV2] * sqrt(GetPhillipSpectrum(UV2) * 0.5f);
+    InitialSpectrum[DTID.xy] = float4(H1, ComplexConj(H2));
+}
+
+float GetPhillipSpectrum(uint2 UV)
+{
+    float2 Position = float2(UV.x - Width * 0.5f, UV.y - Height * 0.5f);
     float2 k = 2 * PI * float2(Position.x / Width, Position.y / Height);
 
     float2 w = normalize(Wind);
@@ -38,13 +49,11 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 
     if (kMag < EPSILON) // 아주 작은 값으로 비교하여 0 나누기 방지
     {
-        InitialSpectrum[DTID.xy] = Complex(0, 0);
-        return;
+        return 0;
     }
 
-    float PhilipsSpectrum = exp(-1 / pow(kMag * L , 2)) / pow(kMag, 4) * pow(kDotw, 2);
-    Complex xi = GaussianNoise[DTID.xy];
-    InitialSpectrum[DTID.xy] = xi * sqrt(PhilipsSpectrum * 0.5f);
+    float PhilipsSpectrum = 2 * exp(-1 / pow(kMag * L , 2)) / pow(kMag, 4) * pow(kDotw, 2);
+    return PhilipsSpectrum;
 }
 
 #endif

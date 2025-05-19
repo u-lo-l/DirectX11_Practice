@@ -57,18 +57,19 @@ Foliage::Foliage(const LandScape * InTerrain, const float MinAltitude, const flo
 	);
 
 	TerrainHeightData.TerrainSize = { static_cast<float>(Terrain->GetWidth()), static_cast<float>(Terrain->GetHeight()) };
-	TerrainHeightData.TexelSize = {1.f / static_cast<float>(Terrain->GetWidth()), 1.f / static_cast<float>(Terrain->GetHeight()) }; 
+	const Texture * HeightMap = Terrain->GetHeightMap();
+	TerrainHeightData.TexelSize = {1.f / static_cast<float>(HeightMap->GetWidth()), 1.f / static_cast<float>(HeightMap->GetHeight()) }; 
 
 	DensityDistanceData.Near = 75.f;
 	DensityDistanceData.Far = 300.f;
 	
-	AddTexture(L"Terrain/Grass/grass_07.tga");
-	AddTexture(L"Terrain/Grass/grass_11.tga");
-	AddTexture(L"Terrain/Grass/grass_14.tga");
-	AddTexture(L"Terrain/Grass/grass_01.tga");
-	AddTexture(L"Terrain/Grass/grass_02.tga");
-	AddTexture(L"Terrain/Grass/grass_03.tga");
-	AddTexture(L"Terrain/Grass/grass_04.tga");
+	AddTexture(L"Terrain/Foliage/grass_07.tga");
+	AddTexture(L"Terrain/Foliage/grass_11.tga");
+	AddTexture(L"Terrain/Foliage/grass_14.tga");
+	AddTexture(L"Terrain/Foliage/grass_01.tga");
+	AddTexture(L"Terrain/Foliage/grass_02.tga");
+	AddTexture(L"Terrain/Foliage/grass_03.tga");
+	AddTexture(L"Terrain/Foliage/grass_04.tga");
 	CreateRandomFoliage();
 }
 
@@ -87,7 +88,9 @@ void Foliage::Tick()
 	WVPBuffer->UpdateData(&WVPData, sizeof(WVPDesc));
 
 	TerrainHeightData.HeightScaler = Terrain->GetHeightScale();
-	TerrainHeightData.Direction = Context::Get()->GetLightDirection();
+	TerrainHeightData.LightDirection = Context::Get()->GetLightDirection();
+	TerrainHeightData.LightColor = Context::Get()->GetLightColor();
+
 	TerrainHeightCBuffer->UpdateData(&TerrainHeightData, sizeof(TerrainHeightDesc));
 
 	ImGui::SliderFloat("DensityNear", &DensityDistanceData.Near, 1.f, DensityDistanceData.Far * 0.5f, "%.0f");

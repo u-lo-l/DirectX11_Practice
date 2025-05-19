@@ -5,41 +5,42 @@ namespace sdt
 {
 	void OceanDemo::Initialize()
 	{
-		constexpr float SeaLevel = 50.f;
-		const Vector2D SeaSize = {4096, 4096};
+		const Camera * const MainCamera = Context::Get()->GetCamera();
+		MainCamera->SetPosition( 571,30,571);
+		MainCamera->SetRotation( 0,60,0 );
 		
-		// Terrain = new Terrain2(L"Terrain/Gray512.png", 64);
-		// Terrain = new Terrain2(L"Terrain/Gray512.png", 64);
-		// Terrain = new LandScape(L"Terrain/GrandMountain/Height Map PNG.png", 32);
-		// const LandScape::LandScapeDesc LandscapeDesc
-		// {
-		// 	L"Terrain/GrandMountain/Height Map TIF.tif",
-		// 	L"Terrain/GrandMountain/Bump Map TIF.tif",
-		// 	{},
-		// 	{}
-		// 	// L"Terrain/GrandMountain/Bump Map PNG.png",
-		// 	// L"Terrain/GrandMountain/Normal Map PNG.png",
-		// };
-		// Terrain = new LandScape(LandscapeDesc, 32);
-		// Terrain->SetHeightScale(1000);
+		const Vector2D TerrainSize = Vector2D(1024, 1024) * 4 ;
+		constexpr float TerrainHeight = 512 * 8;
 
-		// TODO : QuadTree로 공간 관리. Foliage
-		// Grasses = new Foliage(Terrain, SeaLevel + 2.f);
+		constexpr float SeaLevel = 10.f;
+		const Vector2D SeaSize = Vector2D(1024, 1024) * 16;
 
-		// Sky = new SkySphere(L"Environments/SunSetCube1024.dds", 0.5f);
-		Sky = new SkySphere(L"Environments/GrassCube1024.dds", 0.5f);
-		
+		const LandScape::LandScapeDesc LandscapeDesc
+		{
+			(UINT)TerrainSize.X,
+			(UINT)TerrainSize.Y,
+			TerrainHeight,
+			128,
+			L"Terrain/GrandMountain/Height Map TIF.tif",
+			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
+			{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
+		};
+		Terrain = new LandScape(LandscapeDesc);
+
+		Sky = new SkySphere(L"Environments/SkyDawn.dds", 0.5f);
 		const Ocean::OceanDesc OceanDesc{
 			static_cast<UINT>(SeaSize.X),
 			static_cast<UINT>(SeaSize.Y),
-			32,
+			512,
+			128,
 			{0, 0},
 			SeaLevel,
 			Sky->GetTexture(),
-			Terrain->GetHeightMap(),
+			nullptr,
 			{0, 0},
-			{static_cast<float>(Terrain->GetWidth()), static_cast<float>(Terrain->GetHeight()) },
-			Terrain->GetHeightScale()
+			TerrainSize,
+			TerrainHeight,
+			Vector2D(-15, -20) * 5.f
 		};
 		Sea = new Ocean(OceanDesc);
 
@@ -67,13 +68,7 @@ namespace sdt
 		if (!!Grasses)
 			Grasses->Tick();
 		if (!!Sea)
-		{
 			Sea->Tick();
-			if (Keyboard::Get()->IsPressed(VK_SPACE))
-			{
-				Sea->SaveHeightMap();
-			}
-		}
 	}
 
 	void OceanDemo::Render()

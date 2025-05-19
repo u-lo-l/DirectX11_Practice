@@ -86,6 +86,15 @@ ID3D11ShaderResourceView* RWTexture2D::GetSRV() const
 
 void RWTexture2D::SaveOutputAsFile(const wstring& FileName) const
 {
+	D3D11_TEXTURE2D_DESC TextureDesc;
+	OutputTexture->GetDesc(&TextureDesc);
+	if (
+		TextureDesc.Format != DXGI_FORMAT_R8G8B8A8_UNORM ||
+		TextureDesc.Format != DXGI_FORMAT_R32G32B32A32_FLOAT ||
+		TextureDesc.Format != DXGI_FORMAT_R32_FLOAT
+	)
+		ASSERT(false, "Texture format does not valid to save as file");
+		
 	ID3D11DeviceContext * DeviceContext =  D3D::Get()->GetDeviceContext();
 	DeviceContext->CopyResource(ResultTexture, OutputTexture);
 	Texture::SaveTextureAsFile(ResultTexture, FileName);

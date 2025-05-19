@@ -75,22 +75,21 @@ cbuffer CB_DistanceBlend : register(b2)
     float HighHeight;
     float HeightSharpness;
     
-    uint bUseMacroVariation;
+    uint Padding;
 }
 
 SamplerState LinearSampler_Clamp : register(s0); // VS DS PS
 SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
 
 Texture2D<float> HeightMap : register(t0);        // VS DS PS
-Texture2D<float> BumpMap : register(t1);
-Texture2D<float> VariationMap : register(t2); // 3-Textures
+Texture2D<float> MacroVariationMap : register(t1); // 3-Textures
 const static float GRASS = 0.f;
 const static float DIRT  = 1.f;
 const static float ROCK  = 2.f;
 const static float SAND  = 3.f;
-Texture2DArray<float4> DetailDiffuses : register(t3); // 4-Textures
-Texture2DArray<float4> DetailNormals : register(t4);  // 4-Textures
-Texture2D<float> PerlinNoiseMap : register(t5);
+Texture2DArray<float4> DetailDiffuses : register(t2); // 4-Textures
+Texture2DArray<float4> DetailNormals : register(t3);  // 4-Textures
+Texture2D<float> PerlinNoise : register(t4);
 
 struct VS_INPUT
 {
@@ -129,7 +128,6 @@ struct DS_OUTPUT // PS_INPUT
     float  CameraDistance : DISTANCE;
 };
 
-float3 CalculateNormal(float2 UV);
 
 // VS
 VS_OUTPUT VSMain(VS_INPUT input)
@@ -167,22 +165,22 @@ HS_CONSTANT_OUTPUT HSConstant
         Points[i] = mul(float4(patch[i].Position, 1), WorldView);
     }
 
-    // // BackFace Culling을 시도해보았지만 성능이 더 안 좋음.
-    // float3 Diag1 = (Points[2] - Points[0]).xyz;
-    // float3 Diag2 = (Points[3] - Points[1]).xyz;
-    // float3 PatchNormal = normalize(cross(Diag1, Diag2));
-    // [flatten] if (PatchNormal.z > 0.75f)
-    // {
-    //     [unroll]
-    //     for (int i = 0; i < 4; ++i)
-    //         output.Edge[i] = 0;
+    // BackFace Culling을 시도해보았지만 성능이 더 안 좋음.
+    float3 Diag1 = (Points[2] - Points[0]).xyz;
+    float3 Diag2 = (Points[3] - Points[1]).xyz;
+    float3 PatchNormal = normalize(cross(Diag1, Diag2));
+    [flatten] if (PatchNormal.z > 0.75f)
+    {
+        [unroll]
+        for (int i = 0; i < 4; ++i)
+            output.Edge[i] = 0;
 
-    //     [unroll]
-    //     for (int j = 0; j < 2; ++j)
-    //         output.Inside[j] = 0;
+        [unroll]
+        for (int j = 0; j < 2; ++j)
+            output.Inside[j] = 0;
 
-    //     return output;
-    // }
+        return output;
+    }
 
     [unroll]
     for (int j = 0 ; j < 4 ; j++)
@@ -260,13 +258,17 @@ DS_OUTPUT DSMain
 }
 
 
+float3x3 CalculateNormal(float2 UV);
 float3 DistanceBasedColor(uint TextureIndex, float Tiling, float2 UV, float LOD, float Weight);
+float3 DistanceBasedNormal(uint TextureIndex, float Tiling, float2 UV, float LOD, float Weight);
 float4 CalculateWorldAlignedWeight(float3 Normal, float Height);
+float3 CalculateDetailedNormal(float3x3 TNBMatrix, float3 DetailNormal);
 void ApplyMacroVaration(inout float3 TerrainColor, float2 UV, float LOD);
 // PS
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
-    const float3 Normal = CalculateNormal(input.UV);
+    const float3x3 TNB = CalculateNormal(input.UV);
+    const float3 Normal = TNB[1];
     const float  Height = HeightScaler * HeightMap.Sample(LinearSampler_Clamp, input.UV);
     float Tiling = (TerrainSize / GridSize);
 
@@ -274,27 +276,42 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     float LinearBlendFactor = saturate((input.CameraDistance + StartOffset) / Range);
     float SmoothedBlendFactor = smoothstep(0.0f, 1.0f, LinearBlendFactor);
     float3 GrassColor = DistanceBasedColor(GRASS, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
+    float3 GrassNormal = DistanceBasedNormal(GRASS, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
+
     float3 DirtColor =  DistanceBasedColor(DIRT, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
-    float3 SandColor = DistanceBasedColor(SAND, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
+    float3 DirtNormal = DistanceBasedNormal(DIRT, Tiling, input.UV, input.LOD, SmoothedBlendFactor);;
+    
     float3 RockColor = DistanceBasedColor(ROCK, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
+    float3 RockNormal = DistanceBasedNormal(ROCK, Tiling, input.UV, input.LOD, SmoothedBlendFactor);;
+    
+    float3 SandColor = DistanceBasedColor(SAND, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
+    float3 SandNormal = DistanceBasedNormal(SAND, Tiling, input.UV, input.LOD, SmoothedBlendFactor);;
+
     // Perlin Noise Based
-    float Noise = clamp(0, 1, PerlinNoiseMap.Sample(LinearSampler_Clamp, input.UV).r);
+    float Noise = clamp(0, 1, PerlinNoise.Sample(LinearSampler_Clamp, input.UV).r);
     Noise = pow(abs(Noise * NoiseAmount), abs(NoisePower));
     float3 GroundColor = lerp(GrassColor, DirtColor, clamp(0, 1, Noise));
-
+    float3 GroundNormal = lerp(GrassNormal, DirtNormal, clamp(0, 1, Noise));
     // World Based
-    // x : Grass, y : Sand : z : Rock
+    // x : Ground, y : Sand : z : Rock
     float4 WorldAlignedWeight = CalculateWorldAlignedWeight(Normal, Height);
     float3x3 ColorMat = float3x3(SandColor, GroundColor, RockColor);
-    float3 TerrainColor = mul(WorldAlignedWeight.xyz, ColorMat);
+    float3x3 NormalMat = float3x3(SandNormal, GroundNormal, RockNormal);
 
-    if (bUseMacroVariation != 0)
-        ApplyMacroVaration(TerrainColor, input.UV, input.LOD);
-    
-    float LDotN = dot(-normalize(LightDirection), Normal);
+    float3 TerrainColor = mul(WorldAlignedWeight.xyz, ColorMat);
+    float3 TerrainDetailNormal = mul(WorldAlignedWeight.xyz, NormalMat);
+
+    // Macro Variation
+    ApplyMacroVaration(TerrainColor, input.UV, input.LOD);
+
+    const float3 DetailedNormal = CalculateDetailedNormal(TNB, float3(0,0,1));
+    float LDotN = dot(-normalize(LightDirection), DetailedNormal);
+    // return float4(abs(DetailedNormal), 1);
+    // return float4(abs(TNB[1]), 1);
+    // return float4(abs(LDotN), abs(LDotN), abs(LDotN), 1);
 
     const float Specular = 0.1f;
-    const float Ambient = 0.5f;
+    const float Ambient = 0.2f;
     const float Diffuse = (1 - Specular);
     
     float3 Color = TerrainColor * Ambient
@@ -309,7 +326,7 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
 // PS에서 해도 되고 DS에서 해도 된다.
 // PS에서 하는 것이 더 정밀한 Normal을 얻을 수 있다.
 // 전체 NormalMap을 미리 ComputeShader로 구워서 테스트 해봤는데 속도의 차이가 거의 없다.
-float3 CalculateNormal(float2 UV)
+float3x3 CalculateNormal(float2 UV)
 {
 // HeightMap Normal
     float2 dUV[4] = {
@@ -336,28 +353,8 @@ float3 CalculateNormal(float2 UV)
     float3 tangent = normalize(float3(StrideX, HeightDiffX, 0));    // x
     float3 bitangent = normalize(float3(0, HeightDiffZ, StrideZ));  // z
     float3 normal = normalize(cross(bitangent, tangent));           // y
-    float3x3 TNB = float3x3(tangent, normal, bitangent);
 
-// BumpMap Normal
-    float bump[4] = {0, 0, 0, 0};
-
-    [unroll]
-    for(i = 0 ; i < 4 ; i++)
-    {
-        bump[i] = BumpMap.SampleLevel(LinearSampler_Clamp, UV + dUV[i], 0).r;
-        bump[i] = bump[i] * 2 - 1;
-        bump[i] *= BumpScaler;
-    }
-    StrideX = (UV.x - HeightMapTexelSize.x < 0) || (UV.x + HeightMapTexelSize.x > 1) ? 1.f : 2.f;
-    StrideZ = (UV.y - HeightMapTexelSize.y < 0) || (UV.y + HeightMapTexelSize.y > 1) ? 1.f : 2.f;
-    HeightDiffX = (bump[1] - bump[0]);
-    HeightDiffZ = (bump[3] - bump[2]);
-
-    float3 BumpTangent = normalize(float3(StrideX, HeightDiffX, 0));
-    float3 BumpBitangent = normalize(float3(0, HeightDiffZ, StrideZ));
-    float3 BumpNormal = cross(BumpBitangent, BumpTangent);
-
-    return normalize(mul(BumpNormal, TNB));
+    return float3x3(tangent, normal, bitangent); // TNB
 }
 
 /*======================================================================================*/
@@ -426,6 +423,16 @@ float3 DistanceBasedColor(uint TextureIndex, float Tiling, float2 UV, float LOD,
     float3 FarColor  = DetailDiffuses.SampleLevel(AnisotropicSampler_Wrap, float3(UV * Tiling * FarSize,  TextureIndex), LOD).rgb;
     return lerp(NearColor, FarColor, Weight);
 }
+float3 DistanceBasedNormal(uint TextureIndex, float Tiling, float2 UV, float LOD, float Weight)
+{
+    float3 NearNormal = DetailNormals.SampleLevel(AnisotropicSampler_Wrap, float3(UV * Tiling * NearSize, TextureIndex), LOD).rgb;
+    float3 FarNormal  = DetailNormals.SampleLevel(AnisotropicSampler_Wrap, float3(UV * Tiling * FarSize,  TextureIndex), LOD).rgb;
+    NearNormal = NearNormal * 2.f - 1.f;
+    FarNormal = FarNormal * 2.f - 1.f;
+
+    return lerp(NearNormal, FarNormal, Weight);
+}
+
 
 float4 CalculateWorldAlignedWeight(float3 Normal, float Height)
 {
@@ -457,10 +464,19 @@ void ApplyMacroVaration(inout float3 TerrainColor, float2 UV, float LOD)
     [unroll]
     for (uint i = 0 ; i < 3 ; i++)
     {
-        Variation[i] = (VariationMap.SampleLevel(AnisotropicSampler_Wrap, UV * Tiling[i], LOD));
+        Variation[i] = (MacroVariationMap.SampleLevel(AnisotropicSampler_Wrap, UV * Tiling[i], LOD));
     }
     float MacroViration;
     MacroViration = Variation[0] + (Variation[1] * Variation[2]);
     TerrainColor *= lerp(0.5f, 0.9f, (MacroViration));
+}
+
+float3 CalculateDetailedNormal(float3x3 TNB, float3 DetailNormal)
+{
+    float3 ZupNormal = DetailNormal;
+    float3 YupNormal = float3(DetailNormal.x, DetailNormal.z, -DetailNormal.y);
+
+    DetailNormal = mul(YupNormal, TNB);
+    return lerp(DetailNormal, TNB[1], 0.7f);
 }
 #endif

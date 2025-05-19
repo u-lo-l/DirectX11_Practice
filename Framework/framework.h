@@ -55,6 +55,7 @@ using namespace std;
 	#include "Math/Color.h"
 	#include "Math/Box.h"
 	#include "Math/Frustum.h"
+	#include "Math/Noise.h"
 	#include "Math/Math.h"
 #pragma endregion
 
@@ -82,6 +83,7 @@ using namespace std;
 	#include "Renders/Texture.h"
 	#include "Renders/TextureArray.h"
 	#include "Renders/RWTexture2D.h"
+	#include "Renders/RWTexture2DArray.h"
 	#include "Renders/Material.h"
 	#include "Renders/Context.h"
 	#include "Renders/Buffer/Buffers.h"

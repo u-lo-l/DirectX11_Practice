@@ -14,7 +14,8 @@ private:
 	};
 	struct TerrainHeightDesc
 	{
-		Vector Direction = Vector(0, 0, 0);
+		Color LightColor;
+		Vector LightDirection = Vector(0, 0, 0);
 		float HeightScaler = 30.f;
 		Vector2D TerrainSize;
 		Vector2D TexelSize;
@@ -48,7 +49,7 @@ public:
 private:
 	void UpdateVBuffer();
 
-	float FoliageStride = 0.5f;
+	float FoliageStride = 1.f;
 
 	wstring ShaderName;
 	HlslShader<VertexType> * CrossQuadShader = nullptr;

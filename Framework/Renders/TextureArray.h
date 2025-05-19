@@ -3,7 +3,12 @@
 class TextureArray
 {
 public:
-	explicit TextureArray(const vector<wstring>& InNames, UINT InWidth = 256, UINT InHeight = 256, UINT InMipLevels = 1);
+	explicit TextureArray(
+		const vector<wstring>& InNames,
+		UINT InWidth = 256,
+		UINT InHeight = 256,
+		UINT InMipLevels = 1
+	);
 	~TextureArray();
 	void BindToGPU(UINT SlotNum = 0) const;
 

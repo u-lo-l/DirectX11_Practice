@@ -5,8 +5,11 @@ LandScape::LandScape(const LandScapeDesc& Desc)
 {
 	ASSERT(Desc.DiffuseMapNames.size() == Desc.NormalMapNames.size(), "DetailMaps Not Valid");
 
+	TerrainDimension[0] = Desc.TerrainDim_X;
+	TerrainDimension[1] = Desc.TerrainDim_Z;
 	PatchSize = Desc.PatchSize;
 	TerrainTessData.HeightScaler = Desc.HeightScaler;
+
 	CreatePerlinNoiseMap();
 	SetupShaders();
 	SetupResources(Desc);
@@ -16,7 +19,7 @@ LandScape::LandScape(const LandScapeDesc& Desc)
 }
 
 LandScape::LandScape(const wstring & InHeightMapFilename, const UINT PatchSize)
-	: LandScape({100, PatchSize, InHeightMapFilename, L"", {}, {}})
+	: LandScape({1024, 1024, 100, PatchSize, InHeightMapFilename, {}, {}})
 {
 }
 
@@ -24,7 +27,6 @@ LandScape::~LandScape()
 {
 	SAFE_DELETE(Shader);
 	SAFE_DELETE(HeightMap);
-	SAFE_DELETE(BumpMap);
 	SAFE_DELETE(VariationMap);
 	SAFE_DELETE(DetailDiffuseMaps);
 	SAFE_DELETE(DetailNormalMaps);
@@ -61,13 +63,10 @@ void LandScape::Tick()
 
 	ImGui::SliderFloat("LandScape : SlopBias", &TextureBlendingData.SlopBias, 0, 60, "%.0f");
 	ImGui::SliderFloat("LandScape : SlopSharpness", &TextureBlendingData.SlopSharpness, 1, 3, "%.1f");
-	ImGui::SliderFloat("LandScape : LowHeight", &TextureBlendingData.LowHeight, 10.f, GetHeightScale() / 10, "%.0f");
+	ImGui::SliderFloat("LandScape : LowHeight", &TextureBlendingData.LowHeight, 0, GetHeightScale() / 10, "%.0f");
 	ImGui::SliderFloat("LandScape : HighHeight", &TextureBlendingData.HighHeight, TextureBlendingData.LowHeight, GetHeightScale(), "%.0f");
 	ImGui::SliderFloat("LandScape : HeightSharpness", &TextureBlendingData.HeightSharpness, 1, 3, "%.1f");
 
-	bool bUseMacroVariation = TextureBlendingData.bUseMacroVariation != 0;
-	ImGui::Checkbox("LandScape : MacroVariation", &bUseMacroVariation);
-	TextureBlendingData.bUseMacroVariation = bUseMacroVariation == true ? 1 : 0;
 	CB_TextureBlending->UpdateData(&TextureBlendingData, sizeof(TextureBlendingDesc));
 }
 
@@ -84,28 +83,26 @@ void LandScape::Render() const
 
 	if (!!HeightMap)
 		HeightMap->BindToGPU(0, static_cast<UINT>(ShaderType::VDP));
-	if (!!BumpMap)
-		BumpMap->BindToGPU(1);
 	if (!!VariationMap)
-		VariationMap->BindToGPU(2);
+		VariationMap->BindToGPU(1);
 	if (!!DetailDiffuseMaps)
-		DetailDiffuseMaps->BindToGPU(3);
+		DetailDiffuseMaps->BindToGPU(2);
 	if (!!DetailNormalMaps)
-		DetailNormalMaps->BindToGPU(4);
+		DetailNormalMaps->BindToGPU(3);
 	if (!!PerlinNoiseMap)
 		// PerlinNoiseMap->BindToGPUAsSRV(5, static_cast<UINT>(ShaderType::PixelShader));
-		PerlinNoiseMap->BindToGPU(5);
+		PerlinNoiseMap->BindToGPU(4);
 	Shader->DrawIndexed(Indices.size());
 }
 
 UINT LandScape::GetWidth() const
 {
-	return (!!HeightMap) ? HeightMap->GetWidth() : 0; 
+	return TerrainDimension[0];
 }
 
 UINT LandScape::GetHeight() const
 {
-	return (!!HeightMap) ? HeightMap->GetHeight() : 0; 
+	return TerrainDimension[1];
 }
 
 float LandScape::GetAltitude(const Vector2D & InPositionXZ) const
@@ -177,10 +174,6 @@ void LandScape::SetupResources(const LandScapeDesc & Desc)
 		HeightMap = new Texture(Desc.HeightMapName, true);
 		SetHeightScale(Desc.HeightScaler);
 	}
-	if (!Desc.BumpMapName.empty())
-	{
-		BumpMap = new Texture(Desc.BumpMapName, true);
-	}
 	if (!Desc.DiffuseMapNames.empty())
 	{
 		DetailDiffuseMaps = new TextureArray(Desc.DiffuseMapNames, 1024, 1024, 11);
@@ -197,7 +190,7 @@ void LandScape::SetupResources(const LandScapeDesc & Desc)
 		1.f / static_cast<float>(HeightMap->GetWidth()),
 		1.f / static_cast<float>(HeightMap->GetHeight())
 	};
-	TerrainTessData.TerrainSize = HeightMap->GetWidth();
+	TerrainTessData.TerrainSize = TerrainDimension[0];
 	TerrainTessData.GridSize = PatchSize;
 	TerrainTessData.TextureSize = 1024;
 	
@@ -293,29 +286,5 @@ void LandScape::CreateIndex()
 void LandScape::CreatePerlinNoiseMap()
 {
 	PerlinNoiseMap = new Texture(L"Terrain/T_Perlin_Noise.png", true);
-
-	// PerlinNoiseMap = new RWTexture2D(
-	// 	1024,
-	// 	1024,
-	// 	DXGI_FORMAT_R32_FLOAT
-	// );
-	// const vector<D3D_SHADER_MACRO> ShaderMacros = {
-	// 	{"THREAD_X", "32"},
-	// 	{"THREAD_Y", "32"},
-	// 	{nullptr, }
-	// };
-	// HlslComputeShader * CS_PerlinNoiseMap = new HlslComputeShader(
-	// 	L"Terrain/Compute/ComputePerlinNoise.hlsl",
-	// 	ShaderMacros.data()
-	// );
-	// CS_PerlinNoiseMap->SetDispatchSize(
-	// 	PerlinNoiseMap->GetWidth() / 32,
-	// 	PerlinNoiseMap->GetHeight() / 32,
-	// 	1
-	// );
-	// PerlinNoiseMap->BindToGPUAsUAV(0);
-	// CS_PerlinNoiseMap->Dispatch();
-	// PerlinNoiseMap->UpdateSRV();
-	// PerlinNoiseMap->SaveOutputAsFile(L"PerlinNoise");
-	// SAFE_DELETE(CS_PerlinNoiseMap);
+	// PerlinNoiseMap = Noise::CreatePerlin2DNoise(1024);
 }

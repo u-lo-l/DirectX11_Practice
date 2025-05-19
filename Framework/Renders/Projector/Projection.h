@@ -8,6 +8,8 @@ public:
 	virtual ~Projection() = 0;
 	const Matrix & GetMatrix() const { return ProjectionMatrix; }
 	float GetFOV() const { return FOV; }
+	float GetNear() const { return Near; }
+	float GetFar() const { return Far; }
 protected:
 	Projection();
 

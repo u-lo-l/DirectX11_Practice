@@ -223,7 +223,7 @@ namespace sdt
 		std::normal_distribution<float> Distribution_imag(0.0f, 1.0f);
 
 		std::vector<complex<float>> GaussianRandomArray(Size * Size);
-		for (int i = 0 ; i < Size * Size ; i++)
+		for (UINT i = 0 ; i < Size * Size ; i++)
 		{
 			complex<float> & Element = GaussianRandomArray[i];
 			Element.real(Math::Clamp(Distribution_real(Generator), -3, 3)); 

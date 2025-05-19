@@ -16,4 +16,10 @@ Complex ComplexMul(Complex A, Complex B)
     return Result;
 }
 
+Complex ComplexConj(Complex A)
+{
+    A.y = - A.y;
+    return A;
+}
+
 #endif

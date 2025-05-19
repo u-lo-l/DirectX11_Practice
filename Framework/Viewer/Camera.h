@@ -24,6 +24,7 @@ public:
 
 	void SetPerspective(float Width, float Height, float Near, float Far, float VFOV) const;
 	const Frustum * GetViewFrustum() const;
+	const Projection * GetProjection() const;
 private :
 	Transform * Tf;
 	Projection * Proj;
