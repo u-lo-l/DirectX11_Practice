@@ -58,6 +58,19 @@ bool Frustum::Intersects(const Box& InBox) const
 	return false;
 }
 
+bool Frustum::Intersects(const Box * InBox) const
+{
+	const array<Vector, 8> & BoxPoints = InBox->GetPoints();
+
+	for (const Vector & Point : BoxPoints)
+	{
+		if (Contains(Point) == true)
+			return true;
+	}
+	return false;
+}
+
+
 
 const array<Plane, 6>& Frustum::GetPlanes() const
 {

@@ -24,6 +24,7 @@
     <ClCompile Include="Execute\DisplacementMappingDemo\BasicTessellationDemo.cpp" />
     <ClCompile Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.cpp" />
     <ClCompile Include="Execute\DisplacementMappingDemo\PNTriangleDemo.cpp" />
+    <ClCompile Include="Execute\LandscapeDemo\CellDemo.cpp" />
     <ClCompile Include="Execute\LandscapeDemo\LandScapeDemo.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -120,6 +121,7 @@
     <ClInclude Include="Execute\DisplacementMappingDemo\BasicTessellationDemo.h" />
     <ClInclude Include="Execute\DisplacementMappingDemo\DisplacementMappingDemo.h" />
     <ClInclude Include="Execute\DisplacementMappingDemo\PNTriangleDemo.h" />
+    <ClInclude Include="Execute\LandscapeDemo\CellDemo.h" />
     <ClInclude Include="Execute\LandscapeDemo\LandScapeDemo.h" />
     <ClInclude Include="Execute\LODDemo\TerrainTessellationDemo.h" />
     <ClInclude Include="Execute\OceanDemo\GaussianRandomDemo.h" />

@@ -21,7 +21,6 @@ public:
 		vector<wstring> NormalMapNames;
 	};
 private:
-	friend class TerrainQuadTree;
 	using VertexType = VertexTextureNormal;
 	struct WVPDesc
 	{

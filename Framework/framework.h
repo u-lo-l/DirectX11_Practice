@@ -62,6 +62,7 @@ using namespace std;
 #pragma region  My Own 
 	#include "Utilites/Definitions.h"
 	#include "Utilites/ShaderSlots.h"
+	#include "Utilites/Structures.h"
 	#include "Utilites/Helper.h"
 	#include "Utilites/Path.h"
 	#include "Utilites/String.h"
@@ -102,9 +103,11 @@ using namespace std;
 
 	#include "Environment/Terrain.h"
 	#include "Environment/LandScape.h"
-#include "Environment/SkySphere.h"
+	#include "Environment/SkySphere.h"
 	#include "Environment/Foliage.h"
+	#include "Environment/LandScape/LandScape_QuadTree.h"
 	#include "Environment/Ocean/Ocean.h"
+
 
 	#include "ParticleSystem/ParticleSystem.h"
 

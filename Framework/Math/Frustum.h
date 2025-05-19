@@ -8,6 +8,7 @@ public:
 	bool Contains(const Vector & InPoint) const;
 	bool Intersects(const Vector & Center, float Radius) const;
 	bool Intersects(const Box & InBox) const;
+	bool Intersects(const Box* InBox) const;
 	const array<Plane, 6> & GetPlanes() const;
 
 private:
