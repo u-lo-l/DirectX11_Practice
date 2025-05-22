@@ -43,6 +43,13 @@ Plane::Plane( const Vector& normal, float d)
 
 	D = d;
 }
+
+Plane::Plane(const Vector& Point, const Vector& Normal)
+{
+	this->Normal = Vector::Normalize(Normal);
+	this->D = -Vector::Dot(Point, Normal);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -170,6 +177,14 @@ void Plane::Transform(const Matrix& InMatrix)
 	
 	Normal = Normal * InMatrix;
 	
+}
+
+void Plane::GetEquation(float& A, float& B, float& C, float& D) const
+{
+	A = this->Normal.X;
+	B = this->Normal.Y;
+	C = this->Normal.Z;
+	D = this->D;
 }
 
 Vector Plane::GetNormal() const

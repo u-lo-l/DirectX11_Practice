@@ -23,15 +23,15 @@ cbuffer CB_WVP : register(b0)  // VS DS HS PS
     matrix Projection : packoffset(c8);
 }
 
-cbuffer CB_HeightScaler : register(b1)
+cbuffer CB_Tessellation : register(b1)
 {
     float3 CameraPosition;
     float  HeightScaler = 30.f;
 
-    float4 LightColor;
-
-    float3 LightDirection;
-    float  BumpScaler;
+    float TerrainSize;
+    float GridSize;
+    float TextureSize;
+    float Padding1;
 
     float2 LODRange;
     float2 HeightMapTexelSize;
@@ -40,13 +40,16 @@ cbuffer CB_HeightScaler : register(b1)
     float ScreenDiagonal;
     uint  DiffuseCount;
     uint  NormalCount;
-
-    float TerrainSize;
-    float GridSize;
-    float TextureSize;
 }
 
-cbuffer CB_DistanceBlend : register(b2)
+cbuffer CB_Light : register(b2) // PS
+{
+    float4 LightColor;
+    float3 LightDirection;
+    float  Padding2;
+};
+
+cbuffer CB_DistanceBlend : register(b3)
 {
     /*
        float BlendWeight = (CameraDistance + StartOffset) / Range
@@ -126,6 +129,7 @@ struct DS_OUTPUT // PS_INPUT
 
     uint   LOD : LOD;
     float  CameraDistance : DISTANCE;
+    float4 DebugColor : COLOR;
 };
 
 
@@ -165,22 +169,22 @@ HS_CONSTANT_OUTPUT HSConstant
         Points[i] = mul(float4(patch[i].Position, 1), WorldView);
     }
 
-    // BackFace Culling을 시도해보았지만 성능이 더 안 좋음.
-    float3 Diag1 = (Points[2] - Points[0]).xyz;
-    float3 Diag2 = (Points[3] - Points[1]).xyz;
-    float3 PatchNormal = normalize(cross(Diag1, Diag2));
-    [flatten] if (PatchNormal.z > 0.75f)
-    {
-        [unroll]
-        for (int i = 0; i < 4; ++i)
-            output.Edge[i] = 0;
+    // // BackFace Culling을 시도해보았지만 성능이 더 안 좋음.
+    // float3 Diag1 = (Points[2] - Points[0]).xyz;
+    // float3 Diag2 = (Points[3] - Points[1]).xyz;
+    // float3 PatchNormal = normalize(cross(Diag1, Diag2));
+    // [flatten] if (PatchNormal.z > 0.75f)
+    // {
+    //     [unroll]
+    //     for (int i = 0; i < 4; ++i)
+    //         output.Edge[i] = 0;
 
-        [unroll]
-        for (int j = 0; j < 2; ++j)
-            output.Inside[j] = 0;
+    //     [unroll]
+    //     for (int j = 0; j < 2; ++j)
+    //         output.Inside[j] = 0;
 
-        return output;
-    }
+    //     return output;
+    // }
 
     [unroll]
     for (int j = 0 ; j < 4 ; j++)
@@ -196,6 +200,7 @@ HS_CONSTANT_OUTPUT HSConstant
     output.Inside[0] = Density * DensityWeight + TessFactor * SSDWeight;
     TessFactor = (output.Edge[1] + output.Edge[3]) * 0.5f;
     output.Inside[1] = Density * DensityWeight + TessFactor * SSDWeight;
+    
     return output;
 }
 
@@ -254,6 +259,9 @@ DS_OUTPUT DSMain
 
     float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
     output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
+
+    output.DebugColor = float4(MeanTessFactor / MaxTessFactor, MeanTessFactor / MaxTessFactor, MeanTessFactor / MaxTessFactor, 1);
+
     return output;
 }
 
@@ -306,9 +314,6 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
 
     const float3 DetailedNormal = CalculateDetailedNormal(TNB, float3(0,0,1));
     float LDotN = dot(-normalize(LightDirection), DetailedNormal);
-    // return float4(abs(DetailedNormal), 1);
-    // return float4(abs(TNB[1]), 1);
-    // return float4(abs(LDotN), abs(LDotN), abs(LDotN), 1);
 
     const float Specular = 0.1f;
     const float Ambient = 0.2f;
@@ -318,6 +323,9 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
                  + Specular * (LightColor).rgb
                  + TerrainColor * saturate(LDotN) * Diffuse * (LightColor).rgb
                 ;
+
+    // return input.DebugColor;
+    // return float4(Color * input.DebugColor.rgb, 1.f);
     return float4(Color, 1.f);
 }
 

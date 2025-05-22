@@ -1,13 +1,13 @@
 ﻿#include "framework.h"
 #include "Transform.h"
 
-Transform::Transform(Matrix * InMatrix)
+Transform::Transform(Matrix * InMatrix, int InRegisterIndex)
 	: WorldTF(InMatrix)
 {
 	CBuffer = new ConstantBuffer
 	(
 		ShaderType::VertexShader,
-		0,
+		InRegisterIndex,
 		nullptr,
 		"WorldTransform",
 		sizeof(Matrix),
@@ -198,6 +198,31 @@ void Transform::AddScale(const Vector& InScale)
 {
 	Scale *= InScale;
 	UpdateMatrix();
+}
+
+void Transform::AddTransform(const Matrix& InMatrix)
+{
+	Vector Translation;
+	Quaternion Rotation;
+	Vector Scale;
+	InMatrix.Decompose(Scale, Rotation, Translation);
+	Position += Translation;
+	this->Rotation *= Rotation;
+	RotationMat = Matrix::CreateFromQuaternion(this->Rotation);
+	EulerAngleInDegree = Rotation.ToEulerAnglesInDegrees();
+	EulerAngleInRadian = Rotation.ToEulerAnglesInRadian();
+	this->Scale *= Scale;
+	UpdateMatrix();
+}
+
+void Transform::AddTransform(const Transform& InTransform)
+{
+	AddTransform(InTransform.GetMatrix());
+}
+
+void Transform::AddTransform(const Transform* InTransform)
+{
+	AddTransform(InTransform->GetMatrix());
 }
 
 void Transform::SetTRS(const Vector& Pos, const Quaternion& Rot, const Vector& Scale)

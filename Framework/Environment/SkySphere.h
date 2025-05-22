@@ -5,7 +5,7 @@ class SkySphere
 {
 	using VertexType = Vertex;
 public:
-	SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount = 20);
+	explicit SkySphere(wstring InFilePath = L"Environments/SkyDawn.dds", float InRadius = 0.5f, UINT InSliceCount = 20);
 	~SkySphere();
 
 	void Tick();

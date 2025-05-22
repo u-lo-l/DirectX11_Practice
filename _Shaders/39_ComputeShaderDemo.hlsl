@@ -36,7 +36,6 @@ void CSMain(Case3_Input input)
     uint group = (5 * 4 * 1) * (groupID.y * 3 + groupID.x);
     uint outAddress = (group + index) * 52;
     
-    
     int inAddress = (group + index) * 8;
     
     uint totalIndex = Input.Load(inAddress + 0); //4    

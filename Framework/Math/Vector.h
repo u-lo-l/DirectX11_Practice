@@ -16,7 +16,7 @@ public:
 
 	explicit Vector(const aiVector3D & v);
 	
-	Vector operator -();
+	Vector operator -() const;
 
 	operator float* ();
 	operator const float* () const;
@@ -61,7 +61,7 @@ public:
 	static Vector Multiply( const Vector & value1, const Vector & value2);
 	static Vector Multiply( const Vector & value1, float scaleFactor);
 	static Vector Subtract( const Vector & value1, const Vector & value2);
-
+	static Vector Abs(const Vector & value);
 	static Vector Negative( const Vector & value);
 
 	static Vector Barycentric( const Vector & value1, const Vector & value2, const Vector & value3, float amount1, float amount2);

@@ -30,7 +30,7 @@ public :
 	void SetInputData( const void * InData) const;
 	void GetOutputData(void * OutData) const;
 	void BindInputToGPU() const;
-	void BindOutputToGPU() const;
+	void BindOutputToGPU(UINT SlotNum = 0) const;
 // ~Begin ComputeShaderResource
 protected:
 	void CreateInput() override;

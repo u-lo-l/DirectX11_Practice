@@ -35,11 +35,11 @@ void RawBuffer::BindInputToGPU() const
 	DeviceContext->CSSetShaderResources(0, 1, &SRV);
 }
 
-void RawBuffer::BindOutputToGPU() const
+void RawBuffer::BindOutputToGPU(UINT SlotNum) const
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	// nullptr for Buffer Offset
-	DeviceContext->CSSetUnorderedAccessViews(0, 1, &UAV, nullptr);
+	DeviceContext->CSSetUnorderedAccessViews(SlotNum, 1, &UAV, nullptr);
 }
 
 void RawBuffer::CreateInput()

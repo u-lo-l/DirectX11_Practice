@@ -87,8 +87,6 @@ vector<ID3D11Texture2D*> TextureArray::CreateTextures
 
 	for (UINT i = 0; i < returnTextures.size(); i++)
 	{
-		HRESULT hr;
-
 		DirectX::TexMetadata metaData;
 		DirectX::ScratchImage image;
 		wstring ext = Path::GetExtension(InNames[i]);

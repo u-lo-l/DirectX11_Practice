@@ -51,7 +51,7 @@ Ocean::Ocean(const OceanDesc& Desc)
 		1.f / static_cast<float>(TextureSize)
 	};
 	if (!!DisplacementMap)
-		TessellationData.HeightMapTiling =  Vector2D(Dimension[0], Dimension[1]) / (float)DisplacementMap->GetWidth();
+		TessellationData.HeightMapTiling =  Vector2D(Dimension[0], Dimension[1]) / static_cast<float>(DisplacementMap->GetWidth());
 
 	if (!!PerlinNoise)
 			TessellationData.NoiseTiling = TessellationData.HeightMapTiling / 16.f;
@@ -170,8 +170,8 @@ void Ocean::Tick()
 	ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 50.f, "%.1f");
 	ImGui::SliderFloat("Ocean : LOD Power", &TessellationData.LODRange.X, 0.1f, 3.f, "%.1f");
 	ImGui::SliderFloat("Ocean : Min Screen Diagonal", &TessellationData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
-	ImGui::SliderFloat("Ocean : Noise Scaler", &TessellationData.NoiseScaler, 0.1, 10, "%.1f");
-	ImGui::SliderFloat("Ocean : Noise Power", &TessellationData.NoisePower, 0.1, 5, "%.1f");
+	ImGui::SliderFloat("Ocean : Noise Scaler", &TessellationData.NoiseScaler, 0.1f, 10, "%.1f");
+	ImGui::SliderFloat("Ocean : Noise Power", &TessellationData.NoisePower, 0.1f, 5, "%.1f");
 	TessellationData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
 	TessellationData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
 

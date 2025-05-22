@@ -137,14 +137,12 @@ HRESULT Texture::LoadTextureAndCreateSRV(const wstring & FullPath)
 		&this->SRV
 	);
 }
-
-void Texture::ExtractTextureColors( vector<Color> & OutPixels ) const
+void Texture::ExtractTextureColors(vector<Color> & OutPixels) const
 {
 	OutPixels.clear();
-
 	ID3D11Texture2D * SourceTexture = nullptr;
 	SRV->GetResource(reinterpret_cast<ID3D11Resource **>(&SourceTexture));
-
+	
 	D3D11_TEXTURE2D_DESC TextureDesc = {};
 	SourceTexture->GetDesc(&TextureDesc);
 	TextureDesc.MipLevels = 1;
@@ -164,13 +162,67 @@ void Texture::ExtractTextureColors( vector<Color> & OutPixels ) const
 	CHECK(D3D::Get()->GetDeviceContext()->Map(DestTexture, 0, D3D11_MAP_READ, 0, &SubResource) >= 0);
 	memcpy(Colors, SubResource.pData, PixelCount * sizeof(UINT));
 	D3D::Get()->GetDeviceContext()->Unmap(DestTexture, 0);
-
+	
 	OutPixels.reserve(PixelCount);
 	for (UINT i = 0; i < PixelCount; i++)
 		OutPixels.emplace_back(Colors[i]);
-
+	
 	SAFE_DELETE_ARR(Colors);
 	SAFE_RELEASE(DestTexture);
+}
+
+void Texture::ExtractTextureColors( vector<Color> & OutPixels, const Vector2D & VertexNum, float Scaler ) const
+{
+	OutPixels.clear();
+	OutPixels.resize(VertexNum.X * VertexNum.Y);
+	const RawBuffer * RWBuffer = new RawBuffer(
+		nullptr,
+		OutPixels.size() * sizeof(Color),
+		OutPixels.size() * sizeof(Color)
+	);
+	struct ResolutionDesc
+	{
+		Vector2D Resolution;
+		Vector2D Padding;
+	} ResolutionData = {
+		VertexNum,
+		Vector2D::Zero
+	};
+	ConstantBuffer * CB_Resolution = new ConstantBuffer(
+		(UINT)ShaderType::ComputeShader,
+		0,
+		&ResolutionData,
+		"Sampling Resolution",
+		sizeof(float) * 4,
+		true
+	);
+	const int ThreadDim[2] = {
+		min(8, int(VertexNum.X)),
+		min(8, int(VertexNum.Y))
+	};
+	const string ThreadDimStr[2] = {
+		to_string(ThreadDim[0]),
+		to_string(ThreadDim[1])
+	};
+	const vector<D3D_SHADER_MACRO> Defines{
+		{"THREAD_X", ThreadDimStr[0].c_str()},
+		{"THREAD_Y", ThreadDimStr[1].c_str()},
+		{nullptr, nullptr},
+	};
+	HlslComputeShader * TextureColorExtractor = new HlslComputeShader(L"ComputeShader/GetTextureData.hlsl", Defines.data());
+	TextureColorExtractor->CreateSamplerState_Linear_Clamp();
+
+	CB_Resolution->BindToGPU();
+	this->BindToGPU(0, (UINT)ShaderType::ComputeShader);
+	RWBuffer->BindOutputToGPU(0);
+	const uint32_t ThreadGroupX = static_cast<uint32_t>(ceil(VertexNum.X / static_cast<float>(ThreadDim[0])));
+	const uint32_t ThreadGroupY = static_cast<uint32_t>(ceil(VertexNum.Y / static_cast<float>(ThreadDim[1])));
+	TextureColorExtractor->Dispatch(ThreadGroupX, ThreadGroupY, 1);
+	RWBuffer->GetOutputData(OutPixels.data());
+
+	SAFE_DELETE(RWBuffer);
+	SAFE_DELETE(CB_Resolution);
+	SAFE_DELETE(TextureColorExtractor);
 }
 
 // D3DX11LoadTextureFromTexture : D3D11X.h . 더이상 권장되지 않음.

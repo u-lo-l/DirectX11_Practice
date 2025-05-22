@@ -43,15 +43,33 @@ void Context::Tick()
  */
 void Context::Render() const
 {
+	const int Fps = static_cast<int>(ImGui::GetIO().Framerate);
+	
 	Vp->SetViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
 	Gui * const GuiInst = Gui::Get();
-	GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(static_cast<int>(ImGui::GetIO().Framerate)));
+	GuiInst->RenderText(5, 5, 1, 1, 1,  "FrameRate : " + to_string(Fps));
 	
 	const Vector & CamPos = MainCamera->GetPosition();
 	const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
 	
 	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
 	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
+
+	const Frustum * ViewFrustum = MainCamera->GetViewFrustum();
+	const array<Plane, 6> & Planes = ViewFrustum->GetPlanes();
+	float a, b, c, d;
+	Planes[0].GetEquation(a,b,c,d);
+	Gui::Get()->RenderText(5,  70, 1, 1, 0.5f, String::Format("ViewFrustum Near   : %3.0f, %3.0f, %3.0f, %3.0f", a,b,c,d));
+	Planes[1].GetEquation(a,b,c,d);
+	Gui::Get()->RenderText(5,  80, 1, 1, 0.5f, String::Format("ViewFrustum Far    : %3.0f, %3.0f, %3.0f, %3.0f", a,b,c,d));
+	Planes[2].GetEquation(a,b,c,d);
+	Gui::Get()->RenderText(5,  90, 1, 1, 0.5f, String::Format("ViewFrustum Left   : %3.0f, %3.0f, %3.0f, %3.0f", a,b,c,d));
+	Planes[3].GetEquation(a,b,c,d);
+	Gui::Get()->RenderText(5, 100, 1, 1, 0.5f, String::Format("ViewFrustum Right  : %3.0f, %3.0f, %3.0f, %3.0f", a,b,c,d));
+	Planes[4].GetEquation(a,b,c,d);
+	Gui::Get()->RenderText(5, 110, 1, 1, 0.5f, String::Format("ViewFrustum Top    : %3.0f, %3.0f, %3.0f, %3.0f", a,b,c,d));
+	Planes[5].GetEquation(a,b,c,d);
+	Gui::Get()->RenderText(5, 120, 1, 1, 0.5f, String::Format("ViewFrustum Bottom : %3.0f, %3.0f, %3.0f, %3.0f", a,b,c,d));
 }
 
 void Context::ResizeScreen()

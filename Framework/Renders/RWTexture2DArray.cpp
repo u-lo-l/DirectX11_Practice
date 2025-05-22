@@ -115,7 +115,7 @@ void RWTexture2DArray::SaveOutputAsFile(const wstring& InFileName) const
 	// 내부적으로 InTexture를 Staging으로 변환한다.
 	HRESULT Hr = DirectX::CaptureTexture(Device, DeviceContext, ResultTextureArray, Image);
 	CHECK(SUCCEEDED(Hr));
-	for (int slice = 0 ; slice < ArraySize ; slice++)
+	for (UINT slice = 0 ; slice < ArraySize ; slice++)
 	{
 		wstring FileName = W_TEXTURE_PATH + InFileName + L"_" + to_wstring(slice) + L".png";
 		Hr = DirectX::SaveToWICFile(

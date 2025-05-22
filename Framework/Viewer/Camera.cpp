@@ -5,13 +5,19 @@ Camera::Camera()
 {
 	Tf = new Transform();
 	Proj = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi / 4);
-	
+	ViewFrustum = new Frustum(
+		Proj->GetAspect(),
+		Proj->GetFOV(),
+		Proj->GetNear(),
+		Proj->GetFar()
+	);
 }
 
 Camera::~Camera()
 {
 	SAFE_DELETE(Tf);
 	SAFE_DELETE(Proj);
+	SAFE_DELETE(ViewFrustum);
 }
 
 void Camera::Tick()
@@ -65,6 +71,13 @@ void Camera::Tick()
 	Tf->AddWorldRotation(QuatY);
 	Tf->AddLocalRotation(QuatX);
 	Tf->AddLocalTranslation(DeltaPosition);
+	
+	ViewFrustum->UpdateTransform(
+		Tf->GetWorldPosition(),
+		Tf->GetForward(),
+		Tf->GetUp(),
+		Tf->GetRight()
+	);
 }
 
 const Vector& Camera::GetPosition() const

@@ -1,5 +1,13 @@
 ﻿#pragma once
 
+struct LWVPDesc
+{
+	Matrix Local = Matrix::Identity;
+	Matrix World = Matrix::Identity;
+	Matrix View;
+	Matrix Projection;
+};
+
 struct WVPDesc
 {
 	Matrix World = Matrix::Identity;

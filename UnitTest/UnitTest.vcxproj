@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Execute\030_ComputeShaderDemo\RawBufferDemo.cpp" />
+    <ClCompile Include="Execute\LandscapeDemo\CellDemo.cpp" />
     <ClCompile Include="Execute\LandscapeDemo\LandScapeDemo.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -110,6 +112,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Execute\030_ComputeShaderDemo\RawBufferDemo.h" />
+    <ClInclude Include="Execute\LandscapeDemo\CellDemo.h" />
     <ClInclude Include="Execute\LandscapeDemo\LandScapeDemo.h" />
     <ClInclude Include="Execute\OceanDemo\FoamDemo.h" />
     <ClInclude Include="Execute\OceanDemo\GaussianRandomDemo.h" />

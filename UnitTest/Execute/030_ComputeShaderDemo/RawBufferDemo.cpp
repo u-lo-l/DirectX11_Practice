@@ -7,7 +7,7 @@ namespace sdt
 {
 	void RawBufferDemo::Initialize()
 	{
-		ComputeShader = new HlslComputeShader(L"39_ComputeShaderDemo.hlsl", "CSMain");
+		ComputeShader = new HlslComputeShader(L"39_ComputeShaderDemo.hlsl", nullptr, "CSMain");
 
 		UINT count = (3 * 2 * 1) * (5 * 4 * 1); //Dispatch Dimension X numthread Dimension
 
@@ -24,7 +24,7 @@ namespace sdt
 		
 		ComputeShader->Dispatch(rawBuffer,3, 2, 1);
 
-		OutputDesc* output = new OutputDesc[count];
+		OutputDesc * output = new OutputDesc[count];
 		rawBuffer->GetOutputData(output);
 
 		ofstream file;

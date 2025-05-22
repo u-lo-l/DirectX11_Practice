@@ -8,14 +8,11 @@ LandScape::LandScape(const LandScapeDesc& Desc)
 	TerrainDimension[0] = Desc.TerrainDim_X;
 	TerrainDimension[1] = Desc.TerrainDim_Z;
 	PatchSize = Desc.PatchSize;
-	TerrainTessData.HeightScaler = Desc.HeightScaler;
+	TessellationData.HeightScaler = Desc.HeightScaler;
 
 	CreatePerlinNoiseMap();
 	SetupShaders();
 	SetupResources(Desc);
-
-	Context::Get()->GetCamera()->SetPosition(-650, 1830, -132);
-	Context::Get()->GetCamera()->SetRotation(24, 50, -0);
 }
 
 LandScape::LandScape(const wstring & InHeightMapFilename, const UINT PatchSize)
@@ -26,60 +23,68 @@ LandScape::LandScape(const wstring & InHeightMapFilename, const UINT PatchSize)
 LandScape::~LandScape()
 {
 	SAFE_DELETE(Shader);
+	
 	SAFE_DELETE(HeightMap);
 	SAFE_DELETE(VariationMap);
 	SAFE_DELETE(DetailDiffuseMaps);
 	SAFE_DELETE(DetailNormalMaps);
+	
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
-	SAFE_DELETE(Tf)
+	
+	SAFE_DELETE(Tf);
+	
 	SAFE_DELETE(CB_WVP);
-	SAFE_DELETE(CB_TerrainData);
+	SAFE_DELETE(CB_Light);
+	SAFE_DELETE(CB_Blending);
+	SAFE_DELETE(CB_Tessellation);
 }
 
 void LandScape::Tick()
 {
-	WVP.World = Tf->GetMatrix();
-	WVP.View = Context::Get()->GetViewMatrix();
-	WVP.Projection = Context::Get()->GetProjectionMatrix();
-	CB_WVP->UpdateData(&WVP, sizeof(WVPDesc));
+	MatrixData.World = Tf->GetMatrix();
+	MatrixData.View = Context::Get()->GetViewMatrix();
+	MatrixData.Projection = Context::Get()->GetProjectionMatrix();
+	CB_WVP->UpdateData(&MatrixData, sizeof(WVPDesc));
 
-	ImGui::SliderFloat("LandScape : LOD Power", &TerrainTessData.LODRange.X, 0.1f, 3.f, "%.1f");
-	ImGui::SliderFloat("LandScape : Min Screen Diagonal", &TerrainTessData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
-	TerrainTessData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
-	TerrainTessData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
-	TerrainTessData.CameraWorldPosition = Context::Get()->GetCamera()->GetPosition();
-	TerrainTessData.LightDirection = Context::Get()->GetLightDirection();
-	TerrainTessData.LightColor = Context::Get()->GetLightColor();
-	CB_TerrainData->UpdateData(&TerrainTessData, sizeof(TerrainTessDesc));
+	ImGui::SliderFloat("LandScape : LOD Power", &TessellationData.LODRange.X, 0.1f, 3.f, "%.1f");
+	ImGui::SliderFloat("LandScape : Min Screen Diagonal", &TessellationData.LODRange.Y, LODRange.X, LODRange.Y, "%.0f");
+	TessellationData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
+	TessellationData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
+	TessellationData.CameraWorldPosition = Context::Get()->GetCamera()->GetPosition();
+	CB_Tessellation->UpdateData(&TessellationData, sizeof(LandScapeTessellationDesc));
 
-	ImGui::SliderFloat("LandScape : NearSize ", &TextureBlendingData.NearSize, 0.5f, 2.f, "%.2f");
-	ImGui::SliderFloat("LandScape : Far Size", &TextureBlendingData.FarSize, 0.1f, 0.5f, "%.3f");
-	ImGui::SliderFloat("LandScape : StartOffset", &TextureBlendingData.StartOffset, -3000, 0.f, "%.0f");
-	ImGui::SliderFloat("LandScape : Range", &TextureBlendingData.Range, 3000, 10000, "%.0f");
+	LightData.LightDirection = Context::Get()->GetLightDirection();
+	LightData.LightColor = Context::Get()->GetLightColor();
+	CB_Light->UpdateData(&LightData, sizeof(DirectionalLightDesc));
 
-	ImGui::SliderFloat("LandScape : NoiseAmount", &TextureBlendingData.NoiseAmount, 1, 3, "%.1f");
-	ImGui::SliderFloat("LandScape : NoisePower", &TextureBlendingData.NoisePower, 1, 3, "%.1f");
+	ImGui::SliderFloat("LandScape : NearSize ", &BlendingData.NearSize, 0.5f, 2.f, "%.2f");
+	ImGui::SliderFloat("LandScape : Far Size", &BlendingData.FarSize, 0.1f, 0.5f, "%.3f");
+	ImGui::SliderFloat("LandScape : StartOffset", &BlendingData.StartOffset, -3000, 0.f, "%.0f");
+	ImGui::SliderFloat("LandScape : Range", &BlendingData.Range, 3000, 10000, "%.0f");
 
-	ImGui::SliderFloat("LandScape : SlopBias", &TextureBlendingData.SlopBias, 0, 60, "%.0f");
-	ImGui::SliderFloat("LandScape : SlopSharpness", &TextureBlendingData.SlopSharpness, 1, 3, "%.1f");
-	ImGui::SliderFloat("LandScape : LowHeight", &TextureBlendingData.LowHeight, 0, GetHeightScale() / 10, "%.0f");
-	ImGui::SliderFloat("LandScape : HighHeight", &TextureBlendingData.HighHeight, TextureBlendingData.LowHeight, GetHeightScale(), "%.0f");
-	ImGui::SliderFloat("LandScape : HeightSharpness", &TextureBlendingData.HeightSharpness, 1, 3, "%.1f");
+	ImGui::SliderFloat("LandScape : NoiseAmount", &BlendingData.NoiseAmount, 1, 3, "%.1f");
+	ImGui::SliderFloat("LandScape : NoisePower", &BlendingData.NoisePower, 1, 3, "%.1f");
 
-	CB_TextureBlending->UpdateData(&TextureBlendingData, sizeof(TextureBlendingDesc));
+	ImGui::SliderFloat("LandScape : SlopBias", &BlendingData.SlopBias, 0, 60, "%.0f");
+	ImGui::SliderFloat("LandScape : SlopSharpness", &BlendingData.SlopSharpness, 1, 3, "%.1f");
+	ImGui::SliderFloat("LandScape : LowHeight", &BlendingData.LowHeight, 0, GetHeightScale() / 10, "%.0f");
+	ImGui::SliderFloat("LandScape : HighHeight", &BlendingData.HighHeight, BlendingData.LowHeight, GetHeightScale(), "%.0f");
+	ImGui::SliderFloat("LandScape : HeightSharpness", &BlendingData.HeightSharpness, 1, 3, "%.1f");
+	CB_Blending->UpdateData(&BlendingData, sizeof(LandScapeBlendingDesc));
 }
 
 void LandScape::Render() const
 {
-	if (!Shader) return;
+	ASSERT(!!Shader, "Shader Doesn't Created")
 	
 	if (!!VBuffer) VBuffer->BindToGPU();
 	if (!!IBuffer) IBuffer->BindToGPU();
 	
-	if (!!CB_WVP) CB_WVP->BindToGPU();
-	if (!!CB_TerrainData) CB_TerrainData->BindToGPU();
-	if (!!CB_TextureBlending) CB_TextureBlending->BindToGPU();
+	CB_WVP->BindToGPU();
+	CB_Light->BindToGPU();
+	CB_Blending->BindToGPU();
+	CB_Tessellation->BindToGPU();
 
 	if (!!HeightMap)
 		HeightMap->BindToGPU(0, static_cast<UINT>(ShaderType::VDP));
@@ -90,8 +95,8 @@ void LandScape::Render() const
 	if (!!DetailNormalMaps)
 		DetailNormalMaps->BindToGPU(3);
 	if (!!PerlinNoiseMap)
-		// PerlinNoiseMap->BindToGPUAsSRV(5, static_cast<UINT>(ShaderType::PixelShader));
 		PerlinNoiseMap->BindToGPU(4);
+	
 	Shader->DrawIndexed(Indices.size());
 }
 
@@ -122,19 +127,19 @@ const Texture * LandScape::GetHeightMap() const
 
 float LandScape::GetHeightScale() const
 {
-	return TerrainTessData.HeightScaler;
+	return TessellationData.HeightScaler;
 }
 
 void LandScape::SetHeightScale(float InHeightScale)
 {
-	TerrainTessData.HeightScaler = InHeightScale;
+	TessellationData.HeightScaler = InHeightScale;
 }
 
 void LandScape::SetupShaders()
 {
 	string PatchSizeStr = std::to_string(64);
 	const vector<D3D_SHADER_MACRO> Macros = {
-		{"TYPE01", "0"},
+		{"TYPE01", ""},
 		{"MAX_TESS_FACTOR", PatchSizeStr.c_str()},
 		{nullptr,}
 	};
@@ -155,12 +160,12 @@ void LandScape::SetupShaders()
 	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
 	if (Macros[0].Name == "TYPE03")
 	{
-		TerrainTessData.LODRange = {10,256};
+		TessellationData.LODRange = {10,256};
 		LODRange = {100, 1000};
 	}
 	else
 	{
-		TerrainTessData.LODRange = {1.f, 3};
+		TessellationData.LODRange = {1.f, 3};
 		LODRange = {1, 10};
 	}
 
@@ -177,22 +182,22 @@ void LandScape::SetupResources(const LandScapeDesc & Desc)
 	if (!Desc.DiffuseMapNames.empty())
 	{
 		DetailDiffuseMaps = new TextureArray(Desc.DiffuseMapNames, 1024, 1024, 11);
-		TerrainTessData.DiffuseMapCount = Desc.DiffuseMapNames.size();
+		TessellationData.DiffuseMapCount = Desc.DiffuseMapNames.size();
 	}
 	if (!Desc.NormalMapNames.empty())
 	{
 		DetailNormalMaps = new TextureArray(Desc.NormalMapNames, 1024, 1024, 11);
-		TerrainTessData.NormalMapCount = Desc.NormalMapNames.size();
+		TessellationData.NormalMapCount = Desc.NormalMapNames.size();
 	}
 	
 	Tf = new Transform();
-	TerrainTessData.TexelSize = {
+	TessellationData.TexelSize = {
 		1.f / static_cast<float>(HeightMap->GetWidth()),
 		1.f / static_cast<float>(HeightMap->GetHeight())
 	};
-	TerrainTessData.TerrainSize = TerrainDimension[0];
-	TerrainTessData.GridSize = PatchSize;
-	TerrainTessData.TextureSize = 1024;
+	TessellationData.TerrainSize = TerrainDimension[0];
+	TessellationData.GridSize = PatchSize;
+	TessellationData.TextureSize = 1024;
 	
 	CreateVertex();
 	VBuffer = new VertexBuffer(
@@ -209,26 +214,34 @@ void LandScape::SetupResources(const LandScapeDesc & Desc)
 	
 	CB_WVP = new ConstantBuffer(
 		static_cast<UINT>(ShaderType::VHDP),
-		0,
+		static_cast<UINT>(WVP),
 		nullptr,
 		"World, View, Projection",
 		sizeof(WVPDesc),
 		false
 	);
-	CB_TerrainData = new ConstantBuffer(
+	CB_Tessellation = new ConstantBuffer(
 		static_cast<UINT>(ShaderType::VHDP),
-		1,
+		static_cast<UINT>(Tessellation),
 		nullptr,
 		"Height Scaler",
-		sizeof(TerrainTessDesc),
+		sizeof(LandScapeTessellationDesc),
 		false
 	);
-	CB_TextureBlending = new ConstantBuffer(
+	CB_Light = new ConstantBuffer(
 		static_cast<UINT>(ShaderType::PixelShader),
-		2,
+		static_cast<UINT>(Lighting),
+		nullptr,
+		"Directional Light",
+		sizeof(DirectionalLightDesc),
+		false
+	);
+	CB_Blending = new ConstantBuffer(
+		static_cast<UINT>(ShaderType::PixelShader),
+		static_cast<UINT>(Blending),
 		nullptr,
 		"Distance Based Blending",
-		sizeof(TextureBlendingData),
+		sizeof(LandScapeBlendingDesc),
 		false
 	);
 }

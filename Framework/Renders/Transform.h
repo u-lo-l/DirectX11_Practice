@@ -5,7 +5,7 @@ class Transform
 private:
 	using ThisClass = Transform;
 public:
-	explicit Transform(Matrix * InMatrix = nullptr);
+	explicit Transform(Matrix * InMatrix = nullptr, int InRegisterIndex = 0);
 	~Transform();
 
 	void Tick();
@@ -37,6 +37,9 @@ public:
 	void AddWorldRotation(const Vector & InZYXEulerRadian);
 	void AddLocalRotation(const Vector & InZYXEulerRadian);
 	void AddScale(const Vector & InScale);
+	void AddTransform(const Matrix & InMatrix);
+	void AddTransform(const Transform & InTransform);
+	void AddTransform(const Transform * InTransform);
 	void SetTRS(const Vector& Pos, const Quaternion& Rot, const Vector& Scale);
 
 private :

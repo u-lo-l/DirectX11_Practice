@@ -6,6 +6,7 @@
 #include "Execute/DisplacementMappingDemo/BasicTessellationDemo.h"
 #include "Execute/DisplacementMappingDemo/DisplacementMappingDemo.h"
 #include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
+#include "Execute/LandscapeDemo/CellDemo.h"
 #include "Execute/LandscapeDemo/LandScapeDemo.h"
 #include "Execute/LODDemo/TerrainTessellationDemo.h"
 #include "Execute/OceanDemo/FoamDemo.h"
@@ -25,9 +26,10 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::ShadowDemo);
 	// PUSH_MAIN(sdt::TextureTransposeDemo);
 	// PUSH_MAIN(sdt::PhilipsSpectrumDemo);
-	// PUSH_MAIN(sdt::LandScapeDemo);
-	PUSH_MAIN(sdt::OceanDemo);
+	// PUSH_MAIN(sdt::OceanDemo);
 	// PUSH_MAIN(sdt::FoamDemo);
+	PUSH_MAIN(sdt::CellDemo);
+	// PUSH_MAIN(sdt::LandScapeDemo);
 }
 
 

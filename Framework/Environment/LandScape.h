@@ -23,39 +23,16 @@ public:
 	};
 private:
 	using VertexType = VertexTextureNormal;
-	struct WVPDesc
+	enum CBufferIndex
 	{
-		Matrix World;
-		Matrix View;
-		Matrix Projection;
+		WVP = 0,
+		Tessellation = 1,
+		Lighting = 2,
+		Blending = 3
 	};
-	struct TerrainTessDesc
+	struct LandScapeBlendingDesc
 	{
-		Vector CameraWorldPosition;
-		float HeightScaler = 100.f;
-		
-		Color LightColor;
-		
-		Vector LightDirection;
-		float BumpScaler = 0.001f;
-		
-		Vector2D LODRange;
-		Vector2D TexelSize;
-		
-		float  ScreenDistance;
-		float  ScreenDiagonal;
-		UINT   DiffuseMapCount = 0;
-		UINT   NormalMapCount  = 0;
-
-		float TerrainSize;
-		float GridSize;
-		float TextureSize;
-		float Padding;
-	};
-	struct TextureBlendingDesc
-	{
-		// Distance Based
-		float NearSize = 1.f;
+		float NearSize = 1.0f;
 		float FarSize = 0.1f;
 		float StartOffset = -1000.f;
 		float Range = 5000.f;
@@ -70,7 +47,26 @@ private:
 		float HighHeight = 15;
 		float HeightSharpness = 1;
 		// Padding
-		UINT Padding = 0;
+		float Padding;
+	};
+
+	struct LandScapeTessellationDesc
+	{
+		Vector CameraWorldPosition;
+		float HeightScaler = 100.f;
+		
+		float TerrainSize;
+		float GridSize;
+		float TextureSize;
+		float Padding;
+		
+		Vector2D LODRange;
+		Vector2D TexelSize;
+		
+		float  ScreenDistance;
+		float  ScreenDiagonal;
+		UINT   DiffuseMapCount = 0;
+		UINT   NormalMapCount  = 0;
 	};
 	Vector2D LODRange;
 public:
@@ -99,9 +95,17 @@ private:
 	UINT TerrainDimension[2] = {1024, 1024};
 	vector<VertexType> Vertices;
 	vector<UINT> Indices;
-	WVPDesc WVP;
-	TerrainTessDesc TerrainTessData;
-	TextureBlendingDesc TextureBlendingData;
+	
+	Transform * Tf;
+	WVPDesc MatrixData;	// VDHP
+	DirectionalLightDesc LightData; // P
+	LandScapeTessellationDesc TessellationData; // DH
+	LandScapeBlendingDesc BlendingData; // DH
+	
+	ConstantBuffer * CB_WVP = nullptr; // 0
+	ConstantBuffer * CB_Blending = nullptr; // 1
+	ConstantBuffer * CB_Light = nullptr; // 2
+	ConstantBuffer * CB_Tessellation = nullptr; // 3
 	
 	HlslShader<VertexType> * Shader;
 	
@@ -114,11 +118,6 @@ private:
 	
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
-
-	Transform * Tf;
-	ConstantBuffer * CB_WVP = nullptr;
-	ConstantBuffer * CB_TerrainData = nullptr;
-	ConstantBuffer * CB_TextureBlending = nullptr;
 };
 
 

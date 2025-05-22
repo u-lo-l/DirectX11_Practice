@@ -4,7 +4,9 @@ class Frustum
 {
 public:
 	Frustum(float Aspect, float VFOV, float Near, float Far);
-	void Transform(const Matrix & Mat);
+	Frustum(float Aspect, float VFOV, float Near, float Far,
+		const Vector & Origin, const Vector & Forward, const Vector & Up, const Vector & Right);
+	void UpdateTransform(const Vector& Origin, const Vector& Forward, const Vector& Up, const Vector& Right);
 	bool Contains(const Vector & InPoint) const;
 	bool Intersects(const Vector & Center, float Radius) const;
 	bool Intersects(const Box & InBox) const;
@@ -14,7 +16,11 @@ public:
 private:
 	enum FrustumPlaneType : uint8_t
 	{
-		Near = 0, Left, Right, Top, Bottom, Far
+		Near = 0, Far, Left, Right, Top, Bottom
 	};
 	array<Plane, 6> Planes;
+	float Aspect;
+	float VFOV;
+	float NearDistance;
+	float FarDistance;
 };

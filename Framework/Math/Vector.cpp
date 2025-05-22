@@ -50,7 +50,7 @@ Vector::Vector( const aiVector3D & v )
 {
 }
 
-Vector Vector::operator-(void)
+Vector Vector::operator-() const
 {
 	Vector vector3;
 	vector3.X = -X;
@@ -303,6 +303,16 @@ Vector Vector::Subtract( const Vector & value1, const Vector & value2)
 	vector3.X = value1.X - value2.X;
 	vector3.Y = value1.Y - value2.Y;
 	vector3.Z = value1.Z - value2.Z;
+
+	return vector3;
+}
+
+Vector Vector::Abs(const Vector& value)
+{
+	Vector vector3;
+	vector3.X = abs(value.X);
+	vector3.Y = abs(value.Y);
+	vector3.Z = abs(value.Z);
 
 	return vector3;
 }

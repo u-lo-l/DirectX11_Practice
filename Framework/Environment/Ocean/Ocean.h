@@ -53,7 +53,7 @@ private:
 	{
 		UINT Width;
 		UINT Height;
-		UINT ArraySize = (UINT)SpectrumTextureType::MAX;
+		UINT ArraySize = static_cast<UINT>(SpectrumTextureType::MAX);
 		UINT Padding;
 	};
 	struct TessellationDesc
