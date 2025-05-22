@@ -13,11 +13,11 @@ const static float MinTessFactor = 1;
 const static float MaxTessFactor = MAX_TESS_FACTOR;
 const static float RDRatio = 4;
 
-cbuffer CB_WVP : register(b0) // VS DS HS PS
+cbuffer CB_WVP : register(b0)  // VS DS HS PS
 {
-    matrix World;
-    matrix View;
-    matrix Projection;
+    matrix World      : packoffset(c0);
+    matrix View       : packoffset(c4);
+    matrix Projection : packoffset(c8);
 }
 
 cbuffer CB_Tessellation : register(b1) // VHDP
@@ -228,11 +228,8 @@ DS_OUTPUT DSMain
     float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
     output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
 
-    // float4 RED = float4(1,0.5f,0.5f,1);
-    // float4 GREEN = float4(0.5f,1,0.5f,1);
-    // output.DebugColor = lerp(GREEN, RED, (float)output.LOD / 5.f);
-
     output.DebugColor = float4(MeanTessFactor / MaxTessFactor, MeanTessFactor / MaxTessFactor, MeanTessFactor / MaxTessFactor, 1);
+    
     return output;
 }
 

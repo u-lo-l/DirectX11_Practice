@@ -11,9 +11,7 @@ namespace sdt
 		void Render() override;
 		void Destroy() override;
 	private:
-	bool bRenderCell = false;
-	LandScape_QuadTree * TerrainWidthCell = nullptr;
-	LandScape * TerrainNoCell = nullptr;
+	LandScape * TerrainWidthCell = nullptr;
 	SkySphere * Sky = nullptr;
 	};
 	

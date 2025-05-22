@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
-#include "LandScape_QuadTree.h"
+#include "SceneryCell.h"
 
-LandScape_QuadTree::LandScapeCell::LandScapeCell(
+SceneryCell::SceneryCell(
 	const Vector & InCellExtend,
 	const Vector2D & InCellStartIndex,
 	float InGridSize,
@@ -9,37 +9,35 @@ LandScape_QuadTree::LandScapeCell::LandScapeCell(
 	const Vector& InTerrainExtend
 )
 {
-	const Vector2D TerrainSize = Vector2D(
+	const Vector2D ScenerySize = Vector2D(
 		InTerrainExtend.X,
 		InTerrainExtend.Z
 	);
-	this->CellExtend = InCellExtend;
+	this->CellExtent = InCellExtend;
 	this->GridSize = static_cast<UINT>(InGridSize);
 	
 	CreateVertex(
 		InHeightMapValues,
-		TerrainSize,
+		ScenerySize,
 		InCellStartIndex
 	);
 	CreateIndex();
 }
 
-LandScape_QuadTree::LandScapeCell::~LandScapeCell()
+SceneryCell::~SceneryCell()
 {
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE(BoundingBox);
 }
 
-void LandScape_QuadTree::LandScapeCell::Tick()
+void SceneryCell::Tick()
 {
 	// Do Nothing
+	
 }
 
-bool LandScape_QuadTree::LandScapeCell::Render(
-	HlslShader<VertexType>* InShader,
-	const Frustum * InFrustum
-)
+bool SceneryCell::Render(HlslShader<VertexType>* InShader, const Frustum* InFrustum)
 {
 	if (!!InFrustum && InFrustum->Intersects(BoundingBox) == false)
 		return false;
@@ -50,19 +48,19 @@ bool LandScape_QuadTree::LandScapeCell::Render(
 	return true;
 }
 
-void LandScape_QuadTree::LandScapeCell::CreateVertex
+void SceneryCell::CreateVertex
 (
 	const vector<Color> & InHeightMapValues,
 	const Vector2D & InTerrainSize,
 	const Vector2D & InCellIndex
 )
 {
-	float YMin = FLT_MAX;
+		float YMin = FLT_MAX;
 	float YMax = -FLT_MAX;
 	const float TerrainWidth = InTerrainSize.X;	// 실제 크기 _X
 	const float TerrainHeight = InTerrainSize.Y;// 실제 크기 _Z
-	const float CellWidth = (CellExtend.X);		// Cell 실제 크기_X
-	const float CellHeight = (CellExtend.Z);	// Cell 실제 크기_Z
+	const float CellWidth = (CellExtent.X);		// Cell 실제 크기_X
+	const float CellHeight = (CellExtent.Z);	// Cell 실제 크기_Z
 	
 	const Vector PositionOffset = Vector(
 		InCellIndex.X * CellWidth,
@@ -82,7 +80,7 @@ void LandScape_QuadTree::LandScapeCell::CreateVertex
 	Vertices.clear();
 	Vertices.resize(VertexPerCell_X * VertexPerCell_Z);
 	
-	const float HeightScaler = CellExtend.Y;
+	const float HeightScaler = CellExtent.Y;
 	for (UINT Z = 0 ; Z < VertexPerCell_Z ; Z++)
 	{
 		UINT HeightMap_Z = static_cast<UINT>(InCellIndex.Y) * GridPerCell_Y + Z;
@@ -106,10 +104,10 @@ void LandScape_QuadTree::LandScapeCell::CreateVertex
 		}
 	}
 
-	CellExtend.Y = YMax - YMin;
+	CellExtent.Y = YMax - YMin;
 	LocalPosition = Vector(PositionOffset.X, YMin, PositionOffset.Z);
-	const Vector Center = this->LocalPosition + this->CellExtend * 0.5f;
-	BoundingBox = new Box(Center, CellExtend * 0.5f);
+	const Vector Center = this->LocalPosition + this->CellExtent * 0.5f;
+	BoundingBox = new Box(Center, CellExtent * 0.5f);
 	VBuffer = new VertexBuffer(
 		Vertices.data(),
 		Vertices.size(),
@@ -117,11 +115,10 @@ void LandScape_QuadTree::LandScapeCell::CreateVertex
 	);
 }
 
-
-void LandScape_QuadTree::LandScapeCell::CreateIndex()
+void SceneryCell::CreateIndex()
 {
-	const float CellWidth = (CellExtend.X);
-	const float CellHeight = (CellExtend.Z);
+	const float CellWidth = (CellExtent.X);
+	const float CellHeight = (CellExtent.Z);
 
 	const UINT GridPerCell_X = static_cast<UINT>(CellWidth) / GridSize;
 	const UINT GridPerCell_Y = static_cast<UINT>(CellHeight) / GridSize;

@@ -8,6 +8,7 @@ class Texture;
 class VertexBuffer;
 struct VertexTextureNormal;
 
+// DEPRECATED
 class LandScape
 {
 public:

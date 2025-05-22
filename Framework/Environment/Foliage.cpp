@@ -56,7 +56,7 @@ Foliage::Foliage(const LandScape * InTerrain, const float MinAltitude, const flo
 		false
 	);
 
-	TerrainHeightData.TerrainSize = { static_cast<float>(Terrain->GetWidth()), static_cast<float>(Terrain->GetHeight()) };
+	TerrainHeightData.TerrainSize = { Terrain->GetExtent().X, Terrain->GetExtent().Z };
 	const Texture * HeightMap = Terrain->GetHeightMap();
 	TerrainHeightData.TexelSize = {1.f / static_cast<float>(HeightMap->GetWidth()), 1.f / static_cast<float>(HeightMap->GetHeight()) }; 
 
@@ -87,7 +87,7 @@ void Foliage::Tick()
 	WVPData.Projection = Context::Get()->GetProjectionMatrix();
 	WVPBuffer->UpdateData(&WVPData, sizeof(WVPDesc));
 
-	TerrainHeightData.HeightScaler = Terrain->GetHeightScale();
+	TerrainHeightData.HeightScaler = Terrain->GetExtent().Y;
 	TerrainHeightData.LightDirection = Context::Get()->GetLightDirection();
 	TerrainHeightData.LightColor = Context::Get()->GetLightColor();
 
@@ -140,14 +140,14 @@ void Foliage::CreateRandomFoliage()
 		return ;
 	if (!Terrain || !Terrain->GetHeightMap())
 		return;
-	const float TerrainHeightScaler = Terrain->GetHeightScale();
+	const float TerrainHeightScaler = Terrain->GetExtent().Y;
 	const Texture * HeightMap = Terrain->GetHeightMap();
 	
 	// UINT HorizontalCount = Terrain->GetWidth() / FoliageStride + 1;
 	// UINT VerticalCount = Terrain->GetHeight() / FoliageStride + 1;
 
-	const float TerrainWidth = static_cast<float>(Terrain->GetWidth());
-	const float TerrainHeight = static_cast<float>(Terrain->GetHeight());
+	const float TerrainWidth = Terrain->GetExtent().X;
+	const float TerrainHeight = Terrain->GetExtent().Z;
 
 	// 소수 단위 stride 지원
 	const UINT HorizontalCount = static_cast<UINT>(floor(TerrainWidth / FoliageStride)) + 1;

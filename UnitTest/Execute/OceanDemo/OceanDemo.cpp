@@ -15,14 +15,13 @@ namespace sdt
 		constexpr float SeaLevel = 10.f;
 		const Vector2D SeaSize = Vector2D(1024, 1024) * 16;
 
-		const LandScape::LandScapeDesc LandscapeDesc
+		const Vector TerrainExtent = {2560, 1024, 2560};
+		const UINT GridSize = static_cast<UINT>(powf(2, 6));
+		const LandScape::LandScapeDesc LandscapeDesc =
 		{
-				{
-					TerrainSize.X,
-				   TerrainHeight,
-				   TerrainSize.Y
-				},
+			TerrainExtent,
 			128,
+			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
 			{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
@@ -48,8 +47,8 @@ namespace sdt
 
 		if (!!Sea && !!Terrain)
 		{
-			const Vector2D TerrainCenter = {(float)Terrain->GetWidth() / 2, (float)Terrain->GetHeight() / 2};
-			Sea->SetWorldPosition({TerrainCenter.X - SeaSize.X / 2, SeaLevel, TerrainCenter.Y - SeaSize.Y / 2});
+			const Vector2D TerrainCenter = {Terrain->GetExtent().X * 0.5f, Terrain->GetExtent().Z * 0.5f};
+			Sea->SetWorldPosition({TerrainCenter.X - SeaSize.X * 0.5f, SeaLevel, TerrainCenter.Y - SeaSize.Y * 0.5f});
 		}
 	}
 

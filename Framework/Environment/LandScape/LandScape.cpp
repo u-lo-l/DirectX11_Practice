@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
-#include "LandScape_QuadTree.h"
+#include "LandScape.h"
 
-LandScape_QuadTree::LandScape_QuadTree(const LandScapeDesc& InDesc)
+LandScape::LandScape(const LandScapeDesc& InDesc)
 {
 	Extent = InDesc.Extent;
 	CellSize = InDesc.CellSize;
@@ -12,9 +12,9 @@ LandScape_QuadTree::LandScape_QuadTree(const LandScapeDesc& InDesc)
 	SetupCells();
 }
 
-LandScape_QuadTree::~LandScape_QuadTree()
+LandScape::~LandScape()
 {
-	for (LandScapeCell * Cell : Cells)
+	for (SceneryCell * Cell : Cells)
 		SAFE_DELETE(Cell);
 	
 	SAFE_DELETE(CellRenderer);
@@ -33,7 +33,7 @@ LandScape_QuadTree::~LandScape_QuadTree()
 	SAFE_DELETE(CB_Tessellation);
 }
 
-void LandScape_QuadTree::Tick()
+void LandScape::Tick()
 {
 	MatrixData.World = Tf->GetMatrix();
 	MatrixData.View = Context::Get()->GetCamera()->GetViewMatrix();
@@ -67,7 +67,7 @@ void LandScape_QuadTree::Tick()
 	CB_Blending->UpdateData(&BlendingData, sizeof(LandScapeBlendingDesc));
 }
 
-void LandScape_QuadTree::Render(bool bDrawBoundary)
+void LandScape::Render(bool bDrawBoundary)
 {
 	ASSERT(!!CellRenderer, "Shader Doesn't Created")
 	
@@ -90,7 +90,7 @@ void LandScape_QuadTree::Render(bool bDrawBoundary)
 		PerlinNoise->BindToGPU(4);
 
 	int RenderingCell = 0;
-	for (LandScapeCell * Cell : Cells)
+	for (SceneryCell * Cell : Cells)
 	{
 		if (Cell->Render(CellRenderer, ViewFrustum) == true)
 			RenderingCell++;
@@ -112,7 +112,7 @@ void LandScape_QuadTree::Render(bool bDrawBoundary)
 	}
 }
 
-void LandScape_QuadTree::SetupShaders()
+void LandScape::SetupShaders()
 {
 	const wstring ShaderPath[2]
 	{
@@ -147,7 +147,7 @@ void LandScape_QuadTree::SetupShaders()
 	CHECK(SUCCEEDED(CellRenderer->CreateBlendState_Opaque()));
 }
 
-void LandScape_QuadTree::SetupResources(const LandScapeDesc& InDesc)
+void LandScape::SetupResources(const LandScapeDesc& InDesc)
 {
 	VariationMap = new Texture(L"Terrain/T_MacroVariation.png", true);
 	PerlinNoise = new Texture(L"Terrain/T_Perlin_Noise.png", true);
@@ -214,7 +214,7 @@ void LandScape_QuadTree::SetupResources(const LandScapeDesc& InDesc)
 	);
 }
 
-void LandScape_QuadTree::SetupCells()
+void LandScape::SetupCells()
 {
 	const float HeightScale = Extent.Y;
 	const float Size = static_cast<float>(CellSize);
@@ -245,7 +245,7 @@ void LandScape_QuadTree::SetupCells()
 	{
 		for (UINT w = 0; w < Width; w++)
 		{
-			LandScapeCell * NewCell = new LandScapeCell (
+			SceneryCell * NewCell = new SceneryCell (
 				Vector(Size, HeightScale, Size),
 				Vector2D(static_cast<float>(w), static_cast<float>(h)),
 				GridSize,
@@ -254,12 +254,11 @@ void LandScape_QuadTree::SetupCells()
 			);
 			Cells.push_back(NewCell);
 			Transform CellLocalTf;
-			CellLocalTf.SetScale(NewCell->GetExtend());
+			CellLocalTf.SetScale(NewCell->GetExtent());
 			CellLocalTf.SetWorldPosition(NewCell->GetLocalPosition());
 			CellLocalTransform.push_back(CellLocalTf.GetMatrix());
 		}
 	}
-
 
 #pragma region Bounding Box
 	CellBoxVBuffer = new VertexBuffer(BoxVertices.data(), BoxVertices.size(), sizeof(VertexColor));

@@ -103,13 +103,11 @@ using namespace std;
 	#include "Model/ModelMesh.h"
 	#include "Model/ModelAnimation.h"
 
-	#include "Environment/Terrain.h"
-	#include "Environment/LandScape.h"
+	#include "Environment/LandScape/SceneryCell.h"
+	#include "Environment/LandScape/LandScape.h"
+	#include "Environment/Ocean/Ocean.h"
 	#include "Environment/SkySphere.h"
 	#include "Environment/Foliage.h"
-	#include "Environment/LandScape/LandScape_QuadTree.h"
-	#include "Environment/Ocean/Ocean.h"
-
 
 	#include "ParticleSystem/ParticleSystem.h"
 

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class LandScape;
-
 class Foliage
 {
 private:

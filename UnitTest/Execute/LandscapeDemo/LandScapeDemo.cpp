@@ -7,16 +7,13 @@ namespace sdt
 	{
 		// constexpr float SeaLevel = 50.f;
 
-		// !!! 모든 DetailDiffuse, DetailNormal들은 각각 Format이 같아야 한다.
-		// 지금 많이 다름.
-		const LandScape::LandScapeDesc LandscapeDesc
+		const Vector TerrainExtent = {2560, 1024, 2560};
+		const UINT GridSize = static_cast<UINT>(powf(2, 4));
+		const LandScape::LandScapeDesc LandscapeDesc =
 		{
-				{
-					4096,
-				   2048.f,
-				   4096
-				},
-			32,
+			TerrainExtent,
+			256,
+			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
 			{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
@@ -26,7 +23,6 @@ namespace sdt
 		// TODO : QuadTree로 공간 관리. Foliage
 		// Grasses = new Foliage(Terrain, SeaLevel + 2.f);
 
-		// Sky = new SkySphere(L"Environments/SunSetCube1024.dds", 0.5f);
 		Sky = new SkySphere(L"Environments/SkyDawn.dds", 0.5f);
 	}
 

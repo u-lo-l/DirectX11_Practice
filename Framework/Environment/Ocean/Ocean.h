@@ -29,13 +29,7 @@ private:
 	UINT TextureSize = 512;
 	UINT Dimension[2];
 	Vector2D LODRange;
-	struct WVPDesc
-	{
-		Matrix World;
-		Matrix View;
-		Matrix Projection;
-		Matrix ViewInverse;
-	};
+
 	struct PhillipsInitDesc
 	{
 		float Width;
@@ -174,7 +168,7 @@ private:
 	Transform * Tf;
 	
 	// Resources
-	WVPDesc WVP;
+	WVPIDesc WVP;
 	TessellationDesc TessellationData;
 	ConstantBuffer * CB_WVP = nullptr;
 	ConstantBuffer * CB_Tessellation= nullptr;

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class LandScape_QuadTree
+class LandScape
 {
 public:
 	// for Initialize
@@ -61,13 +61,14 @@ private:
 	};
 	using VertexType = VertexTextureNormal;
 	using CellVertexType = VertexColor; 
-	class LandScapeCell;
 	// for Render
 public:
-	explicit LandScape_QuadTree(const LandScapeDesc & InDesc);
-	~LandScape_QuadTree();
+	explicit LandScape(const LandScapeDesc & InDesc);
+	~LandScape();
 	void Tick();
 	void Render(bool bDrawBoundary = false);
+	const Vector & GetExtent() const { return Extent; }
+	const Texture * GetHeightMap() const { return HeightMap; }
 private:
 	void SetupShaders();
 	void SetupResources(const LandScapeDesc& InDesc);
@@ -78,7 +79,7 @@ private:
 	UINT CellSize;
 	UINT GridSize;
 	
-	vector<LandScapeCell *> Cells;
+	vector<SceneryCell *> Cells;
 	vector<Matrix> CellLocalTransform;
 	VertexBuffer * VBuffer = nullptr;
 	IndexBuffer * IBuffer = nullptr;
@@ -108,47 +109,5 @@ private:
 	Texture * VariationMap;
 	TextureArray * DiffuseMaps;
 	TextureArray * NormalMaps;
-};
-
-class LandScape_QuadTree::LandScapeCell
-{
-private:
-	using VertexType = VertexTextureNormal;
-public:
-	LandScapeCell(
-		const Vector& InCellExtend,
-		const Vector2D& InCellStartIndex,
-		float InGridSize,
-		const vector<Color>& InHeightMapValues,
-		const Vector& InTerrainExtend
-	);
-	~LandScapeCell();
-	void Tick();
-	bool Render(
-		HlslShader<VertexType> * InShader,
-		const Frustum * InFrustum = nullptr
-	);
-	Vector GetExtend() const { return CellExtend; }
-	Vector GetLocalPosition() const { return LocalPosition; }
-
-	VertexBuffer * GetVertexBuffer() const { return VBuffer; }
-	IndexBuffer * GetIndexBuffer() const { return IBuffer; }
-private:
-	void CreateVertex(
-		const vector<Color>& InHeightMapValues,
-		const Vector2D & InTerrainSize,
-		const Vector2D & InCellIndex
-	);
-	void CreateIndex();
-	
-	vector<VertexType> Vertices;
-	vector<UINT> Indices;
-	VertexBuffer * VBuffer = nullptr;
-	IndexBuffer  * IBuffer = nullptr;
-
-	Vector CellExtend;
-	Vector LocalPosition; 
-	UINT GridSize;
-	Box * BoundingBox = nullptr;
 };
 

@@ -1,6 +1,6 @@
 ﻿#include "framework.h"
 #include "LandScape.h"
-
+// DEPRECATED
 LandScape::LandScape(const LandScapeDesc& Desc)
 {
 	ASSERT(Desc.DiffuseMapNames.size() == Desc.NormalMapNames.size(), "DetailMaps Not Valid");
