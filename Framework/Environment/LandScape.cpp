@@ -5,10 +5,10 @@ LandScape::LandScape(const LandScapeDesc& Desc)
 {
 	ASSERT(Desc.DiffuseMapNames.size() == Desc.NormalMapNames.size(), "DetailMaps Not Valid");
 
-	TerrainDimension[0] = Desc.TerrainDim_X;
-	TerrainDimension[1] = Desc.TerrainDim_Z;
+	TerrainDimension[0] = static_cast<UINT>(Desc.Extent.X);
+	TerrainDimension[1] = static_cast<UINT>(Desc.Extent.Z);
 	PatchSize = Desc.PatchSize;
-	TessellationData.HeightScaler = Desc.HeightScaler;
+	TessellationData.HeightScaler = Desc.Extent.Y;
 
 	CreatePerlinNoiseMap();
 	SetupShaders();
@@ -16,7 +16,7 @@ LandScape::LandScape(const LandScapeDesc& Desc)
 }
 
 LandScape::LandScape(const wstring & InHeightMapFilename, const UINT PatchSize)
-	: LandScape({1024, 1024, 100, PatchSize, InHeightMapFilename, {}, {}})
+	: LandScape({{1024, 100, 1024}, PatchSize, InHeightMapFilename, {}, {}})
 {
 }
 
@@ -137,10 +137,11 @@ void LandScape::SetHeightScale(float InHeightScale)
 
 void LandScape::SetupShaders()
 {
-	string PatchSizeStr = std::to_string(64);
+	// const string GridSizeStr = std::to_string(min(PatchSize, 64));
+	const string GridSizeStr = std::to_string(64);
 	const vector<D3D_SHADER_MACRO> Macros = {
-		{"TYPE01", ""},
-		{"MAX_TESS_FACTOR", PatchSizeStr.c_str()},
+		{"TYPE01", "0"},
+		{"MAX_TESS_FACTOR", GridSizeStr.c_str()},
 		{nullptr,}
 	};
 	Shader = new HlslShader<VertexType>(
@@ -158,6 +159,7 @@ void LandScape::SetupShaders()
 	CHECK(SUCCEEDED(Shader->CreateDepthStencilState_Default()));
 	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid()));
 	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
+	
 	if (Macros[0].Name == "TYPE03")
 	{
 		TessellationData.LODRange = {10,256};
@@ -177,16 +179,16 @@ void LandScape::SetupResources(const LandScapeDesc & Desc)
 	if (!Desc.HeightMapName.empty())
 	{
 		HeightMap = new Texture(Desc.HeightMapName, true);
-		SetHeightScale(Desc.HeightScaler);
+		SetHeightScale(Desc.Extent.Y);
 	}
 	if (!Desc.DiffuseMapNames.empty())
 	{
-		DetailDiffuseMaps = new TextureArray(Desc.DiffuseMapNames, 1024, 1024, 11);
+		DetailDiffuseMaps = new TextureArray(Desc.DiffuseMapNames, 1024, 1024, 5);
 		TessellationData.DiffuseMapCount = Desc.DiffuseMapNames.size();
 	}
 	if (!Desc.NormalMapNames.empty())
 	{
-		DetailNormalMaps = new TextureArray(Desc.NormalMapNames, 1024, 1024, 11);
+		DetailNormalMaps = new TextureArray(Desc.NormalMapNames, 1024, 1024, 5);
 		TessellationData.NormalMapCount = Desc.NormalMapNames.size();
 	}
 	
@@ -195,23 +197,18 @@ void LandScape::SetupResources(const LandScapeDesc & Desc)
 		1.f / static_cast<float>(HeightMap->GetWidth()),
 		1.f / static_cast<float>(HeightMap->GetHeight())
 	};
-	TessellationData.TerrainSize = TerrainDimension[0];
-	TessellationData.GridSize = PatchSize;
 	TessellationData.TextureSize = 1024;
-	
+	TessellationData.HeightScaler = GetHeightScale();
+	TessellationData.DiffuseMapCount = Desc.DiffuseMapNames.size();
+	TessellationData.NormalMapCount = Desc.NormalMapNames.size();
+	TessellationData.LODRange = {1, 3};
+	TessellationData.TerrainSize = static_cast<float>(TerrainDimension[0]);
+	TessellationData.GridSize = static_cast<float>(PatchSize);
+	TessellationData.TextureSize = static_cast<float>(HeightMap->GetWidth());
+
 	CreateVertex();
-	VBuffer = new VertexBuffer(
-		Vertices.data(),
-		Vertices.size(),
-		sizeof(VertexType)
-	);
-	
 	CreateIndex();
-	IBuffer = new IndexBuffer(
-		Indices.data(),
-		Indices.size()
-	);
-	
+
 	CB_WVP = new ConstantBuffer(
 		static_cast<UINT>(ShaderType::VHDP),
 		static_cast<UINT>(WVP),
@@ -269,6 +266,11 @@ void LandScape::CreateVertex()
 			Vertices[Index].UV.Y = (Z * PatchSize) / static_cast<float>(Height);
 		}
 	}
+	VBuffer = new VertexBuffer(
+		Vertices.data(),
+		Vertices.size(),
+		sizeof(VertexType)
+	);
 }
 
 void LandScape::CreateIndex()
@@ -294,6 +296,10 @@ void LandScape::CreateIndex()
 			Indices[Index++] = PatchWidth * Z + (X + 1);
 		}
 	}
+	IBuffer = new IndexBuffer(
+		Indices.data(),
+		Indices.size()
+	);
 }
 
 void LandScape::CreatePerlinNoiseMap()

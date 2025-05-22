@@ -6,9 +6,10 @@ LandScape_QuadTree::LandScape_QuadTree(const LandScapeDesc& InDesc)
 	Extent = InDesc.Extent;
 	CellSize = InDesc.CellSize;
 	GridSize = InDesc.GridSize;
+	
+	SetupShaders();
 	SetupResources(InDesc);
 	SetupCells();
-	SetupShaders();
 }
 
 LandScape_QuadTree::~LandScape_QuadTree()
@@ -64,16 +65,14 @@ void LandScape_QuadTree::Tick()
 	ImGui::SliderFloat("LandScape_Cell : HighHeight", &BlendingData.HighHeight, BlendingData.LowHeight, Extent.Y, "%.0f");
 	ImGui::SliderFloat("LandScape_Cell : HeightSharpness", &BlendingData.HeightSharpness, 1, 3, "%.1f");
 	CB_Blending->UpdateData(&BlendingData, sizeof(LandScapeBlendingDesc));
-	
-	// for (LandScapeCell * Cell : Cells)
-	// {
-	// 	Cell->Tick();
-	// }
 }
 
 void LandScape_QuadTree::Render(bool bDrawBoundary)
 {
 	ASSERT(!!CellRenderer, "Shader Doesn't Created")
+	
+	const Frustum * const ViewFrustum = Context::Get()->GetCamera()->GetViewFrustum();
+	
 	CB_WVP->BindToGPU();
 	CB_Light->BindToGPU();
 	CB_Blending->BindToGPU();
@@ -90,39 +89,45 @@ void LandScape_QuadTree::Render(bool bDrawBoundary)
 	if (!!PerlinNoise)
 		PerlinNoise->BindToGPU(4);
 
-	Cells[0]->GetVertexBuffer()->BindToGPU();
-	Cells[0]->GetIndexBuffer()->BindToGPU();
-	CellRenderer->DrawIndexed(Cells[0]->GetIndexBuffer()->GetCount());
+	int RenderingCell = 0;
+	for (LandScapeCell * Cell : Cells)
+	{
+		if (Cell->Render(CellRenderer, ViewFrustum) == true)
+			RenderingCell++;
+	}
 
-	// for (LandScapeCell * Cell : Cells)
-	// {
-	// 	Cell->Render(CellRenderer);
-	// }
+	Gui::Get()->RenderText(5, 150, 1.f, 0.2f, 0.2f, String::Format("VisibleCells : %d / %d", RenderingCell, Cells.size()));
 	
-	// if (bDrawBoundary)
-	// {
-	// 	CellBoxVBuffer->BindToGPU();
-	// 	CellBoxIBuffer->BindToGPU();
-	// 	CellBoxInstBuffer->BindToGPU();
-	// 	CellBoundaryRenderer->DrawIndexedInstanced(
-	// 		CellBoxIBuffer->GetCount(),
-	// 		CellLocalTransform.size(),
-	// 		0,
-	// 		0
-	// 	);
-	// }
+	if (bDrawBoundary)
+	{
+		CellBoxVBuffer->BindToGPU();
+		CellBoxIBuffer->BindToGPU();
+		CellBoxInstBuffer->BindToGPU();
+		CellBoundaryRenderer->DrawIndexedInstanced(
+			CellBoxIBuffer->GetCount(),
+			CellLocalTransform.size(),
+			0,
+			0
+		);
+	}
 }
 
 void LandScape_QuadTree::SetupShaders()
 {
-	const string GridSizeStr = std::to_string(min(GridSize, 64));
+	const wstring ShaderPath[2]
+	{
+		L"Terrain/TerrainCell.hlsl",
+		L"Terrain/TerrainTessellation.hlsl"
+	};
+	// const string GridSizeStr = std::to_string(min(GridSize, 64));
+	const string GridSizeStr = std::to_string(64);
 	const vector<D3D_SHADER_MACRO> Defines = {
 		{"TYPE01", "0"},
 		{"MAX_TESS_FACTOR", GridSizeStr.c_str()},
 		{nullptr, nullptr}
 	};
 	CellRenderer = new HlslShader<VertexType>(
-		L"Terrain/TerrainCell.hlsl",
+		ShaderPath[0],
 		static_cast<UINT>(ShaderType::VHDP),
 		"VSMain",
 		"PSMain",
@@ -135,6 +140,7 @@ void LandScape_QuadTree::SetupShaders()
 	CHECK(SUCCEEDED(CellRenderer->CreateBlendState_Opaque()));
 	CHECK(SUCCEEDED(CellRenderer->CreateDepthStencilState_Default()));
 	CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_Solid()));
+	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
 
 	CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
 	CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -143,12 +149,24 @@ void LandScape_QuadTree::SetupShaders()
 
 void LandScape_QuadTree::SetupResources(const LandScapeDesc& InDesc)
 {
-	HeightMap = new Texture(InDesc.HeightMap, true);
-	// NormalMap = new RWTexture2D(HeightMap->GetWidth(), HeightMap->GetHeight());
-	PerlinNoise = new Texture(L"Terrain/T_Perlin_Noise.png", true);
 	VariationMap = new Texture(L"Terrain/T_MacroVariation.png", true);
-	DiffuseMaps = new TextureArray(InDesc.DiffuseMaps, 1024, 1024);
-	NormalMaps = new TextureArray(InDesc.NormalMaps, 1024, 1024);
+	PerlinNoise = new Texture(L"Terrain/T_Perlin_Noise.png", true);
+
+	if (!InDesc.HeightMapName.empty())
+	{
+		HeightMap = new Texture(InDesc.HeightMapName, true);
+	}
+	if (!InDesc.DiffuseMaps.empty())
+	{
+		DiffuseMaps = new TextureArray(InDesc.DiffuseMaps, 1024, 1024, 5);
+		TessellationData.DiffuseMapCount = InDesc.DiffuseMaps.size();
+	}
+	if (!InDesc.NormalMaps.empty())
+	{
+		NormalMaps = new TextureArray(InDesc.NormalMaps, 1024, 1024, 5);
+		TessellationData.NormalMapCount = InDesc.NormalMaps.size();
+	}
+	// NormalMap = new RWTexture2D(HeightMap->GetWidth(), HeightMap->GetHeight());
 
 	Tf = new Transform();
 
@@ -242,6 +260,8 @@ void LandScape_QuadTree::SetupCells()
 		}
 	}
 
+
+#pragma region Bounding Box
 	CellBoxVBuffer = new VertexBuffer(BoxVertices.data(), BoxVertices.size(), sizeof(VertexColor));
 	CellBoxIBuffer = new IndexBuffer(BoxIndices.data(), BoxIndices.size());
 	CellBoxInstBuffer = new InstanceBuffer(
@@ -249,4 +269,5 @@ void LandScape_QuadTree::SetupCells()
 		CellLocalTransform.size() + 1, // TODO : 왜 +1 해야 되는지 이유 파악하기.
 		sizeof(Matrix)
 	);
+#pragma endregion Bounding Box
 }

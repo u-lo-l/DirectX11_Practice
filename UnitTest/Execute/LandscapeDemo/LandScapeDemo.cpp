@@ -11,9 +11,11 @@ namespace sdt
 		// 지금 많이 다름.
 		const LandScape::LandScapeDesc LandscapeDesc
 		{
-			4096,
-			4096,
-			2048.f,
+				{
+					4096,
+				   2048.f,
+				   4096
+				},
 			32,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},

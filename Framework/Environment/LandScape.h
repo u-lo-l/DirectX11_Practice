@@ -13,9 +13,7 @@ class LandScape
 public:
 	struct LandScapeDesc
 	{
-		UINT	TerrainDim_X;
-		UINT	TerrainDim_Z;
-		float   HeightScaler;
+		Vector	Extent; // x, z : Horizontal, y : Vertical
 		UINT    PatchSize;
 		wstring HeightMapName;
 		vector<wstring> DiffuseMapNames;

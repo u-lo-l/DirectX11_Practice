@@ -6,7 +6,10 @@ public:
 	Frustum(float Aspect, float VFOV, float Near, float Far);
 	Frustum(float Aspect, float VFOV, float Near, float Far,
 		const Vector & Origin, const Vector & Forward, const Vector & Up, const Vector & Right);
+	void UpdateShape(float Aspect, float VFOV, float Near, float Far, const Vector& Origin, const Vector& Forward, const Vector& Up, const
+	                 Vector& Right);
 	void UpdateTransform(const Vector& Origin, const Vector& Forward, const Vector& Up, const Vector& Right);
+	void UpdateTransform(const Matrix & TransformMat);
 	bool Contains(const Vector & InPoint) const;
 	bool Intersects(const Vector & Center, float Radius) const;
 	bool Intersects(const Box & InBox) const;

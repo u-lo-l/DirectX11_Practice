@@ -3,7 +3,7 @@
 
 const Point Point::Zero = Point(0, 0);
 
-Point::Point(void)
+Point::Point()
 {
 	X = 0;
 	Y = 0;

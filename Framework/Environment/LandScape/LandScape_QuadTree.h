@@ -9,7 +9,7 @@ public:
 		Vector	Extent; // x, z : Horizontal, y : Vertical
 		UINT	CellSize;  // Should Be Power Of 2
 		UINT	GridSize;
-		wstring HeightMap;
+		wstring HeightMapName;
 		vector<wstring> DiffuseMaps;
 		vector<wstring> NormalMaps;
 	};
@@ -80,7 +80,9 @@ private:
 	
 	vector<LandScapeCell *> Cells;
 	vector<Matrix> CellLocalTransform;
-
+	VertexBuffer * VBuffer = nullptr;
+	IndexBuffer * IBuffer = nullptr;
+	
 	VertexBuffer * CellBoxVBuffer;
 	IndexBuffer * CellBoxIBuffer;
 	InstanceBuffer * CellBoxInstBuffer;
@@ -122,7 +124,7 @@ public:
 	);
 	~LandScapeCell();
 	void Tick();
-	void Render(
+	bool Render(
 		HlslShader<VertexType> * InShader,
 		const Frustum * InFrustum = nullptr
 	);

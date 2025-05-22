@@ -9,7 +9,11 @@ Camera::Camera()
 		Proj->GetAspect(),
 		Proj->GetFOV(),
 		Proj->GetNear(),
-		Proj->GetFar()
+		Proj->GetFar(),
+		Tf->GetWorldPosition(),
+		Tf->GetForward(),
+		Tf->GetUp(),
+		Tf->GetRight()
 	);
 }
 
@@ -98,11 +102,13 @@ Matrix Camera::GetProjectionMatrix() const
 void Camera::SetPosition(float X, float Y, float Z) const
 {
 	Tf->SetWorldPosition({X, Y, Z});
+	ViewFrustum->UpdateTransform(Tf->GetWorldPosition(), Tf->GetForward(), Tf->GetUp(), Tf->GetRight());
 }
 
 void Camera::SetPosition(const Vector& Vec) const
 {
 	Tf->SetWorldPosition(Vec);
+	ViewFrustum->UpdateTransform(Tf->GetWorldPosition(), Tf->GetForward(), Tf->GetUp(), Tf->GetRight());
 }
 
 const Vector& Camera::GetEulerAngleInDegree() const
@@ -119,11 +125,13 @@ void Camera::SetRotation(float R, float P, float Y) const
 {
 	Vector EulerDegree = {R, P, Y};
 	Tf->SetWorldRotation(EulerDegree * Math::DegToRadian);
+	ViewFrustum->UpdateTransform(Tf->GetWorldPosition(), Tf->GetForward(), Tf->GetUp(), Tf->GetRight());
 }
 
 void Camera::SetRotation(const Vector & InEulerRadian) const
 {
 	Tf->SetWorldRotation(InEulerRadian);
+	ViewFrustum->UpdateTransform(Tf->GetWorldPosition(), Tf->GetForward(), Tf->GetUp(), Tf->GetRight());
 }
 
 void Camera::SetMoveSpeed( float InSpeed )
@@ -139,6 +147,16 @@ void Camera::SetRopSpeed( float InSpeed )
 void Camera::SetPerspective(float Width, float Height, float Near, float Far, float VFOV) const
 {
 	Proj->Set(Width, Height, Near, Far, VFOV);
+	ViewFrustum->UpdateShape(
+		Proj->GetAspect(),
+		Proj->GetFOV(),
+		Proj->GetNear(),
+		Proj->GetFar(),
+		Tf->GetWorldPosition(),
+		Tf->GetForward(),
+		Tf->GetUp(),
+		Tf->GetRight()
+	);
 }
 
 const Frustum* Camera::GetViewFrustum() const
@@ -149,6 +167,21 @@ const Frustum* Camera::GetViewFrustum() const
 const Projection* Camera::GetProjection() const
 {
 	return Proj;
+}
+
+Vector Camera::GetForward() const
+{
+	return Tf->GetForward();
+}
+
+Vector Camera::GetRight() const
+{
+	return Tf->GetRight();
+}
+
+Vector Camera::GetUp() const
+{
+	return Tf->GetUp();
 }
 
 Vector Camera::At() const

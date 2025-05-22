@@ -5,15 +5,16 @@ namespace sdt
 {
 	void CellDemo::Initialize()
 	{
-		const Vector TerrainExtent = {2048, 1024, 2048};
-		const UINT GridSize = pow(2, 7);
+		const Vector TerrainExtent = {2560, 1024, 2560};
+		const UINT GridSize = static_cast<UINT>(powf(2, 6));
 		Sky = new SkySphere();
 		Context::Get()->GetCamera()->SetPosition(-830, 1020, -441);
 		Context::Get()->GetCamera()->SetRotation(17, 50, -0);
+
 		LandScape_QuadTree::LandScapeDesc Desc =
 		{
 			TerrainExtent,
-			2048,
+			256,
 			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
@@ -21,9 +22,7 @@ namespace sdt
 		};
 		const LandScape::LandScapeDesc LandscapeDesc
 		{
-			static_cast<UINT>(TerrainExtent.X),
-			static_cast<UINT>(TerrainExtent.Z),
-			TerrainExtent.Y,
+			TerrainExtent,
 			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
@@ -36,9 +35,9 @@ namespace sdt
 	void CellDemo::Tick()
 	{
 		Sky->Tick();
-		// if (bRenderCell)
+		if (bRenderCell)
 			TerrainWidthCell->Tick();
-		// else
+		else
 			TerrainNoCell->Tick();
 	}
 

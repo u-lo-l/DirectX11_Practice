@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////////
 ///@brief 생성자
 //////////////////////////////////////////////////////////////////////////
-Plane::Plane(void)
+Plane::Plane()
 {
 	Normal = Vector::Zero;
 
@@ -44,7 +44,7 @@ Plane::Plane( const Vector& normal, float d)
 	D = d;
 }
 
-Plane::Plane(const Vector& Point, const Vector& Normal)
+Plane::Plane(const Vector& Normal, const Vector& Point)
 {
 	this->Normal = Vector::Normalize(Normal);
 	this->D = -Vector::Dot(Point, Normal);

@@ -17,9 +17,11 @@ namespace sdt
 
 		const LandScape::LandScapeDesc LandscapeDesc
 		{
-			(UINT)TerrainSize.X,
-			(UINT)TerrainSize.Y,
-			TerrainHeight,
+				{
+					TerrainSize.X,
+				   TerrainHeight,
+				   TerrainSize.Y
+				},
 			128,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},

@@ -15,7 +15,7 @@ const Vector Vector::Left = Vector(-1.0f, 0.0f, 0.0f);
 const Vector Vector::Forward = Vector(0.0f, 0.0f, 1.0f);
 const Vector Vector::Backward = Vector(0.0f, 0.0f, -1.0f);
 
-Vector::Vector(void)
+Vector::Vector()
 	: X(0.0f), Y(0.0f), Z(0.0f)
 {
 }

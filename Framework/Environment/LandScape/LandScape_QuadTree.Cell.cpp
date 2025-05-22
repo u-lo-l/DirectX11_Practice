@@ -33,21 +33,22 @@ LandScape_QuadTree::LandScapeCell::~LandScapeCell()
 
 void LandScape_QuadTree::LandScapeCell::Tick()
 {
+	// Do Nothing
 }
 
-void LandScape_QuadTree::LandScapeCell::Render(
+bool LandScape_QuadTree::LandScapeCell::Render(
 	HlslShader<VertexType>* InShader,
 	const Frustum * InFrustum
 )
 {
 	if (!!InFrustum && InFrustum->Intersects(BoundingBox) == false)
-		return;
+		return false;
 	
-	// VBuffer->BindToGPU();
-	// IBuffer->BindToGPU();
-	// InShader->DrawIndexed(Indices.size());
+	VBuffer->BindToGPU();
+	IBuffer->BindToGPU();
+	InShader->DrawIndexed(Indices.size());
+	return true;
 }
-
 
 void LandScape_QuadTree::LandScapeCell::CreateVertex
 (

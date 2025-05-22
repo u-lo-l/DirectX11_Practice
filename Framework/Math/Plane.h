@@ -17,10 +17,10 @@ enum class PlaneIntersectionType;
 class Plane
 {
 public:
-	Plane(void);
+	Plane();
 	Plane(float a, float b, float c, float d);
 	Plane( const Vector& normal, float d);
-	Plane( const Vector & Point, const Vector & Normal);
+	Plane( const Vector & Normal, const Vector & Point);
 	explicit Plane( const Vector4& value);
 	Plane( const Vector& point1, const Vector& point2, const Vector& point3);
 

@@ -4,7 +4,7 @@ class Vector2D;
 class Point
 {
 public:
-	Point(void);
+	Point();
 	Point(int x, int y);
 
 	operator float* ();

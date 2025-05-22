@@ -9,7 +9,7 @@ const Vector2D Vector2D::UnitY = Vector2D(0.0f, 1.0f);
 
 
 
-Vector2D::Vector2D(void)
+Vector2D::Vector2D()
 {
 	X = 0.0f;
 	Y = 0.0f;
