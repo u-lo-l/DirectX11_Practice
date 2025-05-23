@@ -126,12 +126,10 @@ void Ocean::Render(bool bDrawBoundary)
 	if (!!PerlinNoise)
 		PerlinNoise->BindToGPU(3, static_cast<UINT>(ShaderType::VDP));
 
-	static bool bFrustumCull = false;
-	ImGui::Checkbox("Frustum Cull", &bFrustumCull);
 	int RenderingCell = 0;
 	for (SceneryCell * Cell : Cells)
 	{
-		if (Cell->Render(OceanRenderer, bFrustumCull ? ViewFrustum : nullptr) == true)
+		if (Cell->Render(OceanRenderer, ViewFrustum) == true)
 			RenderingCell++;
 	}
 	Gui::Get()->RenderText(5, 160, 1.f, 0.2f, 0.2f, String::Format("Ocean | VisibleCells : %d / %d", RenderingCell, Cells.size()));

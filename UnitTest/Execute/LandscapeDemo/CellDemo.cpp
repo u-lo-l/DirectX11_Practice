@@ -5,8 +5,8 @@ namespace sdt
 {
 	void CellDemo::Initialize()
 	{
-		const Vector TerrainDimension = {2560, 1024, 2560};
-		const UINT GridSize = static_cast<UINT>(powf(2, 6));
+		const Vector TerrainDimension = {1024, 512, 1024};
+		constexpr UINT GridSize = 64;
 		Sky = new SkySphere();
 		Context::Get()->GetCamera()->SetPosition(-830, 1020, -441);
 		Context::Get()->GetCamera()->SetRotation(17, 50, -0);
@@ -14,21 +14,21 @@ namespace sdt
 		LandScape::LandScapeDesc Desc =
 		{
 			TerrainDimension,
-			256,
+			128,
 			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
 			{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
 		};
-		// Terrain = new LandScape(Desc);
+		Terrain = new LandScape(Desc);
 
-		Vector SeaDimension = Vector(1024, 10, 1024) * 16;
+		Vector SeaDimension = Vector(1024, 10, 1024) * 2;
 		float SeaLevel = 5.f;
 		const Ocean::OceanDesc OceanDesc{
 			SeaDimension,
-			256,
-			1024 * 16,
-			16,
+			512,
+			128,
+			64,
 			SeaLevel,
 			Sky->GetTexture(),
 			nullptr,
@@ -48,16 +48,18 @@ namespace sdt
 
 	void CellDemo::Tick()
 	{
+		ImGui::Checkbox("Draw Terrain", &bDrawTerrain);
+		ImGui::Checkbox("Draw Sea", &bDrawSea);
 		Sky->Tick();
-		if(!!Sea) Sea->Tick();
-		if(!!Terrain) Terrain->Tick();
+		if(!!Sea && bDrawSea) Sea->Tick();
+		if(!!Terrain && bDrawTerrain) Terrain->Tick();
 	}
 
 	void CellDemo::Render()
 	{
 		Sky->Render();
-		if(!!Sea) Sea->Render(true);
-		if(!!Terrain) Terrain->Render(true);
+		if(!!Sea && bDrawSea) Sea->Render(true);
+		if(!!Terrain && bDrawTerrain) Terrain->Render(true);
 	}
 
 	void CellDemo::Destroy()

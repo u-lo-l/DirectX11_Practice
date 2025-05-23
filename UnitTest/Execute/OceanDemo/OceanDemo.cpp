@@ -29,7 +29,7 @@ namespace sdt
 		const Ocean::OceanDesc OceanDesc{
 			SeaExtent,
 			512,
-			256,
+			1024,
 			16,
 			SeaLevel,
 			Sky->GetTexture(),

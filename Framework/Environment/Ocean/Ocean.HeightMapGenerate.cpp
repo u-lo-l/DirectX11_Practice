@@ -186,7 +186,7 @@ void Ocean::GenerateDisplacementMap() const
 	CB_Transpose->BindToGPU();
 	CS_Transpose->Dispatch();
 	IFFT_Result_Transposed->UpdateSRV();
-	
+	//
 	// Col IFFT
 	CB_PhillipsInit->BindToGPU();
 	IFFT_Result_Transposed->BindToGPUAsSRV(0);

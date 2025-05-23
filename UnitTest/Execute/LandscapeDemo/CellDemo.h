@@ -14,6 +14,8 @@ namespace sdt
 		LandScape * Terrain = nullptr;
 		Ocean * Sea = nullptr;
 		SkySphere * Sky = nullptr;
+		bool bDrawTerrain = true;
+		bool bDrawSea = true;
 	};
 	
 }
