@@ -18,11 +18,10 @@ public:
 	ID3D11ShaderResourceView * GetSRV() const { return SRV; }
 	operator ID3D11ShaderResourceView * const *() const { return &SRV; }
 	void ExtractTextureColors(vector<Color>& OutPixels) const;
-	void ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum, float Scaler = 1.f) const;
+	void ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const;
 private:
 	HRESULT LoadTextureAndCreateSRV(const wstring & FullPath);
 
-public:
 private:
 	static HRESULT LoadTextureFromTexture
 	(

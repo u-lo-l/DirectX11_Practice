@@ -9,17 +9,13 @@ namespace sdt
 		MainCamera->SetPosition( 571,30,571);
 		MainCamera->SetRotation( 0,60,0 );
 		
-		const Vector2D TerrainSize = Vector2D(1024, 1024) * 4 ;
-		constexpr float TerrainHeight = 512 * 8;
-
 		constexpr float SeaLevel = 10.f;
-		const Vector2D SeaSize = Vector2D(1024, 1024) * 16;
 
-		const Vector TerrainExtent = {2560, 1024, 2560};
+		const Vector TerrainDimension = {2560, 1024, 2560};
 		const UINT GridSize = static_cast<UINT>(powf(2, 6));
 		const LandScape::LandScapeDesc LandscapeDesc =
 		{
-			TerrainExtent,
+			TerrainDimension,
 			128,
 			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
@@ -29,26 +25,26 @@ namespace sdt
 		Terrain = new LandScape(LandscapeDesc);
 
 		Sky = new SkySphere(L"Environments/SkyDawn.dds", 0.5f);
+		Vector SeaExtent = Vector(1024, 1024, 1024) * 16.f;
 		const Ocean::OceanDesc OceanDesc{
-			static_cast<UINT>(SeaSize.X),
-			static_cast<UINT>(SeaSize.Y),
+			SeaExtent,
 			512,
-			128,
-			{0, 0},
+			256,
+			16,
 			SeaLevel,
 			Sky->GetTexture(),
 			nullptr,
 			{0, 0},
-			TerrainSize,
-			TerrainHeight,
-			Vector2D(-15, -20) * 5.f
+			{0, 0},
+			0,
+			{-15, -20}
 		};
 		Sea = new Ocean(OceanDesc);
 
 		if (!!Sea && !!Terrain)
 		{
-			const Vector2D TerrainCenter = {Terrain->GetExtent().X * 0.5f, Terrain->GetExtent().Z * 0.5f};
-			Sea->SetWorldPosition({TerrainCenter.X - SeaSize.X * 0.5f, SeaLevel, TerrainCenter.Y - SeaSize.Y * 0.5f});
+			const Vector2D TerrainCenter = {Terrain->GetDimension().X * 0.5f, Terrain->GetDimension().Z * 0.5f};
+			Sea->SetWorldPosition({TerrainCenter.X - SeaExtent.X * 0.5f, SeaLevel, TerrainCenter.Y - SeaExtent.Z * 0.5f});
 		}
 	}
 

@@ -158,7 +158,7 @@ bool Frustum::Contains(const Vector& InPoint) const
 		for (const Plane & plane : Planes)
 		{
 			Vector AbsNormal = Vector::Abs(plane.GetNormal());
-			float MaxRadius = Vector::Dot(InBox.GetExtent() * 0.5f, AbsNormal);
+			float MaxRadius = Vector::Dot(InBox.GetDimension() * 0.5f, AbsNormal);
 			float DistanceToCenter = plane.GetDistance(InBox.GetCenter());
 
 			if (MaxRadius + DistanceToCenter < 0)
@@ -173,8 +173,23 @@ bool Frustum::Contains(const Vector& InPoint) const
 		{
 			Vector AbsNormal = Vector::Abs(plane.GetNormal());
 			// 엄밀하겐 0.5만큼. 실제 Box 크기의 1/2이지만 조금 넉넉하게 검사.
-			float MaxRadius = Vector::Dot(InBox->GetExtent() * 1.f, AbsNormal);
+			float MaxRadius = Vector::Dot(InBox->GetDimension() * 1.f, AbsNormal);
 			float DistanceToCenter = plane.GetDistance(InBox->GetCenter());
+
+			if (MaxRadius + DistanceToCenter < 0)
+				return false;
+		}
+		return true;
+	}
+
+	bool Frustum::Intersects(const Vector & BoxCenter, const Vector & BoxDimension) const
+	{
+		for (const Plane & plane : Planes)
+		{
+			Vector AbsNormal = Vector::Abs(plane.GetNormal());
+			// 엄밀하겐 0.5만큼. 실제 Box 크기의 1/2이지만 조금 넉넉하게 검사.
+			float MaxRadius = Vector::Dot(BoxDimension * 1.f, AbsNormal);
+			float DistanceToCenter = plane.GetDistance(BoxCenter);
 
 			if (MaxRadius + DistanceToCenter < 0)
 				return false;

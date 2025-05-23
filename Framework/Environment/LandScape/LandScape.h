@@ -6,7 +6,7 @@ public:
 	// for Initialize
 	struct LandScapeDesc
 	{
-		Vector	Extent; // x, z : Horizontal, y : Vertical
+		Vector	Dimension; // x, z : Horizontal, y : Vertical
 		UINT	CellSize;  // Should Be Power Of 2
 		UINT	GridSize;
 		wstring HeightMapName;
@@ -67,7 +67,7 @@ public:
 	~LandScape();
 	void Tick();
 	void Render(bool bDrawBoundary = false);
-	const Vector & GetExtent() const { return Extent; }
+	const Vector & GetDimension() const { return Dimension; }
 	const Texture * GetHeightMap() const { return HeightMap; }
 private:
 	void SetupShaders();
@@ -75,14 +75,12 @@ private:
 	void SetupCells();
 
 	// Terrain의 실제 크기.
-	Vector Extent;
+	Vector Dimension;
 	UINT CellSize;
 	UINT GridSize;
 	
 	vector<SceneryCell *> Cells;
 	vector<Matrix> CellLocalTransform;
-	VertexBuffer * VBuffer = nullptr;
-	IndexBuffer * IBuffer = nullptr;
 	
 	VertexBuffer * CellBoxVBuffer;
 	IndexBuffer * CellBoxIBuffer;

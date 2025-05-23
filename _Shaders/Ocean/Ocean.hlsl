@@ -31,7 +31,13 @@ cbuffer CB_WVP : register(b0)  // VS DS HS PS
     matrix ViewInverse : packoffset(c12);
 }
 
-cbuffer CB_HeightScaler : register(b1)
+cbuffer CB_Light : register(b1)
+{
+    float4 LightColor;
+    float3 LightDirection;
+    float Padding1;
+}
+cbuffer CB_HeightScaler : register(b2)
 {
     float3 CameraPosition;
     float  HeightScaler = 30.f;
@@ -47,13 +53,11 @@ cbuffer CB_HeightScaler : register(b1)
     float2 HeightMapTiling;
     float2 NoiseMapTiling;
 
-    float4 LightColor;
-
-    float3 LightDirection;
-    float  TerrainHeightScaler;
-
     float2 TerrainWorldPosition;
     float2 TerrainDimension;
+
+    float  TerrainHeightScaler;
+    float3 Padding2;
 }
 
 
@@ -120,9 +124,9 @@ VS_OUTPUT VSMain(VS_INPUT input)
     output.UV = input.UV;
     output.Normal = input.Normal;
 
-    const float2 HeightMapUV = output.UV * HeightMapTiling;
-    const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb ;
-    output.Position.y += Displacement.y;
+    // const float2 HeightMapUV = output.UV * HeightMapTiling;
+    // const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb ;
+    // output.Position.y += Displacement.y;
     return output;
 }
 
@@ -139,6 +143,7 @@ HS_CONSTANT_OUTPUT HSConstant
 )
 {
     HS_CONSTANT_OUTPUT output;
+
     matrix WorldView = mul(World, View);
     float4 Points[4];
     [unroll]
@@ -156,12 +161,9 @@ HS_CONSTANT_OUTPUT HSConstant
         output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
     }
 
-    // float Density = lerp(MinTessFactor, MaxTessFactor, CalculateDensity(patch));
     float TessFactor = (output.Edge[0] + output.Edge[2]) * 0.5f;
-    // output.Inside[0] = Density * DensityWeight + TessFactor * SSDWeight;
     output.Inside[0] = TessFactor;
     TessFactor = (output.Edge[1] + output.Edge[3]) * 0.5f;
-    // output.Inside[1] = Density * DensityWeight + TessFactor * SSDWeight;
     output.Inside[1] = TessFactor;
     return output;
 }
@@ -229,7 +231,6 @@ DS_OUTPUT DSMain
     float3 v2 = lerp(patch[3].Position, patch[2].Position, UV.x);
     output.Position = float4(lerp(v1, v2, UV.y), 1);
 
-    const float3 CameraPosition = ViewInverse._41_42_43;
     const float Dist = length(CameraPosition - mul(output.Position, World).xyz);
     float DistanceBasedBlending = saturate((Dist - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
     output.LOD = GET_MIP_LEVEL(1 - DistanceBasedBlending);
@@ -277,7 +278,6 @@ float3 FogBlending(float3 Color, float Dist)
 
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
-    const float3 CameraPosition = ViewInverse._41_42_43;
     float3 ViewRay = (input.WorldPosition - CameraPosition); // WorldSpace
     const float Distance = length(ViewRay);
     float DistanceBasedBlending = saturate((Distance - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
@@ -305,7 +305,7 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(1, 0.75, DistanceBasedBlending);
     const float Refraction = (1 - Specular);
 
-    float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 0.7f);
+    float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 1.f);
     float Foam = DistanceBasedFoam(HeightMapUV, input.LOD, DistanceBasedBlending);
 
     WaterColor = 
@@ -315,14 +315,12 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
                 ;
     float3 FoamColor = Foam * LightColor.rgb * (Ambient + LDotN);// * GetPerlinRandom(NoiseUV, input.LOD);
     float3 Color = (WaterColor + FoamColor) * input.PerlinBlending; 
-    
-    return float4(FogBlending(Color, Distance), 1);
+    return float4(Color, 1);
+    // return float4(FogBlending(Color, Distance), 1);
 }
 
 /*======================================================================================*/
 
-// PS에서 해도 되고 DS에서 해도 된다.
-// PS에서 하는 것이 더 정밀한 Normal을 얻을 수 있다.
 float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend)
 {
     float2 dUV[4] = {
@@ -398,12 +396,6 @@ float CalculateTessellationFactor(float4 Point1, float4 Point2)
 # endif
 
     return TessRatio;
-}
-
-float CalculateDensity(InputPatch<VS_OUTPUT, HS_INPUT_PATCH_SIZE> patch)
-{
-    float3 PatchNormal = normalize(cross(patch[2].Position - patch[0].Position, patch[3].Position - patch[1].Position));
-    return 1 - saturate(PatchNormal.y);
 }
 
 /*======================================================================================*/

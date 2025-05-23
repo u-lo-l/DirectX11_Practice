@@ -3,7 +3,7 @@
 
 LandScape::LandScape(const LandScapeDesc& InDesc)
 {
-	Extent = InDesc.Extent;
+	Dimension = InDesc.Dimension;
 	CellSize = InDesc.CellSize;
 	GridSize = InDesc.GridSize;
 	
@@ -61,8 +61,8 @@ void LandScape::Tick()
 
 	ImGui::SliderFloat("LandScape_Cell : SlopBias", &BlendingData.SlopBias, 0, 60, "%.0f");
 	ImGui::SliderFloat("LandScape_Cell : SlopSharpness", &BlendingData.SlopSharpness, 1, 3, "%.1f");
-	ImGui::SliderFloat("LandScape_Cell : LowHeight", &BlendingData.LowHeight, 0, Extent.Y / 10, "%.0f");
-	ImGui::SliderFloat("LandScape_Cell : HighHeight", &BlendingData.HighHeight, BlendingData.LowHeight, Extent.Y, "%.0f");
+	ImGui::SliderFloat("LandScape_Cell : LowHeight", &BlendingData.LowHeight, 0, Dimension.Y / 10, "%.0f");
+	ImGui::SliderFloat("LandScape_Cell : HighHeight", &BlendingData.HighHeight, BlendingData.LowHeight, Dimension.Y, "%.0f");
 	ImGui::SliderFloat("LandScape_Cell : HeightSharpness", &BlendingData.HeightSharpness, 1, 3, "%.1f");
 	CB_Blending->UpdateData(&BlendingData, sizeof(LandScapeBlendingDesc));
 }
@@ -96,7 +96,7 @@ void LandScape::Render(bool bDrawBoundary)
 			RenderingCell++;
 	}
 
-	Gui::Get()->RenderText(5, 150, 1.f, 0.2f, 0.2f, String::Format("VisibleCells : %d / %d", RenderingCell, Cells.size()));
+	Gui::Get()->RenderText(5, 150, 1.f, 0.2f, 0.2f, String::Format("Terrain | VisibleCells : %d / %d", RenderingCell, Cells.size()));
 	
 	if (bDrawBoundary)
 	{
@@ -144,7 +144,7 @@ void LandScape::SetupShaders()
 
 	CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
 	CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	CHECK(SUCCEEDED(CellRenderer->CreateBlendState_Opaque()));
+	CHECK(SUCCEEDED(CellBoundaryRenderer->CreateBlendState_Opaque()));
 }
 
 void LandScape::SetupResources(const LandScapeDesc& InDesc)
@@ -170,13 +170,13 @@ void LandScape::SetupResources(const LandScapeDesc& InDesc)
 
 	Tf = new Transform();
 
-	TessellationData.HeightScaler = Extent.Y;
+	TessellationData.HeightScaler = Dimension.Y;
 	TessellationData.DiffuseMapCount = InDesc.DiffuseMaps.size();
 	TessellationData.NormalMapCount = InDesc.NormalMaps.size();
 	TessellationData.LODRange = {1, 3};
 	TessellationData.TexelSize.X = 1.f / static_cast<float>(HeightMap->GetWidth());
 	TessellationData.TexelSize.Y = 1.f / static_cast<float>(HeightMap->GetHeight());
-	TessellationData.TerrainSize = Extent.X;
+	TessellationData.TerrainSize = Dimension.X;
 	TessellationData.GridSize = static_cast<float>(GridSize);
 	TessellationData.TextureSize = static_cast<float>(HeightMap->GetWidth());
 
@@ -216,7 +216,7 @@ void LandScape::SetupResources(const LandScapeDesc& InDesc)
 
 void LandScape::SetupCells()
 {
-	const float HeightScale = Extent.Y;
+	const float HeightScale = Dimension.Y;
 	const float Size = static_cast<float>(CellSize);
 	vector<VertexColor> BoxVertices = { 
 		{ Vector(0.f, 0.f, 0.f), Color::Green },
@@ -235,10 +235,10 @@ void LandScape::SetupCells()
 		4, 5, 5, 6, 6, 7, 7, 4
 	};
 	vector<Color> HeightMapValues;
-	Vector2D VertexNum = Vector2D(1.f + Extent.X / static_cast<float>(GridSize), 1.f + Extent.Z / static_cast<float>(GridSize)); 
+	Vector2D VertexNum = Vector2D(1.f + Dimension.X / static_cast<float>(GridSize), 1.f + Dimension.Z / static_cast<float>(GridSize)); 
 	HeightMap->ExtractTextureColors(HeightMapValues, VertexNum);
-	const UINT Width = static_cast<UINT>(ceil(Extent.X / static_cast<float>(CellSize)));
-	const UINT Height = static_cast<UINT>(ceil(Extent.Z / static_cast<float>(CellSize)));
+	const UINT Width = static_cast<UINT>(ceil(Dimension.X / static_cast<float>(CellSize)));
+	const UINT Height = static_cast<UINT>(ceil(Dimension.Z / static_cast<float>(CellSize)));
 	Cells.clear();
 	CellLocalTransform.clear();
 	for (UINT h = 0; h < Height; h++)
@@ -248,13 +248,13 @@ void LandScape::SetupCells()
 			SceneryCell * NewCell = new SceneryCell (
 				Vector(Size, HeightScale, Size),
 				Vector2D(static_cast<float>(w), static_cast<float>(h)),
-				GridSize,
+				static_cast<float>(GridSize),
 				HeightMapValues,
-				Extent
+				Dimension
 			);
 			Cells.push_back(NewCell);
 			Transform CellLocalTf;
-			CellLocalTf.SetScale(NewCell->GetExtent());
+			CellLocalTf.SetScale(NewCell->GetDimension());
 			CellLocalTf.SetWorldPosition(NewCell->GetLocalPosition());
 			CellLocalTransform.push_back(CellLocalTf.GetMatrix());
 		}

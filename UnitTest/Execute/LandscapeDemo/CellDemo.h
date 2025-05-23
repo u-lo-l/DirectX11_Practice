@@ -11,8 +11,9 @@ namespace sdt
 		void Render() override;
 		void Destroy() override;
 	private:
-	LandScape * TerrainWidthCell = nullptr;
-	SkySphere * Sky = nullptr;
+		LandScape * Terrain = nullptr;
+		Ocean * Sea = nullptr;
+		SkySphere * Sky = nullptr;
 	};
 	
 }

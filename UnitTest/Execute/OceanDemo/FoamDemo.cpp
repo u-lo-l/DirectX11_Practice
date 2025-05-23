@@ -6,13 +6,12 @@ void sdt::FoamDemo::Initialize()
 	Sky = new SkySphere(L"Environments/SkyDawn.dds", 0.5f);
 
 	constexpr float SeaLevel = 4.f;
-	const Vector2D SeaSize = {512, 512};
+	const Vector SeaDimension = {512, 512, 512};
 	const Ocean::OceanDesc OceanDesc{
-		static_cast<UINT>(SeaSize.X),
-		static_cast<UINT>(SeaSize.Y),
+		SeaDimension,
 		512,
+		256,
 		16,
-		{0, 0},
 		SeaLevel,
 		Sky->GetTexture(),
 		nullptr,
@@ -25,7 +24,7 @@ void sdt::FoamDemo::Initialize()
 	Sea = new Ocean(OceanDesc);
 
 	const vector<wstring> ShaderNames {
-		L"2D/WaveSpectrum4.hlsl",	// Specturm
+		L"2D/WaveSpectrum4.hlsl",		// Specturm
 		
 		L"2D/WaveSpectrum.hlsl",		// H
 		L"2D/WaveSpectrum.hlsl",		// dH_x
@@ -36,12 +35,11 @@ void sdt::FoamDemo::Initialize()
 		L"2D/DisplacementMap_B.hlsl",	// dZ Map
 
 		L"2D/DisplacementMap.hlsl",		// Displacement Map
-		L"2D/HeightMap.hlsl",	// Foam
+		L"2D/HeightMap.hlsl",			// Foam
 	};
 	TextureDebugShaders.resize(ShaderNames.size());
 	float SizeSmall = 0.25f * D3D::GetDesc().Height * 0.5f;
 	float SizeGap = SizeSmall * 0.1f;
-	float SizeBig =  SizeSmall * 1.5f;
 	const vector<float> Sizes{
 		SizeSmall,
 		SizeSmall, SizeSmall, SizeSmall,

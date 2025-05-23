@@ -7,11 +7,11 @@ namespace sdt
 	{
 		// constexpr float SeaLevel = 50.f;
 
-		const Vector TerrainExtent = {2560, 1024, 2560};
+		const Vector TerrainDimension = {2560, 1024, 2560};
 		const UINT GridSize = static_cast<UINT>(powf(2, 4));
 		const LandScape::LandScapeDesc LandscapeDesc =
 		{
-			TerrainExtent,
+			TerrainDimension,
 			256,
 			GridSize,
 			L"Terrain/GrandMountain/Height Map TIF.tif",

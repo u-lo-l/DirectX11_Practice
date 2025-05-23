@@ -11,11 +11,11 @@ class Ocean
 public:
 	struct OceanDesc
 	{
-		UINT SeaDimension_X;
-		UINT SeaDimension_Z;
+		Vector	Dimension; // x, z : Horizontal, y : Vertical
 		UINT FFTSize;
-		UINT PatchSize;
-		Vector2D WorldPosition;
+		UINT CellSize;  // Should Be Power Of 2
+		UINT GridSize;
+		
 		float SeaLevel;
 		const Texture * SkyTexture;
 		const Texture * TerrainHeightMap;
@@ -26,9 +26,9 @@ public:
 	};
 private:
 	using VertexType = VertexTextureNormal;
-	UINT TextureSize = 512;
-	UINT Dimension[2];
-	Vector2D LODRange;
+	using CellVertexType = VertexColor; 
+	
+	UINT TextureSize;
 
 	struct PhillipsInitDesc
 	{
@@ -55,7 +55,7 @@ private:
 		Vector CameraPosition;
 		float HeightScaler = 1.f;
 
-		Vector2D LODRange;
+		Vector2D LODRange = {1, 3};
 		Vector2D TexelSize;
 
 		float ScreenDistance;
@@ -66,13 +66,11 @@ private:
 		Vector2D HeightMapTiling;
 		Vector2D NoiseTiling;
 
-		Color LightColor;
-
-		Vector LightDirection;
-		float TerrainMaxHeight = 100;
-		
 		Vector2D TerrainPosition;
 		Vector2D TerrainDimension;
+		
+		float TerrainMaxHeight = 100;
+		Vector Padding;
 	};
 	struct FoamDesc
 	{
@@ -89,21 +87,20 @@ private:
 
 public:
 	explicit Ocean(const OceanDesc & Desc);
-	explicit Ocean(UINT Width = 512, UINT Height = 512, UINT InPatchSize= 32);
 	~Ocean();
 
 	void Tick();
-	void Render();
+	void Render(bool bDrawBoundary = false);
 	
 	void SaveHeightMap();
 
-	void SetWorldPosition(const Vector & Position) const { Tf->SetWorldPosition(Position); }
-	void SetWorldRotation(const Vector & RotationInDeg) const { Tf->SetWorldRotation(RotationInDeg * Math::DegToRadian); }
+	void SetWorldPosition(const Vector & Position) const;
+	// void SetWorldRotation(const Vector & RotationInDeg) const;
 private:
 
 #pragma region Compute
-	void SetupShaders();
-	void SetupResources();
+	void SetupComputeShaders();
+	void SetupComputeResources();
 	void GenerateInitialSpectrum() const;
 	void UpdateSpectrum() const;
 	void GenerateDisplacementMap() const;
@@ -155,29 +152,36 @@ private:
 
 #pragma region Render
 private:
-	void CreateVertex();
-	void CreateIndex();
+	void SetupRenderShaders();
+	void SetupRenderResources();
+	void SetupCells();
+
+	Vector Dimension;
+	UINT CellSize;
+	UINT GridSize;
+	vector<SceneryCell *> Cells;
+	vector<Matrix> CellLocalTransform;
 	
-	UINT PatchSize = 1;
-	vector<VertexType> Vertices;
-	vector<UINT> Indices;
-	
-	VertexBuffer * VBuffer = nullptr;
-	IndexBuffer * IBuffer = nullptr;
+	VertexBuffer * CellBoxVBuffer;
+	IndexBuffer * CellBoxIBuffer;
+	InstanceBuffer * CellBoxInstBuffer;
 
 	Transform * Tf;
 	
 	// Resources
-	WVPIDesc WVP;
+	WVPIDesc MatrixData;
+	DirectionalLightDesc LightData; // P
 	TessellationDesc TessellationData;
-	ConstantBuffer * CB_WVP = nullptr;
+	ConstantBuffer * CB_WVPI = nullptr;
+	ConstantBuffer * CB_Light = nullptr;
 	ConstantBuffer * CB_Tessellation= nullptr;
 
 	const Texture * SkyTexture = nullptr;
 	const Texture * TerrainHeightMap = nullptr;
 	Texture * PerlinNoise = nullptr;
 	// Shader
-	HlslShader<VertexType> * Shader;
+	HlslShader<VertexType> * OceanRenderer = nullptr;
+	HlslShader<CellVertexType> * CellBoundaryRenderer = nullptr;
 #pragma endregion Render
 };
 

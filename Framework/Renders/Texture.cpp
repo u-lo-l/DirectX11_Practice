@@ -171,7 +171,7 @@ void Texture::ExtractTextureColors(vector<Color> & OutPixels) const
 	SAFE_RELEASE(DestTexture);
 }
 
-void Texture::ExtractTextureColors( vector<Color> & OutPixels, const Vector2D & VertexNum, float Scaler ) const
+void Texture::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const
 {
 	OutPixels.clear();
 	OutPixels.resize(VertexNum.X * VertexNum.Y);

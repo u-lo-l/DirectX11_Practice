@@ -21,6 +21,7 @@ public:
 	ID3D11UnorderedAccessView * GetUAV() const;
 	ID3D11ShaderResourceView * GetSRV() const;
 	void SaveOutputAsFile(const wstring & FileName) const;
+	void ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const;
 
 private:
 	void CreateOutputTextureAndUAV(); // GPU Only

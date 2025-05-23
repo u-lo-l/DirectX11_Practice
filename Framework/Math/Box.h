@@ -3,12 +3,16 @@
 class Box
 {
 public:
-	Box(const Vector & Center, const Vector & Extent);
+	Box(const Vector & Center, const Vector & Dimension);
 	const array<Vector, 8> & GetPoints() const;
 	const Vector & GetCenter() const;
-	const Vector & GetExtent() const;
+	const Vector & GetDimension() const;
+	void SetCenter(const Vector & Center);
+	void SetDimension(const Vector & Dimension);
+	float GetDiagonal() const;
 private:
 	array<Vector, 8> Points;
 	Vector Center;
-	Vector Extent;
+	Vector Dimension;
+	float Diagonal;
 };

@@ -14,6 +14,7 @@ public:
 	bool Intersects(const Vector & Center, float Radius) const;
 	bool Intersects(const Box & InBox) const;
 	bool Intersects(const Box* InBox) const;
+	bool Intersects(const Vector& BoxCenter, const Vector& BoxDimension) const;
 	const array<Plane, 6> & GetPlanes() const;
 
 private:

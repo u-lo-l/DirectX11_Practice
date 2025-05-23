@@ -7,7 +7,7 @@
 
 #pragma region Compute
 
-void Ocean::SetupShaders()
+void Ocean::SetupComputeShaders()
 {
 	constexpr UINT TextureThreadGroupSize = 32;
 	const UINT TextureDispatchSize = TextureSize / TextureThreadGroupSize;
@@ -71,7 +71,7 @@ void Ocean::SetupShaders()
 	CS_SimulateFoam->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
 }
 
-void Ocean::SetupResources()
+void Ocean::SetupComputeResources()
 {
 	PhillipsInitData.Width = static_cast<float>(TextureSize);
 	PhillipsInitData.Height = static_cast<float>(TextureSize);
@@ -156,7 +156,7 @@ void Ocean::GenerateInitialSpectrum() const
 	GaussianRandomTexture2D->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); // SRV
 	InitialSpectrumTexture2D->BindToGPUAsUAV(0); // UAV
 	CB_PhillipsInit->BindToGPU();
-		
+
 	CS_SpectrumInitializer->Dispatch();
 	InitialSpectrumTexture2D->UpdateSRV();
 }
