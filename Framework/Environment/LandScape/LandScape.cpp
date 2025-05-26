@@ -67,7 +67,7 @@ void LandScape::Tick()
 	CB_Blending->UpdateData(&BlendingData, sizeof(LandScapeBlendingDesc));
 }
 
-void LandScape::Render(bool bDrawBoundary)
+void LandScape::Render(bool bDrawBoundary) const
 {
 	ASSERT(!!CellRenderer, "Shader Doesn't Created")
 	
@@ -139,8 +139,8 @@ void LandScape::SetupShaders()
 	CHECK(SUCCEEDED(CellRenderer->CreateSamplerState_Anisotropic_Wrap(static_cast<UINT>(ShaderType::VDP))));
 	CHECK(SUCCEEDED(CellRenderer->CreateBlendState_Opaque()));
 	CHECK(SUCCEEDED(CellRenderer->CreateDepthStencilState_Default()));
-	CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_Solid()));
-	// CHECK(SUCCEEDED(Shader->CreateRasterizerState_WireFrame()));
+	// CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_Solid()));
+	CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_WireFrame()));
 
 	CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
 	CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);

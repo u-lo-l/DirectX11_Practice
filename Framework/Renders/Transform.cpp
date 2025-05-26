@@ -80,6 +80,8 @@ void Transform::SetWorldRotation(const Vector& ZYXEulerRadian)
 	SetWorldRotation(Quat);
 }
 
+
+
 void Transform::SetScale(const Vector& InScale)
 {
 	Scale = InScale;

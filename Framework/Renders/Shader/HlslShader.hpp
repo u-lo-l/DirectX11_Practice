@@ -41,14 +41,19 @@ HlslShader<T>::HlslShader
 (
 	const wstring & ShaderFileName,
 	UINT TargetShaderFlag,
+	const D3D_SHADER_MACRO * InMacros,
+	bool bForceRecompile,
 	const string & InVSEntryPoint,
 	const string & InPSEntryPoint,
 	const string & InGSEntryPoint,
-	const D3D_SHADER_MACRO * InMacros
+	const string & InDSEntryPoint,
+	const string & InHSEntryPoint
 )
 	: VSEntryPoint(InVSEntryPoint)
 	, GSEntryPoint(InGSEntryPoint)
 	, PSEntryPoint(InPSEntryPoint)
+	, DSEntryPoint(InDSEntryPoint)
+	, HSEntryPoint(InHSEntryPoint)
 {
 	if (ShaderFileName.empty() == true)
 		return ;
@@ -261,7 +266,24 @@ HRESULT HlslShader<T>::CreateRasterizerState( const D3D11_RASTERIZER_DESC * RSDe
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Anisotropic(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_Linear_Wrap(UINT InTargetShader)
+{
+	D3D11_SAMPLER_DESC SamplerDesc = {};
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear, InTargetShader);
+}
+
+template <class T>
+HRESULT HlslShader<T>::CreateSamplerState_Anisotropic(UINT InTargetShader)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -275,11 +297,11 @@ HRESULT HlslShader<T>::CreateSamplerState_Anisotropic(UINT InTargetShade)
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;
 
-	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShade);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShader);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Clamp(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Clamp(UINT InTargetShader)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -293,11 +315,11 @@ HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Clamp(UINT InTargetShade)
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;
 
-	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShade);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShader);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Wrap(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Wrap(UINT InTargetShader)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -311,11 +333,11 @@ HRESULT HlslShader<T>::CreateSamplerState_Anisotropic_Wrap(UINT InTargetShade)
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;
 
-	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShade);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Anisotropic, InTargetShader);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler(UINT InTargetShader)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -329,11 +351,11 @@ HRESULT HlslShader<T>::CreateSamplerState_ShadowSampler(UINT InTargetShade)
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	SamplerDesc.MaxAnisotropy = 4;
 
-	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Shadow, InTargetShade);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Shadow, InTargetShader);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Linear_Clamp(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_Linear_Clamp(UINT InTargetShader)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -346,11 +368,11 @@ HRESULT HlslShader<T>::CreateSamplerState_Linear_Clamp(UINT InTargetShade)
 	SamplerDesc.MinLOD = 0;
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear, InTargetShade);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear, InTargetShader);
 }
 
 template <class T>
-HRESULT HlslShader<T>::CreateSamplerState_Linear_Border(UINT InTargetShade)
+HRESULT HlslShader<T>::CreateSamplerState_Linear_Border(UINT InTargetShader)
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -363,7 +385,7 @@ HRESULT HlslShader<T>::CreateSamplerState_Linear_Border(UINT InTargetShade)
 	SamplerDesc.MinLOD = 0;
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear, InTargetShade);
+	return this->CreateSamplerState(&SamplerDesc, SamplerStateType::Linear, InTargetShader);
 }
 
 template <class T>
@@ -557,9 +579,12 @@ void HlslShader<T>::CompileShader
 (
 	ShaderType Type,
 	const wstring & ShaderFileName,
-	const D3D_SHADER_MACRO * InMacros
+	const D3D_SHADER_MACRO * InMacros,
+	bool bForceRecompile
 )
 {
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+	HRESULT Hr = 0;
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
 
@@ -631,9 +656,8 @@ void HlslShader<T>::CompileShader
 		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
 	}
 	SAFE_RELEASE(ErrorBlob);
-	
-	ID3D11Device * const Device = D3D::Get()->GetDevice();
-	HRESULT Hr = 0;
+
+	// Create Shader 
 	const void * BufferAddr = ShaderBlob->GetBufferPointer();
 	const UINT BufferSize = ShaderBlob->GetBufferSize();
 	if (bUsePrecompiledShader == false && PreCompiledShaderName.length() > 0)

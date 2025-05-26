@@ -36,15 +36,15 @@ ColorDesc ComputeLight
 )
 {
     ColorDesc Phong;
-    float3 L = normalize(-LightDirection);
+    float3 L = normalize(LightDirection);
     float3 N = normalize(Normal);
     Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
 
-    float NdotL = saturate(dot(L, N));
+    float NdotL = saturate(dot(-L, N));
     Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse * NdotL;
 
     float ns = saturate(MaterialColor.Specular.a) * 128 + 1;
-    float3 R = normalize(reflect(-L, N));
+    float3 R = normalize(reflect(L, N));
     float3 V = normalize(ViewPosition - WorldPosition); // also called as E for Eye-Vector
     float VdotR = saturate(dot(V, R));
     Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);

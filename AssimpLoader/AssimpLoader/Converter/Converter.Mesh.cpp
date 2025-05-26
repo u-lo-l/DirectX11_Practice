@@ -61,7 +61,7 @@ namespace sdt
 {
 	void Converter::ExportMesh( const wstring & InSaveFileName )
 	{
-		wstring FullFileName = W_MODEL_PATH + InSaveFileName + L".mesh";
+		const wstring FullFileName = W_MODEL_PATH + InSaveFileName + L".mesh";
 		ReadBoneData(Scene->mRootNode, 0, -1);
 		ReadMeshData();
 		ReadSkinData();

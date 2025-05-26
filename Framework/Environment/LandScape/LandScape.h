@@ -66,7 +66,7 @@ public:
 	explicit LandScape(const LandScapeDesc & InDesc);
 	~LandScape();
 	void Tick();
-	void Render(bool bDrawBoundary = false);
+	void Render(bool bDrawBoundary = false) const;
 	const Vector & GetDimension() const { return Dimension; }
 	const Texture * GetHeightMap() const { return HeightMap; }
 private:

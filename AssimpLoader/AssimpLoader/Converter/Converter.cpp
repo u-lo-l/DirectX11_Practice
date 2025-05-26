@@ -32,7 +32,7 @@ namespace sdt
 			| aiProcess_GenUVCoords
 			| aiProcess_GenNormals
 			| aiProcess_CalcTangentSpace
-			| aiProcess_GenBoundingBoxes
+			// | aiProcess_GenBoundingBoxes
 		);
 
 		ASSERT(Scene != nullptr, Loader->GetErrorString())

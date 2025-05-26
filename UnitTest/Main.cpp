@@ -3,6 +3,7 @@
 #include "Main.h"
 
 #include "Execute/028_InstancingDemo/InstancingDemo.h"
+#include "Execute/CharacterMoveDemo/CharacterMoveDemo.h"
 #include "Execute/DisplacementMappingDemo/BasicTessellationDemo.h"
 #include "Execute/DisplacementMappingDemo/DisplacementMappingDemo.h"
 #include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
@@ -28,8 +29,9 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::PhilipsSpectrumDemo);
 	// PUSH_MAIN(sdt::OceanDemo);
 	// PUSH_MAIN(sdt::FoamDemo);
-	PUSH_MAIN(sdt::CellDemo);
+	// PUSH_MAIN(sdt::CellDemo);
 	// PUSH_MAIN(sdt::LandScapeDemo);
+	PUSH_MAIN(sdt::CharacterMoveDemo);
 }
 
 

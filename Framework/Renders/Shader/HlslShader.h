@@ -51,10 +51,13 @@ public:
 	explicit HlslShader(
 		const wstring & ShaderFileName,
 		UINT TargetShaderFlag = static_cast<UINT>(ShaderType::VertexShader) | static_cast<UINT>(ShaderType::PixelShader),
+		const D3D_SHADER_MACRO * InMacros = nullptr,
+		bool bForceRecompile = false,
 		const string & InVSEntryPoint = "VSMain",
 		const string & InPSEntryPoint = "PSMain",
 		const string & InGSEntryPoint = "GSMain",
-		const D3D_SHADER_MACRO * InMacros = nullptr
+		const string & InDSEntryPoint = "DSMain",
+		const string & InHSEntryPoint = "HSMain"
 	);
 	~HlslShader();
 private:
@@ -77,6 +80,7 @@ public:
 	HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC * RSDesc);
 
 	// Sampler
+	HRESULT CreateSamplerState_Linear_Wrap(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState_Linear_Clamp(UINT InTargetShader = (UINT)ShaderType::PixelShader);
 	HRESULT CreateSamplerState_Linear_Border(UINT InTargetShade);
 	HRESULT CreateSamplerState_Anisotropic(UINT InTargetShader = (UINT)ShaderType::PixelShader);
@@ -105,12 +109,7 @@ public:
 	HRESULT CreateDepthStencilState_NoDepth();
 	HRESULT CreateDepthStencilState_Particle();
 	HRESULT CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC * DepthStencilDesc);
-private:
 
-// public:
-// 	ID3D11VertexShader * GetVertexShader() const { return VertexShader;}
-// 	ID3D11PixelShader * GetPixelShader() const { return PixelShader;}
-// 	ID3D11GeometryShader * GetGeometryShader() const { return GeometryShader;}
 public:
 	void Draw(UINT VertexCount, UINT StartVertexLocation = 0);
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, UINT BaseVertexLocation = 0);
@@ -121,7 +120,8 @@ private:
 	void CompileShader(
 		ShaderType Type,
 		const wstring & ShaderFileName,
-		const D3D_SHADER_MACRO * InMacros = nullptr
+		const D3D_SHADER_MACRO * InMacros = nullptr,
+		bool bForceRecompile = false
 	);
 	void InitializeInputLayout(ID3DBlob * VertexShaderBlob);
 

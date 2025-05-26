@@ -54,15 +54,11 @@ namespace sdt
 		vector<MeshData*> Meshes;
 #pragma endregion
 
-		// vector<pair<string, Matrix>> BoneMatrix;
-		// vector<pair<string, Matrix>> OffsetMatrix;
-
 #pragma region Extract Animation
 	public:
 		void ExportAnimation( const string & InSaveFileName, int InClipIndex = -1);
 	private:
 		// 애니메이션 하나하나를 Clip이라 한다.
-		// void ReadClips( vector<string> & OutClips ) const;
 		static ClipData * ReadClipData(const aiAnimation * InAnimation);
 		static void WriteClipData( const string & InSaveFileName, const ClipData * InClipData );
 		static void ReadPosKeySequences(vector<FrameDataVec> & OutPosKeys, const aiNodeAnim * InNodeAnim, const ClipData * InClipData );

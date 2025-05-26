@@ -105,7 +105,6 @@ void Model::ReadShaderName(const Json::Value & Value, Material<VertexType> * Out
 		{
 			Macros.push_back({"USE_ANIMATION", "1"});
 		}
-		
 		Macros.push_back({nullptr, nullptr});
 		OutMatData->SetShader(String::ToWString(Value["ShaderName"].asString()), Macros.data());
 	}

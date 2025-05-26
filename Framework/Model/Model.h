@@ -41,7 +41,8 @@ private:
 #pragma region Instancing
 public:
 	Transform * AddTransforms();
-	const Transform * GetTransforms(UINT Index) const;
+	const Transform * GetTransform(UINT Index) const;
+	Transform * GetTransform(UINT Index);
 private:
 	// 모델을 인스턴싱을 통해서 렌더링 할 때는 여러 WorldTransform이 필요하다.
 	// 한 모델의 여러 인스턴스들이 각각의 WorldTFMatrix에 매칭된다.

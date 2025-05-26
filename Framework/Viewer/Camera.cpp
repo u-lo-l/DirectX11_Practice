@@ -4,7 +4,13 @@
 Camera::Camera()
 {
 	Tf = new Transform();
-	Proj = new Perspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 10000.f, Math::Pi / 4);
+	Proj = new Perspective(
+		D3D::GetDesc().Width,
+		D3D::GetDesc().Height,
+		0.1f,
+		10000.f,
+		Math::ToRadians(50.0f)
+	);
 	ViewFrustum = new Frustum(
 		Proj->GetAspect(),
 		Proj->GetFOV(),
@@ -71,17 +77,12 @@ void Camera::Tick()
 	const float Pitch = Delta.X * RotationSpeed * DeltaTime;
 	Quaternion QuatY = Quaternion::CreateFromAxisAngle(Vector::Up, Pitch);
 	Quaternion QuatX = Quaternion::CreateFromAxisAngle(Vector::Right, Roll);
-	
+
 	Tf->AddWorldRotation(QuatY);
 	Tf->AddLocalRotation(QuatX);
 	Tf->AddLocalTranslation(DeltaPosition);
-	
-	ViewFrustum->UpdateTransform(
-		Tf->GetWorldPosition(),
-		Tf->GetForward(),
-		Tf->GetUp(),
-		Tf->GetRight()
-	);
+
+	ViewFrustum->UpdateTransform(Tf->GetMatrix());
 }
 
 const Vector& Camera::GetPosition() const

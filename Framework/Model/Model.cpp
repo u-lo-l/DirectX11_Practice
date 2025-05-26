@@ -85,9 +85,6 @@ void Model::Tick()
 	if (AnimationFrameData_CBuffer != nullptr)
 		AnimationFrameData_CBuffer->UpdateData(&this->BlendingDatas, sizeof(AnimationBlendingDesc) * MaxModelInstanceCount );
 	
-	if (KeyFrameSRV2DArray != nullptr)
-		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &KeyFrameSRV2DArray);
-
 	for (ModelMesh * M : Meshes)
 	{
 		M->Tick();
@@ -105,6 +102,9 @@ void Model::RenderShadow() const
 	if (SkeletonData != nullptr)
 		SkeletonData->BindToGPU();
 
+	if (KeyFrameSRV2DArray != nullptr)
+		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &KeyFrameSRV2DArray);
+	
 	const int InstanceCount = InstanceWorldTransforms.size();
 	for (ModelMesh * const M : Meshes)
 	{
@@ -125,6 +125,9 @@ void Model::Render() const
 
 	if (SkeletonData != nullptr)
 		SkeletonData->BindToGPU();
+
+	if (KeyFrameSRV2DArray != nullptr)
+		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &KeyFrameSRV2DArray);
 
 	const int InstanceCount = InstanceWorldTransforms.size();
 	for (ModelMesh * const M : Meshes)
@@ -156,7 +159,14 @@ Transform * Model::AddTransforms()
 	return NewTransform;
 }
 
-const Transform * Model::GetTransforms( UINT Index ) const
+const Transform * Model::GetTransform( UINT Index ) const
+{
+	if (Index >= InstanceWorldTransforms.size())
+		return nullptr;
+	return InstanceWorldTransforms[Index];
+}
+
+Transform* Model::GetTransform(UINT Index)
 {
 	if (Index >= InstanceWorldTransforms.size())
 		return nullptr;

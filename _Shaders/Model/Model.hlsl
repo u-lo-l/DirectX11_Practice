@@ -18,6 +18,7 @@ DepthOutput VSShadow(VertexInput Input)
 
 #  ifdef USE_ANIMATION
     output.ShadowPosition = SetAnimatedBoneToWorldTF_Instancing(Input); // Local_Space(Bone Root Space)
+
 #  else 
     output.ShadowPosition = Input.Position;
 #  endif
@@ -48,6 +49,7 @@ VertexOutput VSMain(VertexInput Input)
 
 #  ifdef USE_ANIMATION
     output.Position = SetAnimatedBoneToWorldTF_Instancing(Input);
+
 #  else 
     output.Position = Input.Position;
 #  endif
@@ -70,7 +72,7 @@ VertexOutput VSMain(VertexInput Input)
 float4 PSMain(VertexOutput input) : SV_Target
 {
     ColorDesc Color = ApplyAllLights_PS(input);
-    Color = ApplyShadow(Color, input.ShadowPosition, ShadowBias);
+    // Color = ApplyShadow(Color, input.ShadowPosition, ShadowBias);
     return  Color.Ambient + Color.Diffuse + Color.Specular;
 }
 

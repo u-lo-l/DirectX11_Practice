@@ -30,15 +30,13 @@ public:
 	Vector GetRight() const;
 	Vector GetUp() const;
 private :
+	Vector At() const;
 	Transform * Tf;
 	Projection * Proj;
+	Frustum * ViewFrustum = nullptr;
+	
 	float DefaultMoveSpeed = 20.f;
 	float MaxMoveSpeed = 10000.f;
 	float MoveSpeed = 20.f;
 	float RotationSpeed = 1.f;
-
-private:
-	Vector At() const;
-
-	Frustum * ViewFrustum = nullptr;
 };

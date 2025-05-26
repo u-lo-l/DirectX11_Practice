@@ -16,9 +16,10 @@ matrix InterpolateKeyFrameMatrix(in InterploateKeyframeParams Params, int Instan
 float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
 {
     int   Indices[4] = { input.Indices.x, input.Indices.y, input.Indices.z, input.Indices.w };
-    float Weights[4] = { input.Weight.x, input.Weight.y, input.Weight.z, input.Weight.w };
+    float Weights[4] = { input.Weight.x,  input.Weight.y,  input.Weight.z,  input.Weight.w  };
 
     float4 pos = 0;
+
     InterploateKeyframeParams ParamsCurrent;
     InterploateKeyframeParams ParamsNext;
 
@@ -46,6 +47,7 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
 
         pos += mul(VertexPosInBoneSpace, currentAnim);
     }
+
     return pos;
 }
 
