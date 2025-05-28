@@ -52,12 +52,12 @@ Vector::Vector( const aiVector3D & v )
 
 Vector Vector::operator-() const
 {
-	Vector vector3;
-	vector3.X = -X;
-	vector3.Y = -Y;
-	vector3.Z = -Z;
+	Vector Result;
+	Result.X = -X;
+	Result.Y = -Y;
+	Result.Z = -Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector::operator float*()
@@ -98,42 +98,42 @@ bool Vector::operator!=(const Vector& value2) const
 
 Vector Vector::operator+(const Vector& value2) const
 {
-	Vector vector3;
-	vector3.X = X + value2.X;
-	vector3.Y = Y + value2.Y;
-	vector3.Z = Z + value2.Z;
+	Vector Result;
+	Result.X = X + value2.X;
+	Result.Y = Y + value2.Y;
+	Result.Z = Z + value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::operator-(const Vector& value2) const
 {
-	Vector vector3;
-	vector3.X = X - value2.X;
-	vector3.Y = Y - value2.Y;
-	vector3.Z = Z - value2.Z;
+	Vector Result;
+	Result.X = X - value2.X;
+	Result.Y = Y - value2.Y;
+	Result.Z = Z - value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::operator*(const Vector& value2) const
 {
-	Vector vector3;
-	vector3.X = X * value2.X;
-	vector3.Y = Y * value2.Y;
-	vector3.Z = Z * value2.Z;
+	Vector Result;
+	Result.X = X * value2.X;
+	Result.Y = Y * value2.Y;
+	Result.Z = Z * value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::operator*(const float& scaleFactor) const
 {
-	Vector vector3;
-	vector3.X = X * scaleFactor;
-	vector3.Y = Y * scaleFactor;
-	vector3.Z = Z * scaleFactor;
+	Vector Result;
+	Result.X = X * scaleFactor;
+	Result.Y = Y * scaleFactor;
+	Result.Z = Z * scaleFactor;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::operator*(const Matrix& Matrix) const
@@ -149,24 +149,24 @@ Vector Vector::operator*(const Matrix& Matrix) const
 
 Vector Vector::operator/(const Vector& value2) const
 {
-	Vector vector3;
-	vector3.X = X / value2.X;
-	vector3.Y = Y / value2.Y;
-	vector3.Z = Z / value2.Z;
+	Vector Result;
+	Result.X = X / value2.X;
+	Result.Y = Y / value2.Y;
+	Result.Z = Z / value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::operator/(const float& divider) const
 {
 	float num = 1.0f / divider;
 
-	Vector vector3;
-	vector3.X = X * num;
-	vector3.Y = Y * num;
-	vector3.Z = Z * num;
+	Vector Result;
+	Result.X = X * num;
+	Result.Y = Y * num;
+	Result.Z = Z * num;
 
-	return vector3;
+	return Result;
 }
 
 void Vector::operator+=(const Vector& value2)
@@ -247,94 +247,94 @@ void Vector::Normalize()
 
 Vector Vector::Add( const Vector & value1, const Vector & value2)
 {
-	Vector vector3;
-	vector3.X = value1.X + value2.X;
-	vector3.Y = value1.Y + value2.Y;
-	vector3.Z = value1.Z + value2.Z;
+	Vector Result;
+	Result.X = value1.X + value2.X;
+	Result.Y = value1.Y + value2.Y;
+	Result.Z = value1.Z + value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Divide( const Vector & value1, const Vector & value2)
 {
-	Vector vector3;
-	vector3.X = value1.X / value2.X;
-	vector3.Y = value1.Y / value2.Y;
-	vector3.Z = value1.Z / value2.Z;
+	Vector Result;
+	Result.X = value1.X / value2.X;
+	Result.Y = value1.Y / value2.Y;
+	Result.Z = value1.Z / value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Divide( const Vector & value1, float value2)
 {
 	float single = 1.0f / value2;
 
-	Vector vector3;
-	vector3.X = value1.X * single;
-	vector3.Y = value1.Y * single;
-	vector3.Z = value1.Z * single;
+	Vector Result;
+	Result.X = value1.X * single;
+	Result.Y = value1.Y * single;
+	Result.Z = value1.Z * single;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Multiply( const Vector & value1, const Vector & value2)
 {
-	Vector vector3;
-	vector3.X = value1.X * value2.X;
-	vector3.Y = value1.Y * value2.Y;
-	vector3.Z = value1.Z * value2.Z;
+	Vector Result;
+	Result.X = value1.X * value2.X;
+	Result.Y = value1.Y * value2.Y;
+	Result.Z = value1.Z * value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Multiply( const Vector & value1, float scaleFactor)
 {
-	Vector vector3;
-	vector3.X = value1.X * scaleFactor;
-	vector3.Y = value1.Y * scaleFactor;
-	vector3.Z = value1.Z * scaleFactor;
+	Vector Result;
+	Result.X = value1.X * scaleFactor;
+	Result.Y = value1.Y * scaleFactor;
+	Result.Z = value1.Z * scaleFactor;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Subtract( const Vector & value1, const Vector & value2)
 {
-	Vector vector3;
-	vector3.X = value1.X - value2.X;
-	vector3.Y = value1.Y - value2.Y;
-	vector3.Z = value1.Z - value2.Z;
+	Vector Result;
+	Result.X = value1.X - value2.X;
+	Result.Y = value1.Y - value2.Y;
+	Result.Z = value1.Z - value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Abs(const Vector& value)
 {
-	Vector vector3;
-	vector3.X = abs(value.X);
-	vector3.Y = abs(value.Y);
-	vector3.Z = abs(value.Z);
+	Vector Result;
+	Result.X = abs(value.X);
+	Result.Y = abs(value.Y);
+	Result.Z = abs(value.Z);
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Negative( const Vector & value)
 {
-	Vector vector3;
-	vector3.X = -value.X;
-	vector3.Y = -value.Y;
-	vector3.Z = -value.Z;
+	Vector Result;
+	Result.X = -value.X;
+	Result.Y = -value.Y;
+	Result.Z = -value.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Barycentric( const Vector & value1, const Vector & value2, const Vector & value3, float amount1, float amount2)
 {
-	Vector vector3;
-	vector3.X = value1.X + amount1 * (value2.X - value1.X) + amount2 * (value3.X - value1.X);
-	vector3.Y = value1.Y + amount1 * (value2.Y - value1.Y) + amount2 * (value3.Y - value1.Y);
-	vector3.Z = value1.Z + amount1 * (value2.Z - value1.Z) + amount2 * (value3.Z - value1.Z);
+	Vector Result;
+	Result.X = value1.X + amount1 * (value2.X - value1.X) + amount2 * (value3.X - value1.X);
+	Result.Y = value1.Y + amount1 * (value2.Y - value1.Y) + amount2 * (value3.Y - value1.Y);
+	Result.Z = value1.Z + amount1 * (value2.Z - value1.Z) + amount2 * (value3.Z - value1.Z);
 
-	return vector3;
+	return Result;
 }
 
 float Vector::Distance( const Vector & value1, const Vector & value2)
@@ -363,56 +363,59 @@ float Vector::Dot( const Vector & value1, const Vector & value2)
 
 Vector Vector::Normalize( const Vector & value)
 {
-	float x = value.X * value.X + value.Y * value.Y + value.Z * value.Z;
-	float single = 1.0f / sqrtf(x);
+	const float Length = sqrt(value.X * value.X + value.Y * value.Y + value.Z * value.Z);
+	if (Length < Math::Epsilon)
+		return Zero;
 
-	Vector vector3;
-	vector3.X = value.X * single;
-	vector3.Y = value.Y * single;
-	vector3.Z = value.Z * single;
+	const float LengthInverse = 1.0f / Length;
 
-	return vector3;
+	Vector Result;
+	Result.X = value.X * LengthInverse;
+	Result.Y = value.Y * LengthInverse;
+	Result.Z = value.Z * LengthInverse;
+
+	return Result;
 }
 
 Vector Vector::Cross( const Vector & vector1, const Vector & vector2)
 {
-	Vector vector3;
-	vector3.X = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
-	vector3.Y = vector1.Z * vector2.X - vector1.X * vector2.Z;
-	vector3.Z = vector1.X * vector2.Y - vector1.Y * vector2.X;
+	Vector Result;
+	Result.X = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
+	Result.Y = vector1.Z * vector2.X - vector1.X * vector2.Z;
+	Result.Z = vector1.X * vector2.Y - vector1.Y * vector2.X;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Reflect( const Vector & vector, const Vector & normal)
 {
 	float x = vector.X * normal.X + vector.Y * normal.Y + vector.Z * normal.Z;
 
-	Vector vector3;
-	vector3.X = vector.X - 2.0f * x * normal.X;
-	vector3.Y = vector.Y - 2.0f * x * normal.Y;
-	vector3.Z = vector.Z - 2.0f * x * normal.Z;
-	return vector3;
+	Vector Result;
+	Result.X = vector.X - 2.0f * x * normal.X;
+	Result.Y = vector.Y - 2.0f * x * normal.Y;
+	Result.Z = vector.Z - 2.0f * x * normal.Z;
+	return Result;
 }
 
 Vector Vector::Min( const Vector & value1, const Vector & value2)
 {
-	Vector vector3;
-	vector3.X = value1.X < value2.X ? value1.X : value2.X;
-	vector3.Y = value1.Y < value2.Y ? value1.Y : value2.Y;
-	vector3.Z = value1.Z < value2.Z ? value1.Z : value2.Z;
+	Vector Result;
+	Result.X = value1.X < value2.X ? value1.X : value2.X;
+	Result.Y = value1.Y < value2.Y ? value1.Y : value2.Y;
+	Result.Z = value1.Z < value2.Z ? value1.Z : value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Max( const Vector & value1, const Vector & value2)
 {
-	Vector vector3;
-	vector3.X = value1.X > value2.X ? value1.X : value2.X;
-	vector3.Y = value1.Y > value2.Y ? value1.Y : value2.Y;
-	vector3.Z = value1.Z > value2.Z ? value1.Z : value2.Z;
+	Vector Result;
+	Result.X = value1.X > value2.X ? value1.X : value2.X;
+	Result.Y = value1.Y > value2.Y ? value1.Y : value2.Y;
+	Result.Z = value1.Z > value2.Z ? value1.Z : value2.Z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Clamp( const Vector & value1, const Vector & min, const Vector & max)
@@ -429,22 +432,22 @@ Vector Vector::Clamp( const Vector & value1, const Vector & min, const Vector & 
 	z = (z > max.Z ? max.Z : z);
 	z = (z < min.Z ? min.Z : z);
 
-	Vector vector3;
-	vector3.X = x;
-	vector3.Y = y;
-	vector3.Z = z;
+	Vector Result;
+	Result.X = x;
+	Result.Y = y;
+	Result.Z = z;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Lerp( const Vector & value1, const Vector & value2, float amount)
 {
-	Vector vector3;
-	vector3.X = value1.X + (value2.X - value1.X) * amount;
-	vector3.Y = value1.Y + (value2.Y - value1.Y) * amount;
-	vector3.Z = value1.Z + (value2.Z - value1.Z) * amount;
+	Vector Result;
+	Result.X = value1.X + (value2.X - value1.X) * amount;
+	Result.Y = value1.Y + (value2.Y - value1.Y) * amount;
+	Result.Z = value1.Z + (value2.Z - value1.Z) * amount;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::SmoothStep( const Vector & value1, const Vector & value2, float amount)
@@ -459,12 +462,12 @@ Vector Vector::SmoothStep( const Vector & value1, const Vector & value2, float a
 	amount = single;
 	amount = amount * amount * (3.0f - 2.0f * amount);
 
-	Vector vector3;
-	vector3.X = value1.X + (value2.X - value1.X) * amount;
-	vector3.Y = value1.Y + (value2.Y - value1.Y) * amount;
-	vector3.Z = value1.Z + (value2.Z - value1.Z) * amount;
+	Vector Result;
+	Result.X = value1.X + (value2.X - value1.X) * amount;
+	Result.Y = value1.Y + (value2.Y - value1.Y) * amount;
+	Result.Z = value1.Z + (value2.Z - value1.Z) * amount;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::CatmullRom( const Vector & value1, const Vector & value2, const Vector & value3, const Vector & value4, float amount)
@@ -472,12 +475,12 @@ Vector Vector::CatmullRom( const Vector & value1, const Vector & value2, const V
 	float single = amount * amount;
 	float single1 = amount * single;
 
-	Vector vector3;
-	vector3.X = 0.5f * (2.0f * value2.X + (-value1.X + value3.X) * amount + (2.0f * value1.X - 5.0f * value2.X + 4.0f * value3.X - value4.X) * single + (-value1.X + 3.0f * value2.X - 3.0f * value3.X + value4.X) * single1);
-	vector3.Y = 0.5f * (2.0f * value2.Y + (-value1.Y + value3.Y) * amount + (2.0f * value1.Y - 5.0f * value2.Y + 4.0f * value3.Y - value4.Y) * single + (-value1.Y + 3.0f * value2.Y - 3.0f * value3.Y + value4.Y) * single1);
-	vector3.Z = 0.5f * (2.0f * value2.Z + (-value1.Z + value3.Z) * amount + (2.0f * value1.Z - 5.0f * value2.Z + 4.0f * value3.Z - value4.Z) * single + (-value1.Z + 3.0f * value2.Z - 3.0f * value3.Z + value4.Z) * single1);
+	Vector Result;
+	Result.X = 0.5f * (2.0f * value2.X + (-value1.X + value3.X) * amount + (2.0f * value1.X - 5.0f * value2.X + 4.0f * value3.X - value4.X) * single + (-value1.X + 3.0f * value2.X - 3.0f * value3.X + value4.X) * single1);
+	Result.Y = 0.5f * (2.0f * value2.Y + (-value1.Y + value3.Y) * amount + (2.0f * value1.Y - 5.0f * value2.Y + 4.0f * value3.Y - value4.Y) * single + (-value1.Y + 3.0f * value2.Y - 3.0f * value3.Y + value4.Y) * single1);
+	Result.Z = 0.5f * (2.0f * value2.Z + (-value1.Z + value3.Z) * amount + (2.0f * value1.Z - 5.0f * value2.Z + 4.0f * value3.Z - value4.Z) * single + (-value1.Z + 3.0f * value2.Z - 3.0f * value3.Z + value4.Z) * single1);
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Hermite( const Vector & value1, const Vector & tangent1, const Vector & value2, const Vector & tangent2, float amount)
@@ -489,12 +492,12 @@ Vector Vector::Hermite( const Vector & value1, const Vector & tangent1, const Ve
 	float single4 = single1 - 2.0f * single + amount;
 	float single5 = single1 - single;
 
-	Vector vector3;
-	vector3.X = value1.X * single2 + value2.X * single3 + tangent1.X * single4 + tangent2.X * single5;
-	vector3.Y = value1.Y * single2 + value2.Y * single3 + tangent1.Y * single4 + tangent2.Y * single5;
-	vector3.Z = value1.Z * single2 + value2.Z * single3 + tangent1.Z * single4 + tangent2.Z * single5;
+	Vector Result;
+	Result.X = value1.X * single2 + value2.X * single3 + tangent1.X * single4 + tangent2.X * single5;
+	Result.Y = value1.Y * single2 + value2.Y * single3 + tangent1.Y * single4 + tangent2.Y * single5;
+	Result.Z = value1.Z * single2 + value2.Z * single3 + tangent1.Z * single4 + tangent2.Z * single5;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Transform( const Vector & position, const Matrix & matrix)
@@ -503,12 +506,12 @@ Vector Vector::Transform( const Vector & position, const Matrix & matrix)
 	float single = position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42;
 	float x1 = position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43;
 
-	Vector vector3;
-	vector3.X = x;
-	vector3.Y = single;
-	vector3.Z = x1;
+	Vector Result;
+	Result.X = x;
+	Result.Y = single;
+	Result.Z = x1;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::Transform( const Vector & value, const Quaternion & rotation)
@@ -532,12 +535,12 @@ Vector Vector::Transform( const Vector & value, const Quaternion & rotation)
 	float x3 = value.X * (single1 + w1) + value.Y * (1.0f - x1 - z1) + value.Z * (y2 - w);
 	float single3 = value.X * (x2 - single) + value.Y * (y2 + w) + value.Z * (1.0f - x1 - y1);
 
-	Vector vector3;
-	vector3.X = single2;
-	vector3.Y = x3;
-	vector3.Z = single3;
+	Vector Result;
+	Result.X = single2;
+	Result.Y = x3;
+	Result.Z = single3;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::TransformNormal( const Vector & normal, const Matrix & matrix)
@@ -546,12 +549,12 @@ Vector Vector::TransformNormal( const Vector & normal, const Matrix & matrix)
 	float single = normal.X * matrix.M12 + normal.Y * matrix.M22 + normal.Z * matrix.M32;
 	float x1 = normal.X * matrix.M13 + normal.Y * matrix.M23 + normal.Z * matrix.M33;
 
-	Vector vector3;
-	vector3.X = x;
-	vector3.Y = single;
-	vector3.Z = x1;
+	Vector Result;
+	Result.X = x;
+	Result.Y = single;
+	Result.Z = x1;
 
-	return vector3;
+	return Result;
 }
 
 Vector Vector::TransformCoord( const Vector & position, const Matrix & matrix)

@@ -42,11 +42,21 @@ namespace sdt
 			{
 				DeltaPosition -= Vector::Right * DeltaTime * 20;
 			}
-			Character->GetTransform(0)->AddWorldTranslation(DeltaPosition);
+			Character->GetTransform(0)->AddLocalTranslation(DeltaPosition);
 		}
 
 		if (!!Terrain) Terrain->Tick();
-		if (!!Character) Character->Tick();
+		if (!!Character)
+		{
+			Character->Tick();
+			const Vector & Location =  Character->GetTransform(0)->GetWorldPosition();
+			const Vector & Forward =  Character->GetTransform(0)->GetForward();
+			const Vector & Right =  Character->GetTransform(0)->GetRight();
+			Gui::Get()->RenderText(5, 200, 0, 255, 0, String::Format("P : %.3f, %.3f, %.3f", Location.X, Location.Y, Location.Z));
+			Gui::Get()->RenderText(5, 220, 0, 255, 0, String::Format("F : %.3f, %.3f, %.3f", Forward.X, Forward.Y, Forward.Z));
+			Gui::Get()->RenderText(5, 240, 0, 255, 0, String::Format("R : %.3f, %.3f, %.3f", Right.X, Right.Y, Right.Z));
+		}
+		
 	}
 
 	void CharacterMoveDemo::PreRender()
@@ -69,8 +79,8 @@ namespace sdt
 	{
 		LandScape::LandScapeDesc Desc =
 		{
-			Vector(512, 128, 512),
-			512,
+			Vector(2048, 2048, 2048),
+			256,
 			64,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
@@ -84,7 +94,7 @@ namespace sdt
 		Character = new Model(L"Adam");
 		Transform * tf = Character->AddTransforms();
 		tf->SetWorldPosition({0,0,0});
-		tf->SetScale({0.01f,0.01f,0.01f});
-		tf->SetWorldRotation({0, 180 * Math::DegToRadian, 0});
+		tf->SetScale({0.1f,0.1f,0.1f});
+		// tf->SetWorldRotation({0, 180 * Math::DegToRadian, 0});
 	}
 }

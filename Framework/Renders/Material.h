@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Buffer/ConstantBuffer.h"
 #include "Utilites/String.h"
-// #include "Renders/Shader/HlslShader.hpp"
+#include "Renders/Shader/HlslShader.hpp"
 
 class String;
 
@@ -63,7 +63,6 @@ private:
 	Texture * Textures[ThisClass::MaxTextureCount];
 	ID3D11ShaderResourceView * SRVs[ThisClass::MaxTextureCount]; // Texture에서 해제됨.
 };
-
 
 /*==========================================================================================*/
 
@@ -143,10 +142,8 @@ void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D
 	Shader = new HlslShader<VertexType>(
 		ShaderFileName,
 		TargetShaderFlag,
-		"VSMain",
-		"PSMain",
-		"",
-		ShaderMacro
+		ShaderMacro,
+		false
 	);
 	Shader->CreateRasterizerState_Solid();
 	// Shader->CreateRasterizerState_WireFrame();
@@ -158,10 +155,10 @@ void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D
 	ShadowShader = new HlslShader<VertexType>(
 		ShaderFileName,
 		TargetShaderFlag,
+		ShaderMacro,
+		false,
 		"VSShadow",
-		"PSShadow",
-		"",
-		ShaderMacro
+		"PSShadow"
 	);
 	ShadowShader->CreateRasterizerState_Solid();
 	ShadowShader->CreateSamplerState_ShadowSampler();

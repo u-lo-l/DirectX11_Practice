@@ -127,19 +127,19 @@ const Vector & Transform::GetScale() const
 Vector Transform::GetForward() const
 {
 	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return WorldTF->Forward();
+	return Vector::Normalize(WorldTF->Forward());
 }
 
 Vector Transform::GetUp() const
 {
 	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return WorldTF->Up();
+	return Vector::Normalize(WorldTF->Up());
 }
 
 Vector Transform::GetRight() const
 {
 	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return WorldTF->Right();
+	return Vector::Normalize(WorldTF->Right());
 }
 
 void Transform::AddWorldTranslation(const Vector& InTranslation)

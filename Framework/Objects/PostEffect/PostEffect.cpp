@@ -49,19 +49,19 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 	Bloom_DS = new DepthStencil(ScreenWidth, ScreenHeight, false);
 
 	UINT ShaderTarget = (UINT)ShaderType::VertexShader | (UINT)ShaderType::PixelShader;
-	Bloom_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_Bloom_Separate");
+	Bloom_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Separate");
 	Bloom_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CHECK(SUCCEEDED(Bloom_Shader[0]->CreateSamplerState_Linear_Clamp()));
 
-	Bloom_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_Bloom_Combine");
+	Bloom_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Combine");
 	Bloom_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CHECK(SUCCEEDED(Bloom_Shader[1]->CreateSamplerState_Linear_Clamp()));
 
-	GaussianBlur_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_GaussianBlur_X");
+	GaussianBlur_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_GaussianBlur_X");
 	GaussianBlur_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CHECK(SUCCEEDED(GaussianBlur_Shader[0]->CreateSamplerState_Linear_Clamp()));
 
-	GaussianBlur_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, "VSMain", "PS_GaussianBlur_Y");
+	GaussianBlur_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_GaussianBlur_Y");
 	GaussianBlur_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CHECK(SUCCEEDED(GaussianBlur_Shader[1]->CreateSamplerState_Linear_Clamp()));
 }

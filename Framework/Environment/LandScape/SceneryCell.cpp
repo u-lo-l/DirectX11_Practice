@@ -158,7 +158,7 @@ void SceneryCell::CreateVertex
 			YMin = min(YMin, Y);
 			YMax = max(YMax, Y);
 
-			Vertices[CellIndex].Position = Vector(X,0, Z) * static_cast<float>(GridSize);
+			Vertices[CellIndex].Position = Vector(static_cast<float>(X), 0, static_cast<float>(Z)) * static_cast<float>(GridSize);
 			Vertices[CellIndex].Position += PositionOffset;
 			Vertices[CellIndex].Normal = Vector(0, 1, 0);
 			Vertices[CellIndex].UV = Vector2D(
@@ -212,7 +212,7 @@ void SceneryCell::CreateVertex
 		{
 			UINT CellIndex = Z * VertexPerCell_X + X;
 			
-			Vertices[CellIndex].Position = Vector(X,0, Z) * static_cast<float>(GridSize);
+			Vertices[CellIndex].Position = Vector(static_cast<float>(X), 0, static_cast<float>(Z)) * static_cast<float>(GridSize);
 			Vertices[CellIndex].Position += PositionOffset;
 			Vertices[CellIndex].Normal = Vector(0, 1, 0);
 			Vertices[CellIndex].UV = Vector2D(

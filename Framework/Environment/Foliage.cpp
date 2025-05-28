@@ -21,10 +21,8 @@ Foliage::Foliage(const LandScape * InTerrain, const float MinAltitude, const flo
 	CrossQuadShader = new HlslShader<VertexType>(
 		ShaderName,
 		static_cast<UINT>(ShaderType::VGP),
-		"VSMain",
-		"PSMain",
-		"GSMain",
-		nullptr
+		nullptr,
+		false
 	);
 	CrossQuadShader->SetTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));

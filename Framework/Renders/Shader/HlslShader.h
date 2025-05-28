@@ -118,13 +118,14 @@ public:
 
 private:
 	void CompileShader(
-		ShaderType Type,
-		const wstring & ShaderFileName,
+		ShaderType InShaderType,
+		const wstring & InShaderFileName,
 		const D3D_SHADER_MACRO * InMacros = nullptr,
 		bool bForceRecompile = false
 	);
 	void InitializeInputLayout(ID3DBlob * VertexShaderBlob);
-
+	bool CheckPrecompiled(ShaderType InShaderType, const wstring& HlslFilePath, string& OutCSOFilePath);
+	
 	void BeginDraw();
 	void EndDraw();
 private:

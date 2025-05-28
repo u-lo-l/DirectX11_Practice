@@ -8,7 +8,8 @@ public:
     explicit HlslComputeShader(
         const wstring & ShaderFileName,
         const D3D_SHADER_MACRO * Macros = nullptr, 
-        const string & EntryPoint = "CSMain"
+        const string & EntryPoint = "CSMain",
+        bool bForceRecompile = false
     );
     ~HlslComputeShader();
     
@@ -30,6 +31,19 @@ public:
         SamplerStateType SamplerType = SamplerStateType::Linear
     );
 private:
+    static bool CheckPreCompiled (
+        const wstring & HlslFilePath,
+        const string & InEntryPoint,
+        string & OutCSOFilePath
+    );
+    bool CreateShader(
+        bool bUsePrecompiledShader,
+        const string& PrecompiledShaderName,
+        const D3D_SHADER_MACRO* InMacros,
+        const string& InEntryPoint,
+        ID3DBlob*& OutShaderBlob,
+        ID3DBlob*& OutErrorBlob
+    ) const;
     ID3D11ComputeShader * ComputeShader;
     wstring FileName;
     UINT DispatchSize[3] = {1, 1, 1};

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Renders/Shader/HlslShader.hpp"
 
 class SkySphere
 {
@@ -10,13 +9,9 @@ public:
 
 	void Tick();
 	void Render();
-	// ID3D11ShaderResourceView * GetSRV() const { return SkyTexture->GetSRV(); }
 	const Texture * GetTexture() const { return SkyTexture; }
 
 private:
-	/*
-	 * Create Sphere VertexBuffer
-	 */
 	void CreateVertexBuffer();
 	void CreateIndexBuffer();
 
@@ -35,5 +30,4 @@ private:
 	UINT SliceCount;
 private:
 	Texture * SkyTexture;
-	// ID3D11ShaderResourceView * SkySRV;
 };

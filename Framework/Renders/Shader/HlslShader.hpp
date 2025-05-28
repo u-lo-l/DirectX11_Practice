@@ -4,7 +4,7 @@
 #include "Utilites/String.h"
 
 template <class T>
-std::string HlslShader<T>::GetShaderTarget( ShaderType Type )
+std::string HlslShader<T>::GetShaderTarget(const ShaderType Type )
 {
 	switch (Type)
 	{
@@ -20,7 +20,7 @@ std::string HlslShader<T>::GetShaderTarget( ShaderType Type )
 }
 
 template <class T>
-std::string HlslShader<T>::GetEntryPoint( ShaderType Type )
+std::string HlslShader<T>::GetEntryPoint(const ShaderType Type )
 {
 	switch (Type)
 	{
@@ -52,8 +52,8 @@ HlslShader<T>::HlslShader
 	: VSEntryPoint(InVSEntryPoint)
 	, GSEntryPoint(InGSEntryPoint)
 	, PSEntryPoint(InPSEntryPoint)
-	, DSEntryPoint(InDSEntryPoint)
 	, HSEntryPoint(InHSEntryPoint)
+	, DSEntryPoint(InDSEntryPoint)
 {
 	if (ShaderFileName.empty() == true)
 		return ;
@@ -66,15 +66,15 @@ HlslShader<T>::HlslShader
 	FileName = W_SHADER_PATH + ShaderFileName;
 	
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::VertexShader))
-		CompileShader(ShaderType::VertexShader, FileName, InMacros);
+		CompileShader(ShaderType::VertexShader, ShaderFileName, InMacros, bForceRecompile);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::PixelShader))
-		CompileShader(ShaderType::PixelShader, FileName, InMacros);
+		CompileShader(ShaderType::PixelShader, ShaderFileName, InMacros, bForceRecompile);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::GeometryShader))
-		CompileShader(ShaderType::GeometryShader, FileName, InMacros);
+		CompileShader(ShaderType::GeometryShader, ShaderFileName, InMacros, bForceRecompile);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::HullShader))
-		CompileShader(ShaderType::HullShader, FileName, InMacros);
+		CompileShader(ShaderType::HullShader, ShaderFileName, InMacros, bForceRecompile);
 	if (TargetShaderFlag & static_cast<UINT>(ShaderType::DomainShader))
-		CompileShader(ShaderType::DomainShader, FileName, InMacros);
+		CompileShader(ShaderType::DomainShader, ShaderFileName, InMacros, bForceRecompile);
 	CHECK(CreateRasterizerState_Solid() >= 0);
 	CHECK(CreateBlendState_NoBlend() >= 0);
 	CHECK(CreateDepthStencilState_Default() >= 0);
@@ -577,8 +577,8 @@ HRESULT HlslShader<T>::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* D
 template <class T>
 void HlslShader<T>::CompileShader
 (
-	ShaderType Type,
-	const wstring & ShaderFileName,
+	ShaderType InShaderType,
+	const wstring & InShaderFileName,
 	const D3D_SHADER_MACRO * InMacros,
 	bool bForceRecompile
 )
@@ -588,102 +588,87 @@ void HlslShader<T>::CompileShader
 	ID3DBlob * ErrorBlob = nullptr;
 	ID3DBlob * ShaderBlob = nullptr;
 
-	string PreCompiledShaderName = "";
-	bool bUsePrecompiledShader = false;
-	size_t ExtensionIndex = ShaderFileName.rfind(L".hlsl");
-	HRESULT hr = -1;
-	ASSERT(ExtensionIndex != string::npos, "ShaderFileName Not Valid");
-	PreCompiledShaderName = String::ToString(ShaderFileName);
-	PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 5, "");
-	size_t DirectoryIndex = 0;
-	DirectoryIndex = PreCompiledShaderName.rfind("/");
-	PreCompiledShaderName = PreCompiledShaderName.replace(ExtensionIndex, 1, "/PreCompiled/");
-	// DWORD attrib = GetFileAttributesA(PreCompiledShaderName.c_str());
-	// if (attrib == INVALID_FILE_ATTRIBUTES || !(attrib & FILE_ATTRIBUTE_DIRECTORY))
-	// {
-	// 	CreateDirectoryA(PreCompiledShaderName.c_str(), nullptr);
-	// }
-	PreCompiledShaderName += GetEntryPoint(Type) + ".cso";
-	printf("%s\n", PreCompiledShaderName.c_str());
-	std::ifstream file(PreCompiledShaderName, std::ios::binary | std::ios::ate);
-	if (file.is_open() == true)
-	{
-		std::streamsize FileSize = file.tellg();
-		file.seekg(0, std::ios::beg);
-
-		hr = D3DCreateBlob(static_cast<SIZE_T>(FileSize), &ShaderBlob);
-		file.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
-		file.close();
-		if (SUCCEEDED(hr))
-		{
-			bUsePrecompiledShader = true;
-		}
-	}
-	
-	// https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/d3dcompile-constants
-	int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
-	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
-	// Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
-	Flag |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
-	Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
-
-	constexpr int EffectFlag = 0; // Effect FrameWork 쓸 떄만 씀.
+	string PreCompiledShader;
+	bool bPreCompiled = CheckPrecompiled(InShaderType, this->FileName, PreCompiledShader);
+	const bool bUsePrecompiledShader = bPreCompiled && !bForceRecompile;
 
 	if (bUsePrecompiledShader == false)
 	{
-		hr = D3DCompileFromFile(
-			ShaderFileName.c_str(),
+		// https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/d3dcompile-constants
+		int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR |
+				   D3DCOMPILE_OPTIMIZATION_LEVEL3 |
+				   D3DCOMPILE_WARNINGS_ARE_ERRORS;
+		const string & EntryPoint = GetEntryPoint(InShaderType);
+		const string & ShaderTarget = GetShaderTarget(InShaderType);
+		Hr = D3DCompileFromFile(
+			this->FileName.c_str(),
 			InMacros,
 			D3D_COMPILE_STANDARD_FILE_INCLUDE, // HLSL내에서 #include 쓸 수 있게 해줌. custom ID3DInclude도 가능.
-			GetEntryPoint(Type).c_str(),
-			GetShaderTarget(Type).c_str(),
+			EntryPoint.c_str(),
+			ShaderTarget.c_str(),
 			Flag,
-			EffectFlag,
+			0,
 			&ShaderBlob,
 			&ErrorBlob
 		);
 	}
-	if (FAILED(hr) && ErrorBlob != nullptr)
+	else
+	{
+		std::ifstream File(PreCompiledShader, std::ios::binary | std::ios::ate);
+		if (bUsePrecompiledShader && File.is_open() == true)
+		{
+			std::streamsize FileSize = File.tellg();
+			File.seekg(0, std::ios::beg);
+
+			Hr = D3DCreateBlob(static_cast<SIZE_T>(FileSize), &ShaderBlob);
+			File.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
+			File.close();
+		}
+	}
+	
+	if (FAILED(Hr) && ErrorBlob != nullptr)
 	{
 		const char * const ErrMsg = static_cast<char *>(ErrorBlob->GetBufferPointer());
-		string ShaderFile = (bUsePrecompiledShader == true) ? PreCompiledShaderName : String::ToString(ShaderFileName);
+		string ShaderFile = (bUsePrecompiledShader == true) ? PreCompiledShader : String::ToString(this->FileName);
 		SAFE_RELEASE(ErrorBlob);
-		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
+		ASSERT(false, (String::ToString(this->FileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
+		return ;
 	}
-	if (FAILED(hr) && ErrorBlob == nullptr)
+	if (FAILED(Hr) && ErrorBlob == nullptr)
 	{
 		SAFE_RELEASE(ErrorBlob);
-		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
+		ASSERT(false, (String::ToString(this->FileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
+		return ;
 	}
 	SAFE_RELEASE(ErrorBlob);
 
 	// Create Shader 
 	const void * BufferAddr = ShaderBlob->GetBufferPointer();
 	const UINT BufferSize = ShaderBlob->GetBufferSize();
-	if (bUsePrecompiledShader == false && PreCompiledShaderName.length() > 0)
+	if (bUsePrecompiledShader == false && !PreCompiledShader.empty())
 	{
-		std::ofstream outFile(PreCompiledShaderName, std::ios::binary);
+		std::ofstream outFile(PreCompiledShader, std::ios::binary);
 		outFile.write((char*)ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize());
 		outFile.close();
 	}
-	if (Type == ShaderType::VertexShader)
+	if (InShaderType == ShaderType::VertexShader)
 	{
 		Hr = Device->CreateVertexShader(BufferAddr, BufferSize, nullptr, &VertexShader);
 		InitializeInputLayout(ShaderBlob);
 	}
-	else if (Type == ShaderType::PixelShader)
+	else if (InShaderType == ShaderType::PixelShader)
 	{
 		Hr = Device->CreatePixelShader(BufferAddr, BufferSize, nullptr, &PixelShader);
 	}
-	else if (Type == ShaderType::HullShader)
+	else if (InShaderType == ShaderType::HullShader)
 	{
 		Hr = Device->CreateHullShader(BufferAddr, BufferSize, nullptr, &HullShader);
 	}
-	else if (Type == ShaderType::DomainShader)
+	else if (InShaderType == ShaderType::DomainShader)
 	{
 		Hr = Device->CreateDomainShader(BufferAddr, BufferSize, nullptr, &DomainShader);
 	}
-	else if (Type == ShaderType::GeometryShader)
+	else if (InShaderType == ShaderType::GeometryShader)
 	{
 		Hr = Device->CreateGeometryShader(BufferAddr, BufferSize, nullptr, &GeometryShader);
 	}
@@ -732,6 +717,30 @@ void HlslShader<T>::InitializeInputLayout( ID3DBlob * VertexShaderBlob )
 		LocalFree(errorMessage);
 	}
 	ASSERT((Hr >= 0), "Failed to create input layout")
+}
+
+template <class T>
+bool HlslShader<T>::CheckPrecompiled
+(
+	ShaderType InShaderType,
+	const wstring& HlslFilePath,
+	string & OutCSOFilePath
+)
+{
+	const wstring ShaderDirectory = Path::GetDirectoryName(HlslFilePath);
+	const wstring ShaderName = Path::GetFileNameWithoutExtension(HlslFilePath);
+
+	const wstring PreCompiledShaderDirectory = ShaderDirectory + L"PreCompiled/";
+	OutCSOFilePath = 
+		String::ToString(PreCompiledShaderDirectory)
+		+ String::ToString(ShaderName) + "."
+		+ GetEntryPoint(InShaderType) + ".cso";
+	if (Path::IsDirectoryExist(PreCompiledShaderDirectory) == false)
+	{
+		Path::CreateFolder(PreCompiledShaderDirectory);
+		return false;
+	}
+	return Path::IsFileExist(OutCSOFilePath);
 }
 
 template <class T>

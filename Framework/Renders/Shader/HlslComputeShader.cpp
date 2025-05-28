@@ -5,51 +5,52 @@ HlslComputeShader::HlslComputeShader
 (
 	const wstring & ShaderFileName,
 	const D3D_SHADER_MACRO * InMacros,
-	const string& EntryPoint
-)
+	const string& EntryPoint,
+	bool bForceRecompile
+): SamplerStates()
 {
-    if (ShaderFileName.empty() == false)
-    {
-        FileName = W_SHADER_PATH + ShaderFileName;
+	if (ShaderFileName.empty() == true)
+		return;
 
-        ID3DBlob * ErrorBlob = nullptr;
-        ID3DBlob * ShaderBlob = nullptr;
+	ID3D11Device* const Device = D3D::Get()->GetDevice();
+	HRESULT Hr = 0;
+	ID3DBlob* ErrorBlob = nullptr;
+	ID3DBlob* ShaderBlob = nullptr;
+	FileName = W_SHADER_PATH + ShaderFileName;
 
-        int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
-        Flag |= D3DCOMPILE_WARNINGS_ARE_ERRORS;
+	string PreCompiledShader;
+	bool bPreCompiled = CheckPreCompiled(FileName, EntryPoint, PreCompiledShader);
+	const bool bUsePrecompiledShader = bPreCompiled && !bForceRecompile;
+	
+	Hr = CreateShader(bUsePrecompiledShader, PreCompiledShader, InMacros, EntryPoint, ShaderBlob, ErrorBlob);
+	
+	if (FAILED(Hr) && ErrorBlob != nullptr)
+	{
+		const char* const ErrMsg = static_cast<char*>(ErrorBlob->GetBufferPointer());
+		ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
+	}
+	if (FAILED(Hr) && ErrorBlob == nullptr)
+	{
+		string Msg;
+		if (Hr == D3D11_ERROR_FILE_NOT_FOUND)
+			Msg = "File not found.";
+		ASSERT(false,
+		       (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint : " + Msg).
+		       c_str())
+	}
+	SAFE_RELEASE(ErrorBlob);
 
-        HRESULT Hr = D3DCompileFromFile(
-            FileName.c_str(),
-            InMacros,
-            D3D_COMPILE_STANDARD_FILE_INCLUDE,
-            EntryPoint.c_str(),
-            "cs_5_0",
-            Flag,
-            0,
-            &ShaderBlob,
-            &ErrorBlob
-        );
-        if (FAILED(Hr) && ErrorBlob != nullptr)
-        {
-            const char * const ErrMsg = static_cast<char *>(ErrorBlob->GetBufferPointer());
-            ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
-        }
-        if (FAILED(Hr) && ErrorBlob == nullptr)
-        {
-        	string Msg;
-        	if (Hr == D3D11_ERROR_FILE_NOT_FOUND)
-        		Msg = "File not found.";
-            ASSERT(false, (String::ToString(ShaderFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint : " + Msg).c_str())
-        }
-        SAFE_RELEASE(ErrorBlob);
-
-        ID3D11Device * const Device = D3D::Get()->GetDevice();
-        const void * BlobBufferAddr = ShaderBlob->GetBufferPointer();
-        const UINT BlobBufferSize = ShaderBlob->GetBufferSize();
-        Hr = Device->CreateComputeShader(BlobBufferAddr, BlobBufferSize, nullptr, &ComputeShader);
-        SAFE_RELEASE(ShaderBlob);
-        ASSERT(Hr >= 0, "Failed to create shader")
-    }
+	const void* BlobBufferAddr = ShaderBlob->GetBufferPointer();
+	const UINT BlobBufferSize = ShaderBlob->GetBufferSize();
+	if (bUsePrecompiledShader == false && !PreCompiledShader.empty())
+	{
+		std::ofstream outFile(PreCompiledShader, std::ios::binary);
+		outFile.write((char*)ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize());
+		outFile.close();
+	}
+	Hr = Device->CreateComputeShader(BlobBufferAddr, BlobBufferSize, nullptr, &ComputeShader);
+	SAFE_RELEASE(ShaderBlob);
+	ASSERT(Hr >= 0, "Failed to create shader")
 }
 
 HlslComputeShader::~HlslComputeShader()
@@ -190,6 +191,69 @@ HRESULT HlslComputeShader::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDe
 {
 	SAFE_RELEASE(SamplerStates[(UINT)SamplerType]);
 	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerStates[static_cast<UINT>(SamplerType)]);
+}
+
+bool HlslComputeShader::CheckPreCompiled(const wstring& HlslFilePath, const string& InEntryPoint, string & OutCSOFilePath)
+{
+	const wstring ShaderDirectory = Path::GetDirectoryName(HlslFilePath);
+	const wstring ShaderName = Path::GetFileNameWithoutExtension(HlslFilePath);
+
+	const wstring PreCompiledShaderDirectory = ShaderDirectory + L"PreCompiled/";
+	OutCSOFilePath = 
+		String::ToString(PreCompiledShaderDirectory)
+		+ String::ToString(ShaderName) + "."
+		+ InEntryPoint + ".cso";
+	if (Path::IsDirectoryExist(PreCompiledShaderDirectory) == false)
+	{
+		Path::CreateFolder(PreCompiledShaderDirectory);
+		return false;
+	}
+	return Path::IsFileExist(OutCSOFilePath);
+}
+
+bool HlslComputeShader::CreateShader
+(
+	bool bUsePrecompiledShader,
+	const string & PrecompiledShaderName,
+	const D3D_SHADER_MACRO * InMacros,
+	const string & InEntryPoint,
+	ID3DBlob* &OutShaderBlob,
+	ID3DBlob* &OutErrorBlob
+) const
+{
+	HRESULT Hr = false;
+	if (bUsePrecompiledShader == false)
+	{
+		// https://learn.microsoft.com/ko-kr/windows/win32/direct3dhlsl/d3dcompile-constants
+		int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR |
+				   D3DCOMPILE_OPTIMIZATION_LEVEL3 |
+				   D3DCOMPILE_WARNINGS_ARE_ERRORS;
+		Hr = D3DCompileFromFile(
+			FileName.c_str(),
+			InMacros,
+			D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			InEntryPoint.c_str(),
+			"cs_5_0",
+			Flag,
+			0,
+			&OutShaderBlob,
+			&OutErrorBlob
+		);
+	}
+	else
+	{
+		std::ifstream File(PrecompiledShaderName, std::ios::binary | std::ios::ate);
+		if (bUsePrecompiledShader && File.is_open() == true)
+		{
+			std::streamsize FileSize = File.tellg();
+			File.seekg(0, std::ios::beg);
+
+			Hr = D3DCreateBlob(static_cast<SIZE_T>(FileSize), &OutShaderBlob);
+			File.read((char*)OutShaderBlob->GetBufferPointer(), FileSize);
+			File.close();
+		}
+	}
+	return Hr;
 }
 
 void HlslComputeShader::Dispatch(const RawBuffer * InRawBuffer, UINT X, UINT Y, UINT Z) const

@@ -59,7 +59,6 @@ using namespace std;
 	#include "Math/Math.h"
 #pragma endregion
 
-
 #pragma region  My Own 
 	#include "Utilites/Definitions.h"
 	#include "Utilites/ShaderSlots.h"

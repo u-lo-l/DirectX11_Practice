@@ -29,12 +29,6 @@ DepthOutput VSShadow(VertexInput Input)
     return output;
 }
 
-float4 PSShadow(DepthOutput input) : SV_Target
-{
-    float depth = input.ShadowPosition.z / input.ShadowPosition.w;
-    return float4 (depth, depth, depth, 1);
-}
-
 VertexOutput VSMain(VertexInput Input)
 {
     VertexOutput output;
@@ -69,11 +63,17 @@ VertexOutput VSMain(VertexInput Input)
     return output;
 }
 
-float4 PSMain(VertexOutput input) : SV_Target
+float4 PSMain(VertexOutput input) : SV_TARGET
 {
     ColorDesc Color = ApplyAllLights_PS(input);
     // Color = ApplyShadow(Color, input.ShadowPosition, ShadowBias);
     return  Color.Ambient + Color.Diffuse + Color.Specular;
+}
+
+float4 PSShadow(DepthOutput input) : SV_TARGET
+{
+    float depth = input.ShadowPosition.z / input.ShadowPosition.w;
+    return float4 (depth, depth, depth, 1);
 }
 
 #endif

@@ -192,9 +192,6 @@ void Ocean::SetupRenderShaders()
 	OceanRenderer = new HlslShader<VertexType>(
 		L"Ocean/Ocean.hlsl",
 		static_cast<UINT>(ShaderType::VHDP),
-		"VSMain",
-		"PSMain",
-		"",
 		Macros.data()
 	);
 	OceanRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
