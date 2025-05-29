@@ -15,6 +15,7 @@ namespace sdt
 		void ReadAiSceneFromFile(const wstring& InFileName);
 
 	private:
+		const static float PreYRotation;
 		wstring FilePath;
 		Assimp::Importer* Loader;
 		const aiScene * Scene;

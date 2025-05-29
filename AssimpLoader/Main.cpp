@@ -9,7 +9,7 @@
 void Main::Initialize()
 {
 	PUSH_MAIN(sdt::ExportFile);
-	// PUSH_MAIN(Sdt::DrawModel);
+	PUSH_MAIN(sdt::DrawModel);
 }
 
 void Main::Destroy()

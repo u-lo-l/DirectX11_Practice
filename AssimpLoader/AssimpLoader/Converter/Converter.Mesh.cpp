@@ -62,10 +62,11 @@ namespace sdt
 	void Converter::ExportMesh( const wstring & InSaveFileName )
 	{
 		const wstring FullFileName = W_MODEL_PATH + InSaveFileName + L".mesh";
+
 		ReadBoneData(Scene->mRootNode, 0, -1);
 		ReadMeshData();
 		ReadSkinData();
-		
+
 		WriteAndClearBonesAndMeshes(FullFileName);
 	}
 
@@ -81,6 +82,11 @@ namespace sdt
 		if (Bone->IsRootBone() == false)
 		{
 			Bone->Transform = Bone->Transform * Bones[Bone->Parent]->Transform;
+		}
+		else
+		{
+			
+			Bone->Transform = Bone->Transform * Matrix::CreateFromEulerAngleInRadian({0, PreYRotation, 0});
 		}
 		Bones.push_back(Bone);
 
@@ -143,10 +149,16 @@ namespace sdt
 
 	MeshData::VertexType Converter::ReadSingleVertexDataFromAiMesh( const aiMesh * Mesh, UINT VertexIndex, const aiMatrix4x4 & InMeshTransform )
 	{
-		MeshData::VertexType Vertex;
-		aiVector3D transformedVertex = InMeshTransform * Mesh->mVertices[VertexIndex];
-		memcpy_s(&Vertex.Position, sizeof(Vector), &transformedVertex, sizeof(Vector));
+		aiMatrix4x4 PreRotation;
+		aiMatrix4x4::RotationY(PreYRotation, PreRotation);
 
+		MeshData::VertexType Vertex;
+		if (true)
+		{
+			const aiVector3D & LocalVertex = Mesh->mVertices[VertexIndex];
+			const aiVector3D TransformedVertex = PreRotation * InMeshTransform * LocalVertex;
+			memcpy_s(&Vertex.Position, sizeof(Vector), &TransformedVertex, sizeof(Vector));
+		}
 		if (Mesh->HasTextureCoords(0) == true)
 		{
 			memcpy_s(&Vertex.UV, sizeof(Vector2D), Mesh->mTextureCoords[0] + VertexIndex, sizeof(Vector2D));
@@ -157,11 +169,15 @@ namespace sdt
 		}
 		if (Mesh->HasNormals() == true)
 		{
-			memcpy_s(&Vertex.Normal, sizeof(Vector), Mesh->mNormals + VertexIndex, sizeof(Vector));
+			const aiVector3D & LocalNormal = Mesh->mNormals[VertexIndex];
+			const aiVector3D TransformedNormal = PreRotation * InMeshTransform * LocalNormal;
+			memcpy_s(&Vertex.Normal, sizeof(Vector), &TransformedNormal, sizeof(Vector));
 		}
 		if (Mesh->HasTangentsAndBitangents() == true)
 		{
-			memcpy_s(&Vertex.Tangent, sizeof(Vector), Mesh->mTangents + VertexIndex, sizeof(Vector));
+			const aiVector3D & LocalTangent = Mesh->mTangents[VertexIndex];
+			const aiVector3D TransformedTangent = PreRotation * InMeshTransform * LocalTangent;
+			memcpy_s(&Vertex.Tangent, sizeof(Vector), &TransformedTangent, sizeof(Vector));
 		}
 		else
 		{

@@ -4,6 +4,8 @@
 
 namespace sdt
 {
+	const float Converter::PreYRotation = Math::Pi;
+	
 	Converter::Converter()
 	 : Loader(nullptr), Scene(nullptr)
 	{
@@ -20,19 +22,20 @@ namespace sdt
 	{
 		FilePath = W_ASSET_PATH + InFileName;
 
-		if (Scene != nullptr)
+		if (this->Scene != nullptr)
 		{
 			Loader->FreeScene();
 		}
-
-		Scene = Loader->ReadFile(
+	
+		this->Scene = Loader->ReadFile(
 			String::ToString(FilePath).c_str(),
 			aiProcess_ConvertToLeftHanded
 			| aiProcess_Triangulate
-			| aiProcess_GenUVCoords
 			| aiProcess_GenNormals
 			| aiProcess_CalcTangentSpace
-			// | aiProcess_GenBoundingBoxes
+			| aiProcess_TransformUVCoords
+			| aiProcess_GenUVCoords
+			| aiProcess_OptimizeMeshes
 		);
 
 		ASSERT(Scene != nullptr, Loader->GetErrorString())

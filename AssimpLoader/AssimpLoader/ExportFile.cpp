@@ -16,17 +16,17 @@ namespace sdt
 	const string ShaderForModel = "Model/Model.hlsl";
 	void ExportFile::Initialize()
 	{
-		MakeModel(L"Adam", {L"Idle",L"Idle2",L"Idle3", L"Dance01", L"Dance02", L"Dance03", L"Boxing", L"Boxing2", L"HeadHit"}, 1.f);
-		MakeModel(L"Airplane", {}, 0.1f);
+		MakeModel(L"Adam", {L"Standing Cover Turn", L"Capoeira_02",L"Idle",L"Idle2",L"Idle3", L"Dance01", L"Dance02", L"Dance03", L"Boxing", L"Boxing2", L"HeadHit"}, 1.f);
+		// MakeModel(L"Airplane", {}, 0.1f);
 		// MakeModel(L"Cube", {}, 1.f);
 		// MakeModel(L"Cylinder", {}, 1.f);
 		// MakeModel(L"Sphere", {}, 1.f);
 		// MakeModel(L"Cone", {}, 1.f);
 		// MakeModel(L"Plane", {}, 10.f);
-		MakeModel(L"Mousey", {}, 1.f);
-		MakeModel(L"XYBot", {}, 1.f);
-		MakeModel(L"Shannon", {}, 1.f);
-		MakeModel(L"Kachujin", {L"Idle", L"Run", L"Walk", L"Salsa Dancing"}, 1.f);
+		// MakeModel(L"Mousey", {}, 1.f);
+		// MakeModel(L"XYBot", {}, 1.f);
+		// MakeModel(L"Shannon", {}, 1.f);
+		// MakeModel(L"Kachujin", {L"Idle", L"Run", L"Walk", L"Salsa Dancing"}, 1.f);
 	}
 
 	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)

@@ -159,6 +159,7 @@ Transform * Model::AddTransforms()
 	return NewTransform;
 }
 
+
 const Transform * Model::GetTransform( UINT Index ) const
 {
 	if (Index >= InstanceWorldTransforms.size())

@@ -299,7 +299,6 @@ ColorDesc ApplyAllLights_PS(VertexOutput input)
     OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
     OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
     
-
     OutPut.Ambient  *= MatColor.Ambient;
     OutPut.Diffuse  *= MatColor.Diffuse;
     OutPut.Specular *= MatColor.Specular;
