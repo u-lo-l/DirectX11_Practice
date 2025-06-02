@@ -3,7 +3,7 @@
 class String
 {
 public:
-	static void SplitString(vector<string>* InResult, const string & InOrigin, const string & InToken);
+	static void SplitString(vector<string>* InResult, const string & InOrigin, const string & InSeperater);
 	static void SplitString(vector<wstring>* InResult, const wstring & InOrigin, const wstring & InToken);
 
 	static bool StartsWith(const string & InValue, const string & InCompare);

@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "ModelMesh.h"
+#include "SubMesh.h"
 
-class StaticMesh : public ModelMesh
+class StaticMesh : public SubMesh
 {
 public:
 	StaticMesh();

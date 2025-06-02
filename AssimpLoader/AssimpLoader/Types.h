@@ -17,7 +17,7 @@ struct MaterialData
 	vector<string> SpecularFiles;
 	vector<string> NormalFiles;
 
-	void SetTextureFilesFromAiMaterialByTextureType(const aiMaterial * Material, aiTextureType InTextureType);
+	void CollectTexturePaths(const aiMaterial * Material, aiTextureType InTextureType);
 };
 
 struct BoneData

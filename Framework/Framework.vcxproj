@@ -265,6 +265,15 @@
     <ClCompile Include="Framework.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Model\Animation\AnimationClip.cpp" />
+    <ClCompile Include="Model\Animation\AnimationController.cpp" />
+    <ClCompile Include="Model\Character.cpp" />
+    <ClCompile Include="Model\Mesh\CBone.cpp" />
+    <ClCompile Include="Model\Mesh\CMesh.cpp" />
+    <ClCompile Include="Model\Mesh\CSkeletal.cpp" />
+    <ClCompile Include="Model\Mesh\CSkeletalMesh.cpp" />
+    <ClCompile Include="Model\Mesh\CStaticMesh.cpp" />
+    <ClCompile Include="Model\Mesh\MeshSubset.cpp" />
     <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Model\Model.ReadFile.cpp" />
     <ClCompile Include="Model\ModelAnimation.cpp" />
@@ -877,10 +886,19 @@
     <ClInclude Include="Math\Vector2D.h" />
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="Model\Animation\AnimationClip.h" />
+    <ClInclude Include="Model\Animation\AnimationController.h" />
+    <ClInclude Include="Model\Character.h" />
+    <ClInclude Include="Model\Mesh\CBone.h" />
+    <ClInclude Include="Model\Mesh\CMesh.h" />
+    <ClInclude Include="Model\Mesh\CSkeletal.h" />
+    <ClInclude Include="Model\Mesh\CSkeletalMesh.h" />
+    <ClInclude Include="Model\Mesh\CStaticMesh.h" />
+    <ClInclude Include="Model\Mesh\MeshSubset.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Model\ModelAnimation.h" />
     <ClInclude Include="Model\ModelBone.h" />
-    <ClInclude Include="Model\ModelMesh.h" />
+    <ClInclude Include="Model\SubMesh.h" />
     <ClInclude Include="Model\SkeletalMesh.h" />
     <ClInclude Include="Model\Skeleton.h" />
     <ClInclude Include="Model\StaticMesh.h" />

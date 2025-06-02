@@ -2,30 +2,30 @@
 #include "SkeletalMesh.h"
 
 SkeletalMesh::SkeletalMesh()
-	: BoneIndexData(), BoneIndexBuffer(nullptr)
+	: BoneIndexData(), CB_BoneIndex(nullptr)
 {
 }
 
 SkeletalMesh::~SkeletalMesh()
 {
 #pragma region Bone
-	SAFE_DELETE(BoneIndexBuffer);
+	SAFE_DELETE(CB_BoneIndex);
 #pragma endregion Bone
 }
 
 void SkeletalMesh::Render(UINT InstanceCount) const
 {
-	if (BoneIndexBuffer != nullptr)
-		BoneIndexBuffer->BindToGPU();
+	if (CB_BoneIndex != nullptr)
+		CB_BoneIndex->BindToGPU();
 
-	ModelMesh::Render(InstanceCount);
+	SubMesh::Render(InstanceCount);
 }
 
 void SkeletalMesh::CreateBuffers()
 {
-	ModelMesh::CreateBuffers();
+	SubMesh::CreateBuffers();
 	const string CBufferInfo = MeshName + " : Base Bone Index for this Mesh";
-	BoneIndexBuffer = new ConstantBuffer(
+	CB_BoneIndex = new ConstantBuffer(
 		ShaderType::VertexShader,
 		VS_BoneIndex,
 		&BoneIndexData,

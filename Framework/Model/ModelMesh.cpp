@@ -2,12 +2,12 @@
 #include "StaticMesh.h"
 #include "SkeletalMesh.h"
 
-ModelMesh::ModelMesh()
+SubMesh::SubMesh()
 {
 	WorldTF = new Transform();
 }
 
-ModelMesh::~ModelMesh()
+SubMesh::~SubMesh()
 {
 	SAFE_DELETE(VBuffer);
 	SAFE_DELETE(IBuffer);
@@ -17,14 +17,14 @@ ModelMesh::~ModelMesh()
 
 // InstanceSize는 Model의 Transforms의 size()
 // BlendingDesc의 Current의 Clip정보는 일단 랜덤으로 줬다고 가정하자.
-void ModelMesh::Tick()
+void SubMesh::Tick()
 {
 	WorldTF->Tick();
 	PS_ViewInv.ViewInv = Matrix::Invert(Context::Get()->GetViewMatrix());
 	ViewInv_CBuffer_PS->UpdateData(&PS_ViewInv, sizeof(ViewInvDesc));
 }
 
-void ModelMesh::RenderShadow(UINT InstanceCount) const
+void SubMesh::RenderShadow(UINT InstanceCount) const
 {
 	VBuffer->BindToGPU();
 	IBuffer->BindToGPU();
@@ -38,7 +38,7 @@ void ModelMesh::RenderShadow(UINT InstanceCount) const
 	);
 }
 
-void ModelMesh::Render(UINT InstanceCount) const
+void SubMesh::Render(UINT InstanceCount) const
 {
 	// ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	VBuffer->BindToGPU();
@@ -56,15 +56,15 @@ void ModelMesh::Render(UINT InstanceCount) const
 	);
 }
 
-void ModelMesh::SetMaterialData( Material<VertexType> * InMaterial )
+void SubMesh::SetMaterialData( Material<VertexType> * InMaterial )
 {
 	MaterialData = InMaterial;
 }
 
-void ModelMesh::ReadMeshFile
+void SubMesh::ReadMeshFile
 (
 	const BinaryReader * InReader,
-	vector<ModelMesh*> & OutMeshes,
+	vector<SubMesh*> & OutMeshes,
 	const map<string, Material<VertexType>*> & InMaterialTable,
 	bool bIsSkeletal
 )
@@ -106,7 +106,7 @@ void ModelMesh::ReadMeshFile
 	}
 }
 
-void ModelMesh::CreateBuffers()
+void SubMesh::CreateBuffers()
 {
 	VBuffer = new VertexBuffer(Vertices.data(), Vertices.size(), sizeof(VertexType));
 	IBuffer = new IndexBuffer(Indices.data(), Indices.size());

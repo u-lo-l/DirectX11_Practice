@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "ModelMesh.h"
+#include "SubMesh.h"
 
 // NOLINT(cppcoreguidelines-special-member-functions)
-class SkeletalMesh final : public ModelMesh 
+class SkeletalMesh final : public SubMesh 
 {
 public:
 	static constexpr UINT MaxBoneCount = 256;
@@ -27,8 +27,7 @@ private:
 	};
 	// 이 SkeletalMesh의 BaseBone. 변경되지 않음.
 	BoneIndexDesc BoneIndexData;
-	ConstantBuffer * BoneIndexBuffer;
-	string CBufferName = "CB_BoneIndex";
+	ConstantBuffer * CB_BoneIndex;
 #pragma endregion Bone
 
 };

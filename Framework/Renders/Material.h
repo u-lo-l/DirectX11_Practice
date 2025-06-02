@@ -24,7 +24,7 @@ public:
 	~Material();
 
 	void Tick();
-	void BindToGPU();
+	void BindToGPU(int SlotNum = TextureSlot::PS_TextureMap);
 
 	void SetShader(const wstring & InShaderFileName, const D3D_SHADER_MACRO * ShaderMacro = nullptr);
 	void SetShader(const HlslShader<VertexType> * InShader);
@@ -105,15 +105,14 @@ void Material<TVertexType>::Tick()
 }
 
 template<class TVertexType>
-void Material<TVertexType>::BindToGPU()
+void Material<TVertexType>::BindToGPU(int SlotNum)
 {
 	if (Shader == nullptr)
 		return ;
 	
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	ColorData_CBuffer->BindToGPU();
-	DeviceContext->PSSetShaderResources(TextureSlot::PS_TextureMap, MaxTextureCount, SRVs);
-	// DeviceContext->DSSetShaderResources(TextureSlot::PS_TextureMap, 1, SRVs + 2);
+	DeviceContext->PSSetShaderResources(SlotNum, MaxTextureCount, SRVs);
 }
 
 template<class TVertexType>
@@ -135,15 +134,14 @@ template<class TVertexType>
 void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D3D_SHADER_MACRO * ShaderMacro)
 {
 	assert(InShaderFileName.length() > 0);
-	UINT TargetShaderFlag = static_cast<UINT>(ShaderType::VertexShader) | static_cast<UINT>(ShaderType::PixelShader);
 
 	SAFE_DELETE(Shader);
 	ShaderFileName = InShaderFileName;
 	Shader = new HlslShader<VertexType>(
 		ShaderFileName,
-		TargetShaderFlag,
+		static_cast<UINT>(ShaderType::VP),
 		ShaderMacro,
-		false
+		true
 	);
 	Shader->CreateRasterizerState_Solid();
 	// Shader->CreateRasterizerState_WireFrame();
@@ -154,9 +152,9 @@ void Material<TVertexType>::SetShader( const wstring & InShaderFileName, const D
 	SAFE_DELETE(ShadowShader);
 	ShadowShader = new HlslShader<VertexType>(
 		ShaderFileName,
-		TargetShaderFlag,
+		static_cast<UINT>(ShaderType::VP),
 		ShaderMacro,
-		false,
+		true,
 		"VSShadow",
 		"PSShadow"
 	);

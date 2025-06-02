@@ -1,6 +1,8 @@
 ﻿#include "framework.h"
 #include "Skeleton.h"
 
+#include "Mesh/MeshSubset.h"
+
 Skeleton::Skeleton()
 	: BoneDescBuffer(nullptr)
 {
@@ -12,7 +14,7 @@ Skeleton::~Skeleton()
 		SAFE_DELETE(Bone);
 }
 
-void Skeleton::SetUpBoneTable(const vector<ModelMesh *> & Meshes)
+void Skeleton::SetUpBoneTable(const vector<SubMesh *> & Meshes)
 {
 	this->CachedBoneTable = new CachedBoneTableType(); // 애니메이션 다 읽으면 지워진다.
 	for (int i = 0; i < GetBoneCount(); i++)
@@ -31,6 +33,27 @@ void Skeleton::SetUpBoneTable(const vector<ModelMesh *> & Meshes)
 		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
 	}
 	// 이것 이후에 CreateBuffer 해야함.
+}
+
+void Skeleton::SetUpBoneTable(const vector<MeshSubset*> & SubMeshes)
+{
+	this->CachedBoneTable = new CachedBoneTableType(); // 애니메이션 다 읽으면 지워진다.
+	for (int i = 0; i < GetBoneCount(); i++)
+	{
+		ModelBone * TargetBone = this->Bones[i];
+
+		this->BoneData.OffsetMatrix[i] = Matrix::Invert(TargetBone->Transform, true);
+		this->BoneData.BoneTransform[i] = TargetBone->Transform; // Bone의 Root기준 Transform.
+		for (const UINT number : TargetBone->MeshIndices)
+		{
+			// SkeletalMesh * SkMesh = dynamic_cast<SkeletalMesh*>(SubMeshes[number]);
+			MeshSubset* TargetSubMesh = SubMeshes[number];
+			const Matrix & BoneTransform = TargetBone->Transform;
+			TargetSubMesh->SetTransform(BoneTransform);
+			// TargetSubMesh->SetBoneIndex(TargetBone->Index);
+		}
+		(*CachedBoneTable)[TargetBone->Name] = TargetBone;
+	}
 }
 
 void Skeleton::ClearBoneTable()

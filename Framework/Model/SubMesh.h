@@ -4,10 +4,10 @@ class ModelAnimation;
 class ModelBone;
 struct MeshData;
 
-class ModelMesh
+class SubMesh
 {
 public:
-	using ThisClass = ModelMesh;
+	using ThisClass = SubMesh;
 	using ThisClassPtr = ThisClass*;
 	friend class Model;
 protected:
@@ -24,9 +24,9 @@ protected:
 	explicit ModelMesh(const string & MetaData = "ModelMesh");
 	string MetaData;
 #else
-	ModelMesh();
+	SubMesh();
 #endif
-	virtual ~ModelMesh() = 0;
+	virtual ~SubMesh() = 0;
 	void Tick();
 	virtual void RenderShadow(UINT InstanceCount) const;
 	virtual void Render(UINT InstanceCount) const;

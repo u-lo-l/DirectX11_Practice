@@ -45,7 +45,10 @@ namespace sdt
 			Character->GetTransform(0)->AddLocalTranslation(DeltaPosition);
 		}
 
-		if (!!Terrain) Terrain->Tick();
+		if (!!Terrain)
+		{
+			Terrain->Tick();
+		}
 		if (!!Character)
 		{
 			Character->Tick();
@@ -56,7 +59,6 @@ namespace sdt
 			Gui::Get()->RenderText(5, 220, 0, 255, 0, String::Format("F : %.3f, %.3f, %.3f", Forward.X, Forward.Y, Forward.Z));
 			Gui::Get()->RenderText(5, 240, 0, 255, 0, String::Format("R : %.3f, %.3f, %.3f", Right.X, Right.Y, Right.Z));
 		}
-		
 	}
 
 	void CharacterMoveDemo::PreRender()

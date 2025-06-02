@@ -2,6 +2,8 @@
 #include <fstream>
 #include "ExportFile.h"
 #include "Converter/Converter.h"
+#include "Converter2/MeshConverter.h"
+#include "Converter2/AnimationConverter.h"
 
 namespace sdt
 {
@@ -14,19 +16,44 @@ namespace sdt
 	// const string ShaderForNonAnim = "Lighting/43_Instancing_Model_Lighting.hlsl";
 
 	const string ShaderForModel = "Model/Model.hlsl";
+
+	ExportFile::ExportFile()
+	{
+		bTickable = false;
+	}
+
 	void ExportFile::Initialize()
 	{
-		MakeModel(L"Adam", {L"Standing Cover Turn", L"Capoeira_02",L"Idle",L"Idle2",L"Idle3", L"Dance01", L"Dance02", L"Dance03", L"Boxing", L"Boxing2", L"HeadHit"}, 1.f);
-		// MakeModel(L"Airplane", {}, 0.1f);
-		// MakeModel(L"Cube", {}, 1.f);
-		// MakeModel(L"Cylinder", {}, 1.f);
-		// MakeModel(L"Sphere", {}, 1.f);
-		// MakeModel(L"Cone", {}, 1.f);
-		// MakeModel(L"Plane", {}, 10.f);
-		// MakeModel(L"Mousey", {}, 1.f);
-		// MakeModel(L"XYBot", {}, 1.f);
-		// MakeModel(L"Shannon", {}, 1.f);
-		// MakeModel(L"Kachujin", {L"Idle", L"Run", L"Walk", L"Salsa Dancing"}, 1.f);
+		ExportMeshes({L"Adam/Adam.fbx", L"Kachujin/Kachujin.fbx"});
+		ExportAnimations({
+			L"Adam/Standing Cover Turn.fbx",
+			L"Adam/Capoeira_02.fbx",
+			L"Adam/Idle.fbx",
+			L"Adam/Idle2.fbx",
+			L"Adam/Idle3.fbx",
+			L"Adam/Dance01.fbx",
+			L"Adam/Dance02.fbx",
+			L"Adam/Dance03.fbx",
+			L"Adam/Boxing.fbx",
+			L"Adam/Boxing2.fbx",
+			L"Adam/HeadHit.fbx"
+		});
+	}
+
+	void ExportFile::ExportMeshes(const vector<wstring>& FBXFileNames)
+	{
+		MeshConverter * meshConverter = new MeshConverter();
+		for (const wstring & fileName : FBXFileNames)
+			meshConverter->ReadAiScene(fileName);
+		SAFE_DELETE(meshConverter);
+	}
+
+	void ExportFile::ExportAnimations(const vector<wstring>& FBXFileNames)
+	{
+		AnimationConverter * AnimConverter = new AnimationConverter();
+		for (const wstring & fileName : FBXFileNames)
+			AnimConverter->ReadAiScene(fileName);
+		SAFE_DELETE(AnimConverter);
 	}
 
 	void ExportFile::MakeModel(const wstring & InModelName, const vector<wstring> & InAnimationNames, float InScale)
@@ -44,7 +71,10 @@ namespace sdt
 		for (wstring AnimationName : InAnimationNames)
 		{
 			converter->ReadAiSceneFromFile(InModelName + L"/" + AnimationName + L".fbx");
-			converter->ExportAnimation(String::ToString(InModelName) + "/" + String::ToString(AnimationName), 0);
+			converter->ExportAnimation(
+				String::ToString(InModelName) + "/" + String::ToString(AnimationName),
+				0
+			);
 		}
 		SAFE_DELETE(converter);
 	}

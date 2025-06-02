@@ -19,7 +19,6 @@ WPARAM Window::Run(IExecutable * InMain)
 
 	Main = InMain;
 	Main->Initialize();
-
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 	while (true) //Game Loop
@@ -173,7 +172,7 @@ void Window::MainRender()
 	Main->Tick();						// Main에 Push된 IExecutable들 실행
 
 	{
-		Main->PreRender();	
+		Main->PreRender();
 	}
 	
 	{

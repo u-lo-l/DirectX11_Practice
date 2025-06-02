@@ -99,8 +99,14 @@ using namespace std;
 
 	#include "Model/Model.h"
 	#include "Model/ModelBone.h"
-	#include "Model/ModelMesh.h"
+	#include "Model/SubMesh.h"
 	#include "Model/ModelAnimation.h"
+
+	#include "Model/Mesh/CBone.h"
+	#include "Model/Mesh/CMesh.h"
+	#include "Model/Mesh/CSkeletal.h"
+	#include "Model/Mesh/CSkeletalMesh.h"
+	#include "Model/Mesh/MeshSubset.h"
 
 	#include "Environment/LandScape/SceneryCell.h"
 	#include "Environment/LandScape/LandScape.h"

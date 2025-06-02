@@ -4,11 +4,10 @@
 # include "Model.Resources.hlsl"
 # include "Model.Functions.hlsl"
 # include "Model.Struct.hlsl"
-// # define USE_ANIMATION 1
+
 # ifdef USE_ANIMATION
 #  include "Model.Animation.Functions.hlsl"
 # endif
-
 
 DepthOutput VSShadow(VertexInput Input)
 {
@@ -18,7 +17,6 @@ DepthOutput VSShadow(VertexInput Input)
 
 #  ifdef USE_ANIMATION
     output.ShadowPosition = SetAnimatedBoneToWorldTF_Instancing(Input); // Local_Space(Bone Root Space)
-
 #  else 
     output.ShadowPosition = Input.Position;
 #  endif
@@ -29,26 +27,31 @@ DepthOutput VSShadow(VertexInput Input)
     return output;
 }
 
+float4 PSShadow(DepthOutput input) : SV_TARGET
+{
+    float depth = input.ShadowPosition.z / input.ShadowPosition.w;
+    return float4 (depth, depth, depth, 1);
+}
+
 VertexOutput VSMain(VertexInput Input)
 {
     VertexOutput output;
 
-    matrix ModelWorldTF = Input.Transform;
-    output.Normal = mul(Input.Normal, (float3x3) ModelWorldTF);
-    output.Tangent = mul(Input.Tangent, (float3x3) ModelWorldTF);
-
-    ModelWorldTF = mul(BoneTransforms[BaseBoneIndex], ModelWorldTF);
-
-    output.Uv = Input.Uv;
-
+    matrix MeshWorldTF = Input.Transform;
+    MeshWorldTF = mul(BoneTransforms[BaseBoneIndex], MeshWorldTF);
+    
 #  ifdef USE_ANIMATION
     output.Position = SetAnimatedBoneToWorldTF_Instancing(Input);
-
 #  else 
     output.Position = Input.Position;
 #  endif
 
-    output.Position = mul(output.Position, ModelWorldTF);
+    output.Uv = Input.Uv;
+
+    output.Normal = mul(Input.Normal, (float3x3)MeshWorldTF);
+    output.Tangent = mul(Input.Tangent, (float3x3)MeshWorldTF);
+
+    output.Position = mul(output.Position, MeshWorldTF);
     output.WorldPosition = output.Position.xyz;
     output.Position = mul(output.Position, View_VS);
     output.Position = mul(output.Position, Projection_VS);
@@ -68,12 +71,6 @@ float4 PSMain(VertexOutput input) : SV_TARGET
     ColorDesc Color = ApplyAllLights_PS(input);
     // Color = ApplyShadow(Color, input.ShadowPosition, ShadowBias);
     return  Color.Ambient + Color.Diffuse + Color.Specular;
-}
-
-float4 PSShadow(DepthOutput input) : SV_TARGET
-{
-    float depth = input.ShadowPosition.z / input.ShadowPosition.w;
-    return float4 (depth, depth, depth, 1);
 }
 
 #endif

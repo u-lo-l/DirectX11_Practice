@@ -61,7 +61,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 	}
 
 	CreateAnimationBuffers();
-	for (ModelMesh * M : this->Meshes)
+	for (SubMesh * M : this->Meshes)
 	{
 		M->CreateBuffers();
 	}
@@ -85,7 +85,7 @@ void Model::ReadMaterial( const wstring & InFileName, bool bUseAnimation)
 
 		if (MaterialsTable.find(Name) != MaterialsTable.cend())
 			continue;
-		
+
 		ReadShaderName(Value, MatData, bUseAnimation);
 		ReadColor(Value, MatData);
 		ReadColorMap(Value, MatData);
@@ -151,7 +151,7 @@ void Model::ReadMeshAndCreateBoneTable( const wstring & InFileName  )
 
 	ModelBone::ReadModelFile(BinReader, this->SkeletonData);
 	bool bIsSkeletal = this->SkeletonData != nullptr;
-	ModelMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable, bIsSkeletal);
+	SubMesh::ReadMeshFile(BinReader, this->Meshes, this->MaterialsTable, bIsSkeletal);
 	
 	BinReader->Close();
 	SAFE_DELETE(BinReader);

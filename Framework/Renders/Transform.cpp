@@ -202,6 +202,16 @@ void Transform::AddScale(const Vector& InScale)
 	UpdateMatrix();
 }
 
+void Transform::SetTransform(const Matrix& InMatrix)
+{
+	Vector Scale;
+	Quaternion Rotation;
+	Vector Position;
+	InMatrix.Decompose(Scale, Rotation, Position);
+
+	this->SetTRS(Position, Rotation, Scale);
+}
+
 void Transform::AddTransform(const Matrix& InMatrix)
 {
 	Vector Translation;

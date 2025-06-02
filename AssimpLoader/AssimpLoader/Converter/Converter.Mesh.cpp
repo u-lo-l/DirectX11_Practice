@@ -192,18 +192,6 @@ namespace sdt
 		BinaryWriter * BinWriter = new BinaryWriter();
 		BinWriter->Open(InSaveFileName);
 
-		BinWriter->WriteUint(Bones.size());
-		for (const BoneData * BoneData : Bones)
-		{
-			BinWriter->WriteUint(BoneData->Index);
-			BinWriter->WriteString(BoneData->Name);
-			BinWriter->WriteInt(BoneData->Parent);
-			BinWriter->WriteMatrix(BoneData->Transform);
-			BinWriter->WriteSTDVector<UINT>(BoneData->MeshIndices);
-			SAFE_DELETE(BoneData);
-		}
-		Bones.clear();
-		
 		BinWriter->WriteUint(Meshes.size());
 		for (const MeshData * MeshData : Meshes)
 		{
@@ -215,6 +203,18 @@ namespace sdt
 			SAFE_DELETE(MeshData);
 		}
 		Meshes.clear();
+		
+		BinWriter->WriteUint(Bones.size());
+		for (const BoneData * BoneData : Bones)
+		{
+			BinWriter->WriteUint(BoneData->Index);
+			BinWriter->WriteString(BoneData->Name);
+			BinWriter->WriteInt(BoneData->Parent);
+			BinWriter->WriteMatrix(BoneData->Transform);
+			BinWriter->WriteSTDVector<UINT>(BoneData->MeshIndices);
+			SAFE_DELETE(BoneData);
+		}
+		Bones.clear();
 		
 		BinWriter->Close();
 		SAFE_DELETE(BinWriter);

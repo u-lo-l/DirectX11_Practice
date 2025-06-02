@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class MeshSubset;
+
 class Skeleton
 {
 public:
@@ -8,7 +10,8 @@ public:
 	~Skeleton();
 
 	int GetBoneCount() const { return Bones.size(); }
-	void SetUpBoneTable(const vector<ModelMesh *> & Meshes);
+	void SetUpBoneTable(const vector<SubMesh *> & Meshes);
+	void SetUpBoneTable(const vector<MeshSubset *> & SubMeshes);
 	void ClearBoneTable();
 	const CachedBoneTableType * GetCachedBoneTable() const { return CachedBoneTable; }
 	// BoneDesc ConstantBuffer 생성
@@ -19,6 +22,7 @@ private:
 	friend class Model;
 	friend class ModelBone;
 	friend class ModelAnimation;
+	friend class CSkeletalMesh;
 private:
 	vector<ModelBone *> Bones;
 	CachedBoneTableType * CachedBoneTable = nullptr;

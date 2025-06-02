@@ -4,7 +4,7 @@
 #include "Skeleton.h"
 
 class ModelBone;
-class ModelMesh;
+class SubMesh;
 class ModelAnimation;
 
 class Model
@@ -35,7 +35,7 @@ private:
 	static Color JsonStringToColor(const Json::String & InJson);
 	string ModelName;
 	map<string, Material<VertexType>*> MaterialsTable;
-	vector<ModelMesh *> Meshes;
+	vector<SubMesh *> Meshes;
 	Transform * WorldTransform;
 
 #pragma region Instancing

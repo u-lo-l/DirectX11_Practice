@@ -37,6 +37,7 @@ public:
 	void AddWorldRotation(const Vector & InZYXEulerRadian);
 	void AddLocalRotation(const Vector & InZYXEulerRadian);
 	void AddScale(const Vector & InScale);
+	void SetTransform(const Matrix & InMatrix);
 	void AddTransform(const Matrix & InMatrix);
 	void AddTransform(const Transform & InTransform);
 	void AddTransform(const Transform * InTransform);

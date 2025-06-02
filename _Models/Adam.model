@@ -1,24 +1,11 @@
 {
-   "Animations" : [
-      "Adam/Standing Cover Turn",
-      "Adam/Capoeira_02",
-      "Adam/Idle",
-      "Adam/Idle2",
-      "Adam/Idle3",
-      "Adam/Dance01",
-      "Adam/Dance02",
-      "Adam/Dance03",
-      "Adam/Boxing",
-      "Adam/Boxing2",
-      "Adam/HeadHit"
-   ],
    "File" : {
-      "Material" : "Adam",
+      "Materials" : "Adam",
       "Mesh" : "Adam"
    },
    "Transform" : {
-      "Position" : "0,0,0",
-      "Rotation" : "0,0,0",
-      "Scale" : "1.000000,1.000000,1.000000"
+      "Position" : "0.0,0.0,0.0",
+      "Rotation" : "0.0,0.0,0.0",
+      "Scale" : "0.1,0.1,0.1"
    }
 }

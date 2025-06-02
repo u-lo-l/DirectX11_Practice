@@ -11,6 +11,7 @@ public:
 	void Tick() override;
 	void Render() override;
 
+	unsigned int GetExecutableCount() const { return Executables.size(); }
 private:
 	void Push(IExecutable* Executable);
 

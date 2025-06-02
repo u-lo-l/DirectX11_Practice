@@ -1,17 +1,11 @@
 {
-   "Animations" : [
-      "Kachujin/Idle",
-      "Kachujin/Run",
-      "Kachujin/Walk",
-      "Kachujin/Salsa Dancing"
-   ],
    "File" : {
-      "Material" : "Kachujin",
+      "Materials" : "Kachujin",
       "Mesh" : "Kachujin"
    },
    "Transform" : {
-      "Position" : "0,0,0",
-      "Rotation" : "0,0,0",
-      "Scale" : "1.000000,1.000000,1.000000"
+      "Position" : "0.0,0.0,0.0",
+      "Rotation" : "0.0,0.0,0.0",
+      "Scale" : "0.1,0.1,0.1"
    }
 }

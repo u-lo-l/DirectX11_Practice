@@ -2,10 +2,9 @@
 #include "Types.h"
 
 // const aiMaterial * const : 함수 내에서 Material의 불변성을 보장
-void MaterialData::SetTextureFilesFromAiMaterialByTextureType( const aiMaterial * const Material, aiTextureType InTextureType )
+void MaterialData::CollectTexturePaths( const aiMaterial * const Material, aiTextureType InTextureType )
 {
-	vector<string> * TargetList = nullptr;
-
+	vector<string> * TargetList;
 	if (InTextureType==aiTextureType_DIFFUSE)
 		TargetList = &this->DiffuseFiles;
 	else if (InTextureType==aiTextureType_SPECULAR)
@@ -14,14 +13,15 @@ void MaterialData::SetTextureFilesFromAiMaterialByTextureType( const aiMaterial 
 		TargetList = &this->NormalFiles;
 	else
 		return ;
-		
+
+	
 	aiString TextureFile;
 	const UINT TextureCount = Material->GetTextureCount(InTextureType);
-	TargetList->reserve(TextureCount);
+	TargetList->clear();
 
 	for (UINT TextureIndex = 0; TextureIndex < TextureCount; TextureIndex++)
 	{
 		Material->GetTexture(InTextureType, TextureIndex, &TextureFile);
-		TargetList->emplace_back(TextureFile.C_Str());
+		TargetList->push_back(TextureFile.C_Str());
 	}
 }

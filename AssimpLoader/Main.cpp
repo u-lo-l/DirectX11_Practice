@@ -5,11 +5,13 @@
 
 #include "AssimpLoader/ExportFile.h"
 #include "AssimpLoader/DrawModel.h"
+#include "AssimpLoader/DrawCSkeletalMesh.h"
 
 void Main::Initialize()
 {
 	PUSH_MAIN(sdt::ExportFile);
-	PUSH_MAIN(sdt::DrawModel);
+	// PUSH_MAIN(sdt::DrawModel);
+	PUSH_MAIN(DrawCSkeletalMesh);
 }
 
 void Main::Destroy()
@@ -34,8 +36,10 @@ void Main::Render()
 
 void Main::Push(IExecutable* Executable)
 {
-	Executables.push_back(Executable);
+	ASSERT(!!Executable , String::Format("%s | Executable Not Valid", __FUNCTION__).c_str());
 
+	if (Executable->IsTickable())
+		Executables.push_back(Executable);
 	Executable->Initialize();
 }
 
@@ -51,9 +55,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	D3D::SetDesc(desc);
 
-	// ReSharper disable once CppUseAuto
+	WPARAM wParam = 0;
 	Main * main = new Main();
-	const WPARAM wParam = Window::Run(main);
+	wParam = Window::Run(main);
 	SAFE_DELETE(main)
 	return static_cast<int>(wParam);
 }

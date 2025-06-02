@@ -11,4 +11,9 @@ public:
 	virtual void PreRender(){}
 	virtual void Render(){}
 	virtual void PostRender(){} // Render UI
+	
+	bool IsTickable() const { return bTickable; }
+protected:
+	bool bTickable = true;
+	// bool bRenderable = true;
 };

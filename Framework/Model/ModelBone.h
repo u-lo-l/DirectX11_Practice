@@ -4,16 +4,19 @@ class Skeleton;
 
 class ModelBone
 {
+public:
+	static void ReadModelFile( const BinaryReader * InReader, Skeleton* &OutSkeleton);
+private:
 	using ThisClass = ModelBone;
 	using ThisClassPtr = ThisClass*;
 	friend class Model;
 	friend class ModelAnimation;
 	friend class Skeleton;
+	friend class CSkeletalMesh;
 
 	ModelBone();
 	~ModelBone();
 	bool IsRootBone() const {return ParentIndex < 0;}
-	static void ReadModelFile( const BinaryReader * InReader, Skeleton* &OutSkeleton);
 	
 	int Index = -1;
 	string Name;

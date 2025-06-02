@@ -22,7 +22,7 @@ Model::~Model()
 	SAFE_RELEASE(KeyFrameSRV2DArray);
 	
 	SAFE_DELETE(InstBuffer);
-	for (const ModelMesh * Mesh : Meshes)
+	for (const SubMesh * Mesh : Meshes)
 		SAFE_DELETE(Mesh);
 	for (pair<string, Material<VertexType> *> KeyVal : MaterialsTable)
 		SAFE_DELETE(KeyVal.second);
@@ -85,7 +85,7 @@ void Model::Tick()
 	if (AnimationFrameData_CBuffer != nullptr)
 		AnimationFrameData_CBuffer->UpdateData(&this->BlendingDatas, sizeof(AnimationBlendingDesc) * MaxModelInstanceCount );
 	
-	for (ModelMesh * M : Meshes)
+	for (SubMesh * M : Meshes)
 	{
 		M->Tick();
 	}
@@ -106,7 +106,7 @@ void Model::RenderShadow() const
 		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &KeyFrameSRV2DArray);
 	
 	const int InstanceCount = InstanceWorldTransforms.size();
-	for (ModelMesh * const M : Meshes)
+	for (SubMesh * const M : Meshes)
 	{
 		M->RenderShadow(InstanceCount);
 	}
@@ -130,7 +130,7 @@ void Model::Render() const
 		D3D::Get()->GetDeviceContext()->VSSetShaderResources(TextureSlot::VS_KeyFrames, 1, &KeyFrameSRV2DArray);
 
 	const int InstanceCount = InstanceWorldTransforms.size();
-	for (ModelMesh * const M : Meshes)
+	for (SubMesh * const M : Meshes)
 	{
 		M->Render(InstanceCount);
 	}
@@ -138,7 +138,7 @@ void Model::Render() const
 
 void Model::SetTiling(const Vector2D & Tiling) const
 {
-	for (ModelMesh * M : Meshes)
+	for (SubMesh * M : Meshes)
 		M->PS_ViewInv.Tiling = Tiling;
 }
 
