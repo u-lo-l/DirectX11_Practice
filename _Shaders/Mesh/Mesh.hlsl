@@ -2,16 +2,16 @@
 #define __MESH_HLSL__
 
 # define MAX_BONE_COUNT 256
-
+# define MAX_BLENDING_BONE_COUNT 4
 struct VS_Input
 {
-    float4 Position  : POSITION;
+    float4 Position  : POSITION; // Model의 BindPose
     float2 Uv        : UV;
     float4 Color     : COLOR;
     float3 Normal    : NORMAL;
     float3 Tangent   : TANGENT;
-    float4 Indices   : BLENDINDICES;
-    float4 Weight    : BLENDWEIGHTS;
+    float4 Indices   : BLENDINDICES; // BoneIndices
+    float4 Weights   : BLENDWEIGHTS;
 
     matrix InstanceTF: INSTANCE;
     uint InstanceID  : SV_InstanceID;
@@ -34,29 +34,23 @@ struct DepthOutput
     float4 ShadowPosition : SV_Position;
 };
 
-cbuffer CB_Matrix : register(b0) // VS PS
+cbuffer CB_Matrix : register(b0) // PerModel VS PS
 {
     matrix World;
     matrix View;
     matrix Projection;
     matrix ViewInverse;
 }
-
-cbuffer CB_Light : register(b1)
+cbuffer CB_Light : register(b1) // PerFrame PS
 {
     float4 LightColor;
     float3 LightDirection;
     float  LightPadding;
 }
-
-cbuffer CB_LocalMatrix : register(b2)
+cbuffer CB_BoneMatrix : register(b2) // PerModel VS
 {
-    matrix LocalTf;
-}
-
-cbuffer CB_OffsetMatrix : register(b3)
-{
-    matrix OffsetMatrix[MAX_BONE_COUNT];
+    matrix BoneMatrices[MAX_BONE_COUNT];
+    matrix OffsetMatrices[MAX_BONE_COUNT]; // Inv(BoneMatrix)
 }
 
 static const int DiffuseMap = 0;
@@ -66,13 +60,27 @@ Texture2D MaterialMaps[3] : register(t0);
 SamplerState LinearSampler : register(s0);
 
 
+float4 BlendPosition(float4 BindPoseInModelSpace, float4 Indicies, float4 Weights)
+{
+    float4 Result = float4(0,0,0,0);
+
+    [unroll]
+    for (int i = 0 ; i < MAX_BLENDING_BONE_COUNT ; i++)
+    {
+        const int TargetBoneIndex = Indicies[i];
+        const float Weight = Weights[i];
+        float4 VertexPoseInBoneSpace = mul(BindPoseInModelSpace, OffsetMatrices[TargetBoneIndex]);
+        Result += mul(VertexPoseInBoneSpace, BoneMatrices[TargetBoneIndex]) * Weight;
+    }
+    return Result;
+}
+
 VS_Output VSMain(VS_Input Input)
 {
     VS_Output Output;
 
-    const matrix MeshWorldTf = mul(LocalTf, World);
-
-    Output.Position = mul(Input.Position, MeshWorldTf);
+    Output.Position = BlendPosition(Input.Position, Input.Indices, Input.Weights);
+    Output.Position = mul(Output.Position, World);
     Output.WorldPosition = Output.Position.xyz;
 
     Output.Position = mul(Output.Position, View);
@@ -82,8 +90,9 @@ VS_Output VSMain(VS_Input Input)
     Output.ShadowPosition = float4(0,0,0,1);
 
     Output.Uv = Input.Uv;
-    Output.Normal = normalize(mul(Input.Normal, (float3x3)MeshWorldTf));
-    Output.Tangent = normalize(mul(Input.Tangent, (float3x3)MeshWorldTf));
+    Output.Normal = normalize(mul(Input.Normal, (float3x3)World));
+    Output.Tangent = normalize(mul(Input.Tangent, (float3x3)World));
+
     return Output;
 }
 

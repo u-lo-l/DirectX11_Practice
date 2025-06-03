@@ -16,7 +16,7 @@ public:
 		ShaderType TargetShaderType,
 		int RegisterIndex = 0,
 		void * InData = nullptr,
-		string InDataName = "",
+		const string& InDataName = "",
 		UINT InDataSize = 0,
 		bool bStatic = false
 	);

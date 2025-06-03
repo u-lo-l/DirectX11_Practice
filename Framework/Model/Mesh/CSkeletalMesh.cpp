@@ -16,7 +16,7 @@ CSkeletalMesh::CSkeletalMesh(const wstring& InModelName)
 
 	ReadTransform(Root);
 	ReadMaterial(Root);
-	ReadMeshAndCreateBoneMap(Root);
+	ReadSubMeshesAndBones(Root);
 
 	CB_Matrix = new ConstantBuffer(
 		ShaderType::VertexShader,
@@ -66,6 +66,7 @@ void CSkeletalMesh::Render()
 {
 	CB_Matrix->BindToGPU(); // 0
 	CB_Light->BindToGPU();	// 1
+	Skeleton->BindToGPU(); // 2, 3
 	
 	for (MeshSubset * Subset : MeshSubsets)
 		Subset->Render();
@@ -111,7 +112,7 @@ void CSkeletalMesh::ReadMaterial(const Json::Value::const_iterator::reference Ro
 	}
 }
 
-void CSkeletalMesh::ReadMeshAndCreateBoneMap(const Json::Value::const_iterator::reference Root)
+void CSkeletalMesh::ReadSubMeshesAndBones(const Json::Value::const_iterator::reference Root)
 {
 	const wstring MeshFileName = String::ToWString(Root["File"]["Mesh"].asString());
 	const wstring FullPath = W_MODEL_PATH + MeshFileName + L"/Mesh/" + MeshFileName + L".mesh";

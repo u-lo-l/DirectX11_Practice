@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Systems/IExecutable.h"
 
+class Character;
 class CSkeletalMesh;
 
 class DrawCSkeletalMesh : public IExecutable
@@ -11,5 +12,5 @@ public:
 	void Tick() override;
 	void Render() override;
 
-	CSkeletalMesh * Mesh;
+	Character * Adam; 
 };

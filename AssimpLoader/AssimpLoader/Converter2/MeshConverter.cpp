@@ -434,6 +434,7 @@ MeshData::VertexType MeshConverter::ReadSingleVertex( const aiMesh * Mesh, UINT 
 	{
 		const aiVector3D & LocalVertex = Mesh->mVertices[VertexIndex];
 		const aiVector3D TransformedVertex = PreRotation * InMeshTransform * LocalVertex;
+		// const aiVector3D TransformedVertex = LocalVertex;
 		memcpy_s(&Vertex.Position, sizeof(Vector), &TransformedVertex, sizeof(Vector));
 	}
 	if (Mesh->HasTextureCoords(0) == true)
@@ -448,12 +449,14 @@ MeshData::VertexType MeshConverter::ReadSingleVertex( const aiMesh * Mesh, UINT 
 	{
 		const aiVector3D & LocalNormal = Mesh->mNormals[VertexIndex];
 		const aiVector3D TransformedNormal = PreRotation * InMeshTransform * LocalNormal;
+		// const aiVector3D TransformedNormal = LocalNormal;
 		memcpy_s(&Vertex.Normal, sizeof(Vector), &TransformedNormal, sizeof(Vector));
 	}
 	if (Mesh->HasTangentsAndBitangents() == true)
 	{
 		const aiVector3D & LocalTangent = Mesh->mTangents[VertexIndex];
 		const aiVector3D TransformedTangent = PreRotation * InMeshTransform * LocalTangent;
+		// const aiVector3D TransformedTangent = LocalTangent;
 		memcpy_s(&Vertex.Tangent, sizeof(Vector), &TransformedTangent, sizeof(Vector));
 	}
 	else

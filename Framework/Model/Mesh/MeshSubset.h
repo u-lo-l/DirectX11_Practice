@@ -31,6 +31,4 @@ private:
 	IndexBuffer * IBuffer = nullptr;
 	
 	Transform * Tf; // Local Transform in Model Root Space
-	Matrix LocalTransform;
-	ConstantBuffer * CB_LocalTransform;
 };

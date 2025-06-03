@@ -25,8 +25,9 @@ float4 SetAnimatedBoneToWorldTF_Instancing(inout VertexInput input)
 
     for(int i = 0 ; i < g_BoneCountToFindWeight ; i++)
     {
+        float4 VertexPosInRootSpace = input.Position;
         int targetBoneIndex = Indices[i];
-        float4 VertexPosInBoneSpace = mul(input.Position, OffsetMatrix[targetBoneIndex]);
+        float4 VertexPosInBoneSpace = mul(VertexPosInRootSpace, OffsetMatrix[targetBoneIndex]);
         
         matrix currentAnim = 0;
         

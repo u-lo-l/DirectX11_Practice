@@ -18,11 +18,16 @@ ConstantBuffer::ConstantBuffer(UINT TargetShaderType, int RegisterIndex, void * 
 	{
 		BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &Buffer) >= 0);
 	}
 	else
 	{
 		BufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	}
+	
+	if (Data == nullptr)
+		CHECK(Device->CreateBuffer(&BufferDesc, nullptr, &Buffer) >= 0);
+	else
+	{
 		D3D11_SUBRESOURCE_DATA InitData;
 		InitData.pSysMem = this->Data;
 		InitData.SysMemPitch = 0;
@@ -31,7 +36,7 @@ ConstantBuffer::ConstantBuffer(UINT TargetShaderType, int RegisterIndex, void * 
 	}
 }
 
-ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, void* InData, string InDataName,
+ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, void* InData, const string& InDataName,
 	UINT InDataSize, bool bStatic)
 	: ConstantBuffer(static_cast<UINT>(TargetShaderType), RegisterIndex, InData, InDataName, InDataSize, bStatic)
 {

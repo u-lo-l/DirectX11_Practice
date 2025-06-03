@@ -18,7 +18,7 @@ public:
 private:
 	void ReadTransform(const Json::Value::const_iterator::reference Root);
 	void ReadMaterial(const Json::Value::const_iterator::reference Root);
-	void ReadMeshAndCreateBoneMap(const Json::Value::const_iterator::reference Root);
+	void ReadSubMeshesAndBones(const Json::Value::const_iterator::reference Root);
 	static void ReadShaderName(const Json::Value & Value, Material<VertexType> * OutMatData, bool bUseAnimation = false);
 	static void ReadColor(const Json::Value & Value, Material<VertexType> * MatData);
 	static void ReadTextures(const Json::Value & Value, Material<VertexType> * MatData);

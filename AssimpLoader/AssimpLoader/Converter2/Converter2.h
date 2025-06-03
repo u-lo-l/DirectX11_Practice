@@ -11,5 +11,5 @@ protected:
 	Assimp::Importer * Importer;
 
 	const static unsigned int ConvertFlag;
-	static const float PreYRotation;
+	const static float PreYRotation;
 };
