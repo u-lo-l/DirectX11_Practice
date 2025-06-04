@@ -19,6 +19,7 @@ namespace sdt
 		wstring FilePath;
 		Assimp::Importer* Loader;
 		const aiScene * Scene;
+
 		
 #pragma region ExtractMaterial
 	public:

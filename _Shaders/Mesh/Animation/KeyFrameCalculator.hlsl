@@ -1,58 +1,51 @@
 #ifndef __KEYFRAME_CALCULATOR_HLSL__
 #define __KEYFRAME_CALCULATOR_HLSL__
 
-Texture2D KeyFrameTexture : register(t0);
-RWByteAddressBuffer BoneMatrix : register(u0);
+# ifndef THREAD_X
+# error "NumThread Size Not Defined"
+# endif
+
+struct BoneMatrix_s
+{
+	matrix Transform;
+};
+
+Texture2D<float4> KeyFrameTexture : register(t0);
+RWStructuredBuffer<BoneMatrix_s> BoneMatrix : register(u0);
 
 cbuffer CB_Info : register(b0)
 {
-    float CurrentTime;
-    int   CurrentFrame;
-    int   NextFrame;
-    int   Duration;
-    float TicksPerSeconds = 30.f;
-    float3 Padding;
+	int CurrentFrame;
+	int NextFrame;
+	float CurrentTime;
+	float LerpRate;
 }
 
-[numthreads(THREAD_X, THREAD_Y, 1)]
+
+[numthreads(THREAD_X, 1, 1)]
 void CSMain(uint3 DTid : SV_DISPATCHTHREADID)
 {
-    const int BoneIndex = 0;
+	matrix Curr, Next;
+	const uint BoneIndex = DTid.x;
+	uint StructCount, StructStride;
+	BoneMatrix.GetDimensions(StructCount, StructStride);
+	[flatten]
+	if (BoneIndex >= StructCount)
+		return ;
 
+	Curr[0] = KeyFrameTexture[uint2(BoneIndex * 4 + 0, CurrentFrame)];
+	Curr[1] = KeyFrameTexture[uint2(BoneIndex * 4 + 1, CurrentFrame)];
+	Curr[2] = KeyFrameTexture[uint2(BoneIndex * 4 + 2, CurrentFrame)];
+	Curr[3] = KeyFrameTexture[uint2(BoneIndex * 4 + 3, CurrentFrame)];
 
-    float LerpRate;
-    float CurrentFrameTime = CurrentFrame * TicksPerSeconds;
-    float NextFrameTime;
-    [flatten]
-    if (NextFrame < CurrentFrame)
-        NextFrameTime = (Duration + NextFrame) * TicksPerSeconds;
-    else
-        NextFrameTime = NextFrame * TicksPerSeconds;
-    [flatten]
-    if (NextFrame - CurrentFrame < 0.0001)
-        LerpRate = 0;
-    else
-        LerpRate = (CurrentTime - CurrentFrameTime) / (NextFrameTime - CurrentFrameTime);
+	Next[0] = KeyFrameTexture[uint2(BoneIndex * 4 + 0, NextFrame)];
+	Next[1] = KeyFrameTexture[uint2(BoneIndex * 4 + 1, NextFrame)];
+	Next[2] = KeyFrameTexture[uint2(BoneIndex * 4 + 2, NextFrame)];
+	Next[3] = KeyFrameTexture[uint2(BoneIndex * 4 + 3, NextFrame)];
 
-    float4 CurrentMatrix[4];
-    float4 NextMatrix[4];
-
-    CurrentMatrix[0] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 0, CurrentFrame,0));
-    CurrentMatrix[1] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 1, CurrentFrame,0));
-    CurrentMatrix[2] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 2, CurrentFrame,0));
-    CurrentMatrix[3] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 3, CurrentFrame,0));
-
-    NextMatrix[0] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 0, NextFrame,0));
-    NextMatrix[1] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 1, NextFrame,0));
-    NextMatrix[2] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 2, NextFrame,0));
-    NextMatrix[3] = KeyFrameTexture.Load(int3(BoneIndex * 4 + 3, NextFrame,0));
-    
-    matrix Curr, Next;
-    Curr = matrix(CurrentMatrix[0],CurrentMatrix[1],CurrentMatrix[2],CurrentMatrix[3]);
-    Next = matrix(NextMatrix[0],NextMatrix[1],NextMatrix[2],NextMatrix[3]);
-
-    matrix Result = lerp(Curr, Next, LerpRate);
-    BoneMatrix.Store4(BoneIndex, asint(Result[0]));
+	BoneMatrix_s Result;
+	Result.Transform = lerp(Curr, Next, LerpRate);
+	BoneMatrix[BoneIndex] = Result;
 }
 
 #endif

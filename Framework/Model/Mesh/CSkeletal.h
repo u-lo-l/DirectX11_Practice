@@ -17,6 +17,7 @@ public:
 	int GetBoneCount() const;
 	const array<Matrix, MAX_BONE_COUNT> & GetBoneMatrices() const;
 	array<Matrix, MAX_BONE_COUNT> & GetBoneMatrices();
+	RWStructuredBuffer* GetBoneMatrices_Buffer() const;
 	const array<Matrix, MAX_BONE_COUNT> & GetOffsetMatrices() const;
 	
 	void BindToGPU() const;

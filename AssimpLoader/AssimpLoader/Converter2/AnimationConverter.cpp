@@ -27,10 +27,10 @@ void AnimationConverter::ExportAnimation(const wstring& InFileName, const aiScen
 {
 	const wstring AnimationDirectory = Path::GetDirectoryName(W_ANIMATION_PATH + InFileName);
 	const wstring AnimationName = Path::GetFileNameWithoutExtension(InFileName);
-	
+
 	// Scene에 있는 ClipFrameData(aiNodeAnim)정보를 읽는다.
 	const unsigned int AnimationCount = InScene->mNumAnimations;
-	
+
 	ASSERT(AnimationCount != 0, "Animation Not Found");
 	ASSERT(AnimationCount <= 1, "Too Many Animations In One File");
 
@@ -45,7 +45,7 @@ void AnimationConverter::ExportAnimation(const wstring& InFileName, const aiScen
 		const ClipNodeData * Node = Clip->NodeDatas[j];
 		BoneSearchTree.insert(Node->BoneName);
 	}
-	
+
 	ConnectNodeWithBone(Clip, InScene->mRootNode, BoneSearchTree);
 	WriteClipData(String::ToString(AnimName), Clip);
 }
@@ -69,7 +69,7 @@ ClipData * AnimationConverter::ReadClipData( const aiAnimation * InAnimation )
 #ifdef DO_DEBUG
 	printf("Channels Count: %d\n", ChannelsCount);
 #endif
-		
+
 	AnimationClipDataToReturn->NodeDatas.resize(ChannelsCount, nullptr);
 	for (UINT i = 0; i < ChannelsCount; i++)
 	{
@@ -239,12 +239,12 @@ void AnimationConverter::WriteClipData( const string & InSaveFileName, const Cli
 	BinWriter->WriteFloat(InClipData->TicksPerSecond);
 
 	BinWriter->WriteUint(InClipData->NodeDatas.size());
-	for (const ClipNodeData * const clipNodeData : InClipData->NodeDatas)
+	for (const ClipNodeData * const ClipNodeData : InClipData->NodeDatas)
 	{
-		BinWriter->WriteString(clipNodeData->BoneName);
-		BinWriter->WriteSTDVector<FrameDataVec>(clipNodeData->PosKeys);
-		BinWriter->WriteSTDVector<FrameDataVec>(clipNodeData->ScaleKeys);
-		BinWriter->WriteSTDVector<FrameDataQuat>(clipNodeData->RotKeys);
+		BinWriter->WriteString(ClipNodeData->BoneName);
+		BinWriter->WriteSTDVector<FrameDataVec>(ClipNodeData->PosKeys);
+		BinWriter->WriteSTDVector<FrameDataVec>(ClipNodeData->ScaleKeys);
+		BinWriter->WriteSTDVector<FrameDataQuat>(ClipNodeData->RotKeys);
 	}
 	SAFE_DELETE(BinWriter);
 }

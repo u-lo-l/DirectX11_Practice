@@ -29,6 +29,31 @@ float AnimationClip::CalculateNextAnimTime(float CurrentTime, float DeltaSecond)
 	return CurrentTime;
 }
 
+int AnimationClip::GetCurrentFrame(float CurrentTime) const
+{
+	return static_cast<int>(CurrentTime);
+}
+
+int AnimationClip::GetNextFrame(float CurrentTime) const
+{
+	int NextFrame = GetCurrentFrame(CurrentTime) + 1;
+	if (NextFrame >= static_cast<int>(GetDuration()))
+		NextFrame = bLoop ? NextFrame / static_cast<int>(GetAnimationLength()) : -1;
+	return NextFrame;
+}
+
+float AnimationClip::GetCurrentFrameTime(float CurrentTime) const
+{
+	const float CurrentFrame = static_cast<float>(GetCurrentFrame(CurrentTime));
+	return CurrentFrame * TickPerSecond;
+}
+
+float AnimationClip::GetNextFrameTime(float CurrentTime) const
+{
+	const float NextFrame = static_cast<float>(GetNextFrame(CurrentTime));
+	return NextFrame < 0 ? NextFrame * TickPerSecond : -1.f;
+}
+
 const string& AnimationClip::GetName() const
 {
 	return Name;
@@ -71,7 +96,9 @@ void AnimationClip::ReadAnimationAsset
 	vector<KeyFrameData *> & OutKeyFrames
 )
 {
-	const BinaryReader * BinReader = new BinaryReader(AnimationAssetPath);
+	const wstring Path = W_ANIMATION_PATH + AnimationAssetPath + L".anim";
+	ASSERT(Path::IsFileExist(Path), String::Format("File Not Found : %ls", Path).c_str())
+	const BinaryReader * BinReader = new BinaryReader(Path);
 	Name = BinReader->ReadString();
 	Duration = BinReader->ReadFloat();
 	TickPerSecond = BinReader->ReadFloat();
@@ -132,7 +159,7 @@ void AnimationClip::CreateKeyFrameTable
 (
 	const CSkeletal * InSkeleton,
 	const vector<KeyFrameData *> & InKeyFrames,
-	vector<Matrix> & OutKeyFrameTable
+	vector<Matrix> & OutKeyFrameArray
 )
 {
 	map<string, KeyFrameData *> KeyFrameSearchTree;
@@ -144,23 +171,24 @@ void AnimationClip::CreateKeyFrameTable
 	const UINT BoneCount = InSkeleton->GetBoneCount();
 	const UINT AnimationLength = static_cast<UINT>(GetAnimationLength());
 
-	OutKeyFrameTable.reserve(AnimationLength * BoneCount);
+	OutKeyFrameArray.resize(AnimationLength * BoneCount);
 	for (UINT Frame = 0; Frame < AnimationLength; Frame++)
 	{
 		for (UINT BoneId = 0; BoneId < BoneCount; BoneId++)
 		{
 			const UINT Index = Frame * BoneCount + BoneId;
+
 			const CBone * const TargetBone = InSkeleton->FindBone(static_cast<int>(BoneId));
 			const auto It = KeyFrameSearchTree.find(TargetBone->GetName());
 			if (It == KeyFrameSearchTree.cend())
 				continue;
 			const KeyFrameData * const TargetKeyFrameData = It->second;
+
 			// 현재 Bone에 대한 NodeData를 찾았다면 해당 Bone의 F번쨰 프레임의 TRS를 가져온다.
 			// 이 TRS는 Parent-Coordinate기준 정보다.
 			const Vector & Pos     = TargetKeyFrameData->Positions.size() == 1 ? TargetKeyFrameData->Positions[0].Value : TargetKeyFrameData->Positions[Frame].Value;
 			const Vector & Scale   = TargetKeyFrameData->Scales.size()    == 1 ? TargetKeyFrameData->Scales[0].Value    : TargetKeyFrameData->Scales[Frame].Value;
 			const Quaternion & Rot = TargetKeyFrameData->Rotations.size() == 1 ? TargetKeyFrameData->Rotations[0].Value : TargetKeyFrameData->Rotations[Frame].Value;
-			
 			Matrix S = Matrix::CreateScale(Scale);
 			Matrix R = Matrix::CreateFromQuaternion(Rot);
 			Matrix T = Matrix::CreateTranslation(Pos);
@@ -168,13 +196,13 @@ void AnimationClip::CreateKeyFrameTable
 			Matrix AnimationMatrix = S * R * T; // A_T_B : SRT of B from A-coordinate
 			if (TargetBone->IsRootBone() == true)
 			{
-				OutKeyFrameTable[Index] = AnimationMatrix; // BoneMatrixArr[b] = AnimationMatrix * Matrix::Identity;
+				OutKeyFrameArray[Index] = AnimationMatrix; // BoneMatrixArr[b] = AnimationMatrix * Matrix::Identity;
 			}
 			else
 			{
 				const UINT ParentIndex = Frame * BoneCount + TargetBone->GetParentIndex();
-				const Matrix & ParentMat = OutKeyFrameTable[ParentIndex]; // W_T_A. 이미 업데이트 된 부모노드의 World-Transform.
-				OutKeyFrameTable[Index] = AnimationMatrix * ParentMat;// W_T_B = A_T_B * W_T_A
+				const Matrix & ParentMat = OutKeyFrameArray[ParentIndex]; // W_T_A. 이미 업데이트 된 부모노드의 World-Transform.
+				OutKeyFrameArray[Index] = AnimationMatrix * ParentMat;// W_T_B = A_T_B * W_T_A
 			}
 		}
 	}
@@ -203,8 +231,8 @@ void AnimationClip::CreateKeyFrameTexture(const vector<Matrix> & InKeyFramesArra
 
 	D3D11_SUBRESOURCE_DATA InitialTextureData;
 	ZeroMemory(&InitialTextureData, sizeof(D3D11_SUBRESOURCE_DATA));
-	const UINT RowPitch = sizeof(Matrix) * Width;
-	const UINT PageSize = Width * Height * sizeof(Matrix);
+	const UINT RowPitch = 16 * Width;
+	const UINT PageSize = Width * Height * 16;
 	InitialTextureData.pSysMem = InKeyFramesArray.data();
 	InitialTextureData.SysMemPitch = RowPitch;
 	InitialTextureData.SysMemSlicePitch = PageSize;

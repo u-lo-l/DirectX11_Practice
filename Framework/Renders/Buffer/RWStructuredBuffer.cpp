@@ -30,12 +30,7 @@ RWStructuredBuffer::~RWStructuredBuffer()
 void RWStructuredBuffer::BindToGPUAsUAV(UINT SlotNum) const
 {
 	if (!!UAV)
-		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(
-			SlotNum,
-			1,
-			&UAV,
-			nullptr
-		);
+		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(SlotNum,1,&UAV,nullptr);
 }
 
 void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum) const
@@ -72,8 +67,20 @@ void RWStructuredBuffer::UpdateSRV()
 	SRVDesc.Format = DXGI_FORMAT_UNKNOWN; // StructuredBuffer일 땐 UNKNOWN
 	SRVDesc.Buffer.FirstElement = 0;
 	SRVDesc.Buffer.NumElements = Count;
+	
+	const HRESULT Hr = Device->CreateShaderResourceView(this->Buffer, &SRVDesc, &this->SRV);
+	CHECK(SUCCEEDED(Hr));
+}
 
-	Device->CreateShaderResourceView(this->Buffer, &SRVDesc, &this->SRV);
+void RWStructuredBuffer::GetResult(void* OutData) const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	DeviceContext->CopyResource(ResultBuffer, Buffer);
+
+	D3D11_MAPPED_SUBRESOURCE Subresource;
+	DeviceContext->Map(ResultBuffer, 0, D3D11_MAP_READ, 0, &Subresource);
+	memcpy(OutData, Subresource.pData, Stride * Count);
+	DeviceContext->Unmap(ResultBuffer, 0);
 }
 
 void RWStructuredBuffer::CreateUAV()
@@ -90,7 +97,9 @@ void RWStructuredBuffer::CreateUAV()
 	BufferDesc.StructureByteStride = Stride;
 
 	if (Data == nullptr)
+	{
 		CHECK(SUCCEEDED(Device->CreateBuffer(&BufferDesc, nullptr, &Buffer)));
+	}
 	else
 	{
 		D3D11_SUBRESOURCE_DATA InitData = {};

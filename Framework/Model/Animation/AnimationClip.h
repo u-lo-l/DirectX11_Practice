@@ -13,7 +13,6 @@ private:
 		vector<FrameDataQuat> Rotations;
 	};
 public:
-	
 	AnimationClip(const CSkeletal * InSkeleton, const wstring & AnimationAssetPath);
 	~AnimationClip();
 	const string & GetName() const;
@@ -26,6 +25,11 @@ public:
 	const Texture * GetKeyFrameTexture() const;
 
 	float CalculateNextAnimTime(float CurrentTime, float DeltaSecond) const;
+	int GetCurrentFrame(float CurrentTime) const;
+	int GetNextFrame(float CurrentTime) const;
+	float GetCurrentFrameTime(float CurrentTime) const;
+	float GetNextFrameTime(float CurrentTime) const;
+
 private:
 	void ReadAnimationAsset(
 		const CSkeletal* InSkeleton,
@@ -34,7 +38,7 @@ private:
 	);
 	void CreateKeyFrameTable(
 		const CSkeletal* InSkeleton,
-		const vector<KeyFrameData*>& InKeyFrames, vector<Matrix>& OutKeyFrameTable
+		const vector<KeyFrameData*>& InKeyFrames, vector<Matrix>& OutKeyFrameArray
 	);
 	void CreateKeyFrameTexture(const vector<Matrix>& InKeyFramesArray);
 	string Name;

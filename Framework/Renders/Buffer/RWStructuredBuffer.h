@@ -15,7 +15,7 @@ public:
 	void BindToGPUAsSRV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum, UINT InShaderType) const;
 	void UpdateSRV();
-
+	void GetResult(void * OutData) const;
 	UINT GetTargetShaderType() const { return TargetShaderType; }
 
 private:

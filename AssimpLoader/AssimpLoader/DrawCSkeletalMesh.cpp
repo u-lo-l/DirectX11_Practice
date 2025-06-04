@@ -2,8 +2,7 @@
 #include "DrawCSkeletalMesh.h"
 
 #include "Model/Character.h"
-#include "Model/Mesh/CSkeletalMesh.h"
-
+#include "Model/Animation/AnimationClip.h"
 
 void DrawCSkeletalMesh::Initialize()
 {
@@ -11,6 +10,9 @@ void DrawCSkeletalMesh::Initialize()
 	// Context::Get()->GetCamera()->SetRotation({0, Math::Pi, 0});
 	Adam = new Character();
 	Adam->SetSkeletalMesh(L"Adam");
+	AnimationClip * Idle = new AnimationClip(Adam->GetSkeleton(), L"Adam/Idle");
+	Idle->SetLoop(true);
+	Adam->AddAnimationClip("Idle", Idle);
 }
 
 void DrawCSkeletalMesh::Destroy()

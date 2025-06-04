@@ -34,8 +34,6 @@ TextureArray::TextureArray
 
 	for (UINT i = 0; i < TempTextures.size(); i++)
 	{
-
-		
 		for (UINT level = 0; level < TextureDesc.MipLevels; level++)
 		{
 			D3D11_MAPPED_SUBRESOURCE subResource;
@@ -82,10 +80,10 @@ vector<ID3D11Texture2D*> TextureArray::CreateTextures
 	const UINT InMipLevels
 )
 {
-	vector<ID3D11Texture2D*> returnTextures;
-	returnTextures.resize(InNames.size());
+	vector<ID3D11Texture2D*> ReturnTextures;
+	ReturnTextures.resize(InNames.size());
 
-	for (UINT i = 0; i < returnTextures.size(); i++)
+	for (UINT i = 0; i < ReturnTextures.size(); i++)
 	{
 		DirectX::TexMetadata metaData;
 		DirectX::ScratchImage image;
@@ -161,9 +159,9 @@ vector<ID3D11Texture2D*> TextureArray::CreateTextures
 			D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
 			0,
 			false,
-			reinterpret_cast<ID3D11Resource**>(&returnTextures[i])
+			reinterpret_cast<ID3D11Resource**>(&ReturnTextures[i])
 		)));
 	}
 
-	return returnTextures;
+	return ReturnTextures;
 }

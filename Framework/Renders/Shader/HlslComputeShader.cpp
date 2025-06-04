@@ -211,7 +211,7 @@ bool HlslComputeShader::CheckPreCompiled(const wstring& HlslFilePath, const stri
 	return Path::IsFileExist(OutCSOFilePath);
 }
 
-bool HlslComputeShader::CreateShader
+HRESULT HlslComputeShader::CreateShader
 (
 	bool bUsePrecompiledShader,
 	const string & PrecompiledShaderName,

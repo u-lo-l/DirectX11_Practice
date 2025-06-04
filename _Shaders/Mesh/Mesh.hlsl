@@ -49,9 +49,8 @@ cbuffer CB_Light : register(b1) // PerFrame PS
 }
 cbuffer CB_BoneMatrix : register(b2) // PerModel VS
 {
-    matrix OffsetMatrices[MAX_BONE_COUNT]; // Inv(BoneMatrix)
+    matrix OffsetMatrices[MAX_BONE_COUNT]; // Inv(BindPose BoneMatrix)
 }
-
 
 static const int DiffuseMap = 0;
 static const int SpecularMap = 1;
@@ -106,6 +105,7 @@ float4 PSMain(VS_Output Input) : SV_TARGET
     float LDotN = saturate(dot(Input.Normal, -LightDirection));
     float3 Color = LightColor.rgb * LDotN;
     return float4(Color, 1);
+
 }
 
 DepthOutput VSShadow(VS_Input Input)

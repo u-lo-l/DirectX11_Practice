@@ -11,6 +11,7 @@ public:
 	~Character();
 	
 	void SetSkeletalMesh(const wstring & InMeshName);
+	const CSkeletal* GetSkeleton() const;
 	void AddAnimationClip(const string & InName, AnimationClip * InAnimation);
 	void Tick();
 	void Render();

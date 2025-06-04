@@ -1,49 +1,38 @@
 ﻿#pragma once
+#include "AnimationBlendSpace1D.h"
 
 class AnimationClip;
 
 class AnimationController
 {
 private:
-	struct FrameDesc
+	struct AnimationInfoDesc
 	{
-		float	CurrentTime = -1;
-		int		CurrentFrame = -1;
-		int		NextFrame = -1;
-		float	Padding;
-	};
-	struct AnimationBlendingDesc
-	{
-		float BlendingDuration = 0.1f;
-		float ElapsedBlendTime = 0.0f;
-		float Padding[2];
-
-		FrameDesc Current;
-		FrameDesc Next;
+		int	  CurrentFrame = -1;
+		int   NextFrame  = -1;
+		float CurrentTime = 0.0f;
+		float LerpRate = 0.0f;
 	};
 public:
 	explicit AnimationController(CSkeletal * InSkeletal);
 	~AnimationController();
+	void PlaySingleAnimation(const AnimationClip* Clip, float DeltaSecond);
+	void PlayAnimationBlendSpace1D(const AnimationBlendSpace1D* BlendSpace1D, float DeltaSecond, float Value);
+	void UpdateAnimationFrameData(float DeltaSecond);
 	void Tick();
 
 	void SetCurrentAnimation(const AnimationClip * Clip);
 	void SetNextAnimation(const AnimationClip * Clip);
 
-	void CalculateBoneMatrices(
-		float Time,
-		array<Matrix, CSkeletal::MAX_BONE_COUNT> & OutBoneMatrix
-	);
-	void CalculateBoneMatrices(
-		array<Matrix, CSkeletal::MAX_BONE_COUNT> & OutBoneMatrix
-	);
+	void CalculateBoneMatrices() const;
 
 private:
-	AnimationBlendingDesc AnimationInfo;
-	
+	AnimationInfoDesc AnimationData;
+	ConstantBuffer * CB_AnimationInfo;
 	HlslComputeShader * AnimationKeyFrameCalculator = nullptr;
-	HlslComputeShader * AnimationKeyFrameBlender = nullptr;
+	// HlslComputeShader * AnimationKeyFrameBlender = nullptr;
 	map<string, AnimationClip *> AnimationClips;
-	
+
 	CSkeletal * TargetSkeletal = nullptr;
 	const AnimationClip * CurrentAnimation = nullptr;
 	const AnimationClip * NextAnimation = nullptr;

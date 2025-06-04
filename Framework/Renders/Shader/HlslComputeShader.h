@@ -36,7 +36,7 @@ private:
         const string & InEntryPoint,
         string & OutCSOFilePath
     );
-    bool CreateShader(
+    HRESULT CreateShader(
         bool bUsePrecompiledShader,
         const string& PrecompiledShaderName,
         const D3D_SHADER_MACRO* InMacros,
