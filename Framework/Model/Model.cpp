@@ -193,7 +193,7 @@ void Model::SetClipIndex(UINT InInstanceID, int InClipIndex )
 	{
 		TargetBlendingData.BlendingDuration = 0.1f;
 		TargetBlendingData.ElapsedBlendTime = 0.0f;
-			
+
 		TargetBlendingData.Next.Clip = InClipIndex;
 		TargetBlendingData.Next.CurrentTime = 0;
 		TargetBlendingData.Next.CurrentFrame = 0;

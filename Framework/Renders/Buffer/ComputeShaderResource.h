@@ -35,6 +35,6 @@ protected:
 
 	ID3D11Resource * Output = nullptr; // from GPU to CPU output
 	ID3D11UnorderedAccessView * UAV = nullptr;
-	
+
 	ID3D11Resource * Result = nullptr;
 };

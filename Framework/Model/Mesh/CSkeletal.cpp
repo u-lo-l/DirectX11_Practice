@@ -9,57 +9,73 @@ CSkeletal::CSkeletal(const vector<CBone*>& InBones)
 	for (UINT BoneIndex = 0; BoneIndex < BoneCount; BoneIndex++)
 	{
 		const CBone * const TargetBone = Bones[BoneIndex];
-		// BoneSearchMap[TargetBone->GetName()] = TargetBone;
+		BoneSearchMap[TargetBone->GetName()] = TargetBone;
 		const Matrix & BoneMatrix = TargetBone->GetRootTransform();
-		BoneMatrixData.BoneMatrices[BoneIndex] = BoneMatrix;
-		BoneMatrixData.OffsetMatrices[BoneIndex] = Matrix::Invert(BoneMatrix, true);
+		BoneMatrices[BoneIndex] = BoneMatrix;
+		OffsetMatrices[BoneIndex] = Matrix::Invert(BoneMatrix, true);
 	}
-	CB_BoneMatrices = new ConstantBuffer(
+	SB_BoneMatrices = new RWStructuredBuffer(
+		static_cast<UINT>(ShaderType::VertexShader),
+		0,
+		BoneMatrices.data(),
+		BoneMatrices.size(),
+		sizeof(Matrix)
+	);
+	CB_OffsetMatrices = new ConstantBuffer(
 		ShaderType::VertexShader,
 		2,
-		&BoneMatrixData,
-		"Model Bone Matrices",
-		sizeof(BoneMatrixDesc)
+		OffsetMatrices.data(),
+		"Model Offset Matrices",
+		OffsetMatrices.size() * sizeof(Matrix),
+		true
 	);
 }
 
 CSkeletal::~CSkeletal()
 {
-	SAFE_DELETE(CB_BoneMatrices);
+	SAFE_DELETE(SB_BoneMatrices);
+	SAFE_DELETE(CB_OffsetMatrices);
 }
 
-// const CBone* CSkeletal::FindBone(const string& InBoneName) const
-// {
-// 	BoneSearchMapType::const_iterator It = BoneSearchMap.find(InBoneName);
-// 	if (It == BoneSearchMap.cend())
-// 		return nullptr;
-// 	return It->second; 
-// }
-//
-// const CBone * CSkeletal::FindBone(int Index) const
-// {
-// 	if (Index < 0 || Index >= Bones.size())
-// 		return nullptr;
-// 	return Bones[Index];
-// }
+const CBone* CSkeletal::FindBone(const string& InBoneName) const
+{
+	BoneSearchMapType::const_iterator It = BoneSearchMap.find(InBoneName);
+	if (It == BoneSearchMap.cend())
+		return nullptr;
+	return It->second; 
+}
 
-// const array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetBoneMatrices() const
-// { 
-// 	return BoneMatrices; 
-// }
-//
-// array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetBoneMatrices()
-// { 
-// 	return BoneMatrices; 
-// }
-//
-// const array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetOffsetMatrices() const
-// {
-// 	return OffsetMatrices;
-// }
+const CBone * CSkeletal::FindBone(int Index) const
+{
+	if (Index < 0 || Index >= Bones.size())
+		return nullptr;
+	return Bones[Index];
+}
+
+int CSkeletal::GetBoneCount() const
+{
+	return BoneSearchMap.size();
+}
+
+const array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetBoneMatrices() const
+{ 
+	return BoneMatrices; 
+}
+
+array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetBoneMatrices()
+{ 
+	return BoneMatrices; 
+}
+
+const array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetOffsetMatrices() const
+{
+	return OffsetMatrices;
+}
 
 void CSkeletal::BindToGPU() const
 {
-	if (!!CB_BoneMatrices)
-		CB_BoneMatrices->BindToGPU();
+	if (!!SB_BoneMatrices)
+		SB_BoneMatrices->BindToGPUAsSRV(3, (UINT)ShaderType::VertexShader);
+	if (!!CB_OffsetMatrices)
+		CB_OffsetMatrices->BindToGPU();
 }

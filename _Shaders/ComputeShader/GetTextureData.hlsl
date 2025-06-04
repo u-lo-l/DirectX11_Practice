@@ -6,6 +6,7 @@ const static uint SizeOfFloat4 = 16;
 #ifndef FORMAT
 # define FORMAT float4
 #endif
+
 Texture2D<FORMAT> InputTexture : register(t0);
 RWByteAddressBuffer Output : register (u0);
 SamplerState LinearSampler_Clamp : register(s0);

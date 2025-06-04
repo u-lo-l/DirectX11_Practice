@@ -14,7 +14,7 @@ public:
 	~CSkeletalMesh();
 	void Tick();
 	void Render();
-
+	CSkeletal * GetSkeletal() const;
 private:
 	void ReadTransform(const Json::Value::const_iterator::reference Root);
 	void ReadMaterial(const Json::Value::const_iterator::reference Root);
@@ -31,7 +31,6 @@ private:
 	CSkeletal * Skeleton; 
 	vector<MeshSubset *> MeshSubsets;
 
-	
 	ConstantBuffer * CB_Matrix;
 	ConstantBuffer * CB_Light;
 };

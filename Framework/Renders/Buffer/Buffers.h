@@ -5,4 +5,6 @@
 #include "ConstantBuffer.h"
 #include "RawBuffer.h"
 #include "CircularVertexBuffer.h"
+#include "RWStructuredBuffer.h"
+#include "StructuredBuffer.h"
 

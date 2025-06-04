@@ -72,6 +72,11 @@ void CSkeletalMesh::Render()
 		Subset->Render();
 }
 
+CSkeletal* CSkeletalMesh::GetSkeletal() const
+{
+	return Skeleton;
+}
+
 void CSkeletalMesh::ReadTransform(Json::Value::const_iterator::reference Root)
 {
 	const Vector Position = Helper::JsonToVector3(Root["Transform"]["Position"].asString());

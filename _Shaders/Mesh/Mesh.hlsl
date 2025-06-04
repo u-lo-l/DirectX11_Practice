@@ -49,14 +49,19 @@ cbuffer CB_Light : register(b1) // PerFrame PS
 }
 cbuffer CB_BoneMatrix : register(b2) // PerModel VS
 {
-    matrix BoneMatrices[MAX_BONE_COUNT];
     matrix OffsetMatrices[MAX_BONE_COUNT]; // Inv(BoneMatrix)
 }
+
 
 static const int DiffuseMap = 0;
 static const int SpecularMap = 1;
 static const int NormalMap = 2;
 Texture2D MaterialMaps[3] : register(t0);
+struct BoneMatrix_s
+{
+    matrix M;
+};
+StructuredBuffer<BoneMatrix_s> BoneMatrices : register(t3);
 SamplerState LinearSampler : register(s0);
 
 
@@ -70,7 +75,7 @@ float4 BlendPosition(float4 BindPoseInModelSpace, float4 Indicies, float4 Weight
         const int TargetBoneIndex = Indicies[i];
         const float Weight = Weights[i];
         float4 VertexPoseInBoneSpace = mul(BindPoseInModelSpace, OffsetMatrices[TargetBoneIndex]);
-        Result += mul(VertexPoseInBoneSpace, BoneMatrices[TargetBoneIndex]) * Weight;
+        Result += mul(VertexPoseInBoneSpace, BoneMatrices[TargetBoneIndex].M) * Weight;
     }
     return Result;
 }

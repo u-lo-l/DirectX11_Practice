@@ -33,7 +33,7 @@ Texture * Noise::CreateGaussian2DNoise(UINT InSize)
 	GaussianTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 	D3D11_SUBRESOURCE_DATA InitialTextureData;
-	const UINT RowPitch = InSize * 8;
+	const UINT RowPitch = InSize * 8; // R32B32라 8임.
 	InitialTextureData.pSysMem = GaussianRandomArray.data();
 	InitialTextureData.SysMemPitch = RowPitch;
 	InitialTextureData.SysMemSlicePitch = InSize * RowPitch;

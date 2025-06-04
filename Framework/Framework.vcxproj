@@ -523,6 +523,8 @@
       <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
+    <ClCompile Include="Renders\Buffer\RWStructuredBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\StructuredBuffer.cpp" />
     <ClCompile Include="Renders\Buffer\VertexBuffer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -916,6 +918,8 @@
     <ClInclude Include="Renders\Buffer\ConstantBuffer.h" />
     <ClInclude Include="Renders\Buffer\IndexBuffer.h" />
     <ClInclude Include="Renders\Buffer\RawBuffer.h" />
+    <ClInclude Include="Renders\Buffer\RWStructuredBuffer.h" />
+    <ClInclude Include="Renders\Buffer\StructuredBuffer.h" />
     <ClInclude Include="Renders\Buffer\VertexBuffer.h" />
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\ConstantDataBinder.h" />

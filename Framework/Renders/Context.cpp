@@ -51,35 +51,35 @@ void Context::Render() const
 	Gui * const GuiInst = Gui::Get();
 	GuiInst->RenderText(5, 5, 1, 1, 1,  String::Format("FrameRate : %d", Fps));
 	
-	const Vector & CamPos = MainCamera->GetPosition();
-	const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
+	// const Vector & CamPos = MainCamera->GetPosition();
+	// const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
+	//
+	// Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
+	// Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
+	//
+	// const Vector CamForward = MainCamera->GetForward();
+	// const Vector CamRight = MainCamera->GetRight();
+	// const Vector CamUp = MainCamera->GetUp();
+	//
+	// Gui::Get()->RenderText(5, 50, 0.8f, 0.8f, 1, String::Format("Camera Forward : %.3f, %.3f, %.3f", CamForward.X , CamForward.Y, CamForward.Z));
+	// Gui::Get()->RenderText(5, 60, 0.8f, 0.8f, 1, String::Format("Camera Right   : %.3f, %.3f, %.3f", CamRight.X , CamRight.Y, CamRight.Z));
+	// Gui::Get()->RenderText(5, 70, 0.8f, 0.8f, 1, String::Format("Camera Up      : %.3f, %.3f, %.3f", CamUp.X , CamUp.Y, CamUp.Z));
 
-	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
-	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
-
-	const Vector CamForward = MainCamera->GetForward();
-	const Vector CamRight = MainCamera->GetRight();
-	const Vector CamUp = MainCamera->GetUp();
-
-	Gui::Get()->RenderText(5, 50, 0.8f, 0.8f, 1, String::Format("Camera Forward : %.3f, %.3f, %.3f", CamForward.X , CamForward.Y, CamForward.Z));
-	Gui::Get()->RenderText(5, 60, 0.8f, 0.8f, 1, String::Format("Camera Right   : %.3f, %.3f, %.3f", CamRight.X , CamRight.Y, CamRight.Z));
-	Gui::Get()->RenderText(5, 70, 0.8f, 0.8f, 1, String::Format("Camera Up      : %.3f, %.3f, %.3f", CamUp.X , CamUp.Y, CamUp.Z));
-
-	const Frustum * ViewFrustum = MainCamera->GetViewFrustum();
-	const array<Plane, 6> & Planes = ViewFrustum->GetPlanes();
-	float a, b, c, d;
-	Planes[0].GetEquation(a,b,c,d);
-	Gui::Get()->RenderText(5,  90, 1, 1, 0.5f, String::Format("ViewFrustum Near   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	Planes[1].GetEquation(a,b,c,d);
-	Gui::Get()->RenderText(5, 100, 1, 1, 0.5f, String::Format("ViewFrustum Far    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	Planes[2].GetEquation(a,b,c,d);
-	Gui::Get()->RenderText(5, 110, 1, 1, 0.5f, String::Format("ViewFrustum Left   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	Planes[3].GetEquation(a,b,c,d);
-	Gui::Get()->RenderText(5, 120, 1, 1, 0.5f, String::Format("ViewFrustum Right  : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	Planes[4].GetEquation(a,b,c,d);
-	Gui::Get()->RenderText(5, 130, 1, 1, 0.5f, String::Format("ViewFrustum Top    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	Planes[5].GetEquation(a,b,c,d);
-	Gui::Get()->RenderText(5, 140, 1, 1, 0.5f, String::Format("ViewFrustum Bottom : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	// const Frustum * ViewFrustum = MainCamera->GetViewFrustum();
+	// const array<Plane, 6> & Planes = ViewFrustum->GetPlanes();
+	// float a, b, c, d;
+	// Planes[0].GetEquation(a,b,c,d);
+	// Gui::Get()->RenderText(5,  90, 1, 1, 0.5f, String::Format("ViewFrustum Near   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	// Planes[1].GetEquation(a,b,c,d);
+	// Gui::Get()->RenderText(5, 100, 1, 1, 0.5f, String::Format("ViewFrustum Far    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	// Planes[2].GetEquation(a,b,c,d);
+	// Gui::Get()->RenderText(5, 110, 1, 1, 0.5f, String::Format("ViewFrustum Left   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	// Planes[3].GetEquation(a,b,c,d);
+	// Gui::Get()->RenderText(5, 120, 1, 1, 0.5f, String::Format("ViewFrustum Right  : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	// Planes[4].GetEquation(a,b,c,d);
+	// Gui::Get()->RenderText(5, 130, 1, 1, 0.5f, String::Format("ViewFrustum Top    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	// Planes[5].GetEquation(a,b,c,d);
+	// Gui::Get()->RenderText(5, 140, 1, 1, 0.5f, String::Format("ViewFrustum Bottom : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
 }
 
 void Context::ResizeScreen()
