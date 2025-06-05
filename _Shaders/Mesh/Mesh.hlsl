@@ -3,6 +3,8 @@
 
 # define MAX_BONE_COUNT 256
 # define MAX_BLENDING_BONE_COUNT 4
+
+# include "../ComputeShader/Transform.hlsl"
 struct VS_Input
 {
     float4 Position  : POSITION; // Model의 BindPose
@@ -56,13 +58,8 @@ static const int DiffuseMap = 0;
 static const int SpecularMap = 1;
 static const int NormalMap = 2;
 Texture2D MaterialMaps[3] : register(t0);
-struct BoneMatrix_s
-{
-    matrix M;
-};
-StructuredBuffer<BoneMatrix_s> BoneMatrices : register(t3);
+StructuredBuffer<BoneMatrix_t> BoneMatrices : register(t3);
 SamplerState LinearSampler : register(s0);
-
 
 float4 BlendPosition(float4 BindPoseInModelSpace, float4 Indicies, float4 Weights)
 {
@@ -94,7 +91,7 @@ VS_Output VSMain(VS_Input Input)
     Output.ShadowPosition = float4(0,0,0,1);
 
     Output.Uv = Input.Uv;
-    Output.Normal = normalize(mul(Input.Normal, (float3x3)World));
+    Output.Normal =  normalize(mul(Input.Normal, (float3x3)World));
     Output.Tangent = normalize(mul(Input.Tangent, (float3x3)World));
 
     return Output;

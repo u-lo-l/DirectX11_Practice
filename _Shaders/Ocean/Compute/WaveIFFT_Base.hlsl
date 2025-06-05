@@ -1,6 +1,6 @@
 #ifndef __WAVE_IFFT_BASE_HLSL__
 #define __WAVE_IFFT_BASE_HLSL__
-# include "../../ComputeShader/Math.hlsl"
+# include "../../ComputeShader/Complex.hlsl"
 
 # ifndef FFT_SIZE
 #  define FFT_SIZE 512

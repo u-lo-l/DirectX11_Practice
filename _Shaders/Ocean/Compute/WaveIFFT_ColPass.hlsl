@@ -1,6 +1,6 @@
 #ifndef __WAVE_IFFT_COLPASS_HLSL__
 #define __WAVE_IFFT_COLPASS_HLSL__
-# include "../../ComputeShader/Math.hlsl"
+# include "../../ComputeShader/Complex.hlsl"
 # include "WaveIFFT_Base.hlsl"
 cbuffer CB_IFFTSize : register(b0)
 {

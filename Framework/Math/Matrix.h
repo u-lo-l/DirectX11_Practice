@@ -30,6 +30,7 @@ public:
 	Matrix operator -() const;
 	void Transpose();
 	void Invert(bool bIsTransform = false);
+
 private :
 	void GeneralInvert();
 	void TransformInvert();
@@ -81,6 +82,10 @@ public:
 	static Matrix CreateRotationZ(float radians);
 	static void CreateFromEulerAngle( Matrix & OutMat, const Vector & EulerInRad );
 	static Matrix CreateFromAxisAngle(Vector axis, float angle);
+	static Matrix CreateFromTRS(const Vector& Translation, const Quaternion& Rotation, const Vector& Scale);
+	
+	// static Matrix CreateFromTRS(const Vector& Pos, const Quaternion& Rot, const Vector& Scale);
+	
 	// static Matrix CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
 	static Matrix CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance);

@@ -1,6 +1,6 @@
 #ifndef __WAVE_FOAM_SIMULATION_HLSL__
 #define __WAVE_FOAM_SIMULATION_HLSL__
-# include "../../ComputeShader/Math.hlsl"
+# include "../../ComputeShader/Complex.hlsl"
 
 # ifndef THREAD_X
 #  error "THREAD_X Not Defined"

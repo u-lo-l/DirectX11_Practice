@@ -4,6 +4,20 @@
 class AnimationClip
 {
 private:
+	struct PackedHalfTRS
+	{
+		DirectX::PackedVector::XMHALF4 Translation;
+		DirectX::PackedVector::XMHALF4 Rotation;
+		DirectX::PackedVector::XMHALF4 Scale;
+	};
+	struct TRSDesc
+	{
+		Vector Translation;
+		float Padding1;
+		Quaternion Rotation;
+		Vector Scale;
+		float Padding2;
+	};
 	struct KeyFrameData
 	{
 		int BoneIndex = -1;
@@ -38,9 +52,10 @@ private:
 	);
 	void CreateKeyFrameTable(
 		const CSkeletal* InSkeleton,
-		const vector<KeyFrameData*>& InKeyFrames, vector<Matrix>& OutKeyFrameArray
-	);
-	void CreateKeyFrameTexture(const vector<Matrix>& InKeyFramesArray);
+		const vector<KeyFrameData*> & InKeyFrames,
+		vector<PackedHalfTRS> & OutKeyFrameArray
+	) const;
+	void CreateKeyFrameTexture(const vector<PackedHalfTRS>& InKeyFramesArray);
 	string Name;
 	float Duration;
 	float TickPerSecond;

@@ -44,7 +44,7 @@ AnimationController::~AnimationController()
 	SAFE_DELETE(CB_AnimationInfo);
 }
 
-void AnimationController::PlaySingleAnimation
+void AnimationController::PlaySingleAnimationClip
 (
 	const AnimationClip * Clip,
 	const float DeltaSecond
@@ -80,7 +80,33 @@ void AnimationController::PlayAnimationBlendSpace1D
 	const float Value
 )
 {
+	if (!BlendSpace1D)
+		return;
+	
+	const AnimationClip * Anim1;
+	const AnimationClip * Anim2;
+	BlendSpace1D->GetTargetAnimations(Value, &Anim1, &Anim2);
+	if (Anim1 == nullptr && Anim2 == nullptr)
+		return ;
+	if (Anim1 == Anim2)
+	{
+		PlaySingleAnimationClip(Anim2, DeltaSecond);
+		return;
+	}
+	const float CurrentTime = AnimationData.CurrentTime;
+	const float CurrentFrameTime1 = Anim1->GetCurrentFrameTime(CurrentTime);
+	const float NextFrameTime1 = Anim1->GetNextFrameTime(CurrentTime);
+	float LerpRate1 = 0;
+	if (NextFrameTime1 > 0 && CurrentTime > NextFrameTime1)
+		LerpRate1 = (CurrentTime - CurrentFrameTime1) / (NextFrameTime1 - CurrentFrameTime1);
 
+	const float CurrentFrameTime2 = Anim2->GetCurrentFrameTime(CurrentTime);
+	const float NextFrameTime2 = Anim2->GetNextFrameTime(CurrentTime);
+	float LerpRate2 = 0;
+	if (NextFrameTime2 > 0 && CurrentTime > NextFrameTime2)
+		LerpRate2 = (CurrentTime - CurrentFrameTime2) / (NextFrameTime2 - CurrentFrameTime2);
+
+	
 }
 
 void AnimationController::UpdateAnimationFrameData(float DeltaSecond)
@@ -92,17 +118,21 @@ void AnimationController::Tick()
 {
 	const float DeltaSecond = sdt::SystemTimer::Get()->GetDeltaTime();
 	UpdateAnimationFrameData(DeltaSecond);
-	PlaySingleAnimation(CurrentAnimation, DeltaSecond);
+	PlaySingleAnimationClip(CurrentAnimation, DeltaSecond);
 }
 
 void AnimationController::SetCurrentAnimation(const AnimationClip* const Clip)
 {
+	CurrentBlendSpace = nullptr;
 	CurrentAnimation = Clip;
+	AnimationData = {};
 }
 
-void AnimationController::SetNextAnimation(const AnimationClip* Clip)
+void AnimationController::SetCurrentBlendSpace(const AnimationBlendSpace1D* BlendSpace1D)
 {
-	NextAnimation = Clip;
+	CurrentAnimation = nullptr;
+	CurrentBlendSpace = BlendSpace1D;
+	AnimationData = {};
 }
 
 void AnimationController::CalculateBoneMatrices() const

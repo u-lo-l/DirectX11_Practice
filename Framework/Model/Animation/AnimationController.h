@@ -16,13 +16,13 @@ private:
 public:
 	explicit AnimationController(CSkeletal * InSkeletal);
 	~AnimationController();
-	void PlaySingleAnimation(const AnimationClip* Clip, float DeltaSecond);
+	void PlaySingleAnimationClip(const AnimationClip* Clip, float DeltaSecond);
 	void PlayAnimationBlendSpace1D(const AnimationBlendSpace1D* BlendSpace1D, float DeltaSecond, float Value);
 	void UpdateAnimationFrameData(float DeltaSecond);
 	void Tick();
 
 	void SetCurrentAnimation(const AnimationClip * Clip);
-	void SetNextAnimation(const AnimationClip * Clip);
+	void SetCurrentBlendSpace(const AnimationBlendSpace1D * BlendSpace1D);
 
 	void CalculateBoneMatrices() const;
 
@@ -35,5 +35,5 @@ private:
 
 	CSkeletal * TargetSkeletal = nullptr;
 	const AnimationClip * CurrentAnimation = nullptr;
-	const AnimationClip * NextAnimation = nullptr;
+	const AnimationBlendSpace1D * CurrentBlendSpace = nullptr;
 };

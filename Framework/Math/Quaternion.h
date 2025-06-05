@@ -14,7 +14,9 @@ public:
 	Quaternion(float w, float x, float y, float z);
 	Quaternion( const Vector & vectorPart, float scalarPart);
 	Quaternion(const Quaternion& Other);
+	Quaternion(const DirectX::PackedVector::XMHALF4 & Other);
 	Quaternion& operator=(const Quaternion& Other);
+	static DirectX::PackedVector::XMHALF4 GetPackedVectorHalf4(const Quaternion& Value);
 #ifdef AI_QUATERNION_H_INC
 	explicit Quaternion(const aiQuaternion & aiQuat);
 #endif

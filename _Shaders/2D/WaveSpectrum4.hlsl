@@ -1,6 +1,6 @@
 #ifndef __WAVE_SPECTRUM_HLSL__
 #define __WAVE_SPECTRUM_HLSL__
-#include "../ComputeShader/Math.hlsl"
+#include "../ComputeShader/Complex.hlsl"
 
 cbuffer CB_World : register(b0)
 {

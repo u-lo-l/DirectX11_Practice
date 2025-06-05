@@ -35,6 +35,13 @@ Vector::Vector( const Vector & v )
 {
 }
 
+Vector::Vector(const DirectX::PackedVector::XMHALF4 & Other)
+{
+	X = DirectX::PackedVector::XMConvertHalfToFloat(Other.x);
+	Y = DirectX::PackedVector::XMConvertHalfToFloat(Other.y);
+	Z = DirectX::PackedVector::XMConvertHalfToFloat(Other.z);
+}
+
 Vector& Vector::operator=( const Vector & v )
 {
 	if (this == &v)
@@ -565,6 +572,16 @@ Vector Vector::TransformCoord( const Vector & position, const Matrix & matrix)
 	float single4 = (matrix.M14 * position.X) + (matrix.M24 * position.Y) + (matrix.M34 * position.Z) + matrix.M44;
 
 	return {(single1 / single4), (single2 / single4), (single3 / single4)};
+}
+
+DirectX::PackedVector::XMHALF4 Vector::GetPackedVectorHalf4(const Vector& Value)
+{
+	DirectX::PackedVector::XMHALF4 PackedVector;
+	PackedVector.x = DirectX::PackedVector::XMConvertFloatToHalf(Value.X);
+	PackedVector.y = DirectX::PackedVector::XMConvertFloatToHalf(Value.Y);
+	PackedVector.z = DirectX::PackedVector::XMConvertFloatToHalf(Value.Z);
+	PackedVector.w = DirectX::PackedVector::XMConvertFloatToHalf(0.0f);
+	return PackedVector;
 }
 
 Vector Vector::Random(float MinLength, float MaxLength)

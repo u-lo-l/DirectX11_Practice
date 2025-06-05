@@ -781,6 +781,14 @@ Matrix Matrix::CreateFromAxisAngle(Vector axis, float angle)
 	return matrix;
 }
 
+Matrix Matrix::CreateFromTRS(const Vector& Translation, const Quaternion& Rotation, const Vector& Scale)
+{
+	Matrix T = CreateTranslation(Translation);
+	Matrix R = CreateFromQuaternion(Rotation);
+	Matrix S = CreateScale(Scale);
+	return S * R * T;
+}
+
 // TODO : 문제있음 뭔가 이상함.
 // Matrix Matrix::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
 // {
@@ -1157,6 +1165,31 @@ void Matrix::Invert(bool bIsTransform)
 		this->TransformInvert();
 	}
 }
+
+// Matrix Matrix::CreateFromTRS(const Vector& Pos, const Quaternion& Rot, const Vector& Scale)
+// {
+// 	float x2 = Rot.X + Rot.X;
+// 	float y2 = Rot.Y + Rot.Y;
+// 	float z2 = Rot.Z + Rot.Z;
+//
+// 	float xx2 = Rot.X * x2;
+// 	float yy2 = Rot.Y * y2;
+// 	float zz2 = Rot.Z * z2;
+//
+// 	float yz2 = Rot.Y * z2;
+// 	float wx2 = Rot.W * x2;
+// 	float xy2 = Rot.X * y2;
+// 	float wz2 = Rot.W * z2;
+// 	float xz2 = Rot.X * z2;
+// 	float wy2 = Rot.W * y2;
+//
+// 	return {
+// 		(1.0f - yy2 - zz2) * Scale.X, (xy2 + wz2) * Scale.X,        (xz2 - wy2) * Scale.X,        0.0f,
+// 		(xy2 - wz2) * Scale.Y,        (1.0f - xx2 - zz2) * Scale.Y, (yz2 + wx2) * Scale.Y,        0.0f,
+// 		(xz2 + wy2) * Scale.Z,        (yz2 - wx2) * Scale.Z,        (1.0f - xx2 - yy2) * Scale.Z, 0.0f,
+// 		Pos.X,                        Pos.Y,                        Pos.Y,                        1.0f
+// 	};
+// }
 
 void Matrix::GeneralInvert()
 {

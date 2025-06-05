@@ -24,6 +24,14 @@ Quaternion::Quaternion( const Quaternion & Other )
 {
 }
 
+Quaternion::Quaternion(const DirectX::PackedVector::XMHALF4& Other)
+{
+	W = DirectX::PackedVector::XMConvertHalfToFloat(Other.x);
+	X = DirectX::PackedVector::XMConvertHalfToFloat(Other.y);
+	Y = DirectX::PackedVector::XMConvertHalfToFloat(Other.z);
+	Z = DirectX::PackedVector::XMConvertHalfToFloat(Other.w);
+}
+
 Quaternion & Quaternion::operator=( const Quaternion & Other )
 {
 	if (this == &Other)
@@ -33,6 +41,17 @@ Quaternion & Quaternion::operator=( const Quaternion & Other )
 	Y = Other.Y;
 	Z = Other.Z;
 	return *this;
+}
+
+DirectX::PackedVector::XMHALF4 Quaternion::GetPackedVectorHalf4(const Quaternion& Value)
+{
+	const DirectX::PackedVector::XMHALF4 PackedVector = {
+		DirectX::PackedVector::XMConvertFloatToHalf(Value.W),
+		DirectX::PackedVector::XMConvertFloatToHalf(Value.X),
+		DirectX::PackedVector::XMConvertFloatToHalf(Value.Y),
+		DirectX::PackedVector::XMConvertFloatToHalf(Value.Z)
+	};
+	return PackedVector;
 }
 
 Quaternion::Quaternion( const aiQuaternion & aiQuat )

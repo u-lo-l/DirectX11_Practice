@@ -1,6 +1,6 @@
 #ifndef __PHILIPS_SPECTRUM_UPDATE_HLSL__
 # define __PHILIPS_SPECTRUM_UPDATE_HLSL__
-# include "../../ComputeShader/Math.hlsl"
+# include "../../ComputeShader/Complex.hlsl"
 
 # ifndef THREAD_X
 #  error "THREAD_X Not Defined"

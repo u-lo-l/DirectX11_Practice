@@ -5,13 +5,10 @@
 # error "NumThread Size Not Defined"
 # endif
 
-struct BoneMatrix_s
-{
-	matrix Transform;
-};
+#include "../../ComputeShader/Transform.hlsl"
 
-Texture2D<float4> KeyFrameTexture : register(t0);
-RWStructuredBuffer<BoneMatrix_s> BoneMatrix : register(u0);
+Texture2D<half4> KeyFrameAnimation : register(t0);
+RWStructuredBuffer<BoneMatrix_t> BoneMatrix : register(u0);
 
 cbuffer CB_Info : register(b0)
 {
@@ -21,31 +18,23 @@ cbuffer CB_Info : register(b0)
 	float LerpRate;
 }
 
-
 [numthreads(THREAD_X, 1, 1)]
 void CSMain(uint3 DTid : SV_DISPATCHTHREADID)
 {
-	matrix Curr, Next;
+	BoneTRS_t Curr, Next;
 	const uint BoneIndex = DTid.x;
+
 	uint StructCount, StructStride;
 	BoneMatrix.GetDimensions(StructCount, StructStride);
 	[flatten]
 	if (BoneIndex >= StructCount)
 		return ;
 
-	Curr[0] = KeyFrameTexture[uint2(BoneIndex * 4 + 0, CurrentFrame)];
-	Curr[1] = KeyFrameTexture[uint2(BoneIndex * 4 + 1, CurrentFrame)];
-	Curr[2] = KeyFrameTexture[uint2(BoneIndex * 4 + 2, CurrentFrame)];
-	Curr[3] = KeyFrameTexture[uint2(BoneIndex * 4 + 3, CurrentFrame)];
+	Curr = GetBoneTRS(KeyFrameAnimation, BoneIndex, CurrentFrame);
+	Next = GetBoneTRS(KeyFrameAnimation, BoneIndex, NextFrame);
 
-	Next[0] = KeyFrameTexture[uint2(BoneIndex * 4 + 0, NextFrame)];
-	Next[1] = KeyFrameTexture[uint2(BoneIndex * 4 + 1, NextFrame)];
-	Next[2] = KeyFrameTexture[uint2(BoneIndex * 4 + 2, NextFrame)];
-	Next[3] = KeyFrameTexture[uint2(BoneIndex * 4 + 3, NextFrame)];
-
-	BoneMatrix_s Result;
-	Result.Transform = lerp(Curr, Next, LerpRate);
-	BoneMatrix[BoneIndex] = Result;
+	BoneMatrix[BoneIndex].M = ToMatrix(lerp(Curr, Next, LerpRate));
 }
+
 
 #endif

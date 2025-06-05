@@ -1,10 +1,14 @@
-#ifndef __MATH_HLSL__
-# define __MATH_HLSL__
+#ifndef __COMPLEX_HLSL__
+# define __COMPLEX_HLSL__
 
 # define Complex float2
 
-const static float PI = 3.14159274f;
-const static float EPSILON = 1e-7f;
+#ifndef PI
+# define PI (3.14159274f)
+#endif
+#ifndef EPSILON
+# define EPSILON (1e-7f)
+#endif 
 
 Complex ComplexMul(Complex A, Complex B)
 {

@@ -12,6 +12,7 @@ public:
 	explicit Vector(float value);
 	Vector(float x, float y, float z);
 	Vector(const Vector& v);
+	Vector(const DirectX::PackedVector::XMHALF4 & Other);
 	Vector& operator=(const Vector& v);
 
 	explicit Vector(const aiVector3D & v);
@@ -89,6 +90,8 @@ public:
 	static Vector TransformNormal( const Vector & normal, const Matrix & matrix);
 	static Vector TransformCoord( const Vector & position, const Matrix & matrix);
 
+	static DirectX::PackedVector::XMHALF4 GetPackedVectorHalf4(const Vector & Value);
+	
 	static Vector Random(float MinLength, float MaxLength);
 public:
 	const static Vector Zero;///< 0.0f, 0.0f, 0.0f

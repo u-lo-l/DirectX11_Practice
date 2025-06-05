@@ -1,6 +1,6 @@
 #ifndef __TRANSEPOSE_TEXTURE_ARRAY_HLSL__
 # define __TRANSEPOSE_TEXTURE_ARRAY_HLSL__
-# include "../../ComputeShader/Math.hlsl"
+# include "../../ComputeShader/Complex.hlsl"
 
 # ifndef THREAD_X
 #  error "THREAD_X Not Defined"

@@ -1,6 +1,6 @@
 #ifndef __IFFT_RESULT_HLSL__
 #define __IFFT_RESULT_HLSL__
-#include "../ComputeShader/Math.hlsl"
+#include "../ComputeShader/Complex.hlsl"
 
 cbuffer CB_World : register(b0)
 {

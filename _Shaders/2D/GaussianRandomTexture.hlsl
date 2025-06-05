@@ -1,6 +1,6 @@
 #ifndef __GAUSSIAN_RANDOM_TEXTURE_HLSL__
 #define __GAUSSIAN_RANDOM_TEXTURE_HLSL__
-#include "../ComputeShader/Math.hlsl"
+#include "../ComputeShader/Complex.hlsl"
 cbuffer CB_World : register(b0)
 {
     matrix World;
