@@ -7,7 +7,7 @@
 
 #include "../../ComputeShader/Transform.hlsl"
 
-Texture2D<half4> KeyFrameAnimation : register(t0);
+Texture2D<float4> KeyFrameAnimation : register(t0);
 RWStructuredBuffer<BoneMatrix_t> BoneMatrix : register(u0);
 
 cbuffer CB_Info : register(b0)

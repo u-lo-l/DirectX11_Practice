@@ -7,7 +7,7 @@ AnimationClip::AnimationClip(const CSkeletal * InSkeleton, const wstring& Animat
 	ASSERT(!!InSkeleton, "Skeleton Not Valid")
 	vector<KeyFrameData *> KeyFrames;
 	ReadAnimationAsset(InSkeleton, AnimationAssetPath, KeyFrames);
-	vector<PackedHalfTRS> KeyFramesArray;
+	vector<TRSDesc> KeyFramesArray;
 	CreateKeyFrameTable(InSkeleton, KeyFrames, KeyFramesArray);
 	CreateKeyFrameTexture(KeyFramesArray);
 }
@@ -159,7 +159,7 @@ void AnimationClip::CreateKeyFrameTable
 (
 	const CSkeletal * InSkeleton,
 	const vector<KeyFrameData *> & InKeyFrames,
-	vector<PackedHalfTRS> & OutKeyFrameArray
+	vector<TRSDesc> & OutKeyFrameArray
 ) const
 {
 	map<string, KeyFrameData *> KeyFrameSearchTree;
@@ -196,28 +196,27 @@ void AnimationClip::CreateKeyFrameTable
 				Matrix AnimationMatrix = Matrix::CreateFromTRS(Translation, Rotation, Scale);
 
 				const UINT ParentIndex = Frame * BoneCount + TargetBone->GetParentIndex();
-				const PackedHalfTRS & ParentTRS = OutKeyFrameArray[ParentIndex]; // W_T_A. 이미 업데이트 된 부모노드의 World-Transform.
+				const TRSDesc & ParentTRS = OutKeyFrameArray[ParentIndex]; // W_T_A. 이미 업데이트 된 부모노드의 World-Transform.
 				const Matrix & ParentMatrix = Matrix::CreateFromTRS(ParentTRS.Translation, ParentTRS.Rotation, ParentTRS.Scale);
 				// 여기서 AnimationMatrix를 Root 기준으로 변환해준다.
 				AnimationMatrix = AnimationMatrix * ParentMatrix; // W_T_B = A_T_B * W_T_A
 
-				AnimationMatrix.Decompose(Scale, Rotation, Translation);
-				OutKeyFrameArray[Index];
+				TRSDesc & TRS = OutKeyFrameArray[Index];
+				AnimationMatrix.Decompose(TRS.Scale, TRS.Rotation, TRS.Translation);
 			}
-			OutKeyFrameArray[Index] = {
-				Vector::GetPackedVectorHalf4(Translation),
-				Quaternion::GetPackedVectorHalf4(Rotation),
-				Vector::GetPackedVectorHalf4(Scale)
-			};
+			else
+			{
+				OutKeyFrameArray[Index] = {Translation, 0, Rotation, Scale, 0};
+			}
 		}
 	}
 }
 
-void AnimationClip::CreateKeyFrameTexture(const vector<PackedHalfTRS> & InKeyFramesArray)
+void AnimationClip::CreateKeyFrameTexture(const vector<TRSDesc> & InKeyFramesArray)
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
-	constexpr UINT PixelChannel = 3; // TRSDesc는 R16G16B16A16 3개 필요하다.
-	constexpr UINT FormatSize = 8; // R16G16B16A16
+	constexpr UINT PixelChannel = 3; // TRSDesc는 R32G32B32A32 3개 필요하다.
+	constexpr UINT FormatSize = 16; // R32G32B32A32
 	const UINT Width = this->Skeleton->GetBoneCount() * PixelChannel;
 	const UINT Height = static_cast<UINT>(GetAnimationLength());
 
@@ -229,7 +228,7 @@ void AnimationClip::CreateKeyFrameTexture(const vector<PackedHalfTRS> & InKeyFra
 	TextureDesc.Height = Height;
 	TextureDesc.MipLevels = 1;
 	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; //16Byte * 4 = 64 Byte
+	TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; //16Byte * 4 = 64 Byte
 	TextureDesc.SampleDesc.Count = 1;
 	TextureDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	TextureDesc.CPUAccessFlags = 0;

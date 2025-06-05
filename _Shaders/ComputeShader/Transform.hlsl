@@ -15,12 +15,13 @@ struct BoneMatrix_t
 
 struct BoneTRS_t
 {
-	half3 Translation;
-	half4 Rotation;
-	half3 Scale;
+	float3 Translation;
+	float4 Rotation;
+	float3 Scale;
 };
 
-half4 slerp(half4 a, half4 b, float t);
+
+float4 slerp(float4 a, float4 b, float t);
 
 matrix ToMatrix(in BoneTRS_t TRS)
 {
@@ -51,7 +52,7 @@ matrix ToMatrix(in BoneTRS_t TRS)
     );
 }
 
-BoneTRS_t GetBoneTRS(in Texture2D<half4> Animation, uint BoneIndex, uint Frame)
+BoneTRS_t GetBoneTRS(in Texture2D<float4> Animation, uint BoneIndex, uint Frame)
 {
 	BoneTRS_t Result;
 	Result.Translation = Animation.Load(int3(BoneIndex * 3 + 0, Frame, 0)).xyz;
@@ -70,11 +71,11 @@ BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t)
 	return Result;
 }
 
-half4 slerp(half4 a, half4 b, float t)
+float4 slerp(float4 a, float4 b, float t)
 {
-	half4 q0 = normalize(a);
-	half4 q1 = normalize(b);
-	half dot_product = dot(q0, q1);
+	float4 q0 = normalize(a);
+	float4 q1 = normalize(b);
+	float dot_product = dot(q0, q1);
 
 	if (dot_product < 0.0f)
 	{
@@ -83,15 +84,14 @@ half4 slerp(half4 a, half4 b, float t)
 	}
 	if (dot_product > 1.f - EPSILON)
 	{
-		const half4 a = lerp(q0, q1, t);
+		const float4 a = lerp(q0, q1, t);
 		return normalize(a);
 	}
 
-	half theta = acos(dot_product);
-	half sin_theta = sin(theta);
-	half weight0 = sin((1.0f - t) * theta) / sin_theta;
-	half weight1 = sin(t * theta) / sin_theta;
+	float theta = acos(dot_product);
+	float sin_theta = sin(theta);
+	float weight0 = sin((1.0f - t) * theta) / sin_theta;
+	float weight1 = sin(t * theta) / sin_theta;
 	return normalize(weight0 * q0 + weight1 * q1);
 }
-
 #endif
