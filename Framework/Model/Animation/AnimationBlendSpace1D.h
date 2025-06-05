@@ -13,8 +13,14 @@ public:
 	float GetDuration() const;
 	float GetBlendSpaceLength() const;
 
-	void GetTargetAnimations(float Value, const AnimationClip ** OutAnim1, const AnimationClip ** OutAnim2) const;
-
+	void GetTargetAnimations(
+		float Value,
+		const AnimationClip ** OutAnim1,
+		const AnimationClip ** OutAnim2,
+		float * Alpha
+	) const;
+	float GetNextFrame(float CurrentFrame, float DeltaSecond) const;
+	void SetWrapped(bool bWrapped);
 private:
 	float WrapValue(float InValue) const;
 	void RefreshDuration();

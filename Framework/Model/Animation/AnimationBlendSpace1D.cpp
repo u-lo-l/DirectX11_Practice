@@ -51,7 +51,8 @@ void AnimationBlendSpace1D::GetTargetAnimations
 (
 	float Value,
 	const AnimationClip ** OutAnim1,
-	const AnimationClip ** OutAnim2
+	const AnimationClip ** OutAnim2,
+	float * Alpha
 ) const
 {
 	if (Animations.empty())
@@ -60,11 +61,20 @@ void AnimationBlendSpace1D::GetTargetAnimations
 		return ;
 	}
 	if (Max == Min)
+	{
 		Value = Max;
+		*Alpha = 0;
+	}
 	else if (bWrap)
+	{
 		Value = WrapValue(Value);
+		*Alpha = (Value - Min) / (Max - Min);
+	}
 	else
+	{
 		Value = Math::Clamp(Value, this->Min, this->Max);
+		*Alpha = (Value - Min) / (Max - Min);
+	}
 
 	const auto It2 = Animations.upper_bound(Value);
 	if (It2 == Animations.cbegin())
@@ -82,6 +92,19 @@ void AnimationBlendSpace1D::GetTargetAnimations
 		*OutAnim1 = It1->second;
 		*OutAnim2 = It2->second;
 	}
+}
+
+float AnimationBlendSpace1D::GetNextFrame(float CurrentFrame, float DeltaSecond) const
+{
+	const float BlendSpaceFullTime = GetBlendSpaceLength() * 30;
+	const float DeltaFrame = DeltaSecond * 30.f * 1.f ;
+	CurrentFrame += DeltaFrame;
+	return fmod(CurrentFrame, BlendSpaceFullTime);
+}
+
+void AnimationBlendSpace1D::SetWrapped(bool bWrapped)
+{
+	bWrap = bWrapped;
 }
 
 float AnimationBlendSpace1D::WrapValue(const float InValue) const

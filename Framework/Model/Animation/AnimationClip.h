@@ -27,7 +27,11 @@ private:
 		vector<FrameDataQuat> Rotations;
 	};
 public:
-	AnimationClip(const CSkeletal * InSkeleton, const wstring & AnimationAssetPath);
+	AnimationClip(
+		const CSkeletal * InSkeleton,
+		const wstring & AnimationAssetPath,
+		bool InbLoop = false
+	);
 	~AnimationClip();
 	const string & GetName() const;
 	float GetPlayRate() const;
@@ -38,11 +42,10 @@ public:
 	bool IsLoop() const;
 	const Texture * GetKeyFrameTexture() const;
 
-	float CalculateNextAnimTime(float CurrentTime, float DeltaSecond) const;
-	int GetCurrentFrame(float CurrentTime) const;
-	int GetNextFrame(float CurrentTime) const;
-	float GetCurrentFrameTime(float CurrentTime) const;
-	float GetNextFrameTime(float CurrentTime) const;
+	float GetNextFrame(float CurrentFrame, float DeltaSecond) const;
+	float GetCurrentFrame(float Time) const;
+	int GetKeyFrameCurr(float CurrentTime) const;
+	int GetKeyFrameNext(float CurrentTime) const;
 
 private:
 	void ReadAnimationAsset(

@@ -7,7 +7,7 @@ Character::Character()
 {
 	SkeletalMesh = nullptr;
 	AnimController = nullptr;
-	
+
 }
 
 Character::~Character()
@@ -18,7 +18,10 @@ Character::~Character()
 
 void Character::SetSkeletalMesh(const wstring& InMeshName)
 {
+	SAFE_DELETE(SkeletalMesh);
+	SAFE_DELETE(AnimController);
 	this->SkeletalMesh = new CSkeletalMesh(InMeshName);
+	this->AnimController = new AnimationController(this->SkeletalMesh->GetSkeletal());
 }
 
 const CSkeletal * Character::GetSkeleton() const
@@ -30,10 +33,13 @@ void Character::AddAnimationClip(const string& InName, AnimationClip* InAnimatio
 {
 	ASSERT(!!this->SkeletalMesh, "Character has no SkeletalMesh")
 	
-	if (AnimController == nullptr)
-		AnimController = new AnimationController(this->SkeletalMesh->GetSkeletal());
 	Animations[InName] = InAnimation;
 	AnimController->SetCurrentAnimation(InAnimation);
+}
+
+AnimationController* Character::GetAnimationController() const
+{
+	return AnimController;
 }
 
 void Character::Tick()

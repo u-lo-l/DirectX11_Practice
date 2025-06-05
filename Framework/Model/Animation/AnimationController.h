@@ -8,10 +8,19 @@ class AnimationController
 private:
 	struct AnimationInfoDesc
 	{
-		int	  CurrentFrame = -1;
-		int   NextFrame  = -1;
-		float CurrentTime = 0.0f;
+		int	  KeyFrameCurr = -1;
+		int   KeyFrameNext  = -1;
 		float LerpRate = 0.0f;
+		float CurrentTime = 0.0f;
+	};
+	struct BlendSpace1DInfoDesc
+	{
+		int KeyFrameCurr[2] = {-1, -1};
+		int KeyFrameNext[2] = {-1, -1};
+		
+		float LerpRate[2] = {0.0f, 0.0f};
+		float Alpha = 0.5f;
+		float CurrentTime = 0.0f;
 	};
 public:
 	explicit AnimationController(CSkeletal * InSkeletal);
@@ -21,19 +30,20 @@ public:
 	void UpdateAnimationFrameData(float DeltaSecond);
 	void Tick();
 
-	void SetCurrentAnimation(const AnimationClip * Clip);
-	void SetCurrentBlendSpace(const AnimationBlendSpace1D * BlendSpace1D);
-
-	void CalculateBoneMatrices() const;
+	void SetCurrentAnimation(AnimationClip * Clip);
+	void SetCurrentBlendSpace(AnimationBlendSpace1D * BlendSpace1D);
 
 private:
 	AnimationInfoDesc AnimationData;
+	BlendSpace1DInfoDesc BlendSpace1DData;
 	ConstantBuffer * CB_AnimationInfo;
-	HlslComputeShader * AnimationKeyFrameCalculator = nullptr;
+	ConstantBuffer * CB_BlendSpace1DInfo;
+	HlslComputeShader * AnimationClipPlayer = nullptr;
+	HlslComputeShader * AnimationBlendSpace1DPlayer = nullptr;
 	// HlslComputeShader * AnimationKeyFrameBlender = nullptr;
 	map<string, AnimationClip *> AnimationClips;
 
 	CSkeletal * TargetSkeletal = nullptr;
-	const AnimationClip * CurrentAnimation = nullptr;
-	const AnimationBlendSpace1D * CurrentBlendSpace = nullptr;
+	AnimationClip * CurrentAnimation = nullptr;
+	AnimationBlendSpace1D * CurrentBlendSpace = nullptr;
 };

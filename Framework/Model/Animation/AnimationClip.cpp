@@ -1,8 +1,13 @@
 ﻿#include "framework.h"
 #include "AnimationClip.h"
 
-AnimationClip::AnimationClip(const CSkeletal * InSkeleton, const wstring& AnimationAssetPath)
-	: Skeleton(InSkeleton)
+AnimationClip::AnimationClip
+(
+	const CSkeletal * InSkeleton,
+	const wstring& AnimationAssetPath,
+	bool InbLoop
+)
+	: Skeleton(InSkeleton), bLoop(InbLoop)
 {
 	ASSERT(!!InSkeleton, "Skeleton Not Valid")
 	vector<KeyFrameData *> KeyFrames;
@@ -17,42 +22,50 @@ AnimationClip::~AnimationClip()
 	SAFE_DELETE(KeyFrameTexture);
 }
 
-float AnimationClip::CalculateNextAnimTime(float CurrentTime, float DeltaSecond) const
+float AnimationClip::GetNextFrame(float CurrentFrame, float DeltaSecond) const
 {
-	const float AnimFullTime = GetAnimationLength() * GetTickPerSecond(); 
-	DeltaSecond *= GetTickPerSecond() * GetPlayRate();
-	CurrentTime += DeltaSecond;
+	const float DeltaFrame = DeltaSecond * GetPlayRate() * GetTickPerSecond();
+	CurrentFrame += DeltaFrame;
 	if (IsLoop() == true)
-		return fmod(CurrentTime, GetAnimationLength());
-	if (CurrentTime > AnimFullTime)
+		return fmod(CurrentFrame, GetAnimationLength());
+	if (CurrentFrame > GetAnimationLength())
 		return -1;
-	return CurrentTime;
+	return CurrentFrame;
 }
 
-int AnimationClip::GetCurrentFrame(float CurrentTime) const
+float AnimationClip::GetCurrentFrame(float Time) const
 {
+	if (Time > Duration)
+	{
+		if (bLoop == false)
+			Time = Duration;
+		else
+			Time = fmod(Time, GetAnimationLength());
+	}
+	return Time;
+}
+
+int AnimationClip::GetKeyFrameCurr(float CurrentTime) const
+{
+	if (CurrentTime > Duration)
+	{
+		if (bLoop == false)
+			CurrentTime = Duration;
+		else
+			CurrentTime = fmod(CurrentTime, GetAnimationLength());
+	}
 	return static_cast<int>(CurrentTime);
 }
 
-int AnimationClip::GetNextFrame(float CurrentTime) const
+int AnimationClip::GetKeyFrameNext(float CurrentTime) const
 {
-	int NextFrame = GetCurrentFrame(CurrentTime) + 1;
-	if (NextFrame >= static_cast<int>(GetDuration()))
+	const int Duration = static_cast<int>(GetDuration());
+	int NextFrame = GetKeyFrameCurr(CurrentTime) + 1;
+	if (NextFrame > Duration)
 		NextFrame = bLoop ? NextFrame / static_cast<int>(GetAnimationLength()) : -1;
 	return NextFrame;
 }
 
-float AnimationClip::GetCurrentFrameTime(float CurrentTime) const
-{
-	const float CurrentFrame = static_cast<float>(GetCurrentFrame(CurrentTime));
-	return CurrentFrame * TickPerSecond;
-}
-
-float AnimationClip::GetNextFrameTime(float CurrentTime) const
-{
-	const float NextFrame = static_cast<float>(GetNextFrame(CurrentTime));
-	return NextFrame < 0 ? NextFrame * TickPerSecond : -1.f;
-}
 
 const string& AnimationClip::GetName() const
 {

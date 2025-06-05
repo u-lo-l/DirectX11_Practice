@@ -26,17 +26,8 @@ namespace sdt
 	{
 		ExportMeshes({L"Adam/Adam.fbx", L"Kachujin/Kachujin.fbx"});
 		ExportAnimations({
-			L"Adam/Standing Cover Turn.fbx",
-			L"Adam/Capoeira_02.fbx",
-			L"Adam/Idle.fbx",
-			L"Adam/Idle2.fbx",
-			L"Adam/Idle3.fbx",
-			L"Adam/Dance01.fbx",
-			L"Adam/Dance02.fbx",
-			L"Adam/Dance03.fbx",
-			L"Adam/Boxing.fbx",
-			L"Adam/Boxing2.fbx",
-			L"Adam/HeadHit.fbx"
+			L"Adam/Stop.fbx",
+			L"Adam/Walk_F.fbx",
 		});
 	}
 

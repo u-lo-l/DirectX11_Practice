@@ -22,6 +22,7 @@ struct BoneTRS_t
 
 
 float4 slerp(float4 a, float4 b, float t);
+BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t);
 
 matrix ToMatrix(in BoneTRS_t TRS)
 {
@@ -59,6 +60,14 @@ BoneTRS_t GetBoneTRS(in Texture2D<float4> Animation, uint BoneIndex, uint Frame)
 	Result.Rotation    = Animation.Load(int3(BoneIndex * 3 + 1, Frame, 0)).yzwx; // (wxyz to xywz)
 	Result.Scale       = Animation.Load(int3(BoneIndex * 3 + 2, Frame, 0)).xyz;
 	return Result;
+}
+
+BoneTRS_t GetInterpolatedBoneTRS(in Texture2D<float4> Animation, uint BoneIndex, uint CurrentFrame, uint NextFrame, float t)
+{
+	BoneTRS_t Curr, Next;
+	Curr = GetBoneTRS(Animation, BoneIndex, CurrentFrame);
+	Next = GetBoneTRS(Animation, BoneIndex, NextFrame);
+	return lerp(Curr, Next, t);
 }
 
 BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t)

@@ -13,6 +13,7 @@ public:
 	void SetSkeletalMesh(const wstring & InMeshName);
 	const CSkeletal* GetSkeleton() const;
 	void AddAnimationClip(const string & InName, AnimationClip * InAnimation);
+	AnimationController * GetAnimationController() const;
 	void Tick();
 	void Render();
 private:
