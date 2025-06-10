@@ -10,7 +10,7 @@ const unsigned int Converter2::ConvertFlag =
 	| aiProcess_GenUVCoords
 	| aiProcess_OptimizeMeshes;
 
-const float Converter2::PreYRotation = Math::Pi;
+const float Converter2::PreYRotation = Math::PI;
 
 Converter2::Converter2()
 	: Importer(new Assimp::Importer()) 

@@ -257,7 +257,7 @@ Vector Quaternion::ToEulerAnglesInRadian() const
 	// Pitch (Y-axis rotation)
 	float sinp = 2 * (this->W * this->Y - this->Z * this->X);
 	if (fabsf(sinp) >= 1)
-		angles.Y = std::copysignf(Math::Pi / 2, sinp); // Use 90 degrees if out of range
+		angles.Y = std::copysignf(Math::PI / 2, sinp); // Use 90 degrees if out of range
 	else
 		angles.Y = asinf(sinp);
 
@@ -281,7 +281,7 @@ Vector Quaternion::ToEulerAnglesInDegrees() const
 	// Pitch (Y-axis rotation)
 	float sinp = 2 * (this->W * this->Y - this->Z * this->X);
 	if (fabsf(sinp) >= 1)
-		angles.Y = std::copysignf(Math::Pi / 2, sinp); // Use 90 degrees if out of range
+		angles.Y = std::copysignf(Math::PI / 2, sinp); // Use 90 degrees if out of range
 	else
 		angles.Y = asinf(sinp);
 
@@ -290,7 +290,7 @@ Vector Quaternion::ToEulerAnglesInDegrees() const
 	float cosy_cosp = 1 - 2 * (this->Y * this->Y + this->Z * this->Z);
 	angles.Z = atan2f(siny_cosp, cosy_cosp);
 
-	angles *= Math::RadianToDeg;
+	angles *= Math::RADIAN_TO_DEG;
 	return angles;
 }
 
@@ -451,7 +451,7 @@ Quaternion Quaternion::Negative( const Quaternion & quaternion)
 
 Quaternion Quaternion::CreateFromAxisAngle( const Vector & axis, float angle)
 {
-	if (axis.Length() < Math::Epsilon || abs(angle) < Math::Epsilon)
+	if (axis.Length() < Math::EPSILON || abs(angle) < Math::EPSILON)
 		return {1,0,0,0};
 	
 	float value = angle * 0.5f;

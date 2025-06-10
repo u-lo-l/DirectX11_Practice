@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+constexpr int INDEX_NONE = -1;
+
 struct LWVPDesc
 {
 	Matrix Local = Matrix::Identity;

@@ -9,9 +9,7 @@ AnimationBlendSpace1D::AnimationBlendSpace1D(const CSkeletal* InSkeleton)
 }
 
 AnimationBlendSpace1D::~AnimationBlendSpace1D()
-{
-	Animations.clear();
-}
+ = default;
 
 void AnimationBlendSpace1D::SetHorizontalRange(float Value1, float Value2)
 {
@@ -30,11 +28,6 @@ void AnimationBlendSpace1D::AddAnimation(AnimationClip* Anim, float At)
 	}
 	Animations[At] = Anim;
 	Duration = max(Duration, Anim->GetDuration());
-}
-
-void AnimationBlendSpace1D::Play(float Value, float Time)
-{
-	
 }
 
 float AnimationBlendSpace1D::GetDuration() const
@@ -61,37 +54,29 @@ void AnimationBlendSpace1D::GetTargetAnimations
 		return ;
 	}
 	if (Max == Min)
-	{
 		Value = Max;
-		*Alpha = 0;
-	}
 	else if (bWrap)
-	{
 		Value = WrapValue(Value);
-		*Alpha = (Value - Min) / (Max - Min);
-	}
 	else
-	{
 		Value = Math::Clamp(Value, this->Min, this->Max);
-		*Alpha = (Value - Min) / (Max - Min);
-	}
 
-	const auto It2 = Animations.upper_bound(Value);
-	if (It2 == Animations.cbegin())
+	const auto It2 = Animations.lower_bound(Value);
+	const auto It1 = (It2 == Animations.cbegin() || It2->first == Value) ? It2 : std::prev(It2);
+	float Value1 = It1->first;
+	float Value2 = It2->first;
+	*OutAnim1 = It1->second;
+	*OutAnim2 = It2->second;
+
+	if (abs(Value1 - Value2) < Math::EPSILON)
 	{
-		*OutAnim1 = *OutAnim2 = It2->second;
+		*Alpha = 0.f;
+		return;
 	}
-	else if (It2 == Animations.cend())
+	if (Value1 > Value2)
 	{
-		const auto It1 = std::prev(It2);
-		*OutAnim1 = *OutAnim2 = It1->second;
+		Value2 = Max + (Value2 - Min);
 	}
-	else
-	{
-		const auto It1 = std::prev(It2);
-		*OutAnim1 = It1->second;
-		*OutAnim2 = It2->second;
-	}
+	*Alpha = (Value - Value1) / (Value2 - Value1);
 }
 
 float AnimationBlendSpace1D::GetNextFrame(float CurrentFrame, float DeltaSecond) const
@@ -111,7 +96,7 @@ float AnimationBlendSpace1D::WrapValue(const float InValue) const
 {
 	ASSERT(Max >= Min, String::Format("%s Range Not Valid", __FUNCTION__).c_str())
 	const float Range = Max - Min;
-	if (Range < Math::Epsilon)
+	if (Range < Math::EPSILON)
 	{
 		return InValue;
 	}

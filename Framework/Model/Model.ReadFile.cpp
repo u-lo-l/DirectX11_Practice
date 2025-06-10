@@ -38,7 +38,7 @@ void Model::ReadFile( const wstring & InFileFullPath )
 
 	String::SplitString(&pString, Rotation.asString(), ",");
 	Vector EulerAngles = {stof(pString[0]), stof(pString[1]), stof(pString[2])};
-	WorldTransform->SetWorldRotation(EulerAngles * Math::DegToRadian);
+	WorldTransform->SetWorldRotation(EulerAngles * Math::DEG_TO_RADIAN);
 
 	String::SplitString(&pString, Scale.asString(), ",");
 	WorldTransform->SetScale({stof(pString[0]), stof(pString[1]), stof(pString[2])});

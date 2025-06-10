@@ -4,7 +4,7 @@
 
 namespace sdt
 {
-	const float Converter::PreYRotation = Math::Pi;
+	const float Converter::PreYRotation = Math::PI;
 	
 	Converter::Converter()
 	 : Loader(nullptr), Scene(nullptr)

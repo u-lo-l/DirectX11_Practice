@@ -215,7 +215,7 @@ namespace sdt
 					Transform * TF = Models[ModelIndex].Object->AddTransforms();
 					TF->SetScale(Models[ModelIndex].Scale);
 					TF->SetWorldPosition(Offet + InstancePosition);
-					TF->SetWorldRotation({0, Math::Random(-Math::Pi, Math::Pi), 0});
+					TF->SetWorldRotation({0, Math::Random(-Math::PI, Math::PI), 0});
 
 					const int AnimationNum = Models[ModelIndex].Object->GetClipCount();
 					if (AnimationNum > 0)
@@ -350,8 +350,8 @@ namespace sdt
 			35.0f,
 			Vector(0, -1, 0),
 			20.0f,
-			60 * Math::DegToRadian,
-			90 * Math::DegToRadian
+			60 * Math::DEG_TO_RADIAN,
+			90 * Math::DEG_TO_RADIAN
 		};
 		LightingManager::Get()->AddSpotLight(light);
 	}

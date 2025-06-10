@@ -9,10 +9,10 @@ public:
 	~AnimationBlendSpace1D();
 	void SetHorizontalRange(float Value1, float Value2);
 	void AddAnimation(AnimationClip * Anim, float At);
-	void Play(float Value, float Time);
 	float GetDuration() const;
 	float GetBlendSpaceLength() const;
-
+	float GetMin() const { return Min; }
+	float GetMax() const { return Max; }
 	void GetTargetAnimations(
 		float Value,
 		const AnimationClip ** OutAnim1,

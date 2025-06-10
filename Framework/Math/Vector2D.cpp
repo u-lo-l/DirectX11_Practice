@@ -129,6 +129,16 @@ Vector2D Vector2D::operator/(const float& divider) const
 	return vector2;
 }
 
+float Vector2D::operator|(const Vector2D & value2) const
+{
+	return X * value2.X + Y * value2.Y;
+}
+
+float Vector2D::operator^(const Vector2D & value2) const
+{
+	return X * value2.Y - Y * value2.X;
+}
+
 
 void Vector2D::operator+=(const Vector2D& value2)
 {
@@ -207,6 +217,13 @@ void Vector2D::Normalize()
 
 	X *= single;
 	Y *= single;
+}
+
+bool Vector2D::NearEqual(const Vector2D& A, const Vector2D& B)
+{
+	if (Math::NearEqual(A.X, B.X) && Math::NearEqual(B.Y, B.Y))
+		return true;
+	return false;
 }
 
 

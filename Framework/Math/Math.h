@@ -4,10 +4,12 @@ class Vector;
 class Math
 {
 public:
+
 	static float AngleOfInclineY(Vector value);
 	static float Barycentric(float value1, float value2, float value3, float amount1, float amount2);
 	static float CatmullRom(float value1, float value2, float value3, float value4, float amount);
 	static float Clamp(float value, float min, float max);
+	static float Clamp(float value, const array<float, 2> & Range);
 	static float ConstrainedPi(float x);
 	static float Constrained2Pi(float x);
 	static float Constrained180(float x);
@@ -39,20 +41,22 @@ public:
 	static float Random(float min, float max);
 public:
 	const static float E;///< 자연로그의 밑수
-	const static float Log2E;///< 자연로그의 밑수 2
-	const static float Log10E;///< 자연로그의 밑수 10
-	const static float Pi;///< PI
-	const static float TwoPi;///< PI * 2
-	const static float PiOver2;///< PI / 2
-	const static float PiOver4;///< PI / 4
-	const static float Epsilon;///< 0.000001f
-	const static float DegToRadian;
-	const static float RadianToDeg;
+	const static float LOG2_E;///< 자연로그의 밑수 2
+	const static float LOG10_E;///< 자연로그의 밑수 10
+	const static float PI;///< PI
+	const static float TWO_PI;///< PI * 2
+	const static float PI_OVER2;///< PI / 2
+	static const float PI_OVER3;
+	const static float PI_OVER4;///< PI / 4
+	static const float PI_OVER6;
+	const static float EPSILON;///< 0.000001f
+	const static float DEG_TO_RADIAN;
+	const static float RADIAN_TO_DEG;
 	
-	const static int IntMinValue;///< Int형의 최소값
-	const static int IntMaxValue;///< Int형의 최대값
-	const static float FloatMinValue;///< Flaot형의 최소값
-	const static float FloatMaxValue;///< Float형의 최대값
+	const static int INT_MIN_VALUE;///< Int형의 최소값
+	const static int INT_MAX_VALUE;///< Int형의 최대값
+	const static float FLOAT_MIN_VALUE;///< Flaot형의 최소값
+	const static float FLOAT_MAX_VALUE;///< Float형의 최대값
 
 	static bool IntersectRayTriangle
 	(

@@ -28,6 +28,7 @@ namespace sdt
 		ExportAnimations({
 			L"Adam/Stop.fbx",
 			L"Adam/Walk_F.fbx",
+			L"Adam/Run_F.fbx",
 		});
 	}
 

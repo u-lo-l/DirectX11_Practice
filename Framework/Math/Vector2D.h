@@ -27,6 +27,8 @@ public:
 	Vector2D operator *(const float& scaleFactor) const;
 	Vector2D operator /(const Vector2D& value2) const;
 	Vector2D operator /(const float& divider) const;
+	float operator |(const Vector2D& value2) const;
+	float operator ^(const Vector2D& value2) const;
 
 	void operator +=(const Vector2D& value2);
 	void operator -=(const Vector2D& value2);
@@ -55,6 +57,7 @@ public:
 	float LengthSquared() const;
 
 	void Normalize();
+	static bool NearEqual(const Vector2D & A, const Vector2D & B);
 
 	static Vector2D Add( Vector2D value1, Vector2D value2 );
 	static Vector2D Divide( Vector2D value1, Vector2D value2 );
@@ -106,3 +109,4 @@ public:
 		float V[2];
 	};
 };
+

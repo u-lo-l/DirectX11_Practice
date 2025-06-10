@@ -242,7 +242,7 @@ void Vector::Normalize()
 {
 	float x = X * X + Y * Y + Z * Z;
 	float single;
-	if (x < Math::Epsilon)
+	if (x < Math::EPSILON)
 		single = 0;
 	else
 		single = 1.0f / sqrtf(x);
@@ -371,7 +371,7 @@ float Vector::Dot( const Vector & value1, const Vector & value2)
 Vector Vector::Normalize( const Vector & value)
 {
 	const float Length = sqrt(value.X * value.X + value.Y * value.Y + value.Z * value.Z);
-	if (Length < Math::Epsilon)
+	if (Length < Math::EPSILON)
 		return Zero;
 
 	const float LengthInverse = 1.0f / Length;

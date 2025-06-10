@@ -51,11 +51,11 @@ void Context::Render() const
 	Gui * const GuiInst = Gui::Get();
 	GuiInst->RenderText(5, 5, 1, 1, 1,  String::Format("FrameRate : %d", Fps));
 	
-	// const Vector & CamPos = MainCamera->GetPosition();
-	// const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
-	//
-	// Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
-	// Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
+	const Vector & CamPos = MainCamera->GetPosition();
+	const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
+	
+	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
+	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
 	//
 	// const Vector CamForward = MainCamera->GetForward();
 	// const Vector CamRight = MainCamera->GetRight();

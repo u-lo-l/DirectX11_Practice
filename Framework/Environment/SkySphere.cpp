@@ -58,8 +58,8 @@ void SkySphere::CreateVertexBuffer()
 	VertexData.push_back(VertexType({0, Radius, 0}));
 
 	const float Denominator = 1 / static_cast<float>(SliceCount);
-	const float DeltaPhi = Math::Pi * Denominator;
-	const float DeltaTheta = 2.0f * Math::Pi * Denominator;
+	const float DeltaPhi = Math::PI * Denominator;
+	const float DeltaTheta = 2.0f * Math::PI * Denominator;
 
 	for (UINT i = 1; i <= SliceCount - 1; i++)
 	{

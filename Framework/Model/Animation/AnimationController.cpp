@@ -1,9 +1,6 @@
 ﻿#include "framework.h"
 #include "AnimationController.h"
 
-#include "AnimationBlendSpace1D.h"
-#include "AnimationClip.h"
-
 AnimationController::AnimationController(CSkeletal* InSkeletal)
 	: TargetSkeletal(InSkeletal)
 {
@@ -23,6 +20,14 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		nullptr,
 		"",
 		sizeof(BlendSpace1DInfoDesc),
+		false
+	);
+	CB_BlendSpace2DInfo = new ConstantBuffer(
+		static_cast<UINT>(ShaderType::ComputeShader),
+		0,
+		nullptr,
+		"",
+		sizeof(BlendSpace2DInfoDesc),
 		false
 	);
 
@@ -60,30 +65,18 @@ AnimationController::~AnimationController()
 
 void AnimationController::PlaySingleAnimationClip
 (
-	const AnimationClip * Clip,
+	const AnimationClip * InClip,
 	const float DeltaSecond
 )
 {
-	if (!Clip)
+	if (!InClip)
 		return;
-	
-	const float CurrentFrame = Clip->GetCurrentFrame(AnimationData.CurrentTime);
-	const int KeyFrameCurr = Clip->GetKeyFrameCurr(CurrentFrame);
-	const int KeyFrameNext = Clip->GetKeyFrameNext(CurrentFrame);
-	float LerpRate = 0;
-	
-	if (KeyFrameNext > 0 && CurrentFrame > (float)KeyFrameCurr)
-		LerpRate = (CurrentFrame - (float)KeyFrameCurr) / (float)(KeyFrameNext - KeyFrameCurr);
-	
-	AnimationData = {
-		KeyFrameCurr,
-		KeyFrameNext,
-		LerpRate,
-		CurrentFrame
-	};
+
+	const AnimationInfoDesc CurrentClipPlayingInfo = GetInfo(InClip, AnimationData.CurrentFrame);
+	AnimationData = CurrentClipPlayingInfo;
 	CB_AnimationInfo->UpdateData(&AnimationData, sizeof(AnimationInfoDesc));
 	
-	const Texture * const KeyFrameTexture = Clip->GetKeyFrameTexture();
+	const Texture * const KeyFrameTexture = InClip->GetKeyFrameTexture();
 	RWStructuredBuffer * const SB_BoneMatrices = TargetSkeletal->GetBoneMatrices_Buffer();
 
 	CB_AnimationInfo->BindToGPU();
@@ -92,58 +85,39 @@ void AnimationController::PlaySingleAnimationClip
 	
 	AnimationClipPlayer->Dispatch();
 	
-	const float NextTime = Clip->GetNextFrame(CurrentFrame, DeltaSecond);
+	const float NextTime = InClip->GetNextFrame(CurrentClipPlayingInfo.CurrentFrame, DeltaSecond);
 	if (NextTime > 0)
-		AnimationData.CurrentTime = NextTime;
+		AnimationData.CurrentFrame = NextTime;
 }
 
 void AnimationController::PlayAnimationBlendSpace1D
 (
-	const AnimationBlendSpace1D * BlendSpace1D,
+	const AnimationBlendSpace1D * InBlendSpace1D,
 	const float DeltaSecond,
 	const float Value
 )
 {
-	if (!BlendSpace1D)
+	if (!InBlendSpace1D)
 		return;
 	
 	const AnimationClip * Anim1;
 	const AnimationClip * Anim2;
 	float Alpha;
-	BlendSpace1D->GetTargetAnimations(Value, &Anim1, &Anim2, &Alpha);
+	InBlendSpace1D->GetTargetAnimations(Value, &Anim1, &Anim2, &Alpha);
 	if (Anim1 == nullptr && Anim2 == nullptr)
 		return ;
 	if (Anim1 == Anim2)
 	{
-		AnimationData.CurrentTime = BlendSpace1DData.CurrentTime;
+		AnimationData.CurrentFrame = BlendSpace1DData.CurrentFrame;
 		PlaySingleAnimationClip(Anim2, DeltaSecond);
-		BlendSpace1DData.CurrentTime = AnimationData.CurrentTime;
+		BlendSpace1DData.CurrentFrame = AnimationData.CurrentFrame;
 		return;
 	}
 	
-	const float CurrentTime = BlendSpace1DData.CurrentTime;
-
-	const float CurrentFrame1 = Anim1->GetCurrentFrame(CurrentTime);
-	const int KeyFrameCurr1 = Anim1->GetKeyFrameCurr(CurrentFrame1);
-	const int KeyFrameNext1 = Anim1->GetKeyFrameNext(CurrentFrame1);
-	float LerpRate1 = 0;
-	if (KeyFrameNext1 > 0 && CurrentFrame1 > (float)KeyFrameCurr1)
-		LerpRate1 = (CurrentFrame1 - (float)KeyFrameCurr1) / (float)(KeyFrameNext1 - KeyFrameCurr1);
-
-	const float CurrentFrame2 = Anim2->GetCurrentFrame(CurrentTime);
-	const int KeyFrameCurr2 = Anim2->GetKeyFrameCurr(CurrentFrame2);
-	const int KeyFrameNext2 = Anim2->GetKeyFrameNext(CurrentFrame2);
-	float LerpRate2 = 0;
-	if (KeyFrameNext2 > 0 && CurrentFrame2 > (float)KeyFrameCurr2)
-		LerpRate2 = (CurrentFrame2 - (float)KeyFrameCurr2) / (float)(KeyFrameNext2 - KeyFrameCurr2);
-
-	BlendSpace1DData = {
-		{KeyFrameCurr1, KeyFrameCurr2},
-		{KeyFrameNext1, KeyFrameNext2},
-		{LerpRate1, LerpRate2},
-		Alpha,
-		CurrentTime
-	};
+	const float CurrentTime = BlendSpace1DData.CurrentFrame;
+	const AnimationInfoDesc Anim1PlayingInfo = GetInfo(Anim1, CurrentTime);
+	const AnimationInfoDesc Anim2PlayingInfo = GetInfo(Anim2, CurrentTime);
+	BlendSpace1DData = BlendSpace1DInfoDesc(Anim1PlayingInfo, Anim2PlayingInfo, Alpha);
 	CB_BlendSpace1DInfo->UpdateData(&BlendSpace1DData, sizeof(BlendSpace1DInfoDesc));
 
 	const Texture * const AnimTexture1 = Anim1->GetKeyFrameTexture();
@@ -157,9 +131,53 @@ void AnimationController::PlayAnimationBlendSpace1D
 
 	AnimationBlendSpace1DPlayer->Dispatch();
 
-	const float NextTime = BlendSpace1D->GetNextFrame(CurrentTime, DeltaSecond);
+	const float NextTime = InBlendSpace1D->GetNextFrame(CurrentTime, DeltaSecond);
 	if (NextTime > 0)
-		BlendSpace1DData.CurrentTime = NextTime;
+		BlendSpace1DData.CurrentFrame = NextTime;
+}
+
+void AnimationController::PlayAnimationBlendSpace2D
+(
+	const AnimationBlendSpace2D * InBlendSpace2D,
+	const float DeltaSecond,
+	const float ValueHorizontal,
+	const float ValueVertical
+)
+{
+	if (AnimationBlendSpace2DPlayer == nullptr)
+		return ;
+	if (!InBlendSpace2D)
+		return;
+	
+	array<const AnimationClip *, 3> Clips;
+	array<float, 3> Weights;
+	InBlendSpace2D->GetTargetAnimations({ValueHorizontal, ValueVertical},Clips,Weights);
+
+	const float CurrentTime = BlendSpace1DData.CurrentFrame;
+	const array<AnimationInfoDesc, 3> Anim1PlayingInfos {
+		GetInfo(Clips[0], CurrentTime),
+		GetInfo(Clips[1], CurrentTime),
+		GetInfo(Clips[1], CurrentTime)
+	};
+	BlendSpace2DData = BlendSpace2DInfoDesc(Anim1PlayingInfos, Weights);
+	CB_BlendSpace2DInfo->UpdateData(&BlendSpace2DData, sizeof(BlendSpace2DInfoDesc));
+
+	const Texture * const AnimTexture1 = Clips[0]->GetKeyFrameTexture();
+	const Texture * const AnimTexture2 = Clips[1]->GetKeyFrameTexture();
+	const Texture * const AnimTexture3 = Clips[2]->GetKeyFrameTexture();
+	RWStructuredBuffer * const SB_BoneMatrices = TargetSkeletal->GetBoneMatrices_Buffer();
+
+	AnimTexture1->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
+	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
+	AnimTexture3->BindToGPU(2, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
+	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
+
+	AnimationBlendSpace2DPlayer->Dispatch();
+
+	const float NextTime = InBlendSpace2D->GetNextFrame(CurrentTime, DeltaSecond);
+	if (NextTime > 0)
+		BlendSpace2DData.CurrentFrame = NextTime;
+	
 }
 
 void AnimationController::UpdateAnimationFrameData(float DeltaSecond)
@@ -176,7 +194,7 @@ void AnimationController::Tick()
 	if (!!CurrentBlendSpace)
 	{
 		static float WalkSpeed = 0;
-		ImGui::SliderFloat("Walk Speed", &WalkSpeed, 0.0f, 1.0f);
+		ImGui::SliderFloat("Walk Speed", &WalkSpeed, CurrentBlendSpace->GetMin(), CurrentBlendSpace->GetMax());
 		PlayAnimationBlendSpace1D(CurrentBlendSpace, DeltaSecond, WalkSpeed);
 	}
 }
@@ -193,5 +211,22 @@ void AnimationController::SetCurrentBlendSpace(AnimationBlendSpace1D* BlendSpace
 	CurrentAnimation = nullptr;
 	CurrentBlendSpace = BlendSpace1D;
 	BlendSpace1DData = {};
+}
+
+AnimationController::AnimationInfoDesc AnimationController::GetInfo(const AnimationClip* Clip, float InCurrentFrame)
+{
+	const float CurrentFrame = Clip->GetCurrentFrame(InCurrentFrame);
+	const int KeyFrameCurr = Clip->GetKeyFrameCurr(CurrentFrame);
+	const int KeyFrameNext = Clip->GetKeyFrameNext(CurrentFrame);
+	float LerpRate = 0;
+	if (KeyFrameNext > 0 && CurrentFrame > (float)KeyFrameCurr)
+		LerpRate = (CurrentFrame - (float)KeyFrameCurr) / (float)(KeyFrameNext - KeyFrameCurr);
+
+	return {
+		KeyFrameCurr,
+		KeyFrameNext,
+		LerpRate,
+		CurrentFrame
+	};
 }
 

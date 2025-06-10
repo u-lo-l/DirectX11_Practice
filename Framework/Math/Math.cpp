@@ -3,23 +3,25 @@
 #include <cstdlib>
 
 const float Math::E = 2.71828175f;
-const float Math::Log2E = 1.442695f;
-const float Math::Log10E = 0.4342945f;
-const float Math::Pi = 3.14159274f;
-const float Math::TwoPi = 6.28318548f;
-const float Math::PiOver2 = 1.57079637f;
-const float Math::PiOver4 = 0.7853982f;
-const float Math::DegToRadian = 0.0174533f;
-const float Math::RadianToDeg = 57.2957764f;
+const float Math::LOG2_E = 1.442695f;
+const float Math::LOG10_E = 0.4342945f;
+const float Math::PI = 3.14159274f;
+const float Math::TWO_PI = 6.28318548f;
+const float Math::PI_OVER2 = 1.57079637f;
+const float Math::PI_OVER3 = 1.0471975f;
+const float Math::PI_OVER4 = 0.7853982f;
+const float Math::PI_OVER6 = 0.5235987f;
+const float Math::DEG_TO_RADIAN = 0.0174533f;
+const float Math::RADIAN_TO_DEG = 57.2957764f;
 
 #pragma warning( disable : 4146)
-const int Math::IntMinValue = -2147483648;
-const int Math::IntMaxValue = 2147483647;
-const float Math::FloatMinValue = -3.402823E+38f;
-const float Math::FloatMaxValue = 3.402823E+38f;
+const int Math::INT_MIN_VALUE = -2147483648;
+const int Math::INT_MAX_VALUE = 2147483647;
+const float Math::FLOAT_MIN_VALUE = -3.402823E+38f;
+const float Math::FLOAT_MAX_VALUE = 3.402823E+38f;
 #pragma warning( default : 4146)
 
-const float Math::Epsilon = 1e-6f;
+const float Math::EPSILON = 1e-6f;
 
 float Math::AngleOfInclineY(Vector value)
 {
@@ -49,22 +51,27 @@ float Math::Clamp(float value, float min, float max)
 	return value;
 }
 
+float Math::Clamp(float value, const array<float, 2>& Range)
+{
+	return Clamp(value, Range[0], Range[1]);
+}
+
 float Math::ConstrainedPi(float x)
 {
-	x = fmodf(x + Pi, TwoPi);
+	x = fmodf(x + PI, TWO_PI);
 
 	if (x < 0.0f)
-		x += TwoPi;
+		x += TWO_PI;
 
-	return x - Pi;
+	return x - PI;
 }
 
 float Math::Constrained2Pi(float x)
 {
-	x = fmodf(x, TwoPi);
+	x = fmodf(x, TWO_PI);
 
 	if (x < 0.0f)
-		x += TwoPi;
+		x += TWO_PI;
 
 	return x;
 }
@@ -173,13 +180,13 @@ float Math::WrapAngle(float angle)
 {
 	angle = (float)remainder((double)angle, 6.28318548202515);
 
-	if (angle <= -Pi)
+	if (angle <= -PI)
 	{
-		angle += TwoPi;
+		angle += TWO_PI;
 	}
-	else if (angle > Pi)
+	else if (angle > PI)
 	{
-		angle -= TwoPi;
+		angle -= TWO_PI;
 	}
 
 	return angle;
@@ -187,7 +194,7 @@ float Math::WrapAngle(float angle)
 
 bool Math::IsZero(float a)
 {
-	return fabs(a) < Epsilon;
+	return fabs(a) < EPSILON;
 }
 
 bool Math::IsOne(float a)
@@ -216,7 +223,7 @@ bool Math::WithinEpsilon(float a, float b)
 {
 	float num = a - b;
 
-	return ((-Epsilon <= num) && (num <= Epsilon));
+	return ((-EPSILON <= num) && (num <= EPSILON));
 }
 
 bool Math::WithinEpsilon(float a, float b, float epsilon)
@@ -246,7 +253,7 @@ int Math::Random( int min, int max )
 
 float Math::Random( float min, float max )
 {
-	if (max - min <= Math::Epsilon)
+	if (max - min <= Math::EPSILON)
 		return min;
 	float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	float diff = max - min;

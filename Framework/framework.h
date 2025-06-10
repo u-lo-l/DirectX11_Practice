@@ -58,9 +58,14 @@ using namespace std;
 	#include "Math/Frustum.h"
 	#include "Math/Noise.h"
 	#include "Math/Math.h"
+
+	#include "BasicShapes/BasicShapes2D/Circle2D.h"
+	#include "BasicShapes/BasicShapes2D/LineSegment2D.h"
+	#include "BasicShapes/BasicShapes2D/Triangle2D.h"
 #pragma endregion
 
-#pragma region  My Own 
+#pragma region  My Own
+	#include "Utilites/Hash.h"
 	#include "Utilites/Definitions.h"
 	#include "Utilites/ShaderSlots.h"
 	#include "Utilites/Structures.h"
@@ -108,6 +113,12 @@ using namespace std;
 	#include "Model/Mesh/CSkeletal.h"
 	#include "Model/Mesh/CSkeletalMesh.h"
 	#include "Model/Mesh/MeshSubset.h"
+
+	#include "Model/Animation/AnimationClip.h"
+	#include "Model/Animation/AnimationBlendSpace1D.h"
+	#include "Model/Animation/AnimationBlendSpaceHelper.h"
+	#include "Model/Animation/AnimationBlendSpace2D.h"
+#include "Model/Animation/AnimationController.h"
 
 	#include "Environment/LandScape/SceneryCell.h"
 	#include "Environment/LandScape/LandScape.h"

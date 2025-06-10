@@ -125,7 +125,7 @@ const Vector& Camera::GetEulerAngleInRadian() const
 void Camera::SetRotation(float R, float P, float Y) const
 {
 	Vector EulerDegree = {R, P, Y};
-	Tf->SetWorldRotation(EulerDegree * Math::DegToRadian);
+	Tf->SetWorldRotation(EulerDegree * Math::DEG_TO_RADIAN);
 	ViewFrustum->UpdateTransform(Tf->GetWorldPosition(), Tf->GetForward(), Tf->GetUp(), Tf->GetRight());
 }
 

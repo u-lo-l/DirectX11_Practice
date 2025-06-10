@@ -382,7 +382,7 @@ bool Matrix::DecomposeUniformScale(float& scale, Quaternion& rotation, Vector& t
 	scale = sqrtf((M11 * M11) + (M12 * M12) + (M13 * M13));
 	float inv_scale = 1.0f / scale;
 
-	if (fabsf(scale) < Math::Epsilon)
+	if (fabsf(scale) < Math::EPSILON)
 	{
 		rotation = Quaternion::Identity;
 

@@ -11,6 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BasicShapes\BasicShapes2D\Circle2D.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\LineSegment2D.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\Square2D.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\Triangle2D.cpp" />
     <ClCompile Include="Environment\Foliage.cpp" />
     <ClCompile Include="Environment\LandScape\LandScape.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -267,6 +271,7 @@
     </ClCompile>
     <ClCompile Include="Model\Animation\AnimationBlendSpace1D.cpp" />
     <ClCompile Include="Model\Animation\AnimationBlendSpace2D.cpp" />
+    <ClCompile Include="Model\Animation\AnimationBlendSpaceHelper.cpp" />
     <ClCompile Include="Model\Animation\AnimationClip.cpp" />
     <ClCompile Include="Model\Animation\AnimationController.cpp" />
     <ClCompile Include="Model\Character.cpp" />
@@ -860,6 +865,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Utilites\BinaryFile.cpp" />
+    <ClCompile Include="Utilites\Hash.cpp" />
     <ClCompile Include="Utilites\Helper.cpp" />
     <ClCompile Include="Utilites\Path.cpp" />
     <ClCompile Include="Utilites\String.cpp" />
@@ -868,6 +874,10 @@
     <ClCompile Include="Viewer\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicShapes\BasicShapes2D\Circle2D.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\LineSegment2D.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\Square2D.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\Triangle2D.h" />
     <ClInclude Include="Environment\Foliage.h" />
     <ClInclude Include="Environment\LandScape\LandScape.h" />
     <ClInclude Include="Environment\LandScape\SceneryCell.h" />
@@ -892,6 +902,7 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Model\Animation\AnimationBlendSpace1D.h" />
     <ClInclude Include="Model\Animation\AnimationBlendSpace2D.h" />
+    <ClInclude Include="Model\Animation\AnimationBlendSpaceHelper.h" />
     <ClInclude Include="Model\Animation\AnimationClip.h" />
     <ClInclude Include="Model\Animation\AnimationController.h" />
     <ClInclude Include="Model\Character.h" />
@@ -950,6 +961,7 @@
     <ClInclude Include="Systems\Window.h" />
     <ClInclude Include="Utilites\BinaryFile.h" />
     <ClInclude Include="Utilites\Definitions.h" />
+    <ClInclude Include="Utilites\Hash.h" />
     <ClInclude Include="Utilites\Helper.h" />
     <ClInclude Include="Utilites\Path.h" />
     <ClInclude Include="Utilites\ShaderSlots.h" />

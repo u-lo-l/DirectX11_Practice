@@ -86,7 +86,7 @@ void ParticleSystem::CreateSingleParticleVertex
 )
 {
 
-	const float HorizontalAngle = Math::Pi * 2.0f * Math::Random(0.0f, 1.0f);
+	const float HorizontalAngle = Math::PI * 2.0f * Math::Random(0.0f, 1.0f);
 	Vector4 random;
 	random.X = Math::Random(0.0f, 1.0f);
 	random.Y = Math::Random(0.0f, 1.0f);
