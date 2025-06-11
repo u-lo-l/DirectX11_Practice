@@ -10,7 +10,8 @@ class Vector2D
 {
 public:
 	Vector2D();
-	Vector2D(float value);
+	explicit Vector2D(float value);
+	Vector2D(int x, int y);
 	Vector2D(float x, float y);
 
 	operator float* ();
@@ -27,7 +28,9 @@ public:
 	Vector2D operator *(const float& scaleFactor) const;
 	Vector2D operator /(const Vector2D& value2) const;
 	Vector2D operator /(const float& divider) const;
+	// DotProduct
 	float operator |(const Vector2D& value2) const;
+	// CrossProduct
 	float operator ^(const Vector2D& value2) const;
 
 	void operator +=(const Vector2D& value2);
@@ -55,8 +58,12 @@ public:
 
 	float Length() const;
 	float LengthSquared() const;
+	float L1Norm() const;
+	float L2Norm() const;
+	float LInfNorm() const;
 
 	void Normalize();
+	Vector2D Normalized() const;
 	static bool NearEqual(const Vector2D & A, const Vector2D & B);
 
 	static Vector2D Add( Vector2D value1, Vector2D value2 );

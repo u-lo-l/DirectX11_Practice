@@ -21,6 +21,11 @@ Vector2D::Vector2D(float value)
 	X = Y = value;
 }
 
+Vector2D::Vector2D(int x, int y)
+{
+	X = static_cast<float>(x);
+	Y = static_cast<float>(y);
+}
 
 Vector2D::Vector2D(float x, float y)
 {
@@ -66,7 +71,6 @@ bool Vector2D::operator!=(const Vector2D& value2) const
 	else
 		return true;
 }
-
 
 Vector2D Vector2D::operator+(const Vector2D& value2) const
 {
@@ -134,9 +138,10 @@ float Vector2D::operator|(const Vector2D & value2) const
 	return X * value2.X + Y * value2.Y;
 }
 
+// Left Hand Cross Product
 float Vector2D::operator^(const Vector2D & value2) const
 {
-	return X * value2.Y - Y * value2.X;
+	return -X * value2.Y + Y * value2.X;
 }
 
 
@@ -209,14 +214,35 @@ float Vector2D::LengthSquared() const
 	return X * X + Y * Y;
 }
 
+float Vector2D::L1Norm() const
+{
+	return abs(X) + abs(Y);
+}
+
+float Vector2D::L2Norm() const
+{
+	return Length();
+}
+
+float Vector2D::LInfNorm() const
+{
+	return max(abs(X), abs(Y));
+}
 
 void Vector2D::Normalize()
 {
-	float x = X * X + Y * Y;
-	float single = 1.0f / sqrtf(x);
+	const float x = X * X + Y * Y;
+	const float InvDenominator = Math::IsZero(x) ? 0.f : 1.0f / sqrtf(x);
 
-	X *= single;
-	Y *= single;
+	X *= InvDenominator;
+	Y *= InvDenominator;
+}
+
+Vector2D Vector2D::Normalized() const
+{
+	Vector2D Result = *this;
+	Result.Normalize();
+	return Result;
 }
 
 bool Vector2D::NearEqual(const Vector2D& A, const Vector2D& B)

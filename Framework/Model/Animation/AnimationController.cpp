@@ -49,11 +49,14 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		true
 	);
 	AnimationBlendSpace1DPlayer->SetDispatchSize(8, 1, 1);
-	// AnimationKeyFrameBlender = new HlslComputeShader(
-	// 	L"Mesh/Animation/KeyFrameBlender.hlsl",
-	// 	nullptr
-	// );
-	// AnimationKeyFrameBlender->SetDispatchSize(1,1,1);
+
+	AnimationBlendSpace2DPlayer = new HlslComputeShader(
+		L"Mesh/Animation/BlendSpace2DPlayer.hlsl",
+		Defines.data(),
+		"CSMain",
+		true
+	);
+	AnimationBlendSpace2DPlayer->SetDispatchSize(8, 1, 1);
 }
 
 AnimationController::~AnimationController()
@@ -152,7 +155,9 @@ void AnimationController::PlayAnimationBlendSpace2D
 	array<const AnimationClip *, 3> Clips;
 	array<float, 3> Weights;
 	InBlendSpace2D->GetTargetAnimations({ValueHorizontal, ValueVertical},Clips,Weights);
-
+	ASSERT((Weights[0] > -Math::EPSILON && Weights[1] > -Math::EPSILON && Weights[2] > -Math::EPSILON), "Weight Not Valid : NegativeValue");
+	ASSERT(false == (Math::IsZero(Weights[0]) && Math::IsZero(Weights[1]) && Math::IsZero(Weights[2])), "Weight Not Valid : All Zero");
+	
 	const float CurrentTime = BlendSpace1DData.CurrentFrame;
 	const array<AnimationInfoDesc, 3> Anim1PlayingInfos {
 		GetInfo(Clips[0], CurrentTime),
@@ -177,7 +182,6 @@ void AnimationController::PlayAnimationBlendSpace2D
 	const float NextTime = InBlendSpace2D->GetNextFrame(CurrentTime, DeltaSecond);
 	if (NextTime > 0)
 		BlendSpace2DData.CurrentFrame = NextTime;
-	
 }
 
 void AnimationController::UpdateAnimationFrameData(float DeltaSecond)
@@ -197,6 +201,16 @@ void AnimationController::Tick()
 		ImGui::SliderFloat("Walk Speed", &WalkSpeed, CurrentBlendSpace->GetMin(), CurrentBlendSpace->GetMax());
 		PlayAnimationBlendSpace1D(CurrentBlendSpace, DeltaSecond, WalkSpeed);
 	}
+	if (!!CurrentBlendSpace2D)
+	{
+		static float HorizontalSpeed = 0;
+		static float VerticalSpeed = 0;
+		const array<float, 2> HRange = CurrentBlendSpace2D->GetHorizontalRange();
+		const array<float, 2> VRange = CurrentBlendSpace2D->GetVerticalRange();
+		ImGui::SliderFloat("Horizontal Speed", &HorizontalSpeed, HRange[0], HRange[1]);
+		ImGui::SliderFloat("Vertical Speed", &VerticalSpeed, VRange[0], VRange[1]);
+		PlayAnimationBlendSpace2D(CurrentBlendSpace2D, DeltaSecond, HorizontalSpeed, VerticalSpeed);
+	}
 }
 
 void AnimationController::SetCurrentAnimation(AnimationClip * Clip)
@@ -211,6 +225,14 @@ void AnimationController::SetCurrentBlendSpace(AnimationBlendSpace1D* BlendSpace
 	CurrentAnimation = nullptr;
 	CurrentBlendSpace = BlendSpace1D;
 	BlendSpace1DData = {};
+}
+
+void AnimationController::SetCurrentBlendSpace(AnimationBlendSpace2D * BlendSpace2D)
+{
+	CurrentAnimation = nullptr;
+	CurrentBlendSpace = nullptr;
+	CurrentBlendSpace2D = BlendSpace2D;
+	BlendSpace2DData = {};
 }
 
 AnimationController::AnimationInfoDesc AnimationController::GetInfo(const AnimationClip* Clip, float InCurrentFrame)

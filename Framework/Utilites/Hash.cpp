@@ -1,36 +1,54 @@
 ﻿#include "framework.h"
 #include "Hash.h"
 
-std::uint64_t hash<Vector2D>::operator()(const Vector2D& Value) const
+std::uint32_t hash<pair<int, int>>::operator()(const pair<int, int>& Value) const noexcept
 {
-	constexpr std::uint64_t prime{0x100000001B3};
-	std::uint64_t result{0xcbf29ce484222325};
+	constexpr std::uint32_t FnvPrime = 0x01000193; // 16777619
+	constexpr std::uint32_t FnvOffsetBasis = 0x811C9DC5; // 2166136261
+	std::uint32_t Result = FnvOffsetBasis;
 	
-	constexpr auto FloatHash = hash<float>();
-	const size_t h1 = FloatHash(Value.X);
-	const size_t h2 = FloatHash(Value.Y);
-	result = result ^ h1;
-	result = result * prime;
-	result = result ^ h2;
-	result = result * prime;
-	return result;
+	constexpr auto IntHash = hash<int>();
+	const uint32_t H1 = IntHash(Value.first);
+	const uint32_t H2 = IntHash(Value.second);
+	Result ^= H1;
+	Result *= FnvPrime;
+	Result ^= H2;
+	Result *= FnvPrime;
+	return Result;
 }
 
-std::uint64_t hash<LineSegment2D>::operator()(const LineSegment2D& Value) const
+std::uint32_t hash<Vector2D>::operator()(const Vector2D& Value) const noexcept
 {
-	constexpr std::uint64_t prime{0x100000001B3};
-	std::uint64_t result{0xcbf29ce484222325};
-
-	constexpr auto Vector2DHash = hash<Vector2D>();
-	size_t h1 = Vector2DHash(Value.GetEndPoint(0));
-	size_t h2 = Vector2DHash(Value.GetEndPoint(1));
-
-	if (h1 > h2)
-		std::swap(h1, h2);
+	constexpr std::uint32_t FnvPrime = 0x01000193;
+	constexpr std::uint32_t FnvOffsetBasis = 0x811C9DC5;
+	std::uint32_t Result = FnvOffsetBasis;
 	
-	result = result ^ h1;
-	result = result * prime;
-	result = result ^ h2;
-	result = result * prime;
-	return result;
+	constexpr auto FloatHash = hash<float>();
+	const size_t H1 = FloatHash(Value.X);
+	const size_t H2 = FloatHash(Value.Y);
+	Result ^= H1;
+	Result *= FnvPrime;
+	Result ^= H2;
+	Result *= FnvPrime;
+	return Result;
+}
+
+std::uint32_t hash<LineSegment2D>::operator()(const LineSegment2D& Value) const noexcept
+{
+	constexpr std::uint32_t FnvPrime = 0x01000193;
+	constexpr std::uint32_t FnvOffsetBasis = 0x811C9DC5;
+	std::uint32_t Result = FnvOffsetBasis;
+	
+	constexpr auto Vector2DHash = hash<Vector2D>();
+	std::uint32_t H1 = Vector2DHash(Value.GetEndPoint(0));
+	std::uint32_t H2 = Vector2DHash(Value.GetEndPoint(1));
+
+	if (H1 > H2)
+		std::swap(H1, H2);
+	
+	Result ^= H1;
+	Result *= FnvPrime;
+	Result ^= H2;
+	Result *= FnvPrime;
+	return Result;
 }

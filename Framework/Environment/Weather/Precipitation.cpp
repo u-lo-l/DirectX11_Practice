@@ -123,7 +123,7 @@ void Precipitation::CreateWeatherVertexBuffer()
 		Vertices[i].Position = position;
 		Vertices[i].Scale = scale;
 
-		Vertices[i].Random = 1;
+		Vertices[i].Random = {1, 1};
 	}
 	VBuffer = new VertexBuffer(Vertices.data(), DrawCount, sizeof(VertexType));
 }

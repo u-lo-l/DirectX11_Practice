@@ -13,21 +13,31 @@ void DelaunayTriangleDemo::Initialize()
 		{-2.2f,  1.3f}, {-1.1f,  0.9f}, {-0.1f,  1.2f}, {0.9f,  0.8f}, {1.8f,  1.1f},
 		{-1.9f,  2.2f}, {-0.7f,  1.7f}, {0.2f,  2.1f}, {1.3f,  1.9f}, {2.0f,  1.8f}
 	};
-	DelaunayTriangulator = new DelaunayTriangulator2D(SamplePoints);
-	const vector<Triangle2D> & Triangles = DelaunayTriangulator->GetTriangles();
-	for ( const Triangle2D & Triangle : Triangles )
+	for ( Vector2D  Position : SamplePoints)
 	{
-		const array<Vector2D, 3> & TriangleVertices = Triangle.GetVertices();
-		for (const Vector2D & V : TriangleVertices )
-		{
-			Vector Position = {V.X, 0, V.Y};
-			Vertices.push_back({Position, Color::Green});
-		}	
+		DelaunayTriangulator.AddSample(reinterpret_cast<const AnimationClip*>(0x1), Position);
 	}
+	DelaunayTriangulator.Triangulate();
+
+	for ( const Vector2D & Vertex : SamplePoints )
+	{
+		Vector Position = {Vertex.X, 0, Vertex.Y};
+		Vertices.push_back({Position, Color::Green});
+	}
+	const vector<array<int, 3>> & TriangleIndices = DelaunayTriangulator.GetTriangleVertexIndices();
+	for (const array<int, 3> & TriangleIndex : TriangleIndices)
+	{
+		Indices.insert(Indices.end(), TriangleIndex.begin(), TriangleIndex.end());
+	}
+	
 	VBuffer = new VertexBuffer(
 		Vertices.data(),
 		Vertices.size(),
 		sizeof(VertexType)
+	);
+	IBuffer = new IndexBuffer(
+		Indices.data(),
+		Indices.size()
 	);
 	CB_MatrixData = {
 		Matrix::Identity,
@@ -48,7 +58,10 @@ void DelaunayTriangleDemo::Initialize()
 
 void DelaunayTriangleDemo::Destroy()
 {
-	SAFE_DELETE(DelaunayTriangulator);
+	SAFE_DELETE(Shader);
+	SAFE_DELETE(VBuffer);
+	SAFE_DELETE(IBuffer);
+	SAFE_DELETE(CB_Matrix);
 }
 
 void DelaunayTriangleDemo::Tick()
@@ -67,6 +80,7 @@ void DelaunayTriangleDemo::Render()
 		return;
 	
 	VBuffer->BindToGPU();
+	IBuffer->BindToGPU();
 	CB_Matrix->BindToGPU();
-	Shader->Draw(Vertices.size());
+	Shader->DrawIndexed(IBuffer->GetCount());
 }

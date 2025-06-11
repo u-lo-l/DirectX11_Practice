@@ -5,6 +5,9 @@ class AnimationClip;
 class AnimationBlendSpace2D
 {
 private:
+	constexpr static int HORIZONTAL = 0;
+	constexpr static int VERTICAL = 1;
+	
 	struct AnimationSample
 	{
 		AnimationSample(const AnimationClip * InClip, const Vector2D & SamplePosition)
@@ -24,7 +27,10 @@ public:
 
 	void SetHorizontalRange(float Value1, float Value2);
 	void SetVerticalRange(float Value1, float Value2);
-	void AddAnimation(const AnimationClip * Anim, const array<float, 2> & At);
+	const array<float, 2>& GetHorizontalRange() const;
+	const array<float, 2>& GetVerticalRange() const;
+	void  AddAnimation(const AnimationClip * Anim, const array<float, 2> & At);
+	void  EndAddingAnimation();
 	float GetDuration() const;
 	float GetBlendSpaceLength() const;
 
@@ -38,18 +44,18 @@ public:
 		array<float, 3> & BarycentricWeights
 	) const;
 private:
-	void NormalizeValue(float InValue, const array<float, 2> & Range, bool bWrap);
-	void NormalizeHorizontalValue(float InValue);
-	void NormalizeVerticalValue(float InValue);
+	static float NormalizeValue(float InValue, const array<float, 2>& Range, bool bWrap);
+	float NormalizeHorizontalValue(float InValue) const;
+	float NormalizeVerticalValue(float InValue) const;
 	const CSkeletal * Skeleton;
 	float Duration = -1.f;
 	float PlayRate = 1.f;
-	array<float, 2> HorizontalRange = {0, 0};
-	array<float, 2> VerticalRange = {0, 0};;
+	array<float, 2> HorizontalRange = {NAN, NAN};
+	array<float, 2> VerticalRange = {NAN, NAN};;
 	bool bWrapHorizontal = false;
 	bool bWrapVertical = false;
 	
-	vector<Vector2D> SamplePositions;
-	unordered_map<Vector2D, const AnimationClip *> Samples;
+	// vector<Vector2D> SamplePositions;
+	// unordered_map<Vector2D, const AnimationClip *> Samples;
 	DelaunayTriangulator2D Triangulator;
 };

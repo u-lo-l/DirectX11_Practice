@@ -10,6 +10,9 @@ public:
 	static float CatmullRom(float value1, float value2, float value3, float value4, float amount);
 	static float Clamp(float value, float min, float max);
 	static float Clamp(float value, const array<float, 2> & Range);
+	static float Clamp01(float InValue);
+	static float Wrap(float InValue, float Min, float Max);
+	static float Wrap01(float InValue);
 	static float ConstrainedPi(float x);
 	static float Constrained2Pi(float x);
 	static float Constrained180(float x);
@@ -39,6 +42,8 @@ public:
 
 	static int Random(int min, int max);
 	static float Random(float min, float max);
+
+
 public:
 	const static float E;///< 자연로그의 밑수
 	const static float LOG2_E;///< 자연로그의 밑수 2

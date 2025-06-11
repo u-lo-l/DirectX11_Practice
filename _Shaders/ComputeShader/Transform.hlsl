@@ -23,6 +23,7 @@ struct BoneTRS_t
 
 float4 slerp(float4 a, float4 b, float t);
 BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t);
+BoneTRS_t barycentric(in BoneTRS_t a, in BoneTRS_t b, in BoneTRS_t c, float w0, float w1, float w2);
 
 matrix ToMatrix(in BoneTRS_t TRS)
 {
@@ -102,5 +103,26 @@ float4 slerp(float4 a, float4 b, float t)
 	float weight0 = sin((1.0f - t) * theta) / sin_theta;
 	float weight1 = sin(t * theta) / sin_theta;
 	return normalize(weight0 * q0 + weight1 * q1);
+}
+
+// https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb281615(v=vs.85)
+// the BaryCentric method implements the following series of spherical linear interpolation
+BoneTRS_t barycentric
+(
+	in BoneTRS_t a,
+	in BoneTRS_t b,
+	in BoneTRS_t c,
+	float w0,
+	float w1,
+	float w2
+)
+{
+	BoneTRS_t Result;
+	Result.Translation = a.Translation * w0 + b.Translation * w1 + c.Translation * w2;
+	Result.Scale = a.Scale * w0 + b.Scale * w1 + c.Scale * w2;
+	float4 QuatTemp = slerp(a.Rotation, b.Rotation, w1 / (w0 + w1));
+	Result.Rotation = slerp(QuatTemp, c.Rotation, w2);
+
+	return Result;
 }
 #endif

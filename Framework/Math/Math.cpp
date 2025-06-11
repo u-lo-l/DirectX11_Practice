@@ -262,6 +262,39 @@ float Math::Random( float min, float max )
 	return min + val;
 }
 
+float Math::Clamp01(float InValue)
+{
+	return Clamp(InValue, 0.0f, 1.0f);
+}
+
+float Math::Wrap(float InValue, float Min, float Max)
+{
+	if (Min > Max)
+		swap(Min, Max);
+	
+	const float Range = Max - Min;
+	if (Range < EPSILON)
+	{
+		return InValue;
+	}
+	if (InValue < Min)
+	{
+		float Gap = fmod(Min - InValue, Range);
+		return Max - Gap;
+	}
+	if (InValue >= Max)
+	{
+		float Gap = fmod(InValue - Max, Range);
+		return Min + Gap;
+	}
+	return InValue;
+}
+
+float Math::Wrap01(float InValue)
+{
+	return InValue - floorf(InValue);
+}
+
 bool Math::IntersectRayTriangle
 (
 	const DirectX::XMFLOAT3 & RayPos,  // 광선의 시작점

@@ -5,13 +5,18 @@
  */
 namespace std
 {
+	template<> struct hash<pair<int, int>>
+	{
+		std::uint32_t operator()(const pair<int, int> & Value) const noexcept;
+	};
+	
 	template<> struct hash<Vector2D>
 	{
-		std::uint64_t operator()(const Vector2D & Value) const;
+		std::uint32_t operator()(const Vector2D & Value) const noexcept;
 	};
 	
 	template<> struct hash<LineSegment2D>
 	{
-		std::uint64_t operator()(const LineSegment2D & Value) const;
+		std::uint32_t operator()(const LineSegment2D & Value) const noexcept;
 	};
 }

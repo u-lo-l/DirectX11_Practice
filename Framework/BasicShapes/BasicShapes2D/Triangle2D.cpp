@@ -79,7 +79,7 @@ void Triangle2D::GetBarycentric(const Vector2D& Point, array<float, 3> & OutBary
 	const Vector2D Edge2 = Vertices[2] - Vertices[0];
 	const Vector2D Target = Point - Vertices[0];
 
-	const float Denominator = Edge1.X * Edge2.Y - Edge2.X * Edge1.Y;
+	const float Denominator = abs(Edge1 ^ Edge2);
 	if (Math::IsZero(Denominator) == true)
 	{
 		OutBarycentric = {1, 0, 0};

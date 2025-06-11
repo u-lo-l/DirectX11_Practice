@@ -56,6 +56,7 @@ public:
 
 	void SetCurrentAnimation(AnimationClip * Clip);
 	void SetCurrentBlendSpace(AnimationBlendSpace1D * BlendSpace1D);
+	void SetCurrentBlendSpace(AnimationBlendSpace2D* BlendSpace1D);
 
 private:
 	AnimationInfoDesc GetInfo(const AnimationClip * Clip, float InCurrentFrame);
@@ -76,4 +77,5 @@ private:
 	CSkeletal * TargetSkeletal = nullptr;
 	AnimationClip * CurrentAnimation = nullptr;
 	AnimationBlendSpace1D * CurrentBlendSpace = nullptr;
+	AnimationBlendSpace2D * CurrentBlendSpace2D = nullptr;
 };

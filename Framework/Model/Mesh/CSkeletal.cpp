@@ -47,7 +47,7 @@ const CBone* CSkeletal::FindBone(const string& InBoneName) const
 
 const CBone * CSkeletal::FindBone(int Index) const
 {
-	if (Index < 0 || Index >= Bones.size())
+	if (Index < 0 || Index >= static_cast<int>(Bones.size()))
 		return nullptr;
 	return Bones[Index];
 }
