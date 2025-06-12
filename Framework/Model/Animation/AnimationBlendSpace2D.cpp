@@ -7,8 +7,7 @@ AnimationBlendSpace2D::AnimationBlendSpace2D(const CSkeletal* InSkeleton)
 }
 
 AnimationBlendSpace2D::~AnimationBlendSpace2D()
-{
-}
+= default;
 
 void AnimationBlendSpace2D::SetHorizontalRange(float Value1, float Value2)
 {
@@ -41,6 +40,7 @@ void AnimationBlendSpace2D::AddAnimation(const AnimationClip * Anim, const array
 	float VerticalValue = NormalizeVerticalValue(At[VERTICAL]);
 	
 	Triangulator.AddSample(Anim, {HorizontalValue, VerticalValue});
+	Duration = max(Duration, Anim->GetDuration());
 }
 
 void AnimationBlendSpace2D::EndAddingAnimation()
@@ -84,7 +84,7 @@ void AnimationBlendSpace2D::GetTargetAnimations
 ) const
 {
 	const Vector2D Position = {
-		 NormalizeHorizontalValue(Value[0]),
+		NormalizeHorizontalValue(Value[0]),
 		NormalizeVerticalValue(Value[1])
 	};
 	bool Result = Triangulator.GetAnimsAndWeights(Position, OutClips, BarycentricWeights);

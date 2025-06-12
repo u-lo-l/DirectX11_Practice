@@ -31,27 +31,39 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		false
 	);
 
-	const vector<D3D_SHADER_MACRO> Defines = {
+	vector<D3D_SHADER_MACRO> Defines = {
 		{"THREAD_X", "32"},
+		{"CLIP", ""},
 		{nullptr, nullptr}
 	};
 	AnimationClipPlayer = new HlslComputeShader(
-		L"Mesh/Animation/AnimationClipPlayer.hlsl",
+		L"Mesh/Animation/AnimationPlayer.hlsl",
 		Defines.data(),
 		"CSMain",
 		false
 	);
 	AnimationClipPlayer->SetDispatchSize(8, 1, 1);
+
+	Defines = {
+		{"THREAD_X", "32"},
+		{"BLEND1D", ""},
+		{nullptr, nullptr}
+	};
 	AnimationBlendSpace1DPlayer = new HlslComputeShader(
-		L"Mesh/Animation/BlendSpace1DPlayer.hlsl",
+		L"Mesh/Animation/AnimationPlayer.hlsl",
 		Defines.data(),
 		"CSMain",
 		true
 	);
 	AnimationBlendSpace1DPlayer->SetDispatchSize(8, 1, 1);
 
+	Defines = {
+		{"THREAD_X", "32"},
+		{"BLEND2D", ""},
+		{nullptr, nullptr}
+	};
 	AnimationBlendSpace2DPlayer = new HlslComputeShader(
-		L"Mesh/Animation/BlendSpace2DPlayer.hlsl",
+		L"Mesh/Animation/AnimationPlayer.hlsl",
 		Defines.data(),
 		"CSMain",
 		true
@@ -75,7 +87,7 @@ void AnimationController::PlaySingleAnimationClip
 	if (!InClip)
 		return;
 
-	const AnimationInfoDesc CurrentClipPlayingInfo = GetInfo(InClip, AnimationData.CurrentFrame);
+	const AnimationInfoDesc CurrentClipPlayingInfo = GetInfo(InClip, this->CurrentFrame);
 	AnimationData = CurrentClipPlayingInfo;
 	CB_AnimationInfo->UpdateData(&AnimationData, sizeof(AnimationInfoDesc));
 	
@@ -88,9 +100,9 @@ void AnimationController::PlaySingleAnimationClip
 	
 	AnimationClipPlayer->Dispatch();
 	
-	const float NextTime = InClip->GetNextFrame(CurrentClipPlayingInfo.CurrentFrame, DeltaSecond);
+	const float NextTime = InClip->GetNextFrame(this->CurrentFrame, DeltaSecond);
 	if (NextTime > 0)
-		AnimationData.CurrentFrame = NextTime;
+		this->CurrentFrame = NextTime;
 }
 
 void AnimationController::PlayAnimationBlendSpace1D
@@ -111,15 +123,12 @@ void AnimationController::PlayAnimationBlendSpace1D
 		return ;
 	if (Anim1 == Anim2)
 	{
-		AnimationData.CurrentFrame = BlendSpace1DData.CurrentFrame;
 		PlaySingleAnimationClip(Anim2, DeltaSecond);
-		BlendSpace1DData.CurrentFrame = AnimationData.CurrentFrame;
 		return;
 	}
 	
-	const float CurrentTime = BlendSpace1DData.CurrentFrame;
-	const AnimationInfoDesc Anim1PlayingInfo = GetInfo(Anim1, CurrentTime);
-	const AnimationInfoDesc Anim2PlayingInfo = GetInfo(Anim2, CurrentTime);
+		const AnimationInfoDesc Anim1PlayingInfo = GetInfo(Anim1, this->CurrentFrame);
+	const AnimationInfoDesc Anim2PlayingInfo = GetInfo(Anim2, this->CurrentFrame);
 	BlendSpace1DData = BlendSpace1DInfoDesc(Anim1PlayingInfo, Anim2PlayingInfo, Alpha);
 	CB_BlendSpace1DInfo->UpdateData(&BlendSpace1DData, sizeof(BlendSpace1DInfoDesc));
 
@@ -134,9 +143,9 @@ void AnimationController::PlayAnimationBlendSpace1D
 
 	AnimationBlendSpace1DPlayer->Dispatch();
 
-	const float NextTime = InBlendSpace1D->GetNextFrame(CurrentTime, DeltaSecond);
+	const float NextTime = InBlendSpace1D->GetNextFrame(this->CurrentFrame, DeltaSecond);
 	if (NextTime > 0)
-		BlendSpace1DData.CurrentFrame = NextTime;
+		this->CurrentFrame = NextTime;
 }
 
 void AnimationController::PlayAnimationBlendSpace2D
@@ -158,11 +167,10 @@ void AnimationController::PlayAnimationBlendSpace2D
 	ASSERT((Weights[0] > -Math::EPSILON && Weights[1] > -Math::EPSILON && Weights[2] > -Math::EPSILON), "Weight Not Valid : NegativeValue");
 	ASSERT(false == (Math::IsZero(Weights[0]) && Math::IsZero(Weights[1]) && Math::IsZero(Weights[2])), "Weight Not Valid : All Zero");
 	
-	const float CurrentTime = BlendSpace1DData.CurrentFrame;
 	const array<AnimationInfoDesc, 3> Anim1PlayingInfos {
-		GetInfo(Clips[0], CurrentTime),
-		GetInfo(Clips[1], CurrentTime),
-		GetInfo(Clips[1], CurrentTime)
+		GetInfo(Clips[0], this->CurrentFrame),
+		GetInfo(Clips[1], this->CurrentFrame),
+		GetInfo(Clips[2], this->CurrentFrame)
 	};
 	BlendSpace2DData = BlendSpace2DInfoDesc(Anim1PlayingInfos, Weights);
 	CB_BlendSpace2DInfo->UpdateData(&BlendSpace2DData, sizeof(BlendSpace2DInfoDesc));
@@ -172,6 +180,7 @@ void AnimationController::PlayAnimationBlendSpace2D
 	const Texture * const AnimTexture3 = Clips[2]->GetKeyFrameTexture();
 	RWStructuredBuffer * const SB_BoneMatrices = TargetSkeletal->GetBoneMatrices_Buffer();
 
+	CB_BlendSpace2DInfo->BindToGPU();
 	AnimTexture1->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	AnimTexture3->BindToGPU(2, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
@@ -179,9 +188,9 @@ void AnimationController::PlayAnimationBlendSpace2D
 
 	AnimationBlendSpace2DPlayer->Dispatch();
 
-	const float NextTime = InBlendSpace2D->GetNextFrame(CurrentTime, DeltaSecond);
+	const float NextTime = InBlendSpace2D->GetNextFrame(this->CurrentFrame, DeltaSecond);
 	if (NextTime > 0)
-		BlendSpace2DData.CurrentFrame = NextTime;
+		this->CurrentFrame = NextTime;
 }
 
 void AnimationController::UpdateAnimationFrameData(float DeltaSecond)

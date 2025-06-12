@@ -7,10 +7,10 @@ class CSkeletalMesh;
 class DrawCSkeletalMesh : public IExecutable
 {
 public:
-	void Initialize() override;
-	void Destroy() override;
-	void Tick() override;
-	void Render() override;
+	virtual void Initialize() override;
+	virtual void Destroy() override;
+	virtual void Tick() override;
+	virtual void Render() override;
 
 	Character * Adam; 
 };

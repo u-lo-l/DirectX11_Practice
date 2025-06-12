@@ -15,6 +15,13 @@ private:
 		const AnimationClip * Animation;
 		Vector2D Position;
 	};
+
+	struct BlendSpace2DTriangleNode
+	{
+		array<int , 3> Indices = { -1, };
+		array<const BlendSpace2DTriangleNode *, 3> Neighbors = { nullptr, };
+	};
+	
 public:
 	enum CircumcirclePosition
 	{
@@ -77,8 +84,12 @@ private:
 
 	
 	bool bCollinear;
+
+	// Triangulate
 	vector<BlendSpace2DAnimationSample> Samples;
 	vector<array<int, 3>> TriangleVertexIndices;
+
+	BlendSpace2DTriangleNode * Triangles;
 
 	// Collinear
 	map<float, int> SegmentVertexIndices;

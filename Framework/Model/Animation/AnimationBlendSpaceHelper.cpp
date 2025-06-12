@@ -69,19 +69,9 @@ bool DelaunayTriangulator2D::GetAnimsAndWeights
 {
 	OutClips.fill(nullptr);
 	OutWeights.fill(0.f);
-
-	if (bCollinear)
-	{
-		if (SegmentVertexIndices.empty())
-			return false;
-		return GetAnimsAndWeights_Collinear(NormalizedPosition, OutClips, OutWeights);
-	}
-	else
-	{
-		if (TriangleVertexIndices.empty())
-			return false;
-		return GetAnimsAndWeights_Triangular(NormalizedPosition, OutClips, OutWeights);
-	}
+	return bCollinear
+		? GetAnimsAndWeights_Collinear(NormalizedPosition, OutClips, OutWeights)
+		: GetAnimsAndWeights_Triangular(NormalizedPosition, OutClips, OutWeights);
 }
 
 bool DelaunayTriangulator2D::GetVerticesAndWeights
@@ -328,6 +318,8 @@ bool DelaunayTriangulator2D::GetAnimsAndWeights_Collinear
 	array<float, 3>& OutWeights
 ) const
 {
+	if (SegmentVertexIndices.empty())
+		return false;
 	const float Distance = NormalizedPosition | SpanDir;
 	const auto It2 = SegmentVertexIndices.lower_bound(Distance);
 	const auto It1 = (It2 == SegmentVertexIndices.cbegin() || Math::NearEqual(It2->first, Distance)) ? It2 : std::prev(It2);
@@ -350,6 +342,11 @@ bool DelaunayTriangulator2D::GetAnimsAndWeights_Triangular
 	array<float, 3> & OutWeights
 ) const
 {
+	if (TriangleVertexIndices.empty())
+		return false;
+
+	// 현재는 리니어하게 순회하는 방식을 사용함.
+	// 점이 삼각형들 밖에 존재할 때 문제가 생김. 투영시켜줘야함.
 	for (const array<int, 3> & Indices : TriangleVertexIndices)
 	{
 		const Triangle2D Triangle = {
@@ -369,6 +366,8 @@ bool DelaunayTriangulator2D::GetAnimsAndWeights_Triangular
 		}
 	}
 	return false;
+	
+	// 삼각형의 외부에 존재. 가장 근접한 삼각형의 Edge에 투영시켜야 함.
 }
 
 bool DelaunayTriangulator2D::GetVerticesAndWeights_Collinear(

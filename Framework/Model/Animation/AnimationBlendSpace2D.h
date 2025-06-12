@@ -55,7 +55,5 @@ private:
 	bool bWrapHorizontal = false;
 	bool bWrapVertical = false;
 	
-	// vector<Vector2D> SamplePositions;
-	// unordered_map<Vector2D, const AnimationClip *> Samples;
 	DelaunayTriangulator2D Triangulator;
 };

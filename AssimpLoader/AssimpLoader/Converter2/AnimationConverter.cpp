@@ -35,7 +35,7 @@ void AnimationConverter::ExportAnimation(const wstring& InFileName, const aiScen
 	ASSERT(AnimationCount <= 1, "Too Many Animations In One File");
 
 	const wstring AnimName = AnimationDirectory + AnimationName + L".anim";
-	ClipData * const Clip = ReadClipData(InScene->mAnimations[0]);
+	ClipData * const Clip = ReadClipData(InScene->mAnimations[0], InScene->mRootNode);
 
 	// ReadClipData내부에서 만들어도 되는데 일단은 여기 두자.
 	set<string> BoneSearchTree;
@@ -45,12 +45,11 @@ void AnimationConverter::ExportAnimation(const wstring& InFileName, const aiScen
 		const ClipNodeData * Node = Clip->NodeDatas[j];
 		BoneSearchTree.insert(Node->BoneName);
 	}
-
 	ConnectNodeWithBone(Clip, InScene->mRootNode, BoneSearchTree);
 	WriteClipData(String::ToString(AnimName), Clip);
 }
 
-ClipData * AnimationConverter::ReadClipData( const aiAnimation * InAnimation )
+ClipData * AnimationConverter::ReadClipData( const aiAnimation * InAnimation, const aiNode * RootNode )
 {
 	ClipData * AnimationClipDataToReturn = new ClipData{
 		(InAnimation->mTicksPerSecond != 1),
@@ -65,19 +64,24 @@ ClipData * AnimationConverter::ReadClipData( const aiAnimation * InAnimation )
 		AnimationClipDataToReturn->TicksPerSecond = DefaultTicksPerSecond;
 	}
 	const UINT ChannelsCount = InAnimation->mNumChannels;
-		
-#ifdef DO_DEBUG
-	printf("Channels Count: %d\n", ChannelsCount);
-#endif
 
-	AnimationClipDataToReturn->NodeDatas.resize(ChannelsCount, nullptr);
+	AnimationClipDataToReturn->NodeDatas.resize(ChannelsCount + 1, nullptr);
+	{
+		AnimationClipDataToReturn->NodeDatas[0] = new ClipNodeData();
+		ClipNodeData * const ClipDataNowMaking = AnimationClipDataToReturn->NodeDatas[0]; 
+		ClipDataNowMaking->BoneName = RootNode->mName.C_Str();
+		ClipDataNowMaking->PosKeys.push_back({0, {0,0,0}});
+		ClipDataNowMaking->ScaleKeys.push_back({0, {1,1,1}});
+		ClipDataNowMaking->RotKeys.push_back({0, Quaternion::CreateFromEulerAngleInRadian({0, PRE_Y_ROTATION, 0})});
+	}
 	for (UINT i = 0; i < ChannelsCount; i++)
 	{
 		// aiNodeAnim이란 특정 Node에 대한 애니메이션 데이터를 저장하며, TRS KeySquence를 갖는다.
 		const aiNodeAnim * const NodeAnim = InAnimation->mChannels[i];
 
-		AnimationClipDataToReturn->NodeDatas[i] = new ClipNodeData();
-		ClipNodeData * const ClipDataNowMaking = AnimationClipDataToReturn->NodeDatas[i]; 
+		UINT j = i + 1;
+		AnimationClipDataToReturn->NodeDatas[j] = new ClipNodeData();
+		ClipNodeData * const ClipDataNowMaking = AnimationClipDataToReturn->NodeDatas[j]; 
 		ClipDataNowMaking->BoneName = NodeAnim->mNodeName.C_Str();
 
 		// 모든 KeySequence들은 부모 노드에 상대적인 값으로 저장된다. 따라서 이후에 사용할 때는 좌표변환 해서 사용해야 한다.

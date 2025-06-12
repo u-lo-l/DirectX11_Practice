@@ -32,9 +32,9 @@ public:
     );
 private:
     static bool CheckPreCompiled (
-        const wstring & HlslFilePath,
-        const string & InEntryPoint,
-        string & OutCSOFilePath
+        const wstring& HlslFilePath,
+        const string& InEntryPoint,
+        const D3D_SHADER_MACRO* Defines, string& OutCSOFilePath
     );
     HRESULT CreateShader(
         bool bUsePrecompiledShader,

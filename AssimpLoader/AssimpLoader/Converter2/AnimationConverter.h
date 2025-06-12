@@ -15,7 +15,7 @@ public:
 private:
 	static constexpr int DefaultTicksPerSecond = 30;
 	static void ExportAnimation(const wstring& InFileName, const aiScene* InScene);
-	static ClipData* ReadClipData(const aiAnimation* InAnimation);
+	static ClipData* ReadClipData(const aiAnimation* InAnimation, const aiNode* RootNode);
 	static void ReadPosKeySequences(
 		vector<FrameDataVec>& OutPosKeys,
  		const aiNodeAnim* InNodeAnim,

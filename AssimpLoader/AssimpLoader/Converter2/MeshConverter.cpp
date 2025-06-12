@@ -270,7 +270,7 @@ void MeshConverter::ReadBoneRecursive(const aiNode* InNode, int InIndex, int InP
 	}
 	else
 	{
-		Bone->Transform = Bone->Transform * Matrix::CreateFromEulerAngleInRadian({0, PreYRotation, 0});
+		Bone->Transform = Bone->Transform * Matrix::CreateFromEulerAngleInRadian({0, PRE_Y_ROTATION, 0});
 	}
 	OutBones.push_back(Bone);
 
@@ -427,7 +427,7 @@ void MeshConverter::WriteSkin(
 MeshData::VertexType MeshConverter::ReadSingleVertex( const aiMesh * Mesh, UINT VertexIndex, const aiMatrix4x4 & InMeshTransform )
 {
 	aiMatrix4x4 PreRotation;
-	aiMatrix4x4::RotationY(PreYRotation, PreRotation);
+	aiMatrix4x4::RotationY(PRE_Y_ROTATION, PreRotation);
 
 	MeshData::VertexType Vertex;
 	if (true)

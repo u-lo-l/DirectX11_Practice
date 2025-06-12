@@ -19,7 +19,12 @@ HlslComputeShader::HlslComputeShader
 	FileName = W_SHADER_PATH + ShaderFileName;
 
 	string PreCompiledShader;
-	bool bPreCompiled = CheckPreCompiled(FileName, EntryPoint, PreCompiledShader);
+	bool bPreCompiled = CheckPreCompiled(
+		FileName,
+		EntryPoint,
+		InMacros,
+		PreCompiledShader
+	);
 	const bool bUsePrecompiledShader = bPreCompiled && !bForceRecompile;
 	
 	Hr = CreateShader(bUsePrecompiledShader, PreCompiledShader, InMacros, EntryPoint, ShaderBlob, ErrorBlob);
@@ -125,11 +130,11 @@ HRESULT HlslComputeShader::CreateSamplerState_ShadowSampler()
 {
 	D3D11_SAMPLER_DESC SamplerDesc = {};
 	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-			
+
 	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-			
+
 	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
 	SamplerDesc.MinLOD = 0;
 	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
@@ -193,16 +198,30 @@ HRESULT HlslComputeShader::CreateSamplerState( const D3D11_SAMPLER_DESC * SampDe
 	return D3D::Get()->GetDevice()->CreateSamplerState(SampDesc, &SamplerStates[static_cast<UINT>(SamplerType)]);
 }
 
-bool HlslComputeShader::CheckPreCompiled(const wstring& HlslFilePath, const string& InEntryPoint, string & OutCSOFilePath)
+bool HlslComputeShader::CheckPreCompiled
+(
+	const wstring& HlslFilePath,
+	const string& InEntryPoint,
+	const D3D_SHADER_MACRO * Defines,
+	string & OutCSOFilePath
+)
 {
 	const wstring ShaderDirectory = Path::GetDirectoryName(HlslFilePath);
 	const wstring ShaderName = Path::GetFileNameWithoutExtension(HlslFilePath);
 
+	string ShaderMacro = "";
+	const D3D_SHADER_MACRO * ptr = Defines;
+	while (ptr != nullptr && ptr->Name != nullptr && ptr->Definition != nullptr)
+	{
+		ShaderMacro += "_" + string(ptr->Name) + "_" + string(ptr->Definition);
+		ptr++;
+	}
+	
 	const wstring PreCompiledShaderDirectory = ShaderDirectory + L"PreCompiled/";
 	OutCSOFilePath = 
 		String::ToString(PreCompiledShaderDirectory)
-		+ String::ToString(ShaderName) + "."
-		+ InEntryPoint + ".cso";
+		+ String::ToString(ShaderName) + ShaderMacro 
+		+ "." + InEntryPoint + ".cso";
 	if (Path::IsDirectoryExist(PreCompiledShaderDirectory) == false)
 	{
 		Path::CreateFolder(PreCompiledShaderDirectory);

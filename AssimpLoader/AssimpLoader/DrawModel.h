@@ -8,11 +8,11 @@ namespace sdt
 	class DrawModel final : public IExecutable
 	{
 	public:
-		~DrawModel() override;
-		void Initialize() override;
-		void Destroy() override;
-		void Tick() override;
-		void Render() override;
+		virtual ~DrawModel() override;
+		virtual void Initialize() override;
+		virtual void Destroy() override;
+		virtual void Tick() override;
+		virtual void Render() override;
 	private:
 		vector<Model *> Models;
 		int ModelIndex = 0;
