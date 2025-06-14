@@ -15,8 +15,8 @@ private:
 public:
 	bool IsDown(int InKey);
 	bool IsUp(int InKey);
-	bool IsPressed(int InKey);
-	bool IsToggled(int InKey);
+	static bool IsPressed(int InKey);
+	static bool IsToggled(int InKey);
 private :
 	Keyboard();
 	~Keyboard();

@@ -16,9 +16,9 @@ Triangle2D::Triangle2D(const Vector2D& A, const Vector2D& B, const Vector2D& C)
 	const Vector2D E1 = C - A;
 
 	if ((E0 ^ E1) < 0.f)
-		Vertices = {A, B, C};
-	else
 		Vertices = {A, C, B};
+	else
+		Vertices = {A, B, C};
 }
 
 Circle2D Triangle2D::GetCircumcircle(const Triangle2D& Triangle)
@@ -87,9 +87,9 @@ void Triangle2D::GetBarycentric(const Vector2D& Point, array<float, 3> & OutBary
 	else
 	{
 		const float InvDenominator = 1.0f / Denominator;
-		OutBarycentric[0] = (Target.X * Edge2.Y - Edge2.X * Target.Y) * InvDenominator;
-		OutBarycentric[1] = (Edge1.X * Target.Y - Target.X * Edge1.Y) * InvDenominator;
-		OutBarycentric[2] = 1.0f - OutBarycentric[0] - OutBarycentric[1];
+		OutBarycentric[1] = (Target ^ Edge2) * InvDenominator;;
+		OutBarycentric[2] = (Edge1 ^ Target) * InvDenominator;;
+		OutBarycentric[0] = 1.0f - (OutBarycentric[1] + OutBarycentric[2]);
 	}
 }
 

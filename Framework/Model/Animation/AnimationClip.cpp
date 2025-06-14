@@ -33,36 +33,32 @@ float AnimationClip::GetNextFrame(float CurrentFrame, float DeltaSecond) const
 	return CurrentFrame;
 }
 
-float AnimationClip::GetCurrentFrame(float Time) const
+float AnimationClip::GetCurrentPlayTime(float InNormalizedPlayTime) const
 {
-	if (Time > Duration)
-	{
-		if (bLoop == false)
-			Time = Duration;
-		else
-			Time = fmod(Time, GetAnimationLength());
-	}
-	return Time;
+	InNormalizedPlayTime = bLoop ?
+						Math::Wrap01(InNormalizedPlayTime) :
+						Math::Clamp01(InNormalizedPlayTime);
+	return InNormalizedPlayTime * Duration;
 }
 
-int AnimationClip::GetKeyFrameCurr(float CurrentTime) const
+int AnimationClip::GetKeyFrameCurr(float InPlayTime) const
 {
-	if (CurrentTime > Duration)
+	if (InPlayTime > Duration)
 	{
 		if (bLoop == false)
-			CurrentTime = Duration;
+			InPlayTime = Duration;
 		else
-			CurrentTime = fmod(CurrentTime, GetAnimationLength());
+			InPlayTime = fmod(InPlayTime, GetAnimationLength());
 	}
-	return static_cast<int>(CurrentTime);
+	return static_cast<int>(InPlayTime);
 }
 
-int AnimationClip::GetKeyFrameNext(float CurrentTime) const
+int AnimationClip::GetKeyFrameNext(float InPlayTime) const
 {
 	const int Duration = static_cast<int>(GetDuration());
-	int NextFrame = GetKeyFrameCurr(CurrentTime) + 1;
+	int NextFrame = GetKeyFrameCurr(InPlayTime) + 1;
 	if (NextFrame > Duration)
-		NextFrame = bLoop ? NextFrame / static_cast<int>(GetAnimationLength()) : -1;
+		NextFrame = bLoop ? NextFrame / static_cast<int>(GetAnimationLength()) : - 1;
 	return NextFrame;
 }
 

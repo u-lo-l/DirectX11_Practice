@@ -18,8 +18,7 @@ private:
 
 	struct BlendSpace2DTriangleNode
 	{
-		array<int , 3> Indices = { -1, };
-		array<const BlendSpace2DTriangleNode *, 3> Neighbors = { nullptr, };
+		array<int, 3> NeighborsViaEdge = {INDEX_NONE, INDEX_NONE, INDEX_NONE};
 	};
 	
 public:
@@ -32,6 +31,7 @@ public:
 	DelaunayTriangulator2D();
 	~DelaunayTriangulator2D() = default;
 
+	vector<const AnimationClip *> GetAllAnimationClips() const;
 	void AddSample(const AnimationClip * Clip, const Vector2D & NormalizedPosition);
 	void Triangulate();
 	const vector<array<int, 3>> & GetTriangleVertexIndices() const;
@@ -59,8 +59,20 @@ private:
 	void SearchPolygonHole(const vector<int>& InBadTriangleIndices, unordered_set<pair<int, int>>& OutEdgeEndPointIndices) const;
 	void RemoveBadTriangles(vector<int>& InBadTriangleIndices);
 	void Retriangulate(const unordered_set<pair<int, int>>& InEdgeEndPointIndices, int NewSampleIndex);
+	void GenerateTriangleGraph();
+	
 	static CircumcirclePosition GetCircumcirclePosition(const Triangle2D& Triangle, const Vector2D & Point);
 
+	bool GetSamplesAndWeights_Collinear(
+		const Vector2D& NormalizedPosition,
+		array<const BlendSpace2DAnimationSample*, 3>& OutSamples,
+		array<float, 3>& OutWeights
+	) const;
+	bool GetSamplesAndWeights_Triangular(
+		const Vector2D& NormalizedPosition,
+		array<const BlendSpace2DAnimationSample*, 3>& OutSamples,
+		array<float, 3>& OutWeights
+	) const;
 	bool GetAnimsAndWeights_Collinear(
 		const Vector2D& Position,
 		array<const AnimationClip*, 3>& OutClips,
@@ -88,9 +100,8 @@ private:
 	// Triangulate
 	vector<BlendSpace2DAnimationSample> Samples;
 	vector<array<int, 3>> TriangleVertexIndices;
-
-	BlendSpace2DTriangleNode * Triangles;
-
+	vector<BlendSpace2DTriangleNode> TriangleGraph;
+	
 	// Collinear
 	map<float, int> SegmentVertexIndices;
 	array<Vector2D, 2> SuperSegment = {Vector2D(0, 0), Vector2D(0, 0)};

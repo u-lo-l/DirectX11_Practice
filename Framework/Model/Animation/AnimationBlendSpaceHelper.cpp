@@ -7,6 +7,14 @@
 DelaunayTriangulator2D::DelaunayTriangulator2D()
 = default;
 
+vector<const AnimationClip*> DelaunayTriangulator2D::GetAllAnimationClips() const
+{
+	vector<const AnimationClip*> result;
+	for (const auto & Sample : Samples)
+		result.push_back(Sample.Animation);
+	return result;
+}
+
 void DelaunayTriangulator2D::AddSample(const AnimationClip* Clip, const Vector2D& NormalizedPosition)
 {
 	ASSERT(!!Clip, "Clip not valid");
@@ -52,6 +60,7 @@ void DelaunayTriangulator2D::Triangulate()
 			Retriangulate(EdgeEndPointIndices, i);
 		}
 		RemoveSuperTriangle();
+		GenerateTriangleGraph();
 	}
 }
 
@@ -180,6 +189,7 @@ void DelaunayTriangulator2D::MakeSuperTriangle()
 		SuperTriangleStartIndex + 1,
 		SuperTriangleStartIndex + 2
 	};
+	BlendSpace2DTriangleNode * SuperTriangleNode = new BlendSpace2DTriangleNode();
 	this->Samples.insert(this->Samples.end(), NullSamples, NullSamples + 3);
 	this->TriangleVertexIndices.push_back(SuperTriangleIndices);
 }
@@ -294,6 +304,60 @@ void DelaunayTriangulator2D::Retriangulate
 	}
 }
 
+void DelaunayTriangulator2D::GenerateTriangleGraph()
+{
+	using Edge_t = pair<int, int>;
+
+	// 정점이 N개일 때 Triangle의 최대 개수는 2N-4개이고 Edge의 최대 개수는 3N-6이다.
+	std::unordered_map<Edge_t, vector<int>> EdgeTriangleMap;
+	
+	const int TriangleCount = this->TriangleVertexIndices.size();
+	TriangleGraph.resize(TriangleCount);
+	// Build Edge-TriangleMap
+	for (int i = 0 ; i < TriangleCount; i++)
+	{
+		const array<int, 3> & TriangleIndices = this->TriangleVertexIndices[i];
+		const array<Edge_t, 3> Edges = {
+			minmax(TriangleIndices[0], TriangleIndices[1]),
+			minmax(TriangleIndices[1], TriangleIndices[2]),
+			minmax(TriangleIndices[2], TriangleIndices[0])
+		};
+		for (int e = 0; e < 3; e++)
+		{
+			EdgeTriangleMap[Edges[e]].push_back(i); 
+		}
+	}
+	for (const auto & It : EdgeTriangleMap)
+	{
+		const Edge_t & Edge = It.first;
+		const vector<int> & Indices = It.second;
+		if (Indices.empty() || Indices.size() > 2)
+		{
+			ASSERT(false, String::Format("%s | Edge must belongs to One or Two Triangles", __FUNCTION__).c_str());
+		}
+		else if (Indices.size() == 2)
+		{
+			for (int i = 0 ; i < 2 ; i++)
+			{
+				const int MyIndex = Indices[i];
+				const int NeighborIndex = Indices[1 - i];
+				const array<int, 3> & MyTriangle = this->TriangleVertexIndices[MyIndex];
+				for (int e = 0; e < 3; e++)
+				{
+					Edge_t TargetEdge = minmax(MyTriangle[e], MyTriangle[(e + 1) % 3]);
+					if (TargetEdge == Edge)
+					{
+						TriangleGraph[MyIndex].NeighborsViaEdge[e] = NeighborIndex; 
+						break;
+					}
+				}
+			}
+		}
+		else // 가독성 위해 명시적으로 작성됨.
+			continue; // Perimeter Edge
+	}
+}
+
 DelaunayTriangulator2D::CircumcirclePosition DelaunayTriangulator2D::GetCircumcirclePosition
 (
 	const Triangle2D & Triangle,
@@ -311,6 +375,119 @@ DelaunayTriangulator2D::CircumcirclePosition DelaunayTriangulator2D::GetCircumci
 	return Inside;
 }
 
+bool DelaunayTriangulator2D::GetSamplesAndWeights_Collinear(
+	const Vector2D & NormalizedPosition,
+	array<const BlendSpace2DAnimationSample *, 3> & OutSamples,
+	array<float, 3> & OutWeights
+) const
+{
+	const float ProjectedLength = (NormalizedPosition - SuperSegment[0]) | SpanDir;
+	const auto It2 = SegmentVertexIndices.lower_bound(ProjectedLength);
+	const auto It1 = (It2 == SegmentVertexIndices.cbegin() || Math::NearEqual(It2->first, ProjectedLength)) ? It2 : std::prev(It2);
+	const float Value1 = It1->first;
+	const float Value2 = It2->first;
+
+	OutSamples = {&Samples[It1->second], &Samples[It2->second], &Samples[It2->second]};
+	
+	const float Range = Value2 - Value1;
+	const float SegmentLength = Math::IsZero(Range) ? 0 : (ProjectedLength - Value1) / Range; 
+	OutWeights[0] = 1 - SegmentLength;
+	OutWeights[1] = SegmentLength;
+	OutWeights[2] = 0.f;
+	
+	return true;
+}
+
+bool DelaunayTriangulator2D::GetSamplesAndWeights_Triangular
+(
+	const Vector2D& NormalizedPosition,
+	array<const BlendSpace2DAnimationSample *, 3>& OutSamples,
+	array<float, 3>& OutWeights
+) const
+{
+	if (TriangleVertexIndices.empty())
+		return false;
+	struct History_t
+	{
+		int Index;
+		float a;
+		float b;
+		float c;
+	};
+	vector<History_t> TempHistory;
+	const int MaxIter = TriangleVertexIndices.size();
+	vector<bool> Visited(MaxIter, false);
+	int iter = 0;
+	int TriangleIndex = TriangleVertexIndices.size() / 2;
+	while (iter++ < MaxIter)
+	{
+		// 0. Setup
+		if (TriangleIndex == INDEX_NONE || Visited[TriangleIndex])
+			return false;
+		Visited[TriangleIndex] = true;
+
+		const array<int, 3> & VertexIndices = this->TriangleVertexIndices[TriangleIndex];
+		OutSamples = { &Samples[VertexIndices[0]], &Samples[VertexIndices[1]], &Samples[VertexIndices[2]] };
+		
+		// 1. Calc Barycentric
+		const Triangle2D Triangle = {
+			OutSamples[0]->Position,
+			OutSamples[1]->Position,
+			OutSamples[2]->Position
+		};
+		Triangle.GetBarycentric(NormalizedPosition, OutWeights);
+		TempHistory.push_back(
+			{
+				TriangleIndex,
+				OutWeights[0],
+				OutWeights[1],
+				OutWeights[2]
+			}
+		);
+		// 2. Search Next Triangle
+		int HedgingEdge = INDEX_NONE;
+		for (int V = 0 ; V < 3; V++)
+		{
+			if (OutWeights[V] < -Math::EPSILON)
+			{
+				const int FacingEdgeIndex = (V + 1) % 3; 
+				HedgingEdge = FacingEdgeIndex;
+				break;
+			}
+		}
+		if (HedgingEdge == INDEX_NONE)
+			return true;
+		TriangleIndex = TriangleGraph[TriangleIndex].NeighborsViaEdge[HedgingEdge];
+		if (static_cast<int>(TriangleGraph.size()) <= TriangleIndex)
+		{
+			ASSERT(false, String::Format("%s %d | INVALID INDEX", __FUNCTION__, __LINE__).c_str())
+			return false;
+		}
+		// 3. Perimeter
+		if (TriangleIndex == INDEX_NONE)
+		{
+			const Vector2D & EndPoint1 = Samples[VertexIndices[HedgingEdge]].Position;
+			const Vector2D & EndPoint2 = Samples[VertexIndices[(HedgingEdge + 1) % 3]].Position;
+
+			const float EdgeLength = Vector2D::Distance(EndPoint1, EndPoint2);
+			if (Math::IsZero(EdgeLength))
+				return false;
+			
+			const Vector2D EdgeDir = (EndPoint2 - EndPoint1).Normalized();
+			const float ProjectionLength = (NormalizedPosition - EndPoint1) | EdgeDir;
+			const float Weight = 1 - Math::Clamp01(ProjectionLength / EdgeLength);
+			
+			OutSamples[0] = &Samples[VertexIndices[HedgingEdge]];
+			OutSamples[1] = &Samples[VertexIndices[(HedgingEdge + 1) % 3]];
+			OutSamples[2] = OutSamples[1];
+			OutWeights = {Weight, 1.f - Weight, 0.f};
+			
+			return true;
+		}
+	}
+	return false;
+}
+
 bool DelaunayTriangulator2D::GetAnimsAndWeights_Collinear
 (
 	const Vector2D & NormalizedPosition,
@@ -318,21 +495,15 @@ bool DelaunayTriangulator2D::GetAnimsAndWeights_Collinear
 	array<float, 3>& OutWeights
 ) const
 {
-	if (SegmentVertexIndices.empty())
-		return false;
-	const float Distance = NormalizedPosition | SpanDir;
-	const auto It2 = SegmentVertexIndices.lower_bound(Distance);
-	const auto It1 = (It2 == SegmentVertexIndices.cbegin() || Math::NearEqual(It2->first, Distance)) ? It2 : std::prev(It2);
-	const float Value1 = It1->first;
-	const float Value2 = It2->first;
-	OutClips[0] = Samples[It1->second].Animation;
-	OutClips[1] = Samples[It2->second].Animation;
-	OutClips[2] = Samples[It2->second].Animation;
-	const float Range = Value2 - Value1;
-	OutWeights[0] = Math::IsZero(Range) ? 1.f : (Distance - Value1) / Range;
-	OutWeights[1] = 1.f - OutWeights[0];
-	OutWeights[2] = 0.f;
-	return true;
+	array<const BlendSpace2DAnimationSample *, 3> Samples;
+	bool Result = GetSamplesAndWeights_Collinear(NormalizedPosition, Samples, OutWeights);
+	if (Result == true)
+		OutClips = {
+		Samples[0]->Animation,
+		Samples[1]->Animation,
+		Samples[2]->Animation
+	};
+	return Result;
 }
 
 bool DelaunayTriangulator2D::GetAnimsAndWeights_Triangular
@@ -342,31 +513,15 @@ bool DelaunayTriangulator2D::GetAnimsAndWeights_Triangular
 	array<float, 3> & OutWeights
 ) const
 {
-	if (TriangleVertexIndices.empty())
-		return false;
-
-	// 현재는 리니어하게 순회하는 방식을 사용함.
-	// 점이 삼각형들 밖에 존재할 때 문제가 생김. 투영시켜줘야함.
-	for (const array<int, 3> & Indices : TriangleVertexIndices)
-	{
-		const Triangle2D Triangle = {
-			this->Samples[Indices[0]].Position,
-			this->Samples[Indices[1]].Position,
-			this->Samples[Indices[2]].Position
-		};
-		if (Triangle.Contains(NormalizedPosition) == true)
-		{
-			Triangle.GetBarycentric(NormalizedPosition, OutWeights);
-			OutClips = {
-				this->Samples[Indices[0]].Animation,
-				this->Samples[Indices[1]].Animation,
-				this->Samples[Indices[2]].Animation
-			};
-			return true;
-		}
-	}
-	return false;
-	
+	array<const BlendSpace2DAnimationSample *, 3> Samples;
+	bool Result = GetSamplesAndWeights_Triangular(NormalizedPosition, Samples, OutWeights);
+	if (Result == true)
+		OutClips = {
+		Samples[0]->Animation,
+		Samples[1]->Animation,
+		Samples[2]->Animation
+	};
+	return Result;
 	// 삼각형의 외부에 존재. 가장 근접한 삼각형의 Edge에 투영시켜야 함.
 }
 
@@ -376,19 +531,15 @@ bool DelaunayTriangulator2D::GetVerticesAndWeights_Collinear(
 	array<float, 3> & OutWeights
 ) const
 {
-	const float Distance = NormalizedPosition | SpanDir;
-	const auto It2 = SegmentVertexIndices.lower_bound(Distance);
-	const auto It1 = (It2 == SegmentVertexIndices.cbegin() || Math::NearEqual(It2->first, Distance)) ? It2 : std::prev(It2);
-	const float Value1 = It1->first;
-	const float Value2 = It2->first;
-	OutVertices[0] = Samples[It1->second].Position;
-	OutVertices[1] = Samples[It2->second].Position;
-	OutVertices[2] = Samples[It2->second].Position;
-	const float Range = Value2 - Value1;
-	OutWeights[0] = Math::IsZero(Range) ? 1.f : (Distance - Value1) / Range;
-	OutWeights[1] = 1.f - OutWeights[0];
-	OutWeights[2] = 0.f;
-	return true;
+	array<const BlendSpace2DAnimationSample *, 3> Samples;
+	bool Result = GetSamplesAndWeights_Collinear(NormalizedPosition, Samples, OutWeights);
+		if (Result == true)
+		OutVertices = {
+			Samples[0]->Position,
+			Samples[1]->Position,
+			Samples[2]->Position
+		};
+	return Result;
 }
 
 bool DelaunayTriangulator2D::GetVerticesAndWeights_Triangular(
@@ -397,19 +548,13 @@ bool DelaunayTriangulator2D::GetVerticesAndWeights_Triangular(
 	array<float, 3> & OutWeights
 ) const
 {
-	for (const array<int, 3> & Indices : TriangleVertexIndices)
-	{
-		const Triangle2D Triangle = {
-			this->Samples[Indices[0]].Position,
-			this->Samples[Indices[1]].Position,
-			this->Samples[Indices[2]].Position
+	array<const BlendSpace2DAnimationSample *, 3> Samples;
+	bool Result = GetSamplesAndWeights_Triangular(NormalizedPosition, Samples, OutWeights);
+	if (Result == true)
+		OutVertices = {
+			Samples[0]->Position,
+			Samples[1]->Position,
+			Samples[2]->Position
 		};
-		if (Triangle.Contains(NormalizedPosition) == true)
-		{
-			Triangle.GetBarycentric(NormalizedPosition, OutWeights);
-			OutVertices = Triangle.GetVertices();
-			return true;
-		}
-	}
-	return false;
+	return Result;
 }

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "AnimationBlendSpace1D.h"
+#include "AnimationClip.h"
 
 class AnimationBlendSpace2D;
 class AnimationClip;
@@ -7,7 +8,6 @@ class AnimationClip;
 class AnimationController
 {
 private:
-	float CurrentFrame = 0.0f;
 	struct AnimationInfoDesc
 	{
 		int	  KeyFrameCurr = -1;
@@ -15,21 +15,10 @@ private:
 		float LerpRate = 0.0f;
 		float Weight = 1.0f;
 	};
-	struct BlendSpace1DInfoDesc
+	struct Animation_ConstantDesc
 	{
-		BlendSpace1DInfoDesc() = default;
-		BlendSpace1DInfoDesc(const AnimationInfoDesc& A, const AnimationInfoDesc& B, float Alpha)
-			: AnimData{ A, B }
-		{
-			AnimData[0].Weight = Alpha;
-			AnimData[1].Weight = 1.f - Alpha;
-		}
-		AnimationInfoDesc AnimData[2];
-	};
-	struct BlendSpace2DInfoDesc
-	{
-		BlendSpace2DInfoDesc() = default;
-		BlendSpace2DInfoDesc(const array<AnimationInfoDesc, 3> & Anims, const array<float, 3> & Weights)
+		Animation_ConstantDesc() = default;
+		Animation_ConstantDesc(const array<AnimationInfoDesc, 3> & Anims, const array<float, 3> & Weights)
 		: AnimData{ Anims[0], Anims[1], Anims[2] }
 		{
 			AnimData[0].Weight = Weights[0];
@@ -52,19 +41,14 @@ public:
 	void SetCurrentBlendSpace(AnimationBlendSpace2D* BlendSpace1D);
 
 private:
-	static AnimationInfoDesc GetInfo(const AnimationClip * Clip, float InCurrentFrame);
+	static AnimationInfoDesc GetInfo(const AnimationClip * Clip, float InNormalizedPlayTime);
+
+	float NormalizedPlayTime = 0.0f;
 	
-	AnimationInfoDesc AnimationData;
-	BlendSpace1DInfoDesc BlendSpace1DData;
-	BlendSpace2DInfoDesc BlendSpace2DData;
+	Animation_ConstantDesc Animation_ConstantData;
+	ConstantBuffer * CB_AnimationData;
 	
-	ConstantBuffer * CB_AnimationInfo;
-	ConstantBuffer * CB_BlendSpace1DInfo;
-	ConstantBuffer * CB_BlendSpace2DInfo;
-	
-	HlslComputeShader * AnimationClipPlayer = nullptr;
-	HlslComputeShader * AnimationBlendSpace1DPlayer = nullptr;
-	HlslComputeShader * AnimationBlendSpace2DPlayer = nullptr;
+	HlslComputeShader * AnimationBoneTransformCalculator = nullptr;
 	map<string, AnimationClip *> AnimationClips;
 
 	CSkeletal * TargetSkeletal = nullptr;

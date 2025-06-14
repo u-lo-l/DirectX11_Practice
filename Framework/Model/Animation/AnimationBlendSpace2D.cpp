@@ -40,12 +40,19 @@ void AnimationBlendSpace2D::AddAnimation(const AnimationClip * Anim, const array
 	float VerticalValue = NormalizeVerticalValue(At[VERTICAL]);
 	
 	Triangulator.AddSample(Anim, {HorizontalValue, VerticalValue});
+	ASSERT(Anim->GetDuration() > 0, "Animation Duration Not Valid");
 	Duration = max(Duration, Anim->GetDuration());
+	NormalizedDeltaFrame = 1 / Duration;
 }
 
 void AnimationBlendSpace2D::EndAddingAnimation()
 {
 	Triangulator.Triangulate();
+}
+
+vector<const AnimationClip*> AnimationBlendSpace2D::GetAllAnimationClips() const
+{
+	return Triangulator.GetAllAnimationClips();
 }
 
 float AnimationBlendSpace2D::GetDuration() const
@@ -68,12 +75,10 @@ void AnimationBlendSpace2D::SetHorizontalWrapped(bool bWrapped)
 	bWrapHorizontal = bWrapped;
 }
 
-float AnimationBlendSpace2D::GetNextFrame(float CurrentFrame, float DeltaSecond) const
+float AnimationBlendSpace2D::GetNextNormalizedPlayTime(float InNormalizedCurrentTime, float DeltaSecond) const
 {
-	const float BlendSpaceFullTime = GetBlendSpaceLength() * 30;
-	const float DeltaFrame = DeltaSecond * 30.f * 1.f ;
-	CurrentFrame += DeltaFrame;
-	return fmod(CurrentFrame, BlendSpaceFullTime);
+	InNormalizedCurrentTime += DeltaSecond * NormalizedDeltaFrame * 30;
+	return Math::Wrap01(InNormalizedCurrentTime); 
 }
 
 void AnimationBlendSpace2D::GetTargetAnimations
@@ -87,9 +92,26 @@ void AnimationBlendSpace2D::GetTargetAnimations
 		NormalizeHorizontalValue(Value[0]),
 		NormalizeVerticalValue(Value[1])
 	};
-	bool Result = Triangulator.GetAnimsAndWeights(Position, OutClips, BarycentricWeights);
+	array<const AnimationClip*, 3> Clips;
+	bool Result = Triangulator.GetAnimsAndWeights(Position, Clips, BarycentricWeights);
 	if (Result == false)
 		ASSERT(false, String::Format("%s | Triangle Not Found", __FUNCTION__).c_str());
+
+	// Sort
+	// ERRPR weight가 같을 수도 있지. Map으로 하면 안 됨.
+	vector<pair<float, const AnimationClip *>> Index;
+	for (int i = 0 ; i < 3 ; i++)
+		Index.push_back({BarycentricWeights[i], Clips[i]});
+	sort(Index.begin(), Index.end(), [](
+		const pair<float, const AnimationClip *> & Pair1,
+		const pair<float, const AnimationClip *> & Pair2 )->bool {
+		return Pair1.first > Pair2.first;
+	});
+	for (int i = 0 ; i < 3 ; i++)
+	{
+		BarycentricWeights[i] = Index[i].first;
+		OutClips[i] = Index[i].second;
+	}
 }
 
 float AnimationBlendSpace2D::NormalizeValue

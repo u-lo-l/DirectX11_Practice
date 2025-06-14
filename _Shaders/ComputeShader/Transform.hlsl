@@ -117,12 +117,19 @@ BoneTRS_t barycentric
 	float w2
 )
 {
-	BoneTRS_t Result;
-	Result.Translation = a.Translation * w0 + b.Translation * w1 + c.Translation * w2;
-	Result.Scale = a.Scale * w0 + b.Scale * w1 + c.Scale * w2;
-	float4 QuatTemp = slerp(a.Rotation, b.Rotation, w1 / (w0 + w1));
-	Result.Rotation = slerp(QuatTemp, c.Rotation, w2);
-
-	return Result;
+	[flatten]
+	if (w0 == 1)
+		return a;
+	else if (w2 == 0)
+		return lerp(a, b, w1);
+	else
+	{
+		BoneTRS_t Result;
+		Result.Translation = a.Translation * w0 + b.Translation * w1 + c.Translation * w2;
+		Result.Scale = a.Scale * w0 + b.Scale * w1 + c.Scale * w2;
+		float4 QuatTemp = slerp(a.Rotation, b.Rotation, w1 / (w0 + w1));
+		Result.Rotation = slerp(QuatTemp, c.Rotation, w2);
+		return Result;
+	}
 }
 #endif

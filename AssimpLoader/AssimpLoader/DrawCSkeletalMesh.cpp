@@ -44,12 +44,12 @@ void DrawCSkeletalMesh::Initialize()
 		BS_Locomotion->SetHorizontalWrapped(false);
 		BS_Locomotion->SetVerticalWrapped(false);
 		BS_Locomotion->AddAnimation(Idle  , { 0,  0});
-		// BS_Locomotion->AddAnimation(Walk_F, { 0,  1});
-		// BS_Locomotion->AddAnimation(Walk_B, { 0, -1});
+		BS_Locomotion->AddAnimation(Walk_F, { 0,  1});
+		BS_Locomotion->AddAnimation(Walk_B, { 0, -1});
 		BS_Locomotion->AddAnimation(Walk_R, { 1,  0});
 		BS_Locomotion->AddAnimation(Walk_L, {-1,  0});
-		// BS_Locomotion->AddAnimation(Run_F , { 0,  4});
-		// BS_Locomotion->AddAnimation(Run_B , { 0, -4});
+		BS_Locomotion->AddAnimation(Run_F , { 0,  4});
+		BS_Locomotion->AddAnimation(Run_B , { 0, -4});
 		BS_Locomotion->AddAnimation(Run_R , { 4,  0});
 		BS_Locomotion->AddAnimation(Run_L , {-4,  0});
 		BS_Locomotion->EndAddingAnimation();

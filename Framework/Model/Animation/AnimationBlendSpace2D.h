@@ -31,12 +31,13 @@ public:
 	const array<float, 2>& GetVerticalRange() const;
 	void  AddAnimation(const AnimationClip * Anim, const array<float, 2> & At);
 	void  EndAddingAnimation();
+	vector<const AnimationClip *> GetAllAnimationClips() const;
 	float GetDuration() const;
 	float GetBlendSpaceLength() const;
 
 	void SetVerticalWrapped(bool bWrapped);
 	void SetHorizontalWrapped(bool bWrapped);
-	float GetNextFrame(float CurrentFrame, float DeltaSecond) const;
+	float GetNextNormalizedPlayTime(float InNormalizedCurrentTime, float DeltaSecond) const;
 
 	void GetTargetAnimations(
 		const array<float, 2> & Value,
@@ -47,9 +48,13 @@ private:
 	static float NormalizeValue(float InValue, const array<float, 2>& Range, bool bWrap);
 	float NormalizeHorizontalValue(float InValue) const;
 	float NormalizeVerticalValue(float InValue) const;
+	
 	const CSkeletal * Skeleton;
+	
 	float Duration = -1.f;
 	float PlayRate = 1.f;
+	float NormalizedDeltaFrame = 0.f; 
+
 	array<float, 2> HorizontalRange = {NAN, NAN};
 	array<float, 2> VerticalRange = {NAN, NAN};;
 	bool bWrapHorizontal = false;

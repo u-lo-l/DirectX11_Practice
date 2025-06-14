@@ -238,7 +238,8 @@ void AnimationConverter::WriteClipData( const string & InSaveFileName, const Cli
 
 	const BinaryWriter * BinWriter = new BinaryWriter(InSaveFileName);
 
-	BinWriter->WriteString(InClipData->Name);
+	// BinWriter->WriteString(InClipData->Name);
+	BinWriter->WriteString(Path::GetFileNameWithoutExtension(InSaveFileName));
 	BinWriter->WriteFloat(InClipData->Duration);
 	BinWriter->WriteFloat(InClipData->TicksPerSecond);
 

@@ -43,9 +43,9 @@ public:
 	const Texture * GetKeyFrameTexture() const;
 
 	float GetNextFrame(float CurrentFrame, float DeltaSecond) const;
-	float GetCurrentFrame(float Time) const;
-	int GetKeyFrameCurr(float CurrentTime) const;
-	int GetKeyFrameNext(float CurrentTime) const;
+	float GetCurrentPlayTime(float InNormalizedPlayTime) const;
+	int GetKeyFrameCurr(float InPlayTime) const;
+	int GetKeyFrameNext(float InPlayTime) const;
 
 private:
 	void ReadAnimationAsset(
