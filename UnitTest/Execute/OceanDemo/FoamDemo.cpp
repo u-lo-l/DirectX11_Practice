@@ -38,7 +38,7 @@ void sdt::FoamDemo::Initialize()
 		L"2D/HeightMap.hlsl",			// Foam
 	};
 	TextureDebugShaders.resize(ShaderNames.size());
-	float SizeSmall = 0.25f * D3D::GetDesc().Height * 0.5f;
+	float SizeSmall = 0.25f * D3D::GetDesc().WindowHeight * 0.5f;
 	float SizeGap = SizeSmall * 0.1f;
 	const vector<float> Sizes{
 		SizeSmall,
@@ -50,17 +50,17 @@ void sdt::FoamDemo::Initialize()
 		Vector2D(SizeSmall * -4.5f - SizeGap * 4.5f, +SizeSmall * 1.5f + SizeGap * 1.f),
 
 		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, +SizeSmall * 2.f + SizeGap * 2),
-		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, 0),
+		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, 0.f),
 		Vector2D(SizeSmall * -1.5f - SizeGap * 1.5f, -SizeSmall * 2.f - SizeGap * 2),
 
 		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, +SizeSmall * 2.f + SizeGap * 2),
-		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, 0),
+		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, 0.f),
 		Vector2D(SizeSmall * +1.5f + SizeGap * 1.5f, -SizeSmall * 2.f - SizeGap * 2),
 
 		Vector2D(SizeSmall *  4.5f + SizeGap * 4.5f, -SizeSmall * 1.5f - SizeGap * 1.f),
 		Vector2D(SizeSmall *  4.5f + SizeGap * 4.5f, +SizeSmall * 1.5f + SizeGap * 1.f),
 	};
-	const Vector2D Center = {D3D::GetDesc().Width * 0.5f, D3D::GetDesc().Height * 0.5f};
+	const Vector2D Center = {D3D::GetDesc().WindowWidth * 0.5f, D3D::GetDesc().WindowHeight * 0.5f};
 	
 	for (UINT i = 0 ; i < ShaderNames.size() ; i++)
 	{

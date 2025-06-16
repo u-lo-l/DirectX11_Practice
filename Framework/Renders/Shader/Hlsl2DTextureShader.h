@@ -8,7 +8,10 @@ private:
 	constexpr static int Sampler_Linear_PS = 0;
 	using VertexType = VertexTexture;
 public:
-	explicit Hlsl2DTextureShader(ID3D11ShaderResourceView* InSRV, const wstring & InName = L"2D/Renderer2D.hlsl");
+	explicit Hlsl2DTextureShader(
+		ID3D11ShaderResourceView* InSRV,
+		const wstring & InShaderFileName = L"2D/Renderer2D.hlsl"
+	);
 	~Hlsl2DTextureShader();
 
 	void Tick();

@@ -5,8 +5,8 @@ Camera::Camera()
 {
 	Tf = new Transform();
 	Proj = new Perspective(
-		D3D::GetDesc().Width,
-		D3D::GetDesc().Height,
+		D3D::GetDesc().WindowWidth,
+		D3D::GetDesc().WindowHeight,
 		0.1f,
 		10000.f,
 		Math::ToRadians(50.0f)

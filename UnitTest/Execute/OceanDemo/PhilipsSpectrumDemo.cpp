@@ -24,7 +24,7 @@ namespace sdt
 			L"2D/IFFTResult.hlsl",
 			L"2D/HeightMap.hlsl",
 		};
-		float SizeSmall = 0.4f * D3D::GetDesc().Height / 2.5f;
+		float SizeSmall = 0.4f * D3D::GetDesc().WindowHeight / 2.5f;
 		float SizeGap = SizeSmall * 0.2f;
 		float SizeBig =  SizeSmall * 2 + SizeGap;
 		const vector<float> Sizes{
@@ -35,9 +35,9 @@ namespace sdt
 			Vector2D(-SizeSmall - SizeGap, +SizeSmall + SizeGap),
 			Vector2D(-SizeSmall * 3 - SizeGap * 3, -SizeSmall - SizeGap),
 			Vector2D(-SizeSmall - SizeGap, -SizeSmall - SizeGap),
-			Vector2D(SizeBig + SizeGap, 0)
+			Vector2D(SizeBig + SizeGap, 0.f)
 		};
-		const Vector2D Center = {D3D::GetDesc().Width * 0.5f, D3D::GetDesc().Height * 0.5f};
+		const Vector2D Center = {D3D::GetDesc().WindowWidth * 0.5f, D3D::GetDesc().WindowHeight * 0.5f};
 		for (int i = 0 ; i < 5 ; i++)
 		{
 			TextureDebugShader[i] = new Hlsl2DTextureShader(nullptr, EntryPoints[i]);

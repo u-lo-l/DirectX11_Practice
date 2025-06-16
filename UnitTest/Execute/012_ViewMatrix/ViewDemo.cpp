@@ -88,7 +88,7 @@ namespace Sdt
 		const Vector CameraAt = CamPosition + CameraLocation + CameraForward;
 		D3DXMatrixLookAtLH(&ViewMat, &CameraLocation, &CameraAt, &CameraUp);
 
-		const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
+		const float Aspect = D3D::GetDesc().WindowWidth / D3D::GetDesc().WindowHeight;
 		D3DXMatrixPerspectiveFovLH(&ProjectionMat, Math::PI * 0.25f, Aspect, 0.1f, 1000);
 	}
 

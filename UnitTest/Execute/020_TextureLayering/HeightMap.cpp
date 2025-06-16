@@ -68,7 +68,7 @@
 //
 // 		WorldMat = Matrix::Identity;
 //
-// 		const float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
+// 		const float Aspect = D3D::GetDesc().WindowWidth / D3D::GetDesc().WindowHeight;
 // 		ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.1f, 1000.f);
 // 		MainCamera->SetPosition(0, 0, -5);
 //

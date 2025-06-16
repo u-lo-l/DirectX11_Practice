@@ -49,8 +49,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	desc.AppName = L"D3D Assimp Loader";
 	desc.Instance = hInstance;
 	desc.Handle = nullptr;
-	desc.Width = 1280;
-	desc.Height = 720;
+	desc.WindowWidth = 1280;
+	desc.WindowHeight = 720;
 	desc.Background = Color(0.3f, 0.3f, 0.3f, 1.0f);
 
 	D3D::SetDesc(desc);

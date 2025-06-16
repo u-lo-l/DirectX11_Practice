@@ -7,7 +7,7 @@ public:
 	static void Create();
 	static void Destroy();
 	static Gui * Get();
-	static void Tick();
+	void Tick();
 	void Render();
 	static LRESULT WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam, LPARAM InlParam);
 
@@ -22,7 +22,7 @@ private:
 private:
 	struct GuiText
 	{
-		GuiText() {}
+		GuiText() = default;
 		GuiText(const Vector2D & Position, const Color & Color, const string & Context );
 		Vector2D Position;
 		Color Color;

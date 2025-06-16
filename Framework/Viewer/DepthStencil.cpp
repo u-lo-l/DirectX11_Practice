@@ -7,9 +7,9 @@ DepthStencil::DepthStencil(UINT InWidth, UINT InHeight, bool bInUseStencil)
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 	if (Width == 0)
-		Width = static_cast<UINT>(D3D::GetDesc().Width);
+		Width = static_cast<UINT>(D3D::GetDesc().WindowWidth);
 	if (Height == 0)
-		Height = static_cast<UINT>(D3D::GetDesc().Height);
+		Height = static_cast<UINT>(D3D::GetDesc().WindowHeight);
 	
 	D3D11_TEXTURE2D_DESC TextureDesc {};
 	TextureDesc.Width = Width;

@@ -1,13 +1,13 @@
 ﻿#include "framework.h"
 #include "Hlsl2DTextureShader.h"
 
-Hlsl2DTextureShader::Hlsl2DTextureShader(ID3D11ShaderResourceView * InSRV, const wstring & InName)
+Hlsl2DTextureShader::Hlsl2DTextureShader(ID3D11ShaderResourceView * InSRV, const wstring & InShaderFileName)
 	: Shader(nullptr), World(nullptr), VBuffer(nullptr), SRV(InSRV)
 {
 	Data.View = Matrix::CreateLookAt(Vector(0, 0, -1), Vector::Zero, Vector::Up);
-	Data.Projection = Matrix::CreateOrthographicOffCenter(0, D3D::GetDesc().Width, 0, D3D::GetDesc().Height, -1, +1);
-	
-	Shader = new HlslShader<VertexType>(InName.c_str());
+	Data.Projection = Matrix::CreateOrthographicOffCenter(0, D3D::GetDesc().WindowWidth, 0, D3D::GetDesc().WindowHeight, -1, +1);
+
+	Shader = new HlslShader<VertexType>(InShaderFileName.c_str());
 	CHECK(SUCCEEDED(Shader->CreateRasterizerState_Solid_NoCull()));
 	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear_Clamp()));
 	CHECK(SUCCEEDED(Shader->CreateDepthStencilState_NoDepth()));

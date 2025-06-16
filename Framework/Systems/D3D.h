@@ -13,8 +13,8 @@
 /// <description> - AppName : 애플리케이션의 이름을 저장한다.</description>
 /// <description> - Instance : Win32 애플리케이션의 인스턴스 핸들을 저장한다.</description>
 /// <description> - Handle : 윈도우 핸들(HWND)을 저장한다. 초기값은 nullptr로 설정된다.</description>
-/// <description> - Width : 애플리케이션 창의 너비를 나타낸다. 기본값은 픽셀 단위로 설정된다.</description>
-/// <description> - Height : 애플리케이션 창의 높이를 나타낸다. 기본값은 픽셀 단위로 설정된다.</description>
+/// <description> - WindowWidth : 애플리케이션 창의 너비를 나타낸다. 기본값은 픽셀 단위로 설정된다.</description>
+/// <description> - WindowHeight : 애플리케이션 창의 높이를 나타낸다. 기본값은 픽셀 단위로 설정된다.</description>
 /// <description> - Background : 애플리케이션의 기본 배경색을 나타낸다. RGBA 형식으로 정의된다.</description>
 struct D3DDesc
 {
@@ -22,8 +22,8 @@ struct D3DDesc
 	HINSTANCE Instance;
 	HWND Handle;
 
-	float Width;
-	float Height;
+	float WindowWidth;
+	float WindowHeight;
 
 	Color Background;
 };
@@ -41,7 +41,7 @@ public:
 	static const D3DDesc& GetDesc();
 	static void SetDesc(const D3DDesc& InDesc);
 private:
-	static D3D* Instance;
+	static D3D * Instance;
 	static D3DDesc D3dDesc;
 
 private:
@@ -67,27 +67,33 @@ private:
 	/// </remarks>
 	void CreateRTV();
 	void CreateDSV();
+	void CreateSRV();
 public:
 	ID3D11Device* GetDevice() const { return Device; }
 	ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; }
+	IDXGISwapChain * GetSwapChain() const { return SwapChain; }
+	
 
 	void SetRenderTarget() const;
 	void ClearRenderTargetView( const Color & InColor) const;
 	void ClearDepthStencilView() const;
 	void Present() const;
 	void ResizeScreen(float InWidth, float InHeight);
+	ID3D11RenderTargetView * GetRenderTarget() const;
+	ID3D11ShaderResourceView * GetSRV();
 private:
 	D3D();
 	~D3D();
 
 private:
-	
 	ID3D11Device * Device; // GPU와 통신하는 객체
 	IDXGISwapChain * SwapChain;
 	ID3D11DeviceContext * DeviceContext; // GPU 명령 즉시 실행 컨텍스트
 	
 	ID3D11RenderTargetView * RenderTargetView; //BackBuffer
 	ID3D11DepthStencilView * DepthStencilView;
-	ID3D11Texture2D * DSVTexture;
+	ID3D11ShaderResourceView * RenderTargetSRV;
+	
+	ID3D11Texture2D * DepthTexture;
 };
 

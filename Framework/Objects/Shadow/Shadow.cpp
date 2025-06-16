@@ -41,14 +41,13 @@ Shadow::~Shadow()
 void Shadow::Tick()
 {
 	// ImGui::Separator();
-	ImGui::SeparatorText("Shadow");
-	ImGui::SliderFloat("Shadow Bias", &ShadowData_PS.ShadowBias, -0.01f, +0.01f);
-	
-	ImGui::InputInt("Shadow Quality", (int*)&ShadowData_PS.ShadowLevel);
+	// ImGui::SeparatorText("Shadow");
+	// ImGui::SliderFloat("Shadow Bias", &ShadowData_PS.ShadowBias, -0.01f, +0.01f);
+	// ImGui::InputInt("Shadow Quality", (int*)&ShadowData_PS.ShadowLevel);
+	// ImGui::InputFloat("Shadow Radius", &Radius, 1);
+
+
 	ShadowData_PS.ShadowLevel %= 5;
-
-	ImGui::InputFloat("Shadow Radius", &Radius, 1);
-
 	Vector direction = Context::Get()->GetLightDirection();
 	Vector position = direction * Radius * -2.0f;
 

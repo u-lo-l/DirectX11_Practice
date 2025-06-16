@@ -21,7 +21,7 @@ void sdt::GaussianRandomDemo::Initialize()
 		float Magnitude = Math::Lerp(0.1f, 1.f, GaussianRandom);
 		GaussianRandom = Math::Clamp(distribution(generator), -3, 3);
 		GaussianRandom = (GaussianRandom + 3.f) / 6.f;
-		float Angle = Math::Lerp(-Math::Pi, Math::Pi, GaussianRandom);
+		float Angle = Math::Lerp(-Math::PI, Math::PI, GaussianRandom);
 		Element.real(Magnitude * cosf(Angle));
 		Element.imag(Magnitude * sinf(Angle));
 	}
@@ -57,9 +57,9 @@ void sdt::GaussianRandomDemo::Initialize()
 	GaussianRandom = new Texture(GaussianRandomTexture, GaussianTextureDesc);
 	
 	Shader = new Hlsl2DTextureShader(GaussianRandom->GetSRV(), L"2D/GaussianRandomTexture.hlsl");
-	float TextureHeight = 0.4f * D3D::GetDesc().Height;
+	float TextureHeight = 0.4f * D3D::GetDesc().WindowHeight;
 	Shader->GetTransform()->SetScale({TextureHeight, TextureHeight, 1});
-	Shader->GetTransform()->SetWorldPosition({ D3D::GetDesc().Width * 0.5f,D3D::GetDesc().Height * 0.5f, 0});
+	Shader->GetTransform()->SetWorldPosition({ D3D::GetDesc().WindowWidth * 0.5f,D3D::GetDesc().WindowHeight * 0.5f, 0});
 
 	Camera * const MainCamera = Context::Get()->GetCamera();
 	MainCamera->SetPosition( 0, 10, -50 );

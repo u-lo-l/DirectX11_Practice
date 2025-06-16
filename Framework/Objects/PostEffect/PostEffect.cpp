@@ -22,8 +22,8 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 		sizeof(VertexType)
 	);
 
-	PostEffectFactors[0] = 1 / D3D::GetDesc().Width;
-	PostEffectFactors[1] = 1 / D3D::GetDesc().Height;
+	PostEffectFactors[0] = 1 / D3D::GetDesc().WindowWidth;
+	PostEffectFactors[1] = 1 / D3D::GetDesc().WindowHeight;
 	PostEffectFactors[2] = sdt::SystemTimer::Get()->GetRunningTime();
 
 	PostEffectFactors[4] = 10.f; // Radial Blur Radius
@@ -40,8 +40,8 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 		false
 	);
 
-	const UINT ScreenWidth = static_cast<UINT>(D3D::GetDesc().Width);
-	const UINT ScreenHeight = static_cast<UINT>(D3D::GetDesc().Height);
+	const UINT ScreenWidth = static_cast<UINT>(D3D::GetDesc().WindowWidth);
+	const UINT ScreenHeight = static_cast<UINT>(D3D::GetDesc().WindowHeight);
 	Bloom_RT[Luminosity] = new RenderTarget(ScreenWidth, ScreenHeight);
 	Bloom_RT[GaussianBlur_X] = new RenderTarget(ScreenWidth, ScreenHeight);
 	Bloom_RT[GaussianBlur_Y] = new RenderTarget(ScreenWidth, ScreenHeight);

@@ -98,8 +98,8 @@ void Ocean::Tick()
 	ImGui::SliderFloat("Ocean : Min Screen Diagonal", &TessellationData.LODRange.Y, 1, 5, "%.0f");
 	ImGui::SliderFloat("Ocean : Noise Scaler", &TessellationData.NoiseScaler, 0.1f, 10, "%.1f");
 	ImGui::SliderFloat("Ocean : Noise Power", &TessellationData.NoisePower, 0.1f, 5, "%.1f");
-	TessellationData.ScreenDistance = D3D::GetDesc().Height * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
-	TessellationData.ScreenDiagonal = D3D::GetDesc().Height * D3D::GetDesc().Height + D3D::GetDesc().Width * D3D::GetDesc().Width;
+	TessellationData.ScreenDistance = D3D::GetDesc().WindowHeight * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
+	TessellationData.ScreenDiagonal = D3D::GetDesc().WindowHeight * D3D::GetDesc().WindowHeight + D3D::GetDesc().WindowWidth * D3D::GetDesc().WindowWidth;
 
 	TessellationData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
 	CB_Tessellation->UpdateData(&TessellationData, sizeof(TessellationDesc));

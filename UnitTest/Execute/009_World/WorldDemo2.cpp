@@ -45,7 +45,7 @@ namespace Sdt
 		Vector CameraAt = CameraLocation + CameraForward;
 		ViewMat = Matrix::CreateLookAt(CameraLocation, CameraAt, CameraUp);
 		
-		float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
+		float Aspect = D3D::GetDesc().WindowWidth / D3D::GetDesc().WindowHeight;
 		ProjectionMat = Matrix::CreatePerspectiveFieldOfView(Math::Pi * 0.25f, Aspect, 0.01f, 1000.f);
 
 		D3D11_BUFFER_DESC ConstantBufferDesc = {};

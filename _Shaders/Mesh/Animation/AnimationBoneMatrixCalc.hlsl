@@ -35,27 +35,6 @@ void CSMain(uint3 DTid : SV_DISPATCHTHREADID)
 	if (BoneIndex >= StructCount)
 		return ;
 
-	if (AnimData[0].Weight == 1.f)
-	{
-		BoneMatrices[BoneIndex].M = ToMatrix(GetInterpolatedBoneTRS(
-			Anim[0], BoneIndex, AnimData[0].CurrentFrame, AnimData[0].NextFrame, AnimData[0].LerpRate
-		));
-		return;
-	}
-
-	if (AnimData[2].Weight == 0.f)
-	{
-		[unroll]
-		for (int i = 0 ; i < 2 ; i++)
-		{
-			TRS[i] = GetInterpolatedBoneTRS(
-				Anim[i], BoneIndex, AnimData[i].CurrentFrame, AnimData[i].NextFrame, AnimData[i].LerpRate
-			);
-		}
-		BoneMatrices[BoneIndex].M = ToMatrix(lerp(TRS[0], TRS[1], AnimData[1].Weight));
-		return ;
-	}
-
 	[unroll]
 	for (int i = 0 ; i < 3 ; i++)
 	{

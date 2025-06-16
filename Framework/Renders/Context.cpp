@@ -34,9 +34,11 @@ void Context::Tick()
 		VP_CBuffer_VS->Tick();
 	if (!!ShadowMap)
 		ShadowMap->Tick();
-	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
-	LightDirection.Y = -abs(LightDirection.Y);
-	ImGui::ColorEdit4("LightColor", LightColor);
+	// ImGui::Begin("Directional Light Setting");
+	// ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
+	// LightDirection.Y = -abs(LightDirection.Y);
+	// ImGui::ColorEdit4("LightColor", LightColor);
+	// ImGui::End();
 }
 /**
  *	@brief :
@@ -47,7 +49,7 @@ void Context::Render() const
 {
 	const int Fps = static_cast<int>(ImGui::GetIO().Framerate);
 	
-	Vp->SetViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
+	Vp->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
 	Gui * const GuiInst = Gui::Get();
 	GuiInst->RenderText(5, 5, 1, 1, 1,  String::Format("FrameRate : %d", Fps));
 	
@@ -85,8 +87,8 @@ void Context::Render() const
 void Context::ResizeScreen()
 {
 	const Projection * const Proj = MainCamera->GetProjection();
-	MainCamera->SetPerspective(D3D::GetDesc().Width, D3D::GetDesc().Height, Proj->GetNear(), Proj->GetFar(), Proj->GetFOV());
-	Vp->SetViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
+	MainCamera->SetPerspective(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, Proj->GetNear(), Proj->GetFar(), Proj->GetFOV());
+	Vp->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
 }
 
 Camera * Context::GetCamera() const
@@ -112,8 +114,8 @@ const Color& Context::GetLightColor() const
 Context::Context()
  : MainCamera(new Camera())
 {
-	MainCamera->SetPerspective(D3D::GetDesc().Width, D3D::GetDesc().Height, 0.1f, 5000.f, Math::ToRadians(60.f));
-	Vp = new ViewPort(D3D::GetDesc().Width, D3D::GetDesc().Height, 0, 0, 0, 1);
+	MainCamera->SetPerspective(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0.1f, 5000.f, Math::ToRadians(60.f));
+	Vp = new ViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
 	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
 	ShadowMap = new Shadow({0,0,0}, 100, 1024, 1024);
 }

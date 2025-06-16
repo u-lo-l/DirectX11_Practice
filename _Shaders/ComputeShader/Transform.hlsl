@@ -73,6 +73,11 @@ BoneTRS_t GetInterpolatedBoneTRS(in Texture2D<float4> Animation, uint BoneIndex,
 
 BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t)
 {
+	if (t == 0)
+		return a;
+	else if (t == 1)
+		return b;
+	
 	BoneTRS_t Result;
 	Result.Translation = lerp(a.Translation, b.Translation, t);
 	Result.Rotation = slerp(a.Rotation, b.Rotation, t);
@@ -83,6 +88,11 @@ BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t)
 
 float4 slerp(float4 a, float4 b, float t)
 {
+	if (t == 0)
+		return a;
+	else if (t == 1)
+		return b;
+	
 	float4 q0 = normalize(a);
 	float4 q1 = normalize(b);
 	float dot_product = dot(q0, q1);

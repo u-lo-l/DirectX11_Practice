@@ -8,6 +8,7 @@
 #include "Execute/DisplacementMappingDemo/BasicTessellationDemo.h"
 #include "Execute/DisplacementMappingDemo/DisplacementMappingDemo.h"
 #include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
+#include "Execute/ImGUIDemo/ImGuiDemo.h"
 #include "Execute/LandscapeDemo/CellDemo.h"
 #include "Execute/LandscapeDemo/LandScapeDemo.h"
 #include "Execute/LODDemo/TerrainTessellationDemo.h"
@@ -33,7 +34,8 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::CellDemo);
 	// PUSH_MAIN(sdt::LandScapeDemo);
 	// PUSH_MAIN(sdt::CharacterMoveDemo);
-	PUSH_MAIN(DelaunayTriangleDemo);
+	// PUSH_MAIN(DelaunayTriangleDemo);
+	PUSH_MAIN(ImGuiDemo);
 }
 
 
@@ -79,19 +81,20 @@ void Main::Push(IExecutable* Executable)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	D3DDesc desc;
-	desc.AppName = L"D3D Game";
-	desc.Instance = hInstance;
-	desc.Handle = nullptr;
-	desc.Width = 1280;
-	desc.Height = 720;
-	desc.Background = Color(0.3f, 0.3f, 0.3f, 1.0f);
-
+	const D3DDesc desc {
+		L"DirectX11 Practice",
+		hInstance,
+		nullptr,
+		1280,
+		720,
+		Color(0.3f, 0.3f, 0.3f, 1.0f)
+	};
 	D3D::SetDesc(desc);
 
-	// ReSharper disable once CppUseAuto
 	Main * main = new Main();
-	const WPARAM wParam = Window::Run(main);
+	const int wParam = static_cast<int>(Window::Run(main));
+
 	SAFE_DELETE(main)
-	return static_cast<int>(wParam);
+
+	return wParam;
 }

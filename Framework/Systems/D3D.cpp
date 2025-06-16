@@ -54,8 +54,8 @@ void D3D::ResizeScreen( float InWidth, float InHeight )
 	{
 		return;
 	}
-	D3dDesc.Width = InWidth;
-	D3dDesc.Height = InHeight;
+	D3dDesc.WindowWidth = InWidth;
+	D3dDesc.WindowHeight = InHeight;
 
 	SAFE_RELEASE(RenderTargetView);
 
@@ -64,22 +64,29 @@ void D3D::ResizeScreen( float InWidth, float InHeight )
 
 	CreateRTV();
 	CreateDSV();
+	CreateSRV();
 	SetRenderTarget();
 }
+
+
 
 D3D::D3D()
 {
 	CreateDeviceAndContext();
 	CreateRTV();
 	CreateDSV();
+	CreateSRV();
 	SetRenderTarget();
 }
 
 D3D::~D3D()
 {
-	SAFE_RELEASE(DSVTexture);
+	SAFE_RELEASE(DepthTexture);
+	
 	SAFE_RELEASE(RenderTargetView);
 	SAFE_RELEASE(DepthStencilView);
+	SAFE_RELEASE(RenderTargetSRV);
+	
 	SAFE_RELEASE(DeviceContext);
 	SAFE_RELEASE(Device);
 	SAFE_RELEASE(SwapChain);
@@ -93,8 +100,8 @@ void D3D::CreateDeviceAndContext()
 		DXGI_MODE_DESC Desc;
 		ZeroMemory(&Desc, sizeof(DXGI_MODE_DESC));
 
-		Desc.Width = static_cast<UINT>(D3dDesc.Width);
-		Desc.Height = static_cast<UINT>(D3dDesc.Height);
+		Desc.Width = static_cast<UINT>(D3dDesc.WindowWidth);
+		Desc.Height = static_cast<UINT>(D3dDesc.WindowHeight);
 		Desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		Desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		Desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
@@ -110,7 +117,8 @@ void D3D::CreateDeviceAndContext()
 		SwapChainDesc.SampleDesc.Count = 1;		// pixel당 MultiSample개수
 		SwapChainDesc.SampleDesc.Quality = 0;	//
 		// BufferUsage : https://learn.microsoft.com/ko-kr/windows/win32/direct3ddxgi/dxgi-usage
-		SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // Output RenderTarget으로 설정
+		// SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // Output RenderTarget으로 설정
+		SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 		SwapChainDesc.BufferCount = 1;
 		SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		SwapChainDesc.OutputWindow = D3dDesc.Handle;
@@ -139,8 +147,11 @@ void D3D::CreateDeviceAndContext()
 
 void D3D::CreateRTV()
 {
+	SAFE_RELEASE(RenderTargetView);
+	
 	ID3D11Texture2D * BackBuffer;
-	HRESULT Hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&BackBuffer));
+	void ** const BackBufferRef = reinterpret_cast<void **>(&BackBuffer);
+	HRESULT Hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), BackBufferRef);
 	ASSERT(Hr >= 0, "Back Buffer Failed")
 
 	Hr = Device->CreateRenderTargetView(BackBuffer, nullptr, &RenderTargetView);
@@ -151,10 +162,12 @@ void D3D::CreateRTV()
 
 void D3D::CreateDSV()
 {
+	SAFE_RELEASE(DepthStencilView);
+	
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDecs;
 	ZeroMemory(&DepthStencilBufferDecs, sizeof(DepthStencilBufferDecs));
-	DepthStencilBufferDecs.Width = static_cast<UINT>(D3dDesc.Width);
-	DepthStencilBufferDecs.Height = static_cast<UINT>(D3dDesc.Height);
+	DepthStencilBufferDecs.Width = static_cast<UINT>(D3dDesc.WindowWidth);
+	DepthStencilBufferDecs.Height = static_cast<UINT>(D3dDesc.WindowHeight);
 	DepthStencilBufferDecs.MipLevels = 1;
 	DepthStencilBufferDecs.ArraySize = 1;
 	// DepthStencilBufferDecs.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -165,17 +178,51 @@ void D3D::CreateDSV()
 	DepthStencilBufferDecs.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	DepthStencilBufferDecs.CPUAccessFlags = 0;
 	DepthStencilBufferDecs.MiscFlags = 0;
-	CHECK(Device->CreateTexture2D(&DepthStencilBufferDecs, nullptr, &DSVTexture)>= 0);
+	CHECK(Device->CreateTexture2D(&DepthStencilBufferDecs, nullptr, &DepthTexture)>= 0);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStencilViewDesc;
 	ZeroMemory(&DepthStencilViewDesc, sizeof(DepthStencilViewDesc));
 	DepthStencilViewDesc.Format = DepthStencilBufferDecs.Format;
 	DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	DepthStencilViewDesc.Texture2D.MipSlice = 0;
-	CHECK(Device->CreateDepthStencilView(DSVTexture, &DepthStencilViewDesc, &DepthStencilView) >= 0);
+	CHECK(Device->CreateDepthStencilView(DepthTexture, &DepthStencilViewDesc, &DepthStencilView) >= 0);
+}
+
+void D3D::CreateSRV()
+{
+	SAFE_RELEASE(RenderTargetSRV);
+	
+	ID3D11Texture2D * BackBufferTexture;
+	void ** ppSurface = reinterpret_cast<void **>(&BackBufferTexture);
+	HRESULT Hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ppSurface);
+	CHECK(SUCCEEDED(Hr));
+
+	D3D11_TEXTURE2D_DESC TextureDesc = {};
+	BackBufferTexture->GetDesc(&TextureDesc);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = TextureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	Hr = Device->CreateShaderResourceView(BackBufferTexture, &srvDesc, &RenderTargetSRV);
+	CHECK(SUCCEEDED(Hr));
+	SAFE_RELEASE(BackBufferTexture);
 }
 
 void D3D::SetRenderTarget() const
 {
 	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
+}
+
+ID3D11RenderTargetView * D3D::GetRenderTarget() const
+{
+	return RenderTargetView;
+}
+
+ID3D11ShaderResourceView* D3D::GetSRV()
+{
+	CreateSRV();
+	return RenderTargetSRV;
 }

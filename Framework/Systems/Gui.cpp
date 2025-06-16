@@ -27,6 +27,12 @@ Gui::Gui()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImGuiIO & io = ImGui::GetIO();
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
+
+	ImGui::StyleColorsDark();
+	
 
 	const D3DDesc & Desc = D3D::GetDesc();
 	ImGui_ImplWin32_Init(Desc.Handle);
@@ -76,6 +82,8 @@ void Gui::Tick()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+	
 }
 
 void Gui::Render()
@@ -85,33 +93,31 @@ void Gui::Render()
 	ImGui::SetNextWindowPos(ViewPort->Pos);
 	ImGui::SetNextWindowSize(ViewPort->Size);
 	ImGui::SetNextWindowBgAlpha(0.0f);
+	string AppName = String::ToString(D3D::GetDesc().AppName);
 	// 기본 창 띄우기
 	ImGui::Begin
 	(
-		"Hello ImGUI", nullptr,
-		ImGuiWindowFlags_NoTitleBar |
+		AppName.c_str(), nullptr ,
+		// ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
 		ImGuiWindowFlags_NoScrollWithMouse |
 		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoSavedSettings |
+		// ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoInputs |
 		ImGuiWindowFlags_NoFocusOnAppearing |
 		ImGuiWindowFlags_NoBringToFrontOnFocus |
 		ImGuiWindowFlags_NoNavFocus
 	);
-
 	for (const GuiText & Content : Contents)
 	{
 		ImVec2 Position = {Content.Position.X, Content.Position.Y};
 		ImColor Color = {Content.Color.R, Content.Color.G, Content.Color.B, Content.Color.A};
 		ImGui::GetWindowDrawList()->AddText(Position, Color, Content.Content.c_str());
 	}
-	Contents.clear();
-
 	ImGui::End();
-
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	Contents.clear();
 }

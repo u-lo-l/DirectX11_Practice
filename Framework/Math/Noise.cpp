@@ -78,7 +78,7 @@ Texture* Noise::CreatePerlin2DNoise(UINT InSize)
 	// PerlinNoiseMap->SaveOutputAsFile(L"PerlinNoise");
 	
 	SAFE_DELETE(CS_PerlinNoiseMap);
-	D3D11_TEXTURE2D_DESC Desc = {};
+	D3D11_TEXTURE2D_DESC Desc;
 	Desc.Width = InSize;
 	Desc.Height = InSize;
 	Desc.MipLevels = 1;

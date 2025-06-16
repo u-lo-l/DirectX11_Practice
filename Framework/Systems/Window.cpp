@@ -21,13 +21,12 @@ WPARAM Window::Run(IExecutable * InMain)
 	Main->Initialize();
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
-	while (true) //Game Loop
+	while (true) //Loop
 	{
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
 				break;
-	
 			TranslateMessage(&msg); //WM_CHAR
 			DispatchMessage(&msg);
 		}
@@ -61,14 +60,14 @@ void Window::Create()
 		wndClass.style = CS_HREDRAW | CS_VREDRAW;
 		// 윈도우가 메시지를 받을 때 호출되는 콜백함수
 		// DispatchMessage가 호출될 떄 실행됨
-		wndClass.lpfnWndProc = WndProc;
+		wndClass.lpfnWndProc = Window::WndProc;
 		wndClass.cbClsExtra = 0;
 		wndClass.cbWndExtra = 0;
 		wndClass.hInstance = desc.Instance;
 		wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wndClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 2);
+		wndClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 2); // ???
 		wndClass.lpszMenuName = nullptr;
 		wndClass.lpszClassName = desc.AppName.c_str();
 
@@ -85,8 +84,8 @@ void Window::Create()
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, //Default - X
 		CW_USEDEFAULT, //Default - Y
-		static_cast<int>(desc.Width),
-		static_cast<int>(desc.Height),
+		static_cast<int>(desc.WindowWidth),
+		static_cast<int>(desc.WindowHeight),
 		nullptr,
 		nullptr,
 		desc.Instance,
@@ -95,9 +94,9 @@ void Window::Create()
 	CHECK(desc.Handle != nullptr);
 
 	//렌더링 사이즈에 맞게 Window 창 크기 설정
-	RECT WinRect = { 0,0, static_cast<long>(desc.Width), static_cast<long>(desc.Height)};
-	const UINT WinCenterX = (GetSystemMetrics(SM_CXSCREEN) - static_cast<UINT>(desc.Width)) / 2;
-	const UINT WinCenterY = (GetSystemMetrics(SM_CYSCREEN) - static_cast<UINT>(desc.Height)) / 2;
+	RECT WinRect = { 0,0, static_cast<long>(desc.WindowWidth), static_cast<long>(desc.WindowHeight)};
+	const UINT WinCenterX = (GetSystemMetrics(SM_CXSCREEN) - static_cast<UINT>(desc.WindowWidth)) / 2;
+	const UINT WinCenterY = (GetSystemMetrics(SM_CYSCREEN) - static_cast<UINT>(desc.WindowHeight)) / 2;
 	AdjustWindowRect(&WinRect, WS_OVERLAPPEDWINDOW, FALSE);
 	const UINT WinWidth = WinRect.right - WinRect.left;
 	const UINT WinHeight = WinRect.bottom - WinRect.top;
@@ -164,7 +163,7 @@ LRESULT CALLBACK Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam,
 
 void Window::MainRender()
 {
-	Gui::Tick();
+	Gui::Get()->Tick();
 	sdt::SystemTimer::Get()->Tick();	// DeltaTime 계산
 	sdt::Mouse::Get()->Tick();			// Mouse변화량 계산
 	Context::Get()->Tick();				//
@@ -185,10 +184,22 @@ void Window::MainRender()
 	}
 	
 	{
-		Main->PostRender();	
-		Gui::Get()->Render();
+		Main->PostRender();
 	}
 
+	// ImGui의 Render는 모든 ImGui::Begin()~ImGui::End()가 끝난 뒤에 호출된다. 
+	ID3D11ShaderResourceView * SRV = D3D::Get()->GetSRV();
+	ImGui::Begin("Image");
+	ImGui::BeginChild("ImageBox", ImVec2(-1, -1), ImGuiChildFlags_Borders);
+	const ImTextureID Id = reinterpret_cast<ImTextureID>(SRV);
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+	SRV->GetDesc(&SRVDesc);
+	ImGui::Image(Id,ImVec2(100,100));
+	ImGui::EndChild();
+	ImGui::End();
+	
+	Gui::Get()->Render();
 	
 	D3D::Get()->Present();
+
 }

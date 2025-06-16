@@ -66,7 +66,7 @@ namespace Sdt
 		ViewMat = Matrix::CreateLookAt(CameraLocation, CameraForward, CameraUp);
 		// D3DXMatrixLookAtLH(&ViewMat, &CameraLocation, &CameraAt, &CameraUp);
 
-		float Aspect = D3D::GetDesc().Width / D3D::GetDesc().Height;
+		float Aspect = D3D::GetDesc().WindowWidth / D3D::GetDesc().WindowHeight;
 		ProjectionMat = Matrix::CreatePerspectiveFieldOfView(90, Aspect, 0.01f, 100.0f);
 		// D3DXMatrixPerspectiveFovLH(&ProjectionMat, Math::PI * 0.25f, Aspect, 0.1f, 1000);
 	}

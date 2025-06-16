@@ -5,12 +5,12 @@ namespace sdt
 {
 	void LightingDemo::Initialize()
 	{
-		Diffuse_RT = new RenderTarget(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height));
-		DS = new DepthStencil(static_cast<UINT>(D3D::GetDesc().Width),static_cast<UINT>(D3D::GetDesc().Height), false);
+		Diffuse_RT = new RenderTarget(static_cast<UINT>(D3D::GetDesc().WindowWidth),static_cast<UINT>(D3D::GetDesc().WindowHeight));
+		DS = new DepthStencil(static_cast<UINT>(D3D::GetDesc().WindowWidth),static_cast<UINT>(D3D::GetDesc().WindowHeight), false);
 		TextureShader = new Hlsl2DTextureShader(*Diffuse_RT);
 
-		float TextureWidth = 0.2f * D3D::GetDesc().Width;
-		float TextureHeight = 0.2f * D3D::GetDesc().Height;
+		float TextureWidth = 0.2f * D3D::GetDesc().WindowWidth;
+		float TextureHeight = 0.2f * D3D::GetDesc().WindowHeight;
 		TextureShader->GetTransform()->SetScale({TextureWidth, TextureHeight, 1});
 		TextureShader->GetTransform()->SetWorldPosition({TextureWidth / 2,TextureHeight / 2, 0});
 
