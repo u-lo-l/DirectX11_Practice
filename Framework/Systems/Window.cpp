@@ -188,15 +188,15 @@ void Window::MainRender()
 	}
 
 	// ImGui의 Render는 모든 ImGui::Begin()~ImGui::End()가 끝난 뒤에 호출된다. 
-	ID3D11ShaderResourceView * SRV = D3D::Get()->GetSRV();
-	ImGui::Begin("Image");
-	ImGui::BeginChild("ImageBox", ImVec2(-1, -1), ImGuiChildFlags_Borders);
-	const ImTextureID Id = reinterpret_cast<ImTextureID>(SRV);
-	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-	SRV->GetDesc(&SRVDesc);
-	ImGui::Image(Id,ImVec2(100,100));
-	ImGui::EndChild();
-	ImGui::End();
+	// ID3D11ShaderResourceView * SRV = D3D::Get()->GetSRV();
+	// ImGui::Begin("Image");
+	// ImGui::BeginChild("ImageBox", ImVec2(-1, -1), ImGuiChildFlags_Borders);
+	// const ImTextureID Id = reinterpret_cast<ImTextureID>(SRV);
+	// D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+	// SRV->GetDesc(&SRVDesc);
+	// ImGui::Image(Id,ImVec2(100,100));
+	// ImGui::EndChild();
+	// ImGui::End();
 	
 	Gui::Get()->Render();
 	

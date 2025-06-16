@@ -5,7 +5,7 @@ class AnimationClip;
 class AnimationBlendSpace1D
 {
 public:
-	explicit AnimationBlendSpace1D(const CSkeletal * InSkeleton);
+	AnimationBlendSpace1D(const CSkeletal * InSkeleton, const string & InName);
 	~AnimationBlendSpace1D();
 	void SetHorizontalRange(float Value1, float Value2);
 	void AddAnimation(AnimationClip * Anim, float At);
@@ -21,10 +21,13 @@ public:
 	) const;
 	float GetNextFrame(float CurrentFrame, float DeltaSecond) const;
 	void SetWrapped(bool bWrapped);
+	const string & GetName() const { return Name; }
+
 private:
 	float WrapValue(float InValue) const;
 	void RefreshDuration();
 	const CSkeletal * Skeleton;
+	string Name;
 	float Duration = -1.f;
 	float PlayRate = 1.f;
 	float Min = 0.f;

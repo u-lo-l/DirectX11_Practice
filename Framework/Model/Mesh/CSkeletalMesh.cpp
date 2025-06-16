@@ -47,7 +47,8 @@ CSkeletalMesh::~CSkeletalMesh()
 void CSkeletalMesh::Tick()
 {
 	WVPIDesc MatrixData;
-	MatrixData.World = Tf->GetMatrix();
+	MatrixData.World = ParentTf == nullptr ? Matrix::Identity : ParentTf->GetMatrix();
+	MatrixData.World = Tf->GetMatrix() * MatrixData.World; 
 	MatrixData.View = Context::Get()->GetViewMatrix();
 	MatrixData.Projection = Context::Get()->GetProjectionMatrix();
 	MatrixData.ViewInverse = Matrix::Invert(MatrixData.View, true);
@@ -72,12 +73,12 @@ void CSkeletalMesh::Render()
 		Subset->Render();
 }
 
-CSkeletal* CSkeletalMesh::GetSkeletal() const
+void CSkeletalMesh::SetParentTransform(Transform* InParentTransform)
 {
-	return Skeleton;
+	this->ParentTf = InParentTransform;
 }
 
-void CSkeletalMesh::ReadTransform(Json::Value::const_iterator::reference Root)
+void CSkeletalMesh::ReadTransform(Json::Value::const_iterator::reference Root) const
 {
 	const Vector Position = Helper::JsonToVector3(Root["Transform"]["Position"].asString());
 	const Vector Euler = Helper::JsonToVector3(Root["Transform"]["Rotation"].asString());

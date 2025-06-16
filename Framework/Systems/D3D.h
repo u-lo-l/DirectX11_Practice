@@ -67,7 +67,6 @@ private:
 	/// </remarks>
 	void CreateRTV();
 	void CreateDSV();
-	void CreateSRV();
 public:
 	ID3D11Device* GetDevice() const { return Device; }
 	ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; }
@@ -80,7 +79,6 @@ public:
 	void Present() const;
 	void ResizeScreen(float InWidth, float InHeight);
 	ID3D11RenderTargetView * GetRenderTarget() const;
-	ID3D11ShaderResourceView * GetSRV();
 private:
 	D3D();
 	~D3D();
@@ -92,7 +90,6 @@ private:
 	
 	ID3D11RenderTargetView * RenderTargetView; //BackBuffer
 	ID3D11DepthStencilView * DepthStencilView;
-	ID3D11ShaderResourceView * RenderTargetSRV;
 	
 	ID3D11Texture2D * DepthTexture;
 };

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Systems/IExecutable.h"
 
+class Character;
+
 namespace sdt
 {
 	class CharacterMoveDemo : public IExecutable
@@ -19,6 +21,6 @@ namespace sdt
 		void SetCharacter();
 		
 		LandScape * Terrain = nullptr;
-		Model * Character = nullptr;
+		Character * Adam = nullptr;
 	};
 }

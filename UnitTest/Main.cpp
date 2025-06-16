@@ -33,9 +33,9 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::FoamDemo);
 	// PUSH_MAIN(sdt::CellDemo);
 	// PUSH_MAIN(sdt::LandScapeDemo);
-	// PUSH_MAIN(sdt::CharacterMoveDemo);
+	PUSH_MAIN(sdt::CharacterMoveDemo);
 	// PUSH_MAIN(DelaunayTriangleDemo);
-	PUSH_MAIN(ImGuiDemo);
+	// PUSH_MAIN(ImGuiDemo);
 }
 
 

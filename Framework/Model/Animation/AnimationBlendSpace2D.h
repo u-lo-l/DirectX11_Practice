@@ -22,7 +22,7 @@ private:
 		array<int, NUM_VERTICES> SampleIndices;
 	};
 public:
-	explicit AnimationBlendSpace2D(const CSkeletal * InSkeleton);
+	explicit AnimationBlendSpace2D(const CSkeletal * InSkeleton, const string & InName);
 	~AnimationBlendSpace2D();
 
 	void SetHorizontalRange(float Value1, float Value2);
@@ -44,12 +44,15 @@ public:
 		array<const AnimationClip*, 3> & OutClips,
 		array<float, 3> & BarycentricWeights
 	) const;
+	const string & GetName() const { return Name; }
+
 private:
 	static float NormalizeValue(float InValue, const array<float, 2>& Range, bool bWrap);
 	float NormalizeHorizontalValue(float InValue) const;
 	float NormalizeVerticalValue(float InValue) const;
 	
 	const CSkeletal * Skeleton;
+	string Name;
 	
 	float Duration = -1.f;
 	float PlayRate = 1.f;

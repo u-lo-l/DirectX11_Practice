@@ -1,8 +1,8 @@
 ﻿#include "framework.h"
 #include "AnimationBlendSpace2D.h"
 
-AnimationBlendSpace2D::AnimationBlendSpace2D(const CSkeletal* InSkeleton)
-	: Skeleton(InSkeleton), Triangulator({})
+AnimationBlendSpace2D::AnimationBlendSpace2D(const CSkeletal* InSkeleton, const string& InName)
+	: Skeleton(InSkeleton), Name(InName), Triangulator({})
 {
 }
 

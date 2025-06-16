@@ -3,9 +3,10 @@
 
 #include "AnimationClip.h"
 
-AnimationBlendSpace1D::AnimationBlendSpace1D(const CSkeletal* InSkeleton)
+AnimationBlendSpace1D::AnimationBlendSpace1D(const CSkeletal* InSkeleton, const string & InName)
 {
 	this->Skeleton = InSkeleton;
+	this->Name = InName;
 }
 
 AnimationBlendSpace1D::~AnimationBlendSpace1D()

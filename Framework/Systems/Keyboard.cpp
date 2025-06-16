@@ -8,7 +8,6 @@ void Keyboard::Create()
 {
 	ASSERT(Instance == nullptr, "Keyboard Instance must null on Create()")
 	Instance = new Keyboard();
-
 }
 
 void Keyboard::Destroy()

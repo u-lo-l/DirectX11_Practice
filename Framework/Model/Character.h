@@ -14,6 +14,7 @@ public:
 	const CSkeletal* GetSkeleton() const;
 	void AddAnimationClip(const string & InName, AnimationClip * InAnimation);
 	AnimationController * GetAnimationController() const;
+	Transform * GetTransform() const { return Tf; }
 	void Tick();
 	void Render();
 private:

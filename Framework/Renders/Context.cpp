@@ -34,11 +34,11 @@ void Context::Tick()
 		VP_CBuffer_VS->Tick();
 	if (!!ShadowMap)
 		ShadowMap->Tick();
-	// ImGui::Begin("Directional Light Setting");
-	// ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
-	// LightDirection.Y = -abs(LightDirection.Y);
-	// ImGui::ColorEdit4("LightColor", LightColor);
-	// ImGui::End();
+	ImGui::Begin("Directional Light Setting");
+	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
+	LightDirection.Y = -abs(LightDirection.Y);
+	ImGui::ColorEdit4("LightColor", LightColor);
+	ImGui::End();
 }
 /**
  *	@brief :
@@ -47,41 +47,43 @@ void Context::Tick()
  */
 void Context::Render() const
 {
-	const int Fps = static_cast<int>(ImGui::GetIO().Framerate);
-	
 	Vp->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
-	Gui * const GuiInst = Gui::Get();
-	GuiInst->RenderText(5, 5, 1, 1, 1,  String::Format("FrameRate : %d", Fps));
+	
+	ImGui::Begin("FRS");
+	const int Fps = static_cast<int>(ImGui::GetIO().Framerate);
+	ImGui::TextColored({255, 255, 255, 255},  "FrameRate : %d", Fps);
+	ImGui::TextColored({255, 255, 255, 255},  "Resolution : %d x %d", (int)D3D::GetDesc().WindowWidth, (int)D3D::GetDesc().WindowHeight);
+	ImGui::End();
 	
 	const Vector & CamPos = MainCamera->GetPosition();
 	const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
+	ImGui::Begin("Camera Settings");
+	ImGui::TextColored({255, 255, 255, 255}, "Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z);
+	ImGui::TextColored({255, 255, 255, 255}, "Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z);
+	const Vector CamForward = MainCamera->GetForward();
+	const Vector CamRight = MainCamera->GetRight();
+	const Vector CamUp = MainCamera->GetUp();
 	
-	Gui::Get()->RenderText(5, 20, 1, 1, 1, String::Format("Camera Rotation : %3.0f, %3.0f, %3.0f", CamRot.X, CamRot.Y, CamRot.Z));
-	Gui::Get()->RenderText(5, 35, 1, 1, 1, String::Format("Camera Position : %3.0f, %3.0f, %3.0f", CamPos.X , CamPos.Y, CamPos.Z));
-	//
-	// const Vector CamForward = MainCamera->GetForward();
-	// const Vector CamRight = MainCamera->GetRight();
-	// const Vector CamUp = MainCamera->GetUp();
-	//
-	// Gui::Get()->RenderText(5, 50, 0.8f, 0.8f, 1, String::Format("Camera Forward : %.3f, %.3f, %.3f", CamForward.X , CamForward.Y, CamForward.Z));
-	// Gui::Get()->RenderText(5, 60, 0.8f, 0.8f, 1, String::Format("Camera Right   : %.3f, %.3f, %.3f", CamRight.X , CamRight.Y, CamRight.Z));
-	// Gui::Get()->RenderText(5, 70, 0.8f, 0.8f, 1, String::Format("Camera Up      : %.3f, %.3f, %.3f", CamUp.X , CamUp.Y, CamUp.Z));
+	ImGui::TextColored({255, 200, 200, 255}, "Camera Forward : %.3f, %.3f, %.3f", CamForward.X , CamForward.Y, CamForward.Z);
+	ImGui::TextColored({255, 200, 200, 255}, "Camera Right   : %.3f, %.3f, %.3f", CamRight.X , CamRight.Y, CamRight.Z);
+	ImGui::TextColored({255, 200, 200, 255}, "Camera Up      : %.3f, %.3f, %.3f", CamUp.X , CamUp.Y, CamUp.Z);
 
-	// const Frustum * ViewFrustum = MainCamera->GetViewFrustum();
-	// const array<Plane, 6> & Planes = ViewFrustum->GetPlanes();
-	// float a, b, c, d;
-	// Planes[0].GetEquation(a,b,c,d);
-	// Gui::Get()->RenderText(5,  90, 1, 1, 0.5f, String::Format("ViewFrustum Near   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	// Planes[1].GetEquation(a,b,c,d);
-	// Gui::Get()->RenderText(5, 100, 1, 1, 0.5f, String::Format("ViewFrustum Far    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	// Planes[2].GetEquation(a,b,c,d);
-	// Gui::Get()->RenderText(5, 110, 1, 1, 0.5f, String::Format("ViewFrustum Left   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	// Planes[3].GetEquation(a,b,c,d);
-	// Gui::Get()->RenderText(5, 120, 1, 1, 0.5f, String::Format("ViewFrustum Right  : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	// Planes[4].GetEquation(a,b,c,d);
-	// Gui::Get()->RenderText(5, 130, 1, 1, 0.5f, String::Format("ViewFrustum Top    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
-	// Planes[5].GetEquation(a,b,c,d);
-	// Gui::Get()->RenderText(5, 140, 1, 1, 0.5f, String::Format("ViewFrustum Bottom : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d));
+	const Frustum * ViewFrustum = MainCamera->GetViewFrustum();
+	const array<Plane, 6> & Planes = ViewFrustum->GetPlanes();
+	float a, b, c, d;
+	Planes[0].GetEquation(a,b,c,d);
+	ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Near   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
+	Planes[1].GetEquation(a,b,c,d);
+	ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Far    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
+	Planes[2].GetEquation(a,b,c,d);
+	ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Left   : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
+	Planes[3].GetEquation(a,b,c,d);
+	ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Right  : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
+	Planes[4].GetEquation(a,b,c,d);
+	ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Top    : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
+	Planes[5].GetEquation(a,b,c,d);
+	ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Bottom : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
+	ImGui::End();
 }
 
 void Context::ResizeScreen()

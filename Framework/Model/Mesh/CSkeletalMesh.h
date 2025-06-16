@@ -14,9 +14,11 @@ public:
 	~CSkeletalMesh();
 	void Tick();
 	void Render();
-	CSkeletal * GetSkeletal() const;
+	CSkeletal * GetSkeletal() const { return Skeleton; }
+	Transform * GetTransform() const { return Tf; }
+	void SetParentTransform(Transform * InParentTransform);
 private:
-	void ReadTransform(const Json::Value::const_iterator::reference Root);
+	void ReadTransform(const Json::Value::const_iterator::reference Root) const;
 	void ReadMaterial(const Json::Value::const_iterator::reference Root);
 	void ReadSubMeshesAndBones(const Json::Value::const_iterator::reference Root);
 	static void ReadShaderName(const Json::Value & Value, Material<VertexType> * OutMatData, bool bUseAnimation = false);
@@ -25,6 +27,7 @@ private:
 	void ReadSubMeshes(const BinaryReader * InBinReader);
 	void ReadSkeletalData(const BinaryReader* InBinReader, vector<CBone*>& OutBones);
 	Transform * Tf;
+	Transform * ParentTf = nullptr;
 	map<string, Material<VertexType>*> Materials;
 	
 	// Skeleton * Skeletal;

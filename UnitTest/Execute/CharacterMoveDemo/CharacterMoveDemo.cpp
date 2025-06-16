@@ -1,6 +1,8 @@
 ﻿#include "Pch.h"
 #include "CharacterMoveDemo.h"
 
+#include "Model/Character.h"
+
 namespace sdt
 {
 	
@@ -9,55 +11,63 @@ namespace sdt
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 0, 10, -50 );
 
-		SetTerrain();
+		// SetTerrain();
 		SetCharacter();
 	}
 
 	void CharacterMoveDemo::Destroy()
 	{
 		SAFE_DELETE(Terrain);
-		SAFE_DELETE(Character);
+		SAFE_DELETE(Adam);
 	}
 
 	void CharacterMoveDemo::Tick()
 	{
 		const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
-		Vector DeltaPosition = {0, 0, 0};
-
-		if (sdt::Mouse::Get()->IsPress(MouseButton::Left) == true)
+		Vector MoveDirection = {0, 0, 0};
+		float Speed = 1.f;
+		if (Mouse::Get()->IsPress(MouseButton::Left) == true)
 		{
-			if (Keyboard::Get()->IsPressed('W') == true)
+			if (Keyboard::IsPressed('W') == true)
 			{
-				DeltaPosition += Vector::Forward * DeltaTime * 20;
+				MoveDirection += Vector::Forward;
 			}
-			if (Keyboard::Get()->IsPressed('S') == true)
+			if (Keyboard::IsPressed('S') == true)
 			{
-				DeltaPosition -= Vector::Forward * DeltaTime * 20;
+				MoveDirection -= Vector::Forward;
 			}
-			if (Keyboard::Get()->IsPressed('D') == true)
+			if (Keyboard::IsPressed('D') == true)
 			{
-				DeltaPosition += Vector::Right * DeltaTime * 20;
+				MoveDirection += Vector::Right;
 			}
-			if (Keyboard::Get()->IsPressed('A') == true)
+			if (Keyboard::IsPressed('A') == true)
 			{
-				DeltaPosition -= Vector::Right * DeltaTime * 20;
+				MoveDirection -= Vector::Right;
 			}
-			Character->GetTransform(0)->AddLocalTranslation(DeltaPosition);
+			if (Keyboard::IsPressed(VK_CONTROL) == true)
+			{
+				Speed = 4.f;
+			}
+			MoveDirection.Normalize();
 		}
-
 		if (!!Terrain)
 		{
 			Terrain->Tick();
 		}
-		if (!!Character)
+		if (!!Adam)
 		{
-			Character->Tick();
-			const Vector & Location =  Character->GetTransform(0)->GetWorldPosition();
-			const Vector & Forward =  Character->GetTransform(0)->GetForward();
-			const Vector & Right =  Character->GetTransform(0)->GetRight();
-			Gui::Get()->RenderText(5, 200, 0, 255, 0, String::Format("P : %.3f, %.3f, %.3f", Location.X, Location.Y, Location.Z));
-			Gui::Get()->RenderText(5, 220, 0, 255, 0, String::Format("F : %.3f, %.3f, %.3f", Forward.X, Forward.Y, Forward.Z));
-			Gui::Get()->RenderText(5, 240, 0, 255, 0, String::Format("R : %.3f, %.3f, %.3f", Right.X, Right.Y, Right.Z));
+			ImGui::Begin("Adam Tf Info");
+			Transform * const AdamTf = Adam->GetTransform();
+			const Vector & Location = AdamTf->GetWorldPosition();
+			const Vector & Forward = AdamTf->GetForward();
+			const Vector & Right = AdamTf->GetRight();
+			ImGui::TextColored({0, 255, 0, 255}, "P : %.3f, %.3f, %.3f", Location.X, Location.Y, Location.Z);
+			ImGui::TextColored({0, 255, 0, 255}, "F : %.3f, %.3f, %.3f", Forward.X, Forward.Y, Forward.Z);
+			ImGui::TextColored({0, 255, 0, 255}, "R : %.3f, %.3f, %.3f", Right.X, Right.Y, Right.Z);
+			ImGui::End();
+			const Vector Velocity = MoveDirection * Speed * DeltaTime * 20;
+			AdamTf->AddLocalTranslation(Velocity);
+			Adam->Tick();
 		}
 	}
 
@@ -69,7 +79,7 @@ namespace sdt
 	void CharacterMoveDemo::Render()
 	{
 		if (!!Terrain) Terrain->Render();
-		if (!!Character) Character->Render();
+		if (!!Adam) Adam->Render();
 	}
 
 	void CharacterMoveDemo::PostRender()
@@ -93,10 +103,36 @@ namespace sdt
 
 	void CharacterMoveDemo::SetCharacter()
 	{
-		Character = new Model(L"Adam");
-		Transform * tf = Character->AddTransforms();
-		tf->SetWorldPosition({0,0,0});
-		tf->SetScale({0.1f,0.1f,0.1f});
-		// tf->SetWorldRotation({0, 180 * Math::DegToRadian, 0});
+		Adam = new Character();
+		Adam->SetSkeletalMesh(L"Adam");
+		AnimationClip * Idle = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Stop", true);
+		AnimationClip * Walk_F = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Walk_F", true);
+		AnimationClip * Walk_B = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Walk_B", true);
+		AnimationClip * Walk_R = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Walk_R", true);
+		AnimationClip * Walk_L = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Walk_L", true);
+		AnimationClip * Run_F = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_F", true);
+		AnimationClip * Run_B = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_B", true);
+		AnimationClip * Run_R = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_R", true);
+		AnimationClip * Run_L = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_L", true);
+	
+		AnimationBlendSpace2D * BS_Locomotion = new AnimationBlendSpace2D(
+			Adam->GetSkeleton(),
+			"BS_AdamLocomotion"
+		);
+		BS_Locomotion->SetHorizontalRange(-4,4);
+		BS_Locomotion->SetVerticalRange(-4,4);
+		BS_Locomotion->SetHorizontalWrapped(false);
+		BS_Locomotion->SetVerticalWrapped(false);
+		BS_Locomotion->AddAnimation(Idle  , { 0,  0});
+		BS_Locomotion->AddAnimation(Walk_F, { 0,  1});
+		BS_Locomotion->AddAnimation(Walk_B, { 0, -1});
+		BS_Locomotion->AddAnimation(Walk_R, { 1,  0});
+		BS_Locomotion->AddAnimation(Walk_L, {-1,  0});
+		BS_Locomotion->AddAnimation(Run_F , { 0,  4});
+		BS_Locomotion->AddAnimation(Run_B , { 0, -4});
+		BS_Locomotion->AddAnimation(Run_R , { 4,  0});
+		BS_Locomotion->AddAnimation(Run_L , {-4,  0});
+		BS_Locomotion->EndAddingAnimation();
+		Adam->GetAnimationController()->SetCurrentBlendSpace(BS_Locomotion);
 	}
 }

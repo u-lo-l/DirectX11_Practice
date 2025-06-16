@@ -28,7 +28,10 @@ void DrawCSkeletalMesh::Initialize()
 	}
 
 	{
-		// AnimationBlendSpace1D * BS_Locomotion = new AnimationBlendSpace1D(Adam->GetSkeleton());
+		// AnimationBlendSpace1D * BS_Locomotion = new AnimationBlendSpace1D(
+		//	Adam->GetSkeleton(),
+		//	"BS1_Adam_Walk"
+		// );
 		// BS_Locomotion->SetHorizontalRange(0.f, 4.f);
 		// BS_Locomotion->AddAnimation(Idle, 0.f);
 		// BS_Locomotion->AddAnimation(Walk, 1.f);
@@ -38,7 +41,10 @@ void DrawCSkeletalMesh::Initialize()
 	}
 
 	{
-		AnimationBlendSpace2D * BS_Locomotion = new AnimationBlendSpace2D(Adam->GetSkeleton());
+		AnimationBlendSpace2D * BS_Locomotion = new AnimationBlendSpace2D(
+			Adam->GetSkeleton(),
+			"BS_AdamLocomotion"
+		);
 		BS_Locomotion->SetHorizontalRange(-4,4);
 		BS_Locomotion->SetVerticalRange(-4,4);
 		BS_Locomotion->SetHorizontalWrapped(false);

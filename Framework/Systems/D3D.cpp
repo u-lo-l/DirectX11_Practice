@@ -59,12 +59,11 @@ void D3D::ResizeScreen( float InWidth, float InHeight )
 
 	SAFE_RELEASE(RenderTargetView);
 
-	const HRESULT Hr = SwapChain->ResizeBuffers(0, static_cast<UINT>(InWidth), static_cast<UINT>(InHeight), DXGI_FORMAT_UNKNOWN, 0);
+	const HRESULT Hr = SwapChain->ResizeBuffers(0, static_cast<UINT>(D3dDesc.WindowWidth), static_cast<UINT>(D3dDesc.WindowHeight), DXGI_FORMAT_UNKNOWN, 0);
 	CHECK(Hr >= 0);
 
 	CreateRTV();
 	CreateDSV();
-	CreateSRV();
 	SetRenderTarget();
 }
 
@@ -75,7 +74,6 @@ D3D::D3D()
 	CreateDeviceAndContext();
 	CreateRTV();
 	CreateDSV();
-	CreateSRV();
 	SetRenderTarget();
 }
 
@@ -85,7 +83,6 @@ D3D::~D3D()
 	
 	SAFE_RELEASE(RenderTargetView);
 	SAFE_RELEASE(DepthStencilView);
-	SAFE_RELEASE(RenderTargetSRV);
 	
 	SAFE_RELEASE(DeviceContext);
 	SAFE_RELEASE(Device);
@@ -117,8 +114,7 @@ void D3D::CreateDeviceAndContext()
 		SwapChainDesc.SampleDesc.Count = 1;		// pixel당 MultiSample개수
 		SwapChainDesc.SampleDesc.Quality = 0;	//
 		// BufferUsage : https://learn.microsoft.com/ko-kr/windows/win32/direct3ddxgi/dxgi-usage
-		// SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // Output RenderTarget으로 설정
-		SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
+		SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // Output RenderTarget으로 설정
 		SwapChainDesc.BufferCount = 1;
 		SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		SwapChainDesc.OutputWindow = D3dDesc.Handle;
@@ -188,29 +184,6 @@ void D3D::CreateDSV()
 	CHECK(Device->CreateDepthStencilView(DepthTexture, &DepthStencilViewDesc, &DepthStencilView) >= 0);
 }
 
-void D3D::CreateSRV()
-{
-	SAFE_RELEASE(RenderTargetSRV);
-	
-	ID3D11Texture2D * BackBufferTexture;
-	void ** ppSurface = reinterpret_cast<void **>(&BackBufferTexture);
-	HRESULT Hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), ppSurface);
-	CHECK(SUCCEEDED(Hr));
-
-	D3D11_TEXTURE2D_DESC TextureDesc = {};
-	BackBufferTexture->GetDesc(&TextureDesc);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = TextureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-
-	Hr = Device->CreateShaderResourceView(BackBufferTexture, &srvDesc, &RenderTargetSRV);
-	CHECK(SUCCEEDED(Hr));
-	SAFE_RELEASE(BackBufferTexture);
-}
-
 void D3D::SetRenderTarget() const
 {
 	DeviceContext->OMSetRenderTargets(1, &RenderTargetView, DepthStencilView);
@@ -219,10 +192,4 @@ void D3D::SetRenderTarget() const
 ID3D11RenderTargetView * D3D::GetRenderTarget() const
 {
 	return RenderTargetView;
-}
-
-ID3D11ShaderResourceView* D3D::GetSRV()
-{
-	CreateSRV();
-	return RenderTargetSRV;
 }

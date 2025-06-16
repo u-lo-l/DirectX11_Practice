@@ -7,7 +7,6 @@ private:
 public:
 	explicit Transform(Matrix * InMatrix = nullptr, int InRegisterIndex = 0);
 	~Transform();
-
 	void Tick();
 	void BindToGPU() const;
 public:

@@ -7,7 +7,7 @@ Character::Character()
 {
 	SkeletalMesh = nullptr;
 	AnimController = nullptr;
-
+	Tf = new Transform();
 }
 
 Character::~Character()
@@ -21,6 +21,7 @@ void Character::SetSkeletalMesh(const wstring& InMeshName)
 	SAFE_DELETE(SkeletalMesh);
 	SAFE_DELETE(AnimController);
 	this->SkeletalMesh = new CSkeletalMesh(InMeshName);
+	this->SkeletalMesh->SetParentTransform(this->Tf);
 	this->AnimController = new AnimationController(this->SkeletalMesh->GetSkeletal());
 }
 

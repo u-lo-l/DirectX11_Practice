@@ -174,7 +174,7 @@ void Texture::ExtractTextureColors(vector<Color> & OutPixels) const
 void Texture::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const
 {
 	OutPixels.clear();
-	OutPixels.resize(VertexNum.X * VertexNum.Y);
+	OutPixels.resize(static_cast<size_t>(VertexNum.X * VertexNum.Y));
 	const RawBuffer * RWBuffer = new RawBuffer(
 		nullptr,
 		OutPixels.size() * sizeof(Color),

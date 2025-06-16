@@ -135,20 +135,23 @@ void AnimationController::PlayAnimationBlendSpace2D
 		GetInfo(SampleClips[2], this->NormalizedPlayTime)
 	};
 
-	Gui::Get()->RenderText(5, 150, 1.f, 0.2f, 0.2f,
-		String::Format("Animation Blending, Frame : %.3f | NormalizedTime : %.3f",
-			this->NormalizedPlayTime * InBlendSpace2D->GetBlendSpaceLength(),
-			this->NormalizedPlayTime
-		)
+	ImGui::TextColored(
+		{255, 50, 50, 255},
+		"Animation Blending, Frame : %.3f | NormalizedTime : %.3f",
+		this->NormalizedPlayTime * InBlendSpace2D->GetBlendSpaceLength(),
+		this->NormalizedPlayTime
 	);
-	Gui::Get()->RenderText(5, 170, 1.f, 0.2f, 0.2f,
-		String::Format("Anim 1 : %s (%.3f)", SampleClips[0]->GetName().c_str(), Weights[0])
+	ImGui::TextColored(
+		{255, 50, 50, 255},
+		"Anim 1 : %s (%.3f)", SampleClips[0]->GetName().c_str(), Weights[0]
 	);
-	Gui::Get()->RenderText(5, 190, 1.f, 0.2f, 0.2f,
-		String::Format("Anim 2 : %s (%.3f)", SampleClips[1]->GetName().c_str(), Weights[1])
+	ImGui::TextColored(
+		{255, 50, 50, 255},
+		"Anim 2 : %s (%.3f)", SampleClips[1]->GetName().c_str(), Weights[1]
 	);
-	Gui::Get()->RenderText(5, 210, 1.f, 0.2f, 0.2f,
-		String::Format("Anim 3 : %s (%.3f)", SampleClips[2]->GetName().c_str(), Weights[2])
+	ImGui::TextColored(
+		{255, 50, 50, 255},
+		"Anim 3 : %s (%.3f)", SampleClips[2]->GetName().c_str(), Weights[2]
 	);
 	Animation_ConstantData = Animation_ConstantDesc(Anim1PlayingInfos, Weights);
 	CB_AnimationData->UpdateData(&Animation_ConstantData, sizeof(Animation_ConstantDesc));
@@ -183,15 +186,24 @@ void AnimationController::Tick()
 	const float DeltaSecond = sdt::SystemTimer::Get()->GetDeltaTime();
 	UpdateAnimationFrameData(DeltaSecond);
 	if (!!CurrentAnimation)
+	{
+		ImGui::Begin(String::Format("AnimationClip Player %s", CurrentAnimation->GetName().c_str()).c_str());
 		PlaySingleAnimationClip(CurrentAnimation, DeltaSecond);
+		ImGui::End();
+		return ;
+	}
 	if (!!CurrentBlendSpace)
 	{
 		static float WalkSpeed = 0;
+		ImGui::Begin(String::Format("BlendSpace1D Player %s", CurrentBlendSpace->GetName().c_str()).c_str());
 		ImGui::SliderFloat("Walk Speed", &WalkSpeed, CurrentBlendSpace->GetMin(), CurrentBlendSpace->GetMax());
 		PlayAnimationBlendSpace1D(CurrentBlendSpace, DeltaSecond, WalkSpeed);
+		ImGui::End();
+		return ;
 	}
 	if (!!CurrentBlendSpace2D)
 	{
+		ImGui::Begin(String::Format("BlendSpace2D Player %s", CurrentBlendSpace2D->GetName().c_str()).c_str());
 		static float LerpRate = 5.f;
 		ImGui::SliderFloat("LerpRate", &LerpRate, 1, 10);
 		const float Amount = DeltaSecond * LerpRate;
@@ -216,7 +228,10 @@ void AnimationController::Tick()
 		float HorizontalSpeed = HorizontalValue * SpeedValue;
 		ImGui::SliderFloat("Forward Speed", &VerticalSpeed, -4, 4);
 		ImGui::SliderFloat("Rightward Speed", &HorizontalSpeed, -4, 4);
+		
 		PlayAnimationBlendSpace2D(CurrentBlendSpace2D, DeltaSecond, HorizontalSpeed, VerticalSpeed);
+		ImGui::End();
+		return ;
 	}
 }
 
