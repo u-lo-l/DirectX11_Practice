@@ -1,6 +1,11 @@
 ﻿#include "Framework.h"
+#include <thread>
 #include "Window.h"
 #include "IExecutable.h"
+
+std::thread * Window::GameThread = nullptr;
+std::thread * Window::PhysicsThread = nullptr;
+std::thread * Window::RenderThread = nullptr;
 
 IExecutable * Window::Main = nullptr;
 
@@ -17,23 +22,18 @@ WPARAM Window::Run(IExecutable * InMain)
 	Context::Create();
 	LightingManager::Create();
 
+	Window::GameThread = new std::thread(RunGameLogic);
+	Window::PhysicsThread = new std::thread(RunPhysics);
+	Window::RenderThread = new std::thread(RunRenderer);
+
 	Main = InMain;
 	Main->Initialize();
-	MSG msg;
-	ZeroMemory(&msg, sizeof(MSG));
-	while (true) //Loop
+
+	while (true)
 	{
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				break;
-			TranslateMessage(&msg); //WM_CHAR
-			DispatchMessage(&msg);
-		}
-		else
-		{
-			MainRender();
-		}
+		if (HandleOSEvent() == EXIT_FAILURE)
+			break;
+		MainRender();
 	}
 
 	Main->Destroy();
@@ -114,6 +114,13 @@ void Window::Destroy()
 {
 	const D3DDesc desc = D3D::GetDesc();
 
+	GameThread->join();
+	RenderThread->join();
+	PhysicsThread->join();
+	SAFE_DELETE(GameThread);
+	SAFE_DELETE(PhysicsThread);
+	SAFE_DELETE(RenderThread);
+	
 	DestroyWindow(desc.Handle);
 	UnregisterClass(desc.AppName.c_str(), desc.Instance);
 }
@@ -186,20 +193,35 @@ void Window::MainRender()
 	{
 		Main->PostRender();
 	}
-
-	// ImGui의 Render는 모든 ImGui::Begin()~ImGui::End()가 끝난 뒤에 호출된다. 
-	// ID3D11ShaderResourceView * SRV = D3D::Get()->GetSRV();
-	// ImGui::Begin("Image");
-	// ImGui::BeginChild("ImageBox", ImVec2(-1, -1), ImGuiChildFlags_Borders);
-	// const ImTextureID Id = reinterpret_cast<ImTextureID>(SRV);
-	// D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-	// SRV->GetDesc(&SRVDesc);
-	// ImGui::Image(Id,ImVec2(100,100));
-	// ImGui::EndChild();
-	// ImGui::End();
-	
 	Gui::Get()->Render();
-	
 	D3D::Get()->Present();
+}
 
+bool Window::HandleOSEvent()
+{
+	MSG Message;
+	ZeroMemory(&Message, sizeof(MSG));
+	if (PeekMessage(&Message, nullptr, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&Message); //WM_CHAR
+		DispatchMessage(&Message);
+		if (Message.message == WM_QUIT)
+			return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
+
+void Window::RunGameLogic()
+{
+	printf("Run Game Logic\n");
+}
+
+void Window::RunPhysics()
+{
+	printf("Run Physics Logic\n");
+}
+
+void Window::RunRenderer()
+{
+	printf("Run Render Logic\n");
 }

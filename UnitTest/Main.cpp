@@ -2,6 +2,8 @@
 #include "Pch.h"
 #include "Main.h"
 
+#include <thread>
+
 #include "Execute/028_InstancingDemo/InstancingDemo.h"
 #include "Execute/CharacterMoveDemo/CharacterMoveDemo.h"
 #include "Execute/CharacterMoveDemo/DelaunayTriangleDemo.h"
