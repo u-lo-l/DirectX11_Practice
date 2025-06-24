@@ -2,13 +2,15 @@
 #include "PostEffect.h"
 
 PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderTarget)
-	: PreRenderedTarget(InRenderTarget), VertexShader(nullptr),  GaussianBlurFactor{}
+	// : PreRenderedTarget(InRenderTarget), VertexShader(nullptr),  GaussianBlurFactor{}
 {
 	const wstring ShaderPath = wstring(W_SHADER_PATH) + L"PostEffect/PostEffect.hlsl";
-	Shader = new HlslShader<VertexType>(ShaderPath);
-	Shader->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear_Clamp()));
-	CHECK(SUCCEEDED(Shader->CreateSamplerState_Anisotropic()));
+
+	// TODO :
+	// Shader = new HlslShader<VertexType>(ShaderPath);
+	// Shader->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	// CHECK(SUCCEEDED(Shader->CreateSamplerState_Linear_Clamp()));
+	// CHECK(SUCCEEDED(Shader->CreateSamplerState_Anisotropic()));
 
 	vector<VertexType> Vertices(6);
 	Vertices[0].Position = {-1.f, -1.f, 0.0f};
@@ -48,27 +50,28 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 	Bloom_RT[Final] = new RenderTarget(ScreenWidth, ScreenHeight);
 	Bloom_DS = new DepthStencil(ScreenWidth, ScreenHeight, false);
 
-	UINT ShaderTarget = (UINT)ShaderType::VertexShader | (UINT)ShaderType::PixelShader;
-	Bloom_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Separate");
-	Bloom_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(Bloom_Shader[0]->CreateSamplerState_Linear_Clamp()));
-
-	Bloom_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Combine");
-	Bloom_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(Bloom_Shader[1]->CreateSamplerState_Linear_Clamp()));
-
-	GaussianBlur_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_GaussianBlur_X");
-	GaussianBlur_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(GaussianBlur_Shader[0]->CreateSamplerState_Linear_Clamp()));
-
-	GaussianBlur_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_GaussianBlur_Y");
-	GaussianBlur_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CHECK(SUCCEEDED(GaussianBlur_Shader[1]->CreateSamplerState_Linear_Clamp()));
+	// TODO :
+	// UINT ShaderTarget = (UINT)ShaderType::VertexShader | (UINT)ShaderType::PixelShader;
+	// Bloom_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Separate");
+	// Bloom_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	// CHECK(SUCCEEDED(Bloom_Shader[0]->CreateSamplerState_Linear_Clamp()));
+	//
+	// Bloom_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Combine");
+	// Bloom_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	// CHECK(SUCCEEDED(Bloom_Shader[1]->CreateSamplerState_Linear_Clamp()));
+	//
+	// GaussianBlur_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_GaussianBlur_X");
+	// GaussianBlur_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	// CHECK(SUCCEEDED(GaussianBlur_Shader[0]->CreateSamplerState_Linear_Clamp()));
+	//
+	// GaussianBlur_Shader[1] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_GaussianBlur_Y");
+	// GaussianBlur_Shader[1]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	// CHECK(SUCCEEDED(GaussianBlur_Shader[1]->CreateSamplerState_Linear_Clamp()));
 }
 
 PostEffect::~PostEffect()
 {
-	SAFE_DELETE(Shader);
+	// SAFE_DELETE(Shader);
 	SAFE_DELETE(VBuffer);
 }
 
@@ -113,7 +116,7 @@ void PostEffect::Render()
 	else
 		FinalResultSRV = *PreRenderedTarget;
 	Context->PSSetShaderResources(0, 1, &FinalResultSRV);
-	Shader->Draw(4);
+	// Shader->Draw(4);
 }
 
 void PostEffect::PostRender()
@@ -145,7 +148,7 @@ void PostEffect::PreRender_Bloom(ID3D11ShaderResourceView * InOriginalTextureSRV
 		VBuffer->BindToGPU();
 		PostEffectFactors_CBuffer_PS->BindToGPU();
 		
-		Bloom_Shader[0]->Draw(4); // -> 1
+		// Bloom_Shader[0]->Draw(4); // -> 1
 	}
 	{
 		// PASS 02
@@ -162,7 +165,7 @@ void PostEffect::PreRender_Bloom(ID3D11ShaderResourceView * InOriginalTextureSRV
 		VBuffer->BindToGPU();
 		PostEffectFactors_CBuffer_PS->BindToGPU();
 		
-		GaussianBlur_Shader[0]->Draw(4);
+		// GaussianBlur_Shader[0]->Draw(4);
 	}
 	{
 		// PASS 03
@@ -179,7 +182,7 @@ void PostEffect::PreRender_Bloom(ID3D11ShaderResourceView * InOriginalTextureSRV
 		VBuffer->BindToGPU();
 		PostEffectFactors_CBuffer_PS->BindToGPU();
 		
-		GaussianBlur_Shader[1]->Draw(4);
+		// GaussianBlur_Shader[1]->Draw(4);
 	}
 	{
 		// PASS 04
@@ -199,7 +202,7 @@ void PostEffect::PreRender_Bloom(ID3D11ShaderResourceView * InOriginalTextureSRV
 		
 		VBuffer->BindToGPU();
 		PostEffectFactors_CBuffer_PS->BindToGPU();
-		Bloom_Shader[1]->Draw(4);
+		// Bloom_Shader[1]->Draw(4);
 	}
 }
 

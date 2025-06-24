@@ -20,24 +20,24 @@ namespace sdt
 
 		for (const wstring & ModelName : ModelNames)
 		{
-			Model * M = new Model(ModelName);
-			Transform * tf = M->AddTransforms();
-			tf->SetWorldPosition({0,0,0});
-			tf->SetScale({0.1f,0.1f,0.1f});
-			Models.push_back(M);
+			// Model * M = new Model(ModelName);
+			// Transform * tf = M->AddTransforms();
+			// tf->SetWorldPosition({0,0,0});
+			// tf->SetScale({0.1f,0.1f,0.1f});
+			// Models.push_back(M);
 		}
 	}
 
 	void DrawModel::Destroy()
 	{
-		for (Model* model : Models)
-			SAFE_DELETE(model);
+		// for (Model* model : Models)
+		// 	SAFE_DELETE(model);
 	}
 
 	void DrawModel::Tick()
 	{
-		if (Models.empty() == true)
-			return ;
+		// if (Models.empty() == true)
+		// 	return ;
 		
 		const float DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 		Vector DeltaPosition = {0, 0, 0};
@@ -60,14 +60,14 @@ namespace sdt
 			{
 				DeltaPosition -= Vector::Right * DeltaTime * 20;
 			}
-			Models[ModelIndex]->GetTransform(0)->AddLocalTranslation(DeltaPosition);
+			// Models[ModelIndex]->GetTransform(0)->AddLocalTranslation(DeltaPosition);
 		}
-		ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
-		Models[ModelIndex]->Tick();
+		// ImGui::SliderInt("Model", &ModelIndex, 0, Models.size() - 1);
+		// Models[ModelIndex]->Tick();
 	}
 
 	void DrawModel::Render()
 	{
-		Models[ModelIndex]->Render();
+		// Models[ModelIndex]->Render();
 	}
 }

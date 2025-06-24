@@ -55,9 +55,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	D3D::SetDesc(desc);
 
-	WPARAM wParam = 0;
-	Main * main = new Main();
-	wParam = Window::Run(main);
+	Main * main   = new Main();
+	WPARAM wParam = Window::Run(main);
 	SAFE_DELETE(main)
 	return static_cast<int>(wParam);
 }

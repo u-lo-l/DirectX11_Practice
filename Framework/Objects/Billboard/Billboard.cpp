@@ -12,9 +12,11 @@ Billboard::Billboard()
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::VertexShader);
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::PixelShader);
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::GeometryShader);
-	BillboardShader = new ShaderType(ShaderName, ShaderTypeFlag);
-	CHECK(BillboardShader->CreateRasterizerState_Solid_NoCull() >= 0);
-	CHECK(BillboardShader->CreateBlendState_AlphaBlend() >= 0);
+	
+	// TODO :
+	// BillboardShader = new ShaderType(ShaderName, ShaderTypeFlag);
+	// CHECK(BillboardShader->CreateRasterizerState_Solid_NoCull() >= 0);
+	// CHECK(BillboardShader->CreateBlendState_AlphaBlend() >= 0);
 
 	GS_ViewProjectionBuffer = new ConstantBuffer(
 		(UINT)::ShaderType::GeometryShader,
@@ -56,7 +58,8 @@ void Billboard::Render() const
 	BillboardTextures->BindToGPU(PS_Billboard);
 
 	D3D::Get()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	BillboardShader->Draw(VertexCount);
+	// TODO :
+	// BillboardShader->Draw(VertexCount);
 }
 
 void Billboard::Add(const Vector& InPosition, const Vector2D& InScale, UINT InMapIndex)

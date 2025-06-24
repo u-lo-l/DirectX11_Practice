@@ -100,6 +100,11 @@ Matrix Camera::GetProjectionMatrix() const
 	return Proj->GetMatrix();
 }
 
+Matrix Camera::GetViewProjectionMatrix() const
+{
+	return GetProjectionMatrix() * GetViewMatrix();
+}
+
 void Camera::SetPosition(float X, float Y, float Z) const
 {
 	Tf->SetWorldPosition({X, Y, Z});

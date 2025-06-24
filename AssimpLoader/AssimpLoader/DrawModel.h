@@ -14,7 +14,7 @@ namespace sdt
 		virtual void Tick() override;
 		virtual void Render() override;
 	private:
-		vector<Model *> Models;
+		// vector<Model *> Models;
 		int ModelIndex = 0;
 	};
 }

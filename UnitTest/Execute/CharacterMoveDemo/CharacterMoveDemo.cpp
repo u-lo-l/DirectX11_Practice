@@ -2,6 +2,7 @@
 #include "CharacterMoveDemo.h"
 
 #include "Model/Character.h"
+#include "Systems/RenderManager.h"
 
 namespace sdt
 {

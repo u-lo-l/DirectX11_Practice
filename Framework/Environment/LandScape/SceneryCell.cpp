@@ -61,18 +61,18 @@ void SceneryCell::Tick()
 
 bool SceneryCell::Render
 (
-	HlslShader<VertexType>* InShader,
+	RenderingShader * InShader,
 	const Frustum * InFrustum
 ) const
 {
-	if (!!InFrustum && InFrustum->Intersects(BoundingBox->GetCenter(), BoundingBox->GetDiagonal()) == false)
-		return false;
-	if (!!InFrustum && InFrustum->Intersects(BoundingBox) == false)
-		return false;
-	
-	VBuffer->BindToGPU();
-	IBuffer->BindToGPU();
-	InShader->DrawIndexed(Indices.size());
+	// if (!!InFrustum && InFrustum->Intersects(BoundingBox->GetCenter(), BoundingBox->GetDiagonal()) == false)
+	// 	return false;
+	// if (!!InFrustum && InFrustum->Intersects(BoundingBox) == false)
+	// 	return false;
+	//
+	// VBuffer->BindToGPU();
+	// IBuffer->BindToGPU();
+	// InShader->DrawIndexed(Indices.size());
 	return true;
 }
 

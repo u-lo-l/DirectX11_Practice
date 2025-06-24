@@ -22,7 +22,7 @@ public:
 	~SceneryCell();
 	void Tick();
 	bool Render(
-		HlslShader<VertexType> * InShader,
+		RenderingShader * InShader,
 		const Frustum * InFrustum = nullptr
 	) const;
 

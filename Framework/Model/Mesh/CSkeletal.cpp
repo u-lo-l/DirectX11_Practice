@@ -77,14 +77,14 @@ const array<Matrix, CSkeletal::MAX_BONE_COUNT>& CSkeletal::GetOffsetMatrices() c
 	return OffsetMatrices;
 }
 
-void CSkeletal::BindToGPU() const
+void CSkeletal::BindToGPU(int OffsetMatrixCBRegister, int BoneMatrixSRVRegister) const
 {
 	if (!!SB_BoneMatrices)
 	{
 		array<Matrix, MAX_BONE_COUNT> AnimBoneMatrix;
 		SB_BoneMatrices->GetResult(AnimBoneMatrix.data());
-		SB_BoneMatrices->BindToGPUAsSRV(3, (UINT)ShaderType::VertexShader);
+		SB_BoneMatrices->BindToGPUAsSRV(BoneMatrixSRVRegister, ShaderType::VertexShader);
 	}
 	if (!!CB_OffsetMatrices)
-		CB_OffsetMatrices->BindToGPU();
+		CB_OffsetMatrices->BindToGPU(OffsetMatrixCBRegister);
 }

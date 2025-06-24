@@ -4,10 +4,10 @@
 SkySphere::SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount)
 	: Radius(InRadius), SliceCount(InSliceCount)
 {
-	SkyShader = new HlslShader<VertexType>(L"Weather/40_SkyBox.hlsl");
-	CHECK(SkyShader->CreateSamplerState_Linear_Clamp() >= 0);	
-	CHECK(SkyShader->CreateRasterizerState_Solid_CW() >= 0);
-	CHECK(SkyShader->CreateDepthStencilState_NoDepth() >= 0);
+	// SkyShader = new HlslShader<VertexType>(L"Weather/40_SkyBox.hlsl");
+	// CHECK(SkyShader->CreateSamplerState_Linear_Clamp() >= 0);	
+	// CHECK(SkyShader->CreateRasterizerState_Solid_CW() >= 0);
+	// CHECK(SkyShader->CreateDepthStencilState_NoDepth() >= 0);
 	CameraTF = new Transform();
 
 	CreateVertexBuffer();
@@ -27,7 +27,7 @@ SkySphere::~SkySphere()
 
 	SAFE_DELETE(CameraTF);
 
-	SAFE_DELETE(SkyShader);
+	// SAFE_DELETE(SkyShader);
 	SAFE_DELETE(SkyTexture);
 }
 
@@ -40,16 +40,16 @@ void SkySphere::Tick()
 
 void SkySphere::Render()
 {
-	ID3D11DeviceContext * Context = D3D::Get()->GetDeviceContext();
-	CameraTF->BindToGPU();
-	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
-	VBuffer->BindToGPU();
-	IBuffer->BindToGPU();
-
-	// Context->PSSetShaderResources(PS_SkyBox, 1, &SkySRV);
-	SkyTexture->BindToGPU(PS_SkyBox, (UINT)(::ShaderType::PixelShader));
-	Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	SkyShader->DrawIndexed(IndexCount);
+	// ID3D11DeviceContext * Context = D3D::Get()->GetDeviceContext();
+	// CameraTF->BindToGPU();
+	// Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
+	// VBuffer->BindToGPU();
+	// IBuffer->BindToGPU();
+	//
+	// // Context->PSSetShaderResources(PS_SkyBox, 1, &SkySRV);
+	// SkyTexture->BindToGPU(PS_SkyBox, (UINT)(::ShaderType::PixelShader));
+	// Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// SkyShader->DrawIndexed(IndexCount);
 }
 
 void SkySphere::CreateVertexBuffer()

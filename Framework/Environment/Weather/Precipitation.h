@@ -1,6 +1,5 @@
 ﻿#pragma once
-#include "WeatherStructure.h"
-#include "Renders/Shader/HlslShader.hpp"
+
 // 강수
 // Any form of water, such as rain, snow, or hail, that falls from the atmosphere to the Earth's surface
 class Precipitation
@@ -11,7 +10,6 @@ class Precipitation
 	static constexpr int Const_Slot_GS_WeatherData = 4;
 	static constexpr int Texture_Slot_PS_Diffuse = 0;
 	using VertexType = VertexPrecipitation;
-	using ShaderType = HlslShader<VertexType>;
 public:
 	Precipitation(const Vector& InExtent, UINT InDrawCount, const wstring & InFilePath, WeatherType InWeatherType);
 	~Precipitation();
@@ -26,7 +24,7 @@ private:
 	
 	wstring ShaderName;
 	
-	ShaderType * WeatherShader = nullptr;
+	RenderingShader * WeatherShader = nullptr;
 
 	Transform * World = nullptr;
 	

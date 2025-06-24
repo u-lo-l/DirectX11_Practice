@@ -8,8 +8,6 @@ public:
 	static constexpr UINT MaxBillboardCount = 100000;
 private:
 	using VertexType = VertexBillboard;
-	using ShaderType = HlslShader<VertexType>;
-	using MaterialType = Material<VertexType>;
 public:
 	Billboard();
 	virtual ~Billboard();

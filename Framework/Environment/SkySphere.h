@@ -16,7 +16,8 @@ private:
 	void CreateIndexBuffer();
 
 private:
-	HlslShader<VertexType> * SkyShader;
+	// TODO :
+	// HlslShader<VertexType> * SkyShader;
 	
 	Transform * CameraTF;
 

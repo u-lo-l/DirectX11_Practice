@@ -2,7 +2,6 @@
 #include "Ocean.h"
 
 
-
 Ocean::Ocean(const OceanDesc& Desc)
 : PhillipsInitData()
 , PhilipsUpdateData()
@@ -189,22 +188,22 @@ void Ocean::SetWorldPosition(const Vector& Position) const
 void Ocean::SetupRenderShaders()
 {
 	const vector<D3D_SHADER_MACRO> Macros = { {"TYPE01", ""}, {nullptr,}};
-	OceanRenderer = new HlslShader<VertexType>(
-		L"Ocean/Ocean.hlsl",
-		static_cast<UINT>(ShaderType::VHDP),
-		Macros.data()
-	);
-	OceanRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-	CHECK(SUCCEEDED(OceanRenderer->CreateSamplerState_Linear_Border(static_cast<UINT>(ShaderType::VDP))));
-	CHECK(SUCCEEDED(OceanRenderer->CreateSamplerState_Anisotropic(static_cast<UINT>(ShaderType::VDP))));
-	CHECK(SUCCEEDED(OceanRenderer->CreateBlendState_Multiply()));
-	CHECK(SUCCEEDED(OceanRenderer->CreateDepthStencilState_Default()));
-	CHECK(SUCCEEDED(OceanRenderer->CreateRasterizerState_Solid()));
-	// CHECK(SUCCEEDED(OceanRenderer->CreateRasterizerState_WireFrame()));
-
-	CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
-	CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	CHECK(SUCCEEDED(CellBoundaryRenderer->CreateBlendState_Opaque()));
+	// OceanRenderer = new HlslShader<VertexType>(
+	// 	L"Ocean/Ocean.hlsl",
+	// 	static_cast<UINT>(ShaderType::VHDP),
+	// 	Macros.data()
+	// );
+	// OceanRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	// CHECK(SUCCEEDED(OceanRenderer->CreateSamplerState_Linear_Border(static_cast<UINT>(ShaderType::VDP))));
+	// CHECK(SUCCEEDED(OceanRenderer->CreateSamplerState_Anisotropic(static_cast<UINT>(ShaderType::VDP))));
+	// CHECK(SUCCEEDED(OceanRenderer->CreateBlendState_Multiply()));
+	// CHECK(SUCCEEDED(OceanRenderer->CreateDepthStencilState_Default()));
+	// CHECK(SUCCEEDED(OceanRenderer->CreateRasterizerState_Solid()));
+	// // CHECK(SUCCEEDED(OceanRenderer->CreateRasterizerState_WireFrame()));
+	//
+	// CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
+	// CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	// CHECK(SUCCEEDED(CellBoundaryRenderer->CreateBlendState_Opaque()));
 }
 
 void Ocean::SetupRenderResources()

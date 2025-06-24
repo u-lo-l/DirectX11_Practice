@@ -18,16 +18,17 @@ Foliage::Foliage(const LandScape * InTerrain, const float MinAltitude, const flo
 	// 	{"TRIANGLE", "0"},
 	// 	{nullptr,}
 	// };
-	CrossQuadShader = new HlslShader<VertexType>(
-		ShaderName,
-		static_cast<UINT>(ShaderType::VGP),
-		nullptr,
-		false
-	);
-	CrossQuadShader->SetTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));
-	CHECK(SUCCEEDED(CrossQuadShader->CreateBlendState_AlphaBlendCoverage()));
-	CHECK(SUCCEEDED(CrossQuadShader->CreateDepthStencilState_Default()));
+	// TODO : 
+	// CrossQuadShader = new HlslShader<VertexType>(
+	// 	ShaderName,
+	// 	static_cast<UINT>(ShaderType::VGP),
+	// 	nullptr,
+	// 	false
+	// );
+	// CrossQuadShader->SetTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	// CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));
+	// CHECK(SUCCEEDED(CrossQuadShader->CreateBlendState_AlphaBlendCoverage()));
+	// CHECK(SUCCEEDED(CrossQuadShader->CreateDepthStencilState_Default()));
 
 	WVPBuffer = new ConstantBuffer(
 		static_cast<UINT>(ShaderType::VG),
@@ -73,7 +74,7 @@ Foliage::Foliage(const LandScape * InTerrain, const float MinAltitude, const flo
 
 Foliage::~Foliage()
 {
-	SAFE_DELETE(CrossQuadShader);
+	// SAFE_DELETE(CrossQuadShader);
 	SAFE_DELETE(CrossQuadTextures);
 	SAFE_DELETE(WVPBuffer);
 }
@@ -99,7 +100,7 @@ void Foliage::Tick()
 
 void Foliage::Render() const
 {
-	if (!CrossQuadShader) return;
+	// if (!CrossQuadShader) return;
 
 	if (!!VBuffer) VBuffer->BindToGPU();
 	
@@ -110,7 +111,7 @@ void Foliage::Render() const
 	if (!!Terrain) Terrain->GetHeightMap()->BindToGPU(0, static_cast<UINT>(ShaderType::VP));
 	if (!!CrossQuadTextures) CrossQuadTextures->BindToGPU(1); //PS
 	
-	CrossQuadShader->Draw(Vertices.size());
+	// CrossQuadShader->Draw(Vertices.size());
 }
 
 void Foliage::Add(const vector<VertexType> & InVertices)

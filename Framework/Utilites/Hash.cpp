@@ -52,3 +52,4 @@ std::uint32_t hash<LineSegment2D>::operator()(const LineSegment2D& Value) const 
 	Result *= FnvPrime;
 	return Result;
 }
+

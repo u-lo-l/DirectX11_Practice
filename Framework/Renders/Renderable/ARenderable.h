@@ -1,0 +1,53 @@
+﻿#pragma once
+
+class RenderingShader;
+class Material;
+
+class ARenderable
+{
+protected:
+	ARenderable();
+public:
+	virtual ~ARenderable();
+	Transform * GetTransform() const { return Tf; }
+	void Tick() const;
+	void Render(const RenderingShader * InShader) const;
+	
+	void CreateVertexBuffer(void * InData, int InCount, int InStride);
+	void CreateIndexBuffer(UINT* InData, int InCount);
+	void CreateInstanceBuffer(void * InData, int InCount, int InStride);
+
+	void SetTransform(const Matrix & InMatrix) const;
+	void SetMaterial(const Material * InMaterial);
+	void SetInputLayOut(ID3D11InputLayout * InInputLayout);
+	const string & GetName() const;
+
+	const Material * GetMaterial() const;
+	const ID3D11InputLayout * GetInputLayout() const;
+	const RenderingShader * GetShader() const;
+	
+	const VertexBuffer * GetVertexBuffer() const;
+	const IndexBuffer * GetIndexBuffer() const;
+	const InstanceBuffer * GetInstanceBuffer() const;
+
+	void SetName(const string & InName);
+	virtual void BindResources() const = 0;
+protected:
+
+	// TODO : Change To unique_ptr
+	Transform * Tf = nullptr;
+	string Name;
+	// TODO : Change To shared_ptr
+	const Material * Mat = nullptr;
+
+	// TODO : Change To shared_ptr
+	const RenderingShader * Shader = nullptr;
+	// TODO : Change To shared_ptr
+	const ID3D11InputLayout * VertexInputLayout = nullptr;
+	// TODO : Change To unique_ptr
+	VertexBuffer * VBuffer = nullptr;
+	// TODO : Change To unique_ptr
+	IndexBuffer * IBuffer = nullptr;
+	// TODO : Change To unique_ptr
+	InstanceBuffer * InstBuffer = nullptr;
+};

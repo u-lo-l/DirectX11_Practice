@@ -222,3 +222,4 @@ void BinaryReader::ReadByte( void ** OutData, UINT InDataSize ) const
 	const bool Result = ReadFile(FileHandle, *OutData, InDataSize, &BytesRead, nullptr);
 	ASSERT((Result == true) && (BytesRead == InDataSize), "[BinaryWriter] Failed to read bytes from file")
 }
+

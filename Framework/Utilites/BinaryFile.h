@@ -53,8 +53,21 @@ public:
 	string ReadString() const;
 	Matrix ReadMatrix() const;
 	void ReadByte( void ** OutData, UINT InDataSize) const;
-
+	template<typename T>
+	void ReadSTDVector(vector<T> & InOutVector) const;
 private:
 	HANDLE FileHandle;
 	wstring FileName;
 };
+
+template <typename T>
+void BinaryReader::ReadSTDVector( vector<T> & InOutVector) const
+{
+	const UINT Count = ReadUint();
+	if (Count > 0)
+	{
+		InOutVector.resize(Count);
+		void * Ptr = InOutVector.data();
+		ReadByte(&Ptr, sizeof(T) * Count);
+	}
+}

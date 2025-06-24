@@ -13,7 +13,7 @@ public:
 
 	DelaunayTriangulator2D DelaunayTriangulator;
 	
-	HlslShader<VertexType> * Shader;
+	RenderingShader * Shader;
 	vector<VertexType> Vertices;
 	vector<UINT> Indices;
 	VertexBuffer * VBuffer;

@@ -9,20 +9,22 @@
 
 struct Vertex
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	Vertex()
 	: Position(0, 0, 0) {}
 	explicit Vertex(const Vector & Position)
 	: Position(Position) {}
 	Vector Position;
+	
+
 };
 
 //---------------------------------------------------------------------------//
 
 struct VertexColor
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexColor()
 	: Position(0, 0, 0)
@@ -32,13 +34,15 @@ struct VertexColor
 	, Color(Color.R, Color.G, Color.B, Color.A) {}
 	Vector Position;
 	Color Color;
+	
+
 };
 
 //---------------------------------------------------------------------------//
 
 struct VertexTexture
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexTexture()
 		: Position(0, 0, 0)
@@ -48,13 +52,15 @@ struct VertexTexture
 		, UV(UV) {}
 	Vector Position;
 	Vector2D UV;
+	
+
 };
 
 //---------------------------------------------------------------------------//
 
 struct VertexTextureColor
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexTextureColor()
 		: Position(0, 0, 0)
@@ -69,13 +75,15 @@ struct VertexTextureColor
 	Vector Position;
 	Vector2D UV;
 	Color Color;
+	
+
 };
 
 //---------------------------------------------------------------------------//
 
 struct VertexNormal
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexNormal()
 		: Position(0, 0, 0), Normal(0, 0, 0) {}
@@ -83,13 +91,15 @@ struct VertexNormal
 		: Position(Position), Normal(Normal) {}
 	Vector Position;
 	Vector Normal;
+	
+
 };
 
 //---------------------------------------------------------------------------//
 
 struct VertexTextureNormal
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexTextureNormal()
 		: Position(0, 0, 0), UV(0, 0), Normal(0, 0, 0) {}
@@ -98,14 +108,15 @@ struct VertexTextureNormal
 	Vector Position;
 	Vector2D UV;
 	Vector Normal;
+	
+
 };
 
 //---------------------------------------------------------------------------//
 
 typedef struct VertexTextureColorNormalTangentBlend
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
-
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 	Vector Position;
 	Vector2D UV;
 	Color Color;
@@ -113,13 +124,15 @@ typedef struct VertexTextureColorNormalTangentBlend
 	Vector Tangent;
 	Vector4 Indices {0, };
 	Vector4 Weights {0, };
-} ModelVertex;
+
+
+} SkeletalMeshVertex;
 
 //---------------------------------------------------------------------------//
 
 struct VertexBillboard
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexBillboard()
 		: Position(0, 0, 0), Scale(0, 0), MapIndex(0) {}
@@ -129,6 +142,8 @@ struct VertexBillboard
 	Vector Position;
 	Vector2D Scale;
 	UINT MapIndex;
+
+
 };
 
 //---------------------------------------------------------------------------//
@@ -136,8 +151,7 @@ struct VertexBillboard
 // Vertex For Rain, Snow, Hail
 struct VertexPrecipitation
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
-
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 	VertexPrecipitation()
 		: Position(0, 0, 0), Scale(0, 0), Random(0,0) {}
 	VertexPrecipitation(const Vector& Position, const Vector2D& Scale, const Vector2D& Random)
@@ -146,12 +160,14 @@ struct VertexPrecipitation
 	Vector Position;
 	Vector2D Scale;
 	Vector2D Random;
+
+
 };
 
 //---------------------------------------------------------------------------//
 struct VertexParticle
 {
-	static void CreatInputLayout( vector<D3D11_INPUT_ELEMENT_DESC> & OutLayoutDescs );
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 	VertexParticle()
 		: Position(0, 0, 0), StartVelocity(0, 0, 0), EndVelocity(0, 0, 0), Random(0, 0, 0, 0), SpawnedTime(0.f) {}
 	VertexParticle(const Vector& InPosition, const Vector& InStartVelocity, const Vector& InEndVelocity,const Vector4& InRandom, const float InTime)

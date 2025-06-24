@@ -5,6 +5,10 @@
 # define MAX_BLENDING_BONE_COUNT 4
 
 # include "../ComputeShader/Transform.hlsl"
+
+static const int DiffuseMap = 0;
+static const int SpecularMap = 1;
+static const int NormalMap = 2;
 struct VS_Input
 {
     float4 Position  : POSITION; // Model의 BindPose
@@ -14,9 +18,7 @@ struct VS_Input
     float3 Tangent   : TANGENT;
     float4 Indices   : BLENDINDICES; // BoneIndices
     float4 Weights   : BLENDWEIGHTS;
-
-    matrix InstanceTF: INSTANCE;
-    uint InstanceID  : SV_InstanceID;
+    uint   VertexID  : SV_VERTEXID;
 };
 
 struct VS_Output
@@ -36,27 +38,39 @@ struct DepthOutput
     float4 ShadowPosition : SV_Position;
 };
 
-cbuffer CB_Matrix : register(b0) // PerModel VS PS
+cbuffer CB_PerFrame : register(b0)
 {
-    matrix World;
     matrix View;
     matrix Projection;
-    matrix ViewInverse;
-}
-cbuffer CB_Light : register(b1) // PerFrame PS
-{
+    matrix ViewProjection;
+    float3 CameraWorldPosition;
+    float  Padding;
     float4 LightColor;
     float3 LightDirection;
-    float  LightPadding;
+    float  Padding2;
 }
-cbuffer CB_BoneMatrix : register(b2) // PerModel VS
+
+cbuffer CB_PerMaterial : register(b1)
+{
+    float4 Ambient;
+    float4 Diffuse;
+
+    float4 Specular;
+    float Metalic;
+    float Roughness;
+    float2 Padding_Mat;
+}
+
+cbuffer CB_PerModel : register(b2)
 {
     matrix OffsetMatrices[MAX_BONE_COUNT]; // Inv(BindPose BoneMatrix)
 }
+cbuffer CB_PerMesh : register(b3)
+{
+    matrix World;
+}
 
-static const int DiffuseMap = 0;
-static const int SpecularMap = 1;
-static const int NormalMap = 2;
+
 Texture2D MaterialMaps[3] : register(t0);
 StructuredBuffer<BoneMatrix_t> BoneMatrices : register(t3);
 SamplerState LinearSampler : register(s0);
@@ -102,7 +116,6 @@ float4 PSMain(VS_Output Input) : SV_TARGET
     float LDotN = saturate(dot(Input.Normal, -LightDirection));
     float3 Color = LightColor.rgb * LDotN;
     return float4(Color, 1);
-
 }
 
 DepthOutput VSShadow(VS_Input Input)

@@ -21,7 +21,7 @@ void Character::SetSkeletalMesh(const wstring& InMeshName)
 	SAFE_DELETE(SkeletalMesh);
 	SAFE_DELETE(AnimController);
 	this->SkeletalMesh = new CSkeletalMesh(InMeshName);
-	this->SkeletalMesh->SetParentTransform(this->Tf);
+	this->SkeletalMesh->GetTransform()->SetParent(this->Tf);
 	this->AnimController = new AnimationController(this->SkeletalMesh->GetSkeletal());
 }
 
@@ -46,10 +46,10 @@ AnimationController* Character::GetAnimationController() const
 void Character::Tick()
 {
 	this->AnimController->Tick();
-	this->SkeletalMesh->Tick();
+	// this->SkeletalMesh->Tick();
 }
 
 void Character::Render()
 {
-	this->SkeletalMesh->Render();
+	// this->SkeletalMesh->Render();
 }

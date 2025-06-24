@@ -5,22 +5,7 @@
 #include <thread>
 
 #include "Execute/028_InstancingDemo/InstancingDemo.h"
-#include "Execute/CharacterMoveDemo/CharacterMoveDemo.h"
-#include "Execute/CharacterMoveDemo/DelaunayTriangleDemo.h"
-#include "Execute/DisplacementMappingDemo/BasicTessellationDemo.h"
-#include "Execute/DisplacementMappingDemo/DisplacementMappingDemo.h"
-#include "Execute/DisplacementMappingDemo/PNTriangleDemo.h"
-#include "Execute/ImGUIDemo/ImGuiDemo.h"
-#include "Execute/LandscapeDemo/CellDemo.h"
-#include "Execute/LandscapeDemo/LandScapeDemo.h"
-#include "Execute/LODDemo/TerrainTessellationDemo.h"
-#include "Execute/OceanDemo/FoamDemo.h"
-#include "Execute/OceanDemo/GaussianRandomDemo.h"
-#include "Execute/OceanDemo/OceanDemo.h"
-#include "Execute/OceanDemo/PhilipsSpectrumDemo.h"
-#include "Execute/OceanDemo/TextureTransposeDemo.h"
 #include "Systems/Window.h"
-#include "Execute/Shadow/ShadowDemo.h"
 
 void Main::Initialize()
 {
@@ -35,7 +20,7 @@ void Main::Initialize()
 	// PUSH_MAIN(sdt::FoamDemo);
 	// PUSH_MAIN(sdt::CellDemo);
 	// PUSH_MAIN(sdt::LandScapeDemo);
-	PUSH_MAIN(sdt::CharacterMoveDemo);
+	// PUSH_MAIN(sdt::CharacterMoveDemo);
 	// PUSH_MAIN(DelaunayTriangleDemo);
 	// PUSH_MAIN(ImGuiDemo);
 }

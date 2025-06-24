@@ -19,4 +19,5 @@ namespace std
 	{
 		std::uint32_t operator()(const LineSegment2D & Value) const noexcept;
 	};
+
 }

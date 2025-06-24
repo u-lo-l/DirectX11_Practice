@@ -78,7 +78,6 @@ void VertexBuffer::BindToGPU()
 }
 
 InstanceBuffer::InstanceBuffer( void * InData, UINT InCount, UINT InStride )
-	: VertexBuffer(InData, InCount, InStride, InstancingSlot, true)
+	: VertexBuffer(InData, InCount, InStride, RenderingShader::InstanceSlot, true)
 {
-	
 }

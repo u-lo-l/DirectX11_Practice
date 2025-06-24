@@ -18,7 +18,6 @@ class ParticleSystem
 	
 	const static wstring ShaderName;
 	using VertexType = VertexParticle;
-	using ShaderTypeName = HlslShader<VertexType>;
 public:
 	explicit ParticleSystem(const wstring & InFileName);
 	~ParticleSystem();
@@ -47,7 +46,7 @@ private:
 
 	Transform * WorldTF = nullptr;
 	Texture * ParticleTexture = nullptr;
-	ShaderTypeName * ParticleShader = nullptr;
+	RenderingShader * ParticleShader = nullptr;
 
 	// this->Data의 값을 이 구조체로 복사해서 GPU로 넣어줌.
 	// this->Data가 변경되지 않는다면 Setting도 바뀌지 않음. (X) 바뀐다.

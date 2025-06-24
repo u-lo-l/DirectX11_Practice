@@ -1,0 +1,146 @@
+﻿#include "framework.h"
+#include <fstream>
+#include "ComputeShader.h"
+
+ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
+	: Desc(InDesc)
+{
+	ShaderManager * const ShaderManagerInst = ShaderManager::Get();
+	ASSERT(!Desc.ShaderFileName.empty(), "Shader Name Empty");
+	Desc.ShaderFileName = W_SHADER_PATH + Desc.ShaderFileName;
+	const wstring ShaderDirectory = Path::GetDirectoryName(Desc.ShaderFileName);
+	Desc.PreCompiledShaderFileDirectory = ShaderDirectory + L"PreCompiled/";
+
+	LoadShader();
+	
+	for ( const auto & Item : Desc.SamplerStateNames)
+	{
+		int RegisterIndex = std::get<0>(Item);
+		ShaderType TargetShader = std::get<1>(Item);
+		const string & SamplerStateName = std::get<2>(Item);
+		ID3D11SamplerState * SamplerState = ShaderManagerInst->GetSamplerState(SamplerStateName);
+		CHECK(!!SamplerState);
+		Pass.SamplerStates[RegisterIndex] = {SamplerState, TargetShader };
+	}
+}
+
+ComputeShader::~ComputeShader()
+{
+}
+
+void ComputeShader::Dispatch() const
+{
+	D3D::Get()->GetDeviceContext()->Dispatch(Pass.DispatchX, Pass.DispatchY, Pass.DispatchZ);
+}
+
+void ComputeShader::LoadShader()
+{
+	ID3DBlob * ShaderBlob;
+	const wstring PreCompiledFilePath = Desc.PreCompiledShaderFileDirectory + L"_" + GetEntryPoint() + L".cso";
+	
+	if (Path::IsDirectoryExist(Desc.PreCompiledShaderFileDirectory) == false)
+		Path::CreateFolders(Desc.PreCompiledShaderFileDirectory);
+
+	if (Desc.bForceRecompile || Path::IsFileExist(PreCompiledFilePath) == false)
+	{
+		ShaderBlob = CompileShader(Desc.ShaderFileName, Desc.ShaderMacros);
+		std::ofstream outFile(PreCompiledFilePath, std::ios::binary);
+		outFile.write((char*)ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize());
+		outFile.close();
+	}
+	else
+	{
+		ShaderBlob = LoadPreCompiled(PreCompiledFilePath);
+	}
+
+	CHECK(SUCCEEDED(CreateShader(ShaderBlob, ShaderType::None)));
+
+	SAFE_RELEASE(ShaderBlob);
+}
+
+wstring ComputeShader::GetEntryPoint(ShaderType Type) const
+{
+	return this->Desc.EntryPoint;
+}
+
+string ComputeShader::GetShaderTarget(ShaderType Type) const
+{
+	return "cs_5_0";
+}
+
+ID3DBlob* ComputeShader::CompileShader
+(
+	const wstring& InFileName,
+	const D3D_SHADER_MACRO* InMacros,
+	ShaderType InType
+)
+{
+	ID3DBlob * ShaderBlob = nullptr;
+	ID3DBlob * ErrorBlob = nullptr;
+	int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR |
+		   D3DCOMPILE_OPTIMIZATION_LEVEL3 |
+		   D3DCOMPILE_WARNINGS_ARE_ERRORS;
+	HRESULT Hr = D3DCompileFromFile(
+		InFileName.c_str(),
+		InMacros,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE, // HLSL내에서 #include 쓸 수 있게 해줌. custom ID3DInclude도 가능.
+		String::ToString(GetEntryPoint()).c_str(),
+		GetShaderTarget().c_str(),
+		Flag,
+		0,
+		&ShaderBlob,
+		&ErrorBlob
+	);
+	if (FAILED(Hr) && ErrorBlob != nullptr)
+	{
+		const char * const ErrMsg = static_cast<char *>(ErrorBlob->GetBufferPointer());
+		SAFE_RELEASE(ErrorBlob);
+		ASSERT(false, (String::ToString(InFileName) + " Failed to Compile :\n" + "<" + ErrMsg + ">").c_str())
+		return nullptr;
+	}
+	if (FAILED(Hr) && ErrorBlob == nullptr)
+	{
+		SAFE_RELEASE(ErrorBlob);
+		ASSERT(false, (String::ToString(InFileName) + " Failed to Compile : Maybe No File or Invalid EntryPoint").c_str())
+		return nullptr;
+	}
+	SAFE_RELEASE(ErrorBlob);
+	
+	return ShaderBlob;
+}
+
+ID3DBlob* ComputeShader::LoadPreCompiled(const wstring& InFilename)
+{
+	ID3DBlob * ShaderBlob = nullptr;
+	
+	std::ifstream File(InFilename, std::ios::binary | std::ios::ate);
+	if (File.is_open() == true)
+	{
+		std::streamsize FileSize = File.tellg();
+		File.seekg(0, std::ios::beg);
+
+		HRESULT Hr = D3DCreateBlob(static_cast<SIZE_T>(FileSize), &ShaderBlob);
+		CHECK(SUCCEEDED(Hr));
+		
+		File.read((char*)ShaderBlob->GetBufferPointer(), FileSize);
+		File.close();
+	}
+	else
+	{
+		ASSERT(false, "Failed to open cso File")
+	}
+	return ShaderBlob;
+}
+
+HRESULT ComputeShader::CreateShader(ID3DBlob* ShaderBlob, ShaderType InType)
+{
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+
+	const void * BufferAddr = ShaderBlob->GetBufferPointer();
+	const UINT BufferSize = ShaderBlob->GetBufferSize();
+
+	HRESULT Hr = Device->CreateComputeShader(BufferAddr, BufferSize, nullptr, &Pass.Shader);
+
+	return Hr;
+}
+

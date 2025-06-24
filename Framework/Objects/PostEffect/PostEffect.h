@@ -18,12 +18,13 @@ private:
 	
 	void PreRender_Bloom(ID3D11ShaderResourceView * InOriginalTextureSRV);
 	void PreRender_GaussianBlur(ID3D11ShaderResourceView * InOriginalTextureSRV);
-	
-	HlslShader<VertexType> * Shader;
-	
-	HlslShader<VertexType> * VertexShader;
-	HlslShader<VertexType> * GaussianBlur_Shader[2];
-	HlslShader<VertexType> * Bloom_Shader[2];
+
+	// TODO :
+	// HlslShader<VertexType> * Shader;
+	//
+	// HlslShader<VertexType> * VertexShader;
+	// HlslShader<VertexType> * GaussianBlur_Shader[2];
+	// HlslShader<VertexType> * Bloom_Shader[2];
 	VertexBuffer * VBuffer;
 
 	float PostEffectFactors[8];

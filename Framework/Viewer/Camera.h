@@ -12,6 +12,7 @@ public:
 	const Vector& GetPosition() const;
 	Matrix GetViewMatrix() const;
 	Matrix GetProjectionMatrix() const;
+	Matrix GetViewProjectionMatrix() const;
 	void SetPosition(float X, float Y, float Z) const;
 	void SetPosition(const Vector & Vec) const;
 	const Vector & GetEulerAngleInDegree() const;
@@ -29,6 +30,7 @@ public:
 	Vector GetForward() const;
 	Vector GetRight() const;
 	Vector GetUp() const;
+
 private :
 	Vector At() const;
 	Transform * Tf;

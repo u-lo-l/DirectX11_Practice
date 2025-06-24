@@ -1,6 +1,6 @@
 {
    "File" : {
-      "Materials" : "Kachujin",
+      "Material" : "Kachujin",
       "Mesh" : "Kachujin"
    },
    "Transform" : {

@@ -62,22 +62,23 @@ Texture* Noise::CreatePerlin2DNoise(UINT InSize)
 		{"THREAD_Y", "32"},
 		{nullptr, }
 	};
-	HlslComputeShader * CS_PerlinNoiseMap = new HlslComputeShader(
-		L"Terrain/Compute/ComputePerlinNoise.hlsl",
-		ShaderMacros.data()
-	);
-	CS_PerlinNoiseMap->SetDispatchSize(
-		PerlinNoiseMap->GetWidth() / 32,
-		PerlinNoiseMap->GetHeight() / 32,
-		1
-	);
-	PerlinNoiseMap->BindToGPUAsUAV(0);
-	CS_PerlinNoiseMap->Dispatch();
-	PerlinNoiseMap->UpdateSRV();
+	// TODO :
+	// HlslComputeShader * CS_PerlinNoiseMap = new HlslComputeShader(
+	// 	L"Terrain/Compute/ComputePerlinNoise.hlsl",
+	// 	ShaderMacros.data()
+	// );
+	// CS_PerlinNoiseMap->SetDispatchSize(
+	// 	PerlinNoiseMap->GetWidth() / 32,
+	// 	PerlinNoiseMap->GetHeight() / 32,
+	// 	1
+	// );
+	// PerlinNoiseMap->BindToGPUAsUAV(0);
+	// CS_PerlinNoiseMap->Dispatch();
+	// PerlinNoiseMap->UpdateSRV();
 	
 	// PerlinNoiseMap->SaveOutputAsFile(L"PerlinNoise");
 	
-	SAFE_DELETE(CS_PerlinNoiseMap);
+	// SAFE_DELETE(CS_PerlinNoiseMap);
 	D3D11_TEXTURE2D_DESC Desc;
 	Desc.Width = InSize;
 	Desc.Height = InSize;

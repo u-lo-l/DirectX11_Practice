@@ -47,8 +47,9 @@ private:
 	
 	Animation_ConstantDesc Animation_ConstantData;
 	ConstantBuffer * CB_AnimationData;
-	
-	HlslComputeShader * AnimationBoneTransformCalculator = nullptr;
+
+	//TODO :
+	// HlslComputeShader * AnimationBoneTransformCalculator = nullptr;
 	map<string, AnimationClip *> AnimationClips;
 
 	CSkeletal * TargetSkeletal = nullptr;

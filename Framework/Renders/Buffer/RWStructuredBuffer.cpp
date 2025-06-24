@@ -41,19 +41,19 @@ void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum) const
 
 }
 
-void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum, UINT InShaderType) const
+void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const
 {
 	if (!SRV)
 		return ;
-	if(InShaderType & static_cast<UINT>(ShaderType::VertexShader))
+	if(InShaderType & ShaderType::VertexShader)
 		D3D::Get()->GetDeviceContext()->VSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::PixelShader))
+	if(InShaderType & ShaderType::PixelShader)
 		D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::HullShader))
+	if(InShaderType & ShaderType::HullShader)
 		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::DomainShader))
+	if(InShaderType & ShaderType::DomainShader)
 		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+	if(InShaderType & ShaderType::ComputeShader)
 		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &SRV);
 }
 

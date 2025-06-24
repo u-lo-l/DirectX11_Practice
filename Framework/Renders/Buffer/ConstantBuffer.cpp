@@ -1,7 +1,15 @@
 ﻿#include "framework.h"
 #include "ConstantBuffer.h"
 
-ConstantBuffer::ConstantBuffer(UINT TargetShaderType, int RegisterIndex, void * InData, string InDataName, UINT InDataSize, bool bStatic)
+ConstantBuffer::ConstantBuffer
+(
+	UINT TargetShaderType,
+	int RegisterIndex,
+	void * InData,
+	string InDataName,
+	UINT InDataSize,
+	bool bStatic
+)
  : RegisterIndex(RegisterIndex), DataSize(InDataSize), DataName(move(InDataName)), bIsStatic(bStatic), TargetShaderType(TargetShaderType)
 {
 	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
@@ -36,11 +44,34 @@ ConstantBuffer::ConstantBuffer(UINT TargetShaderType, int RegisterIndex, void * 
 	}
 }
 
-ConstantBuffer::ConstantBuffer(ShaderType TargetShaderType, int RegisterIndex, void* InData, const string& InDataName,
-	UINT InDataSize, bool bStatic)
+ConstantBuffer::ConstantBuffer
+(
+	ShaderType TargetShaderType,
+	int RegisterIndex,
+	void* InData,
+	const string& InDataName,
+	UINT InDataSize,
+	bool bStatic
+)
 	: ConstantBuffer(static_cast<UINT>(TargetShaderType), RegisterIndex, InData, InDataName, InDataSize, bStatic)
 {
 	
+}
+
+ConstantBuffer::ConstantBuffer
+(
+	ShaderType TargetShaderType,
+	int RegisterIndex,
+	void* InData,
+	UINT InDataSize,
+	bool bStatic
+)
+: ConstantBuffer(static_cast<UINT>(TargetShaderType), RegisterIndex, InData, "", InDataSize, bStatic)
+{
+}
+
+ConstantBuffer::~ConstantBuffer()
+{
 }
 
 void ConstantBuffer::UpdateData( void * InData, UINT InDataSize )
@@ -76,4 +107,40 @@ void ConstantBuffer::BindToGPU()
 		DeviceContext->GSSetConstantBuffers(RegisterIndex, 1, &Buffer);
 	if (TargetShaderType & static_cast<UINT>(ShaderType::ComputeShader))
 		DeviceContext->CSSetConstantBuffers(RegisterIndex, 1, &Buffer);
+}
+
+void ConstantBuffer::BindToGPU(int InRegisterIndex) const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	if (TargetShaderType & static_cast<UINT>(ShaderType::VertexShader))
+		DeviceContext->VSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShaderType & static_cast<UINT>(ShaderType::PixelShader))
+		DeviceContext->PSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShaderType & static_cast<UINT>(ShaderType::HullShader))
+		DeviceContext->HSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShaderType & static_cast<UINT>(ShaderType::DomainShader))
+		DeviceContext->DSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShaderType & static_cast<UINT>(ShaderType::GeometryShader))
+		DeviceContext->GSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+		DeviceContext->CSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+}
+
+void ConstantBuffer::BindToGPU(ShaderType TargetShader, int InRegisterIndex) const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+
+	if (TargetShader & ShaderType::VertexShader)
+		DeviceContext->VSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShader & ShaderType::PixelShader)
+		DeviceContext->PSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShader & ShaderType::HullShader)
+		DeviceContext->HSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShader & ShaderType::DomainShader)
+		DeviceContext->DSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShader & ShaderType::GeometryShader)
+		DeviceContext->GSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
+	if (TargetShader & ShaderType::ComputeShader)
+		DeviceContext->CSSetConstantBuffers(InRegisterIndex, 1, &Buffer);
 }

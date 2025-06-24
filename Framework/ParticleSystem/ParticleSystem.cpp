@@ -35,11 +35,12 @@ ParticleSystem::ParticleSystem(const wstring & InFileName)
 	UsingShaderTypeFlag |= static_cast<UINT>(ShaderType::VertexShader);
 	UsingShaderTypeFlag |= static_cast<UINT>(ShaderType::PixelShader);
 	UsingShaderTypeFlag |= static_cast<UINT>(ShaderType::GeometryShader);
-	ParticleShader = new ShaderTypeName(ShaderName, UsingShaderTypeFlag);
-	ParticleShader->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
-	CHECK(SUCCEEDED(ParticleShader->CreateRasterizerState_Solid()));
-	CHECK(SUCCEEDED(ParticleShader->CreateBlendState_Additive()));
-	CHECK(SUCCEEDED(ParticleShader->CreateDepthStencilState_Particle()));
+	// TODO :
+	// ParticleShader = new ShaderTypeName(ShaderName, UsingShaderTypeFlag);
+	// ParticleShader->SetTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
+	// CHECK(SUCCEEDED(ParticleShader->CreateRasterizerState_Solid()));
+	// CHECK(SUCCEEDED(ParticleShader->CreateBlendState_Additive()));
+	// CHECK(SUCCEEDED(ParticleShader->CreateDepthStencilState_Particle()));
 	Reset();
 }
 

@@ -50,7 +50,9 @@ private:
 	float FoliageStride = 1.f;
 
 	wstring ShaderName;
-	HlslShader<VertexType> * CrossQuadShader = nullptr;
+
+	// TODO
+	// HlslShader<VertexType> * CrossQuadShader = nullptr;
 
 	vector<VertexType> Vertices;
 	UINT VertexCount;

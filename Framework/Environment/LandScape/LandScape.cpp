@@ -121,28 +121,29 @@ void LandScape::SetupShaders()
 	};
 	// const string GridSizeStr = std::to_string(min(GridSize, 64));
 	const string GridSizeStr = std::to_string(64);
-	const vector<D3D_SHADER_MACRO> Defines = {
-		{"TYPE01", "0"},
-		{"MAX_TESS_FACTOR", GridSizeStr.c_str()},
-		{nullptr, nullptr}
-	};
-	CellRenderer = new HlslShader<VertexType>(
-		ShaderPath[0],
-		static_cast<UINT>(ShaderType::VHDP),
-		Defines.data(),
-		false
-	);
-	CellRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-	CHECK(SUCCEEDED(CellRenderer->CreateSamplerState_Linear_Clamp(static_cast<UINT>(ShaderType::VDP)))); // Clamp
-	CHECK(SUCCEEDED(CellRenderer->CreateSamplerState_Anisotropic_Wrap(static_cast<UINT>(ShaderType::VDP))));
-	CHECK(SUCCEEDED(CellRenderer->CreateBlendState_Opaque()));
-	CHECK(SUCCEEDED(CellRenderer->CreateDepthStencilState_Default()));
-	CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_Solid()));
-	// CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_WireFrame()));
-
-	CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
-	CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-	CHECK(SUCCEEDED(CellBoundaryRenderer->CreateBlendState_Opaque()));
+	// TODO :
+	// const vector<D3D_SHADER_MACRO> Defines = {
+	// 	{"TYPE01", "0"},
+	// 	{"MAX_TESS_FACTOR", GridSizeStr.c_str()},
+	// 	{nullptr, nullptr}
+	// };
+	// CellRenderer = new HlslShader<VertexType>(
+	// 	ShaderPath[0],
+	// 	static_cast<UINT>(ShaderType::VHDP),
+	// 	Defines.data(),
+	// 	false
+	// );
+	// CellRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	// CHECK(SUCCEEDED(CellRenderer->CreateSamplerState_Linear_Clamp(static_cast<UINT>(ShaderType::VDP)))); // Clamp
+	// CHECK(SUCCEEDED(CellRenderer->CreateSamplerState_Anisotropic_Wrap(static_cast<UINT>(ShaderType::VDP))));
+	// CHECK(SUCCEEDED(CellRenderer->CreateBlendState_Opaque()));
+	// CHECK(SUCCEEDED(CellRenderer->CreateDepthStencilState_Default()));
+	// CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_Solid()));
+	// // CHECK(SUCCEEDED(CellRenderer->CreateRasterizerState_WireFrame()));
+	//
+	// CellBoundaryRenderer = new HlslShader<VertexColor>(L"Debug/Boundary.hlsl");
+	// CellBoundaryRenderer->SetTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	// CHECK(SUCCEEDED(CellBoundaryRenderer->CreateBlendState_Opaque()));
 }
 
 void LandScape::SetupResources(const LandScapeDesc& InDesc)

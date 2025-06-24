@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "Framework.h"
 #pragma comment(lib, "Framework.lib")
 
@@ -9,7 +7,6 @@
 #pragma comment(lib, "Assimp/assimp-vc143-mtd.lib")
 #include "Assimp/postprocess.h"
 #include "Assimp/scene.h"
-
 #include "JsonCpp/json.h"
 #pragma comment(lib, "JsonCpp/jsoncpp_static.lib")
 

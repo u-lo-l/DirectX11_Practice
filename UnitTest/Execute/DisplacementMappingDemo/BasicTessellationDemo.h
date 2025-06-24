@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Systems/IExecutable.h"
-#include "Renders/Shader/Hlsl2DTextureShader.h"
 
 namespace sdt
 {
@@ -21,7 +20,7 @@ namespace sdt
 		vector<UINT> Indices;
 		IndexBuffer * IBuffer;
 
-		HlslShader<VertexType> * Shader;
+		RenderingShader * Shader;
 
 		struct TessellationFactorDesc
 		{

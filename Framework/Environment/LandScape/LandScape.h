@@ -85,10 +85,13 @@ private:
 	VertexBuffer * CellBoxVBuffer;
 	IndexBuffer * CellBoxIBuffer;
 	InstanceBuffer * CellBoxInstBuffer;
-	HlslShader<CellVertexType> * CellBoundaryRenderer = nullptr;
-	
-	HlslShader<VertexType> * CellRenderer = nullptr;
-	HlslComputeShader * NormalMapGenerator = nullptr;
+
+	RenderingShader * CellBoundaryRenderer = nullptr;
+	RenderingShader * CellRenderer = nullptr;
+	ComputeShader * NormalMapGenerator = nullptr;
+	// HlslShader<CellVertexType> * CellBoundaryRenderer = nullptr;
+	// HlslShader<VertexType> * CellRenderer = nullptr;
+	// HlslComputeShader * NormalMapGenerator = nullptr;
 
 	Transform * Tf;
 	WVPDesc MatrixData;	// VDHP

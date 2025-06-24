@@ -4,24 +4,19 @@
 // const aiMaterial * const : 함수 내에서 Material의 불변성을 보장
 void MaterialData::CollectTexturePaths( const aiMaterial * const Material, aiTextureType InTextureType )
 {
-	vector<string> * TargetList;
-	if (InTextureType==aiTextureType_DIFFUSE)
-		TargetList = &this->DiffuseFiles;
-	else if (InTextureType==aiTextureType_SPECULAR)
-		TargetList = &this->SpecularFiles;
-	else if (InTextureType==aiTextureType_NORMALS)
-		TargetList = &this->NormalFiles;
-	else
-		return ;
-
-	
 	aiString TextureFile;
 	const UINT TextureCount = Material->GetTextureCount(InTextureType);
-	TargetList->clear();
+	ASSERT(TextureCount <= 1, "")
 
-	for (UINT TextureIndex = 0; TextureIndex < TextureCount; TextureIndex++)
-	{
-		Material->GetTexture(InTextureType, TextureIndex, &TextureFile);
-		TargetList->push_back(TextureFile.C_Str());
-	}
+	if (TextureCount == 0)
+		return ;
+	
+	Material->GetTexture(InTextureType, 0, &TextureFile);
+
+	if (InTextureType==aiTextureType_DIFFUSE)
+		this->DiffuseFileName = TextureFile.C_Str();
+	else if (InTextureType==aiTextureType_SPECULAR)
+		this->SpecularFileName = TextureFile.C_Str();
+	else if (InTextureType==aiTextureType_NORMALS)
+		this->NormalFileName = TextureFile.C_Str();
 }

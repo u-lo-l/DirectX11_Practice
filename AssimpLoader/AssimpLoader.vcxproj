@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssimpLoader\Converter2\AnimationConverter.cpp" />
-    <ClCompile Include="AssimpLoader\Converter2\Converter2.cpp" />
-    <ClCompile Include="AssimpLoader\Converter2\MeshConverter.cpp" />
+    <ClCompile Include="AssimpLoader\Converter\AConverterBase.cpp" />
+    <ClCompile Include="AssimpLoader\Converter\AnimationConverter.cpp" />
+    <ClCompile Include="AssimpLoader\Converter\MeshConverter.cpp" />
     <ClCompile Include="AssimpLoader\DrawCSkeletalMesh.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
       <ConformanceMode>false</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
@@ -47,37 +47,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\vc143.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\vc143.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\AssimpLoader.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\AssimpLoader.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\AssimpLoader.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\AssimpLoader.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_AssimpLoader\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\AssimpLoader\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -102,9 +102,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssimpLoader\Converter2\AnimationConverter.h" />
-    <ClInclude Include="AssimpLoader\Converter2\Converter2.h" />
-    <ClInclude Include="AssimpLoader\Converter2\MeshConverter.h" />
+    <ClInclude Include="AssimpLoader\Converter\AConverterBase.h" />
+    <ClInclude Include="AssimpLoader\Converter\AnimationConverter.h" />
+    <ClInclude Include="AssimpLoader\Converter\MeshConverter.h" />
     <ClInclude Include="AssimpLoader\DrawCSkeletalMesh.h" />
     <ClInclude Include="AssimpLoader\DrawModel.h" />
     <ClInclude Include="AssimpLoader\ExportFile.h" />
@@ -151,7 +151,7 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <IntDir>$(SolutionDir)\Debug\Debug_$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)Debug\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

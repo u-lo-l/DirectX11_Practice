@@ -10,12 +10,18 @@
     <ClCompile Include="AssimpLoader\ExportFile.cpp">
       <Filter>Execute</Filter>
     </ClCompile>
-    <ClCompile Include="AssimpLoader\Converter\Converter.cpp">
+    <ClCompile Include="AssimpLoader\Converter\AConverterBase.cpp">
       <Filter>Converter</Filter>
     </ClCompile>
-    <ClCompile Include="AssimpLoader\Converter\Converter.Animation.cpp" />
-    <ClCompile Include="AssimpLoader\Converter\Converter.Material.cpp" />
-    <ClCompile Include="AssimpLoader\Converter\Converter.Mesh.cpp" />
+    <ClCompile Include="AssimpLoader\Converter\AnimationConverter.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\Converter\MeshConverter.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader\DrawCSkeletalMesh.cpp">
+      <Filter>Execute</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -27,8 +33,17 @@
     <ClInclude Include="AssimpLoader\DrawModel.h">
       <Filter>Execute</Filter>
     </ClInclude>
-    <ClInclude Include="AssimpLoader\Converter\Converter.h">
+    <ClInclude Include="AssimpLoader\Converter\AConverterBase.h">
       <Filter>Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpLoader\Converter\AnimationConverter.h">
+      <Filter>Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpLoader\Converter\MeshConverter.h">
+      <Filter>Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpLoader\DrawCSkeletalMesh.h">
+      <Filter>Execute</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

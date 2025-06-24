@@ -12,10 +12,12 @@ CrossQuad::CrossQuad()
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::VertexShader);
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::PixelShader);
 	ShaderTypeFlag |= static_cast<UINT>(::ShaderType::GeometryShader);
-	CrossQuadShader = new ShaderType(ShaderName, ShaderTypeFlag);
-	CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));
-	CHECK(SUCCEEDED(CrossQuadShader->CreateBlendState_AlphaBlendCoverage()));
-	CHECK(SUCCEEDED(CrossQuadShader->CreateDepthStencilState_Default()));
+
+	// TODO : 
+	// CrossQuadShader = new ShaderType(ShaderName, ShaderTypeFlag);
+	// CHECK(SUCCEEDED(CrossQuadShader->CreateRasterizerState_Solid_NoCull()));
+	// CHECK(SUCCEEDED(CrossQuadShader->CreateBlendState_AlphaBlendCoverage()));
+	// CHECK(SUCCEEDED(CrossQuadShader->CreateDepthStencilState_Default()));
 	GS_ViewProjectionBuffer = new ConstantBuffer(
 		(UINT)::ShaderType::GeometryShader,
 		GS_ViewProjection,

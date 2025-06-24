@@ -104,7 +104,7 @@ void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D&
 {
 	const string Format = this->TextureFormat == DXGI_FORMAT_R32_FLOAT ? "float" : "float4"; 
 	OutPixels.clear();
-	OutPixels.resize(VertexNum.X * VertexNum.Y);
+	OutPixels.resize(static_cast<size_t>(VertexNum.X * VertexNum.Y));
 	const RawBuffer * RWBuffer = new RawBuffer(
 		nullptr,
 		OutPixels.size() * sizeof(Color),
@@ -134,26 +134,28 @@ void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D&
 		to_string(ThreadDim[0]),
 		to_string(ThreadDim[1])
 	};
-	const vector<D3D_SHADER_MACRO> Defines{
-			{"THREAD_X", ThreadDimStr[0].c_str()},
-			{"THREAD_Y", ThreadDimStr[1].c_str()},
-			{"FORMAT", Format.c_str()},
-			{nullptr, nullptr},
-		};
-	HlslComputeShader * TextureColorExtractor = new HlslComputeShader(L"ComputeShader/GetTextureData.hlsl", Defines.data());
-	TextureColorExtractor->CreateSamplerState_Linear_Clamp();
+	//TODO:
+	// const vector<D3D_SHADER_MACRO> Defines{
+	// 		{"THREAD_X", ThreadDimStr[0].c_str()},
+	// 		{"THREAD_Y", ThreadDimStr[1].c_str()},
+	// 		{"FORMAT", Format.c_str()},
+	// 		{nullptr, nullptr},
+	// 	};
+	// HlslComputeShader * TextureColorExtractor = new HlslComputeShader(L"ComputeShader/GetTextureData.hlsl", Defines.data());
+	// TextureColorExtractor->CreateSamplerState_Linear_Clamp();
 
 	CB_Resolution->BindToGPU();
 	this->BindToGPUAsSRV(0, (UINT)ShaderType::ComputeShader);
 	RWBuffer->BindOutputToGPU(0);
 	const uint32_t ThreadGroupX = static_cast<uint32_t>(ceil(VertexNum.X / static_cast<float>(ThreadDim[0])));
 	const uint32_t ThreadGroupY = static_cast<uint32_t>(ceil(VertexNum.Y / static_cast<float>(ThreadDim[1])));
-	TextureColorExtractor->Dispatch(ThreadGroupX, ThreadGroupY, 1);
-	RWBuffer->GetOutputData(OutPixels.data());
+	//TODO:
+	// TextureColorExtractor->Dispatch(ThreadGroupX, ThreadGroupY, 1);
+	// RWBuffer->GetOutputData(OutPixels.data());
 
 	SAFE_DELETE(RWBuffer);
 	SAFE_DELETE(CB_Resolution);
-	SAFE_DELETE(TextureColorExtractor);
+	// SAFE_DELETE(TextureColorExtractor);
 }
 
 void RWTexture2D::CreateOutputTextureAndUAV()

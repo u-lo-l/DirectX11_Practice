@@ -41,8 +41,7 @@ using namespace std;
 	#include <imgui/imgui.h>
 	#include <imgui/imgui_impl_dx11.h>
 	#include <imgui/imgui_impl_win32.h>
-#pragma comment(lib, "imgui/IMGUI.lib")
-
+	#pragma comment(lib, "imgui/IMGUI.lib")
 #pragma endregion
 
 #pragma region  SDT_Math
@@ -65,10 +64,16 @@ using namespace std;
 #pragma endregion
 
 #pragma region  My Own
+	#include "Structures/Structures.h"
+	#include "Structures/D3DResource.h"
+	#include "Structures/KeyFrameAnimation.h"
+	#include "Structures/Weather.h"
+	#include "Structures/Ligthting.h"
+	#include "Structures/Shader.h"
+
 	#include "Utilites/Hash.h"
 	#include "Utilites/Definitions.h"
 	#include "Utilites/ShaderSlots.h"
-	#include "Utilites/Structures.h"
 	#include "Utilites/Helper.h"
 	#include "Utilites/Path.h"
 	#include "Utilites/String.h"
@@ -80,18 +85,13 @@ using namespace std;
 	#include "Systems/Keyboard.h"
 	#include "Systems/Mouse.h"
 
-	#include "Renders/Shader/VertexLayout.h"
-	#include "Renders/Shader/HlslShader.h"
-	#include "Renders/Shader/HlslComputeShader.h"
-	#include "Renders/Shader/Hlsl2DTextureShader.h"
+	#include "Renders/Buffer/Buffers.h"
 
 	#include "Renders/Texture.h"
 	#include "Renders/TextureArray.h"
 	#include "Renders/RWTexture2D.h"
 	#include "Renders/RWTexture2DArray.h"
-	#include "Renders/Material.h"
 	#include "Renders/Context.h"
-	#include "Renders/Buffer/Buffers.h"
 	#include "Renders/ConstantDataBinder.h"
 	#include "Renders/Transform.h"
 	#include "Renders/Projector/Projection.h"
@@ -99,26 +99,31 @@ using namespace std;
 	#include "Renders/Projector/Orthographic.h"
 	#include "Renders/Projector/Perspective.h"
 
+	#include "Renders/Shader/VertexLayout.h"
+	#include "Renders/Shader/ShaderBase.h"
+	#include "Renders/Shader/RenderingShader.h"
+	#include "Renders/Shader/ComputeShader.h"
+	#include "Renders/Shader/ShaderManager.h"
+	#include "Renders/Shader/Material.h"
+#include "Renders/Renderable/ARenderable.h"
+	#include "Renders/Renderable/RenderManager.h"
+
+
 	#include "Viewer/Camera.h"
 	#include "Viewer/DepthStencil.h"
 	#include "Viewer/RenderTarget.h"
-
-	#include "Model/Model.h"
-	#include "Model/ModelBone.h"
-	#include "Model/SubMesh.h"
-	#include "Model/ModelAnimation.h"
 
 	#include "Model/Mesh/CBone.h"
 	#include "Model/Mesh/CMesh.h"
 	#include "Model/Mesh/CSkeletal.h"
 	#include "Model/Mesh/CSkeletalMesh.h"
-	#include "Model/Mesh/MeshSubset.h"
+	#include "Model/Mesh/SkeletalMeshSubset.h"
 
 	#include "Model/Animation/AnimationClip.h"
 	#include "Model/Animation/AnimationBlendSpace1D.h"
 	#include "Model/Animation/AnimationBlendSpaceHelper.h"
 	#include "Model/Animation/AnimationBlendSpace2D.h"
-#include "Model/Animation/AnimationController.h"
+	#include "Model/Animation/AnimationController.h"
 
 	#include "Environment/LandScape/SceneryCell.h"
 	#include "Environment/LandScape/LandScape.h"
@@ -135,7 +140,6 @@ using namespace std;
 	#include "Objects/PostEffect/PostEffect.h"
 	#include "Objects/Projector/Projector.h"
 	#include "Objects/Shadow/Shadow.h"
-
 #pragma endregion
 
 string GetD3D11ReturnMessage(HRESULT Hr);

@@ -8,9 +8,6 @@
     <ClCompile Include="Systems\Window.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Renders\Shader.cpp">
-      <Filter>Renders</Filter>
-    </ClCompile>
     <ClCompile Include="Systems\Gui.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
@@ -29,33 +26,6 @@
     <ClCompile Include="Renders\Context.cpp">
       <Filter>Renders</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Color.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Math.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Matrix.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Plane.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Point.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Quaternion.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Vector.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Vector2D.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Vector4.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Utilites\Path.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -65,14 +35,81 @@
     <ClCompile Include="Renders\Texture.cpp">
       <Filter>Renders</Filter>
     </ClCompile>
-    <ClCompile Include="Environment\Terrain.cpp">
-      <Filter>Environment</Filter>
-    </ClCompile>
-    <ClCompile Include="Model\Model.cpp" />
-    <ClCompile Include="Model\ModelBone.cpp" />
-    <ClCompile Include="Model\ModelMesh.cpp" />
-    <ClCompile Include="Renders\Buffers.cpp" />
     <ClCompile Include="Utilites\BinaryFile.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\Circle2D.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\LineSegment2D.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\Square2D.cpp" />
+    <ClCompile Include="BasicShapes\BasicShapes2D\Triangle2D.cpp" />
+    <ClCompile Include="Environment\Foliage.cpp" />
+    <ClCompile Include="Environment\LandScape\LandScape.cpp" />
+    <ClCompile Include="Environment\LandScape\SceneryCell.cpp" />
+    <ClCompile Include="Environment\Ocean\Ocean.cpp" />
+    <ClCompile Include="Environment\Ocean\Ocean.HeightMapGenerate.cpp" />
+    <ClCompile Include="Environment\SkySphere.cpp" />
+    <ClCompile Include="Environment\Weather\Precipitation.cpp" />
+    <ClCompile Include="Ligthing\LightingManager.cpp" />
+    <ClCompile Include="Math\Box.cpp" />
+    <ClCompile Include="Math\Color.cpp" />
+    <ClCompile Include="Math\Frustum.cpp" />
+    <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\Noise.cpp" />
+    <ClCompile Include="Math\Plane.cpp" />
+    <ClCompile Include="Math\Point.cpp" />
+    <ClCompile Include="Math\Quaternion.cpp" />
+    <ClCompile Include="Math\Vector.cpp" />
+    <ClCompile Include="Math\Vector2D.cpp" />
+    <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Model\Animation\AnimationBlendSpace1D.cpp" />
+    <ClCompile Include="Model\Animation\AnimationBlendSpace2D.cpp" />
+    <ClCompile Include="Model\Animation\AnimationBlendSpaceHelper.cpp" />
+    <ClCompile Include="Model\Animation\AnimationClip.cpp" />
+    <ClCompile Include="Model\Animation\AnimationController.cpp" />
+    <ClCompile Include="Model\Character.cpp" />
+    <ClCompile Include="Model\Mesh\CBone.cpp" />
+    <ClCompile Include="Model\Mesh\CMesh.cpp" />
+    <ClCompile Include="Model\Mesh\CSkeletal.cpp" />
+    <ClCompile Include="Model\Mesh\CSkeletalMesh.cpp" />
+    <ClCompile Include="Model\Mesh\CStaticMesh.cpp" />
+    <ClCompile Include="Model\Mesh\SkeletalMeshSubset.cpp" />
+    <ClCompile Include="Objects\Billboard\Billboard.cpp" />
+    <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
+    <ClCompile Include="Objects\PostEffect\PostEffect.cpp" />
+    <ClCompile Include="Objects\Projector\Projector.cpp" />
+    <ClCompile Include="Objects\Shadow\Shadow.cpp" />
+    <ClCompile Include="ParticleSystem\ParticleSystem.cpp" />
+    <ClCompile Include="ParticleSystem\ParticleSystem.ReadFile.cpp" />
+    <ClCompile Include="Renders\Buffer\BufferBase.cpp" />
+    <ClCompile Include="Renders\Buffer\CircularVertexBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\ComputeShaderResource.cpp" />
+    <ClCompile Include="Renders\Buffer\IndexBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\RawBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\RWStructuredBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\StructuredBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\VertexBuffer.cpp" />
+    <ClCompile Include="Renders\Buffer\ConstantBuffer.cpp" />
+    <ClCompile Include="Renders\ConstantDataBinder.cpp" />
+    <ClCompile Include="Renders\Projector\Orthographic.cpp" />
+    <ClCompile Include="Renders\Projector\Perspective.cpp" />
+    <ClCompile Include="Renders\Projector\Projection.cpp" />
+    <ClCompile Include="Renders\Renderable\ARenderable.cpp" />
+    <ClCompile Include="Renders\Renderable\RenderManager.cpp" />
+    <ClCompile Include="Renders\RWTexture2D.cpp" />
+    <ClCompile Include="Renders\RWTexture2DArray.cpp" />
+    <ClCompile Include="Renders\Shader\ComputeShader.cpp" />
+    <ClCompile Include="Renders\Shader\NewMaterial.cpp" />
+    <ClCompile Include="Renders\Shader\RenderingShader.cpp" />
+    <ClCompile Include="Renders\Shader\ShaderBase.cpp" />
+    <ClCompile Include="Renders\Shader\ShaderManager.cpp" />
+    <ClCompile Include="Renders\Shader\VertexLayout.cpp" />
+    <ClCompile Include="Renders\TextureArray.cpp" />
+    <ClCompile Include="Renders\Transform.cpp" />
+    <ClCompile Include="Renders\ViewPort\ViewPort.cpp" />
+    <ClCompile Include="Systems\SystemTimer.cpp" />
+    <ClCompile Include="Utilites\Hash.cpp" />
+    <ClCompile Include="Utilites\Helper.cpp" />
+    <ClCompile Include="Viewer\DepthStencil.cpp" />
+    <ClCompile Include="Viewer\RenderTarget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h" />
@@ -85,20 +122,10 @@
     <ClInclude Include="Systems\Window.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Definitions.h" />
-    <ClInclude Include="Renders\Shader.h">
-      <Filter>Renders</Filter>
-    </ClInclude>
-    <ClInclude Include="Renders\VertexLayout.h">
-      <Filter>Renders</Filter>
-    </ClInclude>
     <ClInclude Include="Systems\Gui.h">
       <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Systems\Keyboard.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Systems\Timer.h">
       <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Systems\Mouse.h">
@@ -110,33 +137,6 @@
     <ClInclude Include="Renders\Context.h">
       <Filter>Renders</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Color.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Math.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Matrix.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Plane.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Point.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Quaternion.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Vector.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Vector2D.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Vector4.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Utilites\Path.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -146,14 +146,89 @@
     <ClInclude Include="Renders\Texture.h">
       <Filter>Renders</Filter>
     </ClInclude>
-    <ClInclude Include="Environment\Terrain.h">
-      <Filter>Environment</Filter>
-    </ClInclude>
-    <ClInclude Include="Model\Model.h" />
-    <ClInclude Include="Model\ModelBone.h" />
-    <ClInclude Include="Model\ModelMesh.h" />
-    <ClInclude Include="Renders\Buffers.h" />
     <ClInclude Include="Utilites\BinaryFile.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\Circle2D.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\LineSegment2D.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\Square2D.h" />
+    <ClInclude Include="BasicShapes\BasicShapes2D\Triangle2D.h" />
+    <ClInclude Include="Environment\Foliage.h" />
+    <ClInclude Include="Environment\LandScape\LandScape.h" />
+    <ClInclude Include="Environment\LandScape\SceneryCell.h" />
+    <ClInclude Include="Environment\Ocean\Ocean.h" />
+    <ClInclude Include="Environment\SkySphere.h" />
+    <ClInclude Include="Environment\Weather\Precipitation.h" />
+    <ClInclude Include="Ligthing\LightingManager.h" />
+    <ClInclude Include="Math\Box.h" />
+    <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Frustum.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Noise.h" />
+    <ClInclude Include="Math\Plane.h" />
+    <ClInclude Include="Math\Point.h" />
+    <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Math\Vector2D.h" />
+    <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Model\Animation\AnimationBlendSpace1D.h" />
+    <ClInclude Include="Model\Animation\AnimationBlendSpace2D.h" />
+    <ClInclude Include="Model\Animation\AnimationBlendSpaceHelper.h" />
+    <ClInclude Include="Model\Animation\AnimationClip.h" />
+    <ClInclude Include="Model\Animation\AnimationController.h" />
+    <ClInclude Include="Model\Character.h" />
+    <ClInclude Include="Model\Mesh\CBone.h" />
+    <ClInclude Include="Model\Mesh\CMesh.h" />
+    <ClInclude Include="Model\Mesh\CSkeletal.h" />
+    <ClInclude Include="Model\Mesh\CSkeletalMesh.h" />
+    <ClInclude Include="Model\Mesh\CStaticMesh.h" />
+    <ClInclude Include="Model\Mesh\SkeletalMeshSubset.h" />
+    <ClInclude Include="Objects\Billboard\Billboard.h" />
+    <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
+    <ClInclude Include="Objects\PostEffect\PostEffect.h" />
+    <ClInclude Include="Objects\Projector\Projector.h" />
+    <ClInclude Include="Objects\Shadow\Shadow.h" />
+    <ClInclude Include="ParticleSystem\ParticleData.h" />
+    <ClInclude Include="ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="Renders\Buffer\BufferBase.h" />
+    <ClInclude Include="Renders\Buffer\Buffers.h" />
+    <ClInclude Include="Renders\Buffer\CircularVertexBuffer.h" />
+    <ClInclude Include="Renders\Buffer\ComputeShaderResource.h" />
+    <ClInclude Include="Renders\Buffer\ConstantBuffer.h" />
+    <ClInclude Include="Renders\Buffer\IndexBuffer.h" />
+    <ClInclude Include="Renders\Buffer\RawBuffer.h" />
+    <ClInclude Include="Renders\Buffer\RWStructuredBuffer.h" />
+    <ClInclude Include="Renders\Buffer\StructuredBuffer.h" />
+    <ClInclude Include="Renders\Buffer\VertexBuffer.h" />
+    <ClInclude Include="Renders\ConstantDataBinder.h" />
+    <ClInclude Include="Renders\Projector\Orthographic.h" />
+    <ClInclude Include="Renders\Projector\Perspective.h" />
+    <ClInclude Include="Renders\Projector\Projection.h" />
+    <ClInclude Include="Renders\Renderable\ARenderable.h" />
+    <ClInclude Include="Renders\Renderable\RenderManager.h" />
+    <ClInclude Include="Renders\RWTexture2D.h" />
+    <ClInclude Include="Renders\RWTexture2DArray.h" />
+    <ClInclude Include="Renders\Shader\ComputeShader.h" />
+    <ClInclude Include="Renders\Shader\NewMaterial.h" />
+    <ClInclude Include="Renders\Shader\RenderingShader.h" />
+    <ClInclude Include="Renders\Shader\ShaderBase.h" />
+    <ClInclude Include="Renders\Shader\ShaderManager.h" />
+    <ClInclude Include="Renders\Shader\VertexLayout.h" />
+    <ClInclude Include="Renders\TextureArray.h" />
+    <ClInclude Include="Renders\Transform.h" />
+    <ClInclude Include="Renders\ViewPort\ViewPort.h" />
+    <ClInclude Include="Structures\D3DResource.h" />
+    <ClInclude Include="Structures\KeyFrameAnimation.h" />
+    <ClInclude Include="Structures\Ligthting.h" />
+    <ClInclude Include="Structures\Shader.h" />
+    <ClInclude Include="Structures\Structures.h" />
+    <ClInclude Include="Structures\Weather.h" />
+    <ClInclude Include="Systems\SystemTimer.h" />
+    <ClInclude Include="Utilites\Definitions.h" />
+    <ClInclude Include="Utilites\Hash.h" />
+    <ClInclude Include="Utilites\Helper.h" />
+    <ClInclude Include="Utilites\ShaderSlots.h" />
+    <ClInclude Include="Viewer\DepthStencil.h" />
+    <ClInclude Include="Viewer\RenderTarget.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Systems">

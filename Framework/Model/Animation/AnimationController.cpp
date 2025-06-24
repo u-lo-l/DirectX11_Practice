@@ -15,23 +15,22 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		false
 	);
 
-	const vector<D3D_SHADER_MACRO> Defines = {
-		{"THREAD_X", "32"},
-		{nullptr, nullptr}
-	};
-	AnimationBoneTransformCalculator = new HlslComputeShader(
-		L"Mesh/Animation/AnimationBoneMatrixCalc.hlsl",
-		Defines.data(),
-		"CSMain",
-		true
-	);
-	AnimationBoneTransformCalculator->SetDispatchSize(8, 1, 1);
+	// const vector<D3D_SHADER_MACRO> Defines = {
+	// 	{"THREAD_X", "32"},
+	// 	{nullptr, nullptr}
+	// };
+	// AnimationBoneTransformCalculator = new HlslComputeShader(
+	// 	L"Mesh/Animation/AnimationBoneMatrixCalc.hlsl",
+	// 	Defines.data(),
+	// 	"CSMain",
+	// 	true
+	// );
+	// AnimationBoneTransformCalculator->SetDispatchSize(8, 1, 1);
 }
 
 AnimationController::~AnimationController()
 {
-	SAFE_DELETE(AnimationBoneTransformCalculator);
-	// SAFE_DELETE(AnimationKeyFrameBlender);
+	// SAFE_DELETE(AnimationBoneTransformCalculator);
 	SAFE_DELETE(CB_AnimationData);
 }
 
@@ -58,7 +57,7 @@ void AnimationController::PlaySingleAnimationClip
 	KeyFrameTexture->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 	
-	AnimationBoneTransformCalculator->Dispatch();
+	// AnimationBoneTransformCalculator->Dispatch();
 	
 	const float NextTime = InClip->GetNextFrame(this->NormalizedPlayTime, DeltaSecond);
 	if (NextTime > 0)
@@ -103,7 +102,7 @@ void AnimationController::PlayAnimationBlendSpace1D
 	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 
-	AnimationBoneTransformCalculator->Dispatch();
+	// AnimationBoneTransformCalculator->Dispatch();
 
 	const float NextTime = InBlendSpace1D->GetNextFrame(this->NormalizedPlayTime, DeltaSecond);
 	if (NextTime > 0)
@@ -118,8 +117,8 @@ void AnimationController::PlayAnimationBlendSpace2D
 	const float ValueVertical
 )
 {
-	if (AnimationBoneTransformCalculator == nullptr)
-		return ;
+	// if (AnimationBoneTransformCalculator == nullptr)
+	// 	return ;
 	if (!InBlendSpace2D)
 		return;
 	
@@ -167,7 +166,7 @@ void AnimationController::PlayAnimationBlendSpace2D
 	AnimTexture3->BindToGPU(2, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 
-	AnimationBoneTransformCalculator->Dispatch();
+	// AnimationBoneTransformCalculator->Dispatch();
 
 	float Duration = 0.f;
 	for (int i = 0 ; i < 3 ; i++)

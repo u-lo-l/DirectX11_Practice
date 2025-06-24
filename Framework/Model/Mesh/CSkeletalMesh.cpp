@@ -1,10 +1,11 @@
 ﻿#include "framework.h"
 #include <iostream>
-#include "CSkeletalMesh.h"
+#include <fstream>
 
 CSkeletalMesh::CSkeletalMesh(const wstring& InModelName)
  : Tf(new Transform()), Skeleton(nullptr)
 {
+	this->Name = InModelName;
 	const wstring ModelPath = W_MODEL_PATH + InModelName + L".model";
 	ASSERT(Path::IsFileExist(ModelPath) == true, String::Format("%s | Not Found", ModelPath).c_str());
 
@@ -18,64 +19,32 @@ CSkeletalMesh::CSkeletalMesh(const wstring& InModelName)
 	ReadMaterial(Root);
 	ReadSubMeshesAndBones(Root);
 
-	CB_Matrix = new ConstantBuffer(
-		ShaderType::VertexShader,
-		0,
-		nullptr,
-		"Transform Matrix",
-		sizeof(WVPIDesc),
-		false
-	);
-	CB_Light = new ConstantBuffer(
-		ShaderType::VP,
-		1,
-		nullptr,
-		"Light Color, Light Direction",
-		sizeof(DirectionalLightDesc),
-		false
-	);
+	for (SkeletalMeshSubset * Subset : MeshSubsets)
+	{
+		Subset->SetSkeletal(this->Skeleton);
+		RenderManager::Get()->AddRenderable(Subset);
+	}
 }
 
 CSkeletalMesh::~CSkeletalMesh()
 {
 	SAFE_DELETE(Tf);
 	SAFE_DELETE(Skeleton);
-	SAFE_DELETE(CB_Matrix);
-	SAFE_DELETE(CB_Light);
 }
 
 void CSkeletalMesh::Tick()
 {
-	WVPIDesc MatrixData;
-	MatrixData.World = ParentTf == nullptr ? Matrix::Identity : ParentTf->GetMatrix();
-	MatrixData.World = Tf->GetMatrix() * MatrixData.World; 
-	MatrixData.View = Context::Get()->GetViewMatrix();
-	MatrixData.Projection = Context::Get()->GetProjectionMatrix();
-	MatrixData.ViewInverse = Matrix::Invert(MatrixData.View, true);
-	CB_Matrix->UpdateData(&MatrixData, sizeof(WVPIDesc));
-
-	DirectionalLightDesc LightDesc;
-	LightDesc.LightColor = Context::Get()->GetLightColor();
-	LightDesc.LightDirection = Context::Get()->GetLightDirection();
-	CB_Light->UpdateData(&LightDesc, sizeof(DirectionalLightDesc));
-	
-	for (MeshSubset * Subset : MeshSubsets)
-		Subset->Tick();
+	// TODO
 }
 
-void CSkeletalMesh::Render()
+CSkeletal* CSkeletalMesh::GetSkeletal() const
 {
-	CB_Matrix->BindToGPU(); // 0
-	CB_Light->BindToGPU();	// 1
-	Skeleton->BindToGPU(); // 2, 3
-	
-	for (MeshSubset * Subset : MeshSubsets)
-		Subset->Render();
+	return Skeleton;
 }
 
-void CSkeletalMesh::SetParentTransform(Transform* InParentTransform)
+Transform* CSkeletalMesh::GetTransform() const
 {
-	this->ParentTf = InParentTransform;
+	return Tf;
 }
 
 void CSkeletalMesh::ReadTransform(Json::Value::const_iterator::reference Root) const
@@ -91,30 +60,28 @@ void CSkeletalMesh::ReadTransform(Json::Value::const_iterator::reference Root) c
 
 void CSkeletalMesh::ReadMaterial(const Json::Value::const_iterator::reference Root)
 {
-	const wstring MaterialFileName = String::ToWString(Root["File"]["Materials"].asString());
+	const wstring MaterialFileName = String::ToWString(Root["File"]["Material"].asString());
 	const wstring FullPath = W_MATERIAL_PATH + MaterialFileName + L"/" + MaterialFileName + L".material";
 	ASSERT(Path::IsFileExist(FullPath) == true, String::Format("%s | Not Found", FullPath).c_str());
 	
-	ifstream Stream;
-	Stream.open(FullPath);
-		Json::Value MaterialRoot;
-		Stream >> MaterialRoot;
-	Stream.close();
+	Json::Value MaterialRoot;
+
+	{
+		ifstream Stream;
+		Stream.open(FullPath);
+			Stream >> MaterialRoot;
+		Stream.close();
+	}
 	
 	const Json::Value::Members Members = MaterialRoot.getMemberNames();
 	for (const Json::String & Name : Members)
 	{
-		Material<VertexType> * MatData = new Material<VertexType>();
 		Json::Value Value = MaterialRoot[Name];
-
 		if (Materials.find(Name) != Materials.cend())
 			continue;
-		
-		ReadShaderName(Value, MatData);
-		ReadColor(Value, MatData);
-		ReadTextures(Value, MatData);
-	
-		Materials[Name] = MatData;
+		string MaterialName = String::ToString(this->Name) + "_" + Name;
+		Material * Mat = new Material(Value, MaterialName, Material::Mesh);
+		Materials.insert({ Name, Mat });
 	}
 }
 
@@ -126,61 +93,14 @@ void CSkeletalMesh::ReadSubMeshesAndBones(const Json::Value::const_iterator::ref
 	
 	BinaryReader * BinReader = new BinaryReader();
 	BinReader->Open(FullPath);
-		ReadSubMeshes(BinReader);
 		vector<CBone *> Bones;
+		ReadSubMeshes(BinReader);
 		ReadSkeletalData(BinReader, Bones);
 		Skeleton = new CSkeletal(Bones);
 	BinReader->Close();
 	SAFE_DELETE(BinReader);
 }
 
-void CSkeletalMesh::ReadShaderName(const Json::Value& Value, Material<VertexType>* OutMatData, bool bUseAnimation)
-{
-	string ShaderName = Value["ShaderName"].asString();
-	if (ShaderName == "")
-		ShaderName = "Mesh/Mesh.hlsl";
-	
-	vector<D3D_SHADER_MACRO> Macros = {};
-	if(bUseAnimation)
-		Macros.push_back({"USE_ANIMATION", ""});
-	Macros.push_back({nullptr, nullptr});
-	OutMatData->SetShader(
-		String::ToWString(ShaderName),
-		Macros.data()
-	);
-}
-
-void CSkeletalMesh::ReadColor(const Json::Value& Value, Material<VertexType>* MatData)
-{
-	MatData->SetAmbient(Helper::JsonToColor(Value["Ambient"].asString()));
-	MatData->SetDiffuse(Helper::JsonToColor(Value["Diffuse"].asString()));
-	MatData->SetSpecular(Helper::JsonToColor(Value["Specular"].asString()));
-	MatData->SetEmissive(Helper::JsonToColor(Value["Emissive"].asString()));
-}
-
-void CSkeletalMesh::ReadTextures(const Json::Value& Value, Material<VertexType>* MatData)
-{
-	UINT count = Value["DiffuseMap"].size();
-	for (UINT i = 0; i < count; i++)
-	{
-		if (Value["DiffuseMap"][i].asString().size() > 0)
-			MatData->SetDiffuseMap(String::ToWString(Value["DiffuseMap"][i].asString()));
-	}
-
-	count = Value["SpecularMap"].size();
-	for (UINT i = 0; i < count; i++)
-	{
-		if (Value["SpecularMap"][i].asString().size() > 0)
-			MatData->SetSpecularMap(String::ToWString(Value["SpecularMap"][i].asString()));
-	}
-
-	count = Value["NormalMap"].size();
-	for (UINT i = 0; i < count; i++)
-	{
-		if (Value["NormalMap"][i].asString().size() > 0)
-			MatData->SetNormalMap(String::ToWString(Value["NormalMap"][i].asString()));
-	}
-}
 
 void CSkeletalMesh::ReadSubMeshes(const BinaryReader* InBinReader)
 {
@@ -189,36 +109,20 @@ void CSkeletalMesh::ReadSubMeshes(const BinaryReader* InBinReader)
 
 	for (UINT i = 0; i < MeshCount; i++)
 	{
-		vector<VertexType> Vertices;
-		vector<UINT> Indices;
-		MeshSubset::MeshSubsetDesc Desc = {};
+		SkeletalMeshSubset::MeshSubsetDesc Desc = {};
 		string MeshName = InBinReader->ReadString();
 		const string MaterialName = InBinReader->ReadString();
+		InBinReader->ReadSTDVector<VertexType>(Desc.Vertices);
+		InBinReader->ReadSTDVector<UINT>(Desc.Indices);
+		
 		if (MeshName.empty() == true)
 			Desc.Name = "Mesh #" + to_string(i) + " for " + MaterialName;
 		else
 			Desc.Name = MeshName;
-		Desc.pMaterialData = this->Materials.at(MaterialName); 
+		Desc.Material = this->Materials.at(MaterialName); 
 		
-		const UINT VertexCount = InBinReader->ReadUint();
-		if (VertexCount > 0)
-		{
-			Vertices.resize(VertexCount);
-			void * Ptr = Vertices.data();
-			InBinReader->ReadByte(&Ptr, sizeof(VertexType) * VertexCount);
-		}
-		Desc.pVertices = &Vertices;
-
-		const UINT IndexCount = InBinReader->ReadUint();
-		if (IndexCount > 0)
-		{
-			Indices.resize(IndexCount);
-			void * Ptr = Indices.data();
-			InBinReader->ReadByte(&Ptr, sizeof(UINT) * IndexCount);
-		}
-		Desc.pIndices = &Indices;
-
-		this->MeshSubsets[i] = new MeshSubset(Desc);
+		this->MeshSubsets[i] = new SkeletalMeshSubset(Desc);
+		this->MeshSubsets[i]->GetTransform()->SetParent(this->Tf);
 	}
 }
 

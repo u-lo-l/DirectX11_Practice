@@ -13,7 +13,7 @@ public:
 	~RWStructuredBuffer() override;
 	void BindToGPUAsUAV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum = 0) const;
-	void BindToGPUAsSRV(UINT SlotNum, UINT InShaderType) const;
+	void BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const;
 	void UpdateSRV();
 	void GetResult(void * OutData) const;
 	UINT GetTargetShaderType() const { return TargetShaderType; }

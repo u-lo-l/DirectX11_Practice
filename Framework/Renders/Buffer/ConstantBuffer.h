@@ -20,10 +20,19 @@ public:
 		UINT InDataSize = 0,
 		bool bStatic = false
 	);
-	~ConstantBuffer() override = default;
+	explicit ConstantBuffer(
+		ShaderType TargetShaderType,
+		int RegisterIndex = 0,
+		void * InData = nullptr,
+		UINT InDataSize = 0,
+		bool bStatic = false
+	);
+	virtual ~ConstantBuffer() override;
 
 	void UpdateData(void * InData = nullptr, UINT InDataSize = 0);
-	void BindToGPU() override;
+	virtual void BindToGPU() override;
+	void BindToGPU(int InRegisterIndex) const;
+	void BindToGPU(ShaderType TargetShader, int InRegisterIndex) const;
 	UINT GetTargetShaderType() const { return TargetShaderType; }
 private:
 	int RegisterIndex;

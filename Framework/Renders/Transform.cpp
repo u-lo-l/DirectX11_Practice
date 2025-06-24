@@ -2,11 +2,11 @@
 #include "Transform.h"
 
 Transform::Transform(Matrix * InMatrix, int InRegisterIndex)
-	: WorldTF(InMatrix)
+	: Tf(InMatrix)
 {
 	CBuffer = new ConstantBuffer
 	(
-		ShaderType::VertexShader,
+		ShaderType::ALL,
 		InRegisterIndex,
 		nullptr,
 		"WorldTransform",
@@ -26,7 +26,7 @@ Transform::Transform(Matrix * InMatrix, int InRegisterIndex)
 	{
 		bWorldTFAllocated = true;
 		RotationMat = Matrix::Identity;
-		WorldTF = new Matrix(
+		Tf = new Matrix(
 			1,0,0,0,
 			0,1,0,0,
 			0,0,1,0,
@@ -38,19 +38,20 @@ Transform::Transform(Matrix * InMatrix, int InRegisterIndex)
 Transform::~Transform()
 {
 	if (bWorldTFAllocated)
-		SAFE_DELETE(WorldTF);
+		SAFE_DELETE(Tf);
 	SAFE_DELETE(CBuffer);
 }
 
 void Transform::Tick()
 {
-	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	CBuffer->UpdateData(WorldTF, sizeof(Matrix));
+	ASSERT(!!Tf, "World Transform Not Assigned")
+	Matrix World = GetWorldMatrix();
+	CBuffer->UpdateData(&World, sizeof(Matrix));
 }
 
-void Transform::BindToGPU() const
+void Transform::BindToGPU(const int InRegisterIndex) const
 {
-	CBuffer->BindToGPU();
+	CBuffer->BindToGPU(InRegisterIndex);
 }
 
 void Transform::SetWorldPosition(const Vector& InPosition)
@@ -80,18 +81,28 @@ void Transform::SetWorldRotation(const Vector& ZYXEulerRadian)
 	SetWorldRotation(Quat);
 }
 
-
-
 void Transform::SetScale(const Vector& InScale)
 {
 	Scale = InScale;
 	UpdateMatrix();
 }
 
+Matrix Transform::GetWorldMatrix() const
+{
+	Matrix ParentWorld = (Parent == nullptr) ? Matrix::Identity : Parent->GetMatrix();
+	return ParentWorld * (*Tf);
+}
+
 Matrix Transform::GetMatrix() const
 {
-	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return *WorldTF;
+	ASSERT(!!Tf, "World Transform Not Assigned")
+	return *Tf;
+}
+
+const Matrix * Transform::GetMatrixRef() const
+{
+	ASSERT(!!Tf, "World Transform Not Assigned")
+	return Tf;
 }
 
 const Vector & Transform::GetWorldPosition() const
@@ -126,20 +137,20 @@ const Vector & Transform::GetScale() const
 
 Vector Transform::GetForward() const
 {
-	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return Vector::Normalize(WorldTF->Forward());
+	ASSERT(!!Tf, "World Transform Not Assigned")
+	return Vector::Normalize(Tf->Forward());
 }
 
 Vector Transform::GetUp() const
 {
-	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return Vector::Normalize(WorldTF->Up());
+	ASSERT(!!Tf, "World Transform Not Assigned")
+	return Vector::Normalize(Tf->Up());
 }
 
 Vector Transform::GetRight() const
 {
-	ASSERT(!!WorldTF, "World Transform Not Assigned")
-	return Vector::Normalize(WorldTF->Right());
+	ASSERT(!!Tf, "World Transform Not Assigned")
+	return Vector::Normalize(Tf->Right());
 }
 
 void Transform::AddWorldTranslation(const Vector& InTranslation)
@@ -250,8 +261,8 @@ void Transform::SetTRS(const Vector& Pos, const Quaternion& Rot, const Vector& S
 
 void Transform::UpdateMatrix()
 {
-	ASSERT(!!WorldTF, "World Transform Not Assigned")
+	ASSERT(!!Tf, "World Transform Not Assigned")
 	const Matrix Translation = Matrix::CreateTranslation(Position);
 	const Matrix Scale = Matrix::CreateScale(this->Scale);
-	*WorldTF = Scale * RotationMat * Translation;
+	*Tf = Scale * RotationMat * Translation;
 }

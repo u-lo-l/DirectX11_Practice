@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <unordered_map>
 
 class RWStructuredBuffer;
 class StructuredBuffer;
@@ -20,7 +21,7 @@ public:
 	RWStructuredBuffer* GetBoneMatrices_Buffer() const;
 	const array<Matrix, MAX_BONE_COUNT> & GetOffsetMatrices() const;
 	
-	void BindToGPU() const;
+	void BindToGPU(int OffsetMatrixCBRegister, int BoneMatrixSRVRegister) const;
 private:
 	vector<CBone *> Bones;
 	BoneSearchMapType BoneSearchMap;

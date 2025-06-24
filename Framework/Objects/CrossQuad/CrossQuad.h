@@ -7,9 +7,6 @@ public:
 	~CrossQuad();
 private:
 	using VertexType = VertexBillboard;
-	using ShaderType = HlslShader<VertexType>;
-	using MaterialType = Material<VertexType>;
-	
 public:
 	void Tick();
 	void Render() const;
@@ -22,7 +19,7 @@ private:
 	void UpdateVBuffer();
 	
 	wstring ShaderName;
-	ShaderType * CrossQuadShader = nullptr;
+	RenderingShader * CrossQuadShader = nullptr;
 	
 	Transform * WorldTF;
 

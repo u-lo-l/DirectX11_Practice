@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "Pch.h"
-#include "Model/ModelAnimation.h"
-
 
 struct MaterialData
 {
@@ -11,11 +9,13 @@ struct MaterialData
 	Color Ambient;
 	Color Diffuse;
 	Color Specular;
-	Color Emissive;
-
-	vector<string> DiffuseFiles;
-	vector<string> SpecularFiles;
-	vector<string> NormalFiles;
+	float Metallic;
+	float Roughness;
+	bool Transparent;
+	
+	string DiffuseFileName;
+	string NormalFileName;
+	string SpecularFileName;
 
 	void CollectTexturePaths(const aiMaterial * Material, aiTextureType InTextureType);
 };
@@ -33,7 +33,7 @@ struct BoneData
 
 struct MeshData
 {
-	using VertexType = ModelVertex;
+	using VertexType = SkeletalMeshVertex;
 	
 	string Name;
 

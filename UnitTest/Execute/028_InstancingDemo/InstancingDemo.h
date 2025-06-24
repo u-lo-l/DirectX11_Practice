@@ -9,7 +9,7 @@ namespace sdt
 	private:
 		struct ModelInstanceData
 		{
-			Model* Object;
+			// Model* Object;
 			Vector Scale;
 			float Height;
 		};
@@ -24,7 +24,7 @@ namespace sdt
 		void SetModelsPosition(int MaxInstanceCount = 10, float Stride = 20);
 		
 	private:
-		Model * Plane = nullptr;
+		// Model * Plane = nullptr;
 		vector<ModelInstanceData> ModelInstances;
 
 	};

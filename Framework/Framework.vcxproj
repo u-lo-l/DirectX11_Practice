@@ -16,173 +16,19 @@
     <ClCompile Include="BasicShapes\BasicShapes2D\Square2D.cpp" />
     <ClCompile Include="BasicShapes\BasicShapes2D\Triangle2D.cpp" />
     <ClCompile Include="Environment\Foliage.cpp" />
-    <ClCompile Include="Environment\LandScape\LandScape.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <EnableVectorLength>NotSet</EnableVectorLength>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>Default</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <EnablePREfast>false</EnablePREfast>
-      <OmitFramePointers>false</OmitFramePointers>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="Environment\LandScape\LandScape.cpp" />
     <ClCompile Include="Environment\LandScape\SceneryCell.cpp" />
-    <ClCompile Include="Environment\Ocean\Ocean.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <EnableVectorLength>NotSet</EnableVectorLength>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>Default</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <EnablePREfast>false</EnablePREfast>
-      <OmitFramePointers>false</OmitFramePointers>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="Environment\Ocean\Ocean.cpp" />
     <ClCompile Include="Environment\Ocean\Ocean.HeightMapGenerate.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
@@ -206,37 +52,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
       <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -280,189 +126,28 @@
     <ClCompile Include="Model\Mesh\CSkeletal.cpp" />
     <ClCompile Include="Model\Mesh\CSkeletalMesh.cpp" />
     <ClCompile Include="Model\Mesh\CStaticMesh.cpp" />
-    <ClCompile Include="Model\Mesh\MeshSubset.cpp" />
-    <ClCompile Include="Model\Model.cpp" />
-    <ClCompile Include="Model\Model.ReadFile.cpp" />
-    <ClCompile Include="Model\ModelAnimation.cpp" />
-    <ClCompile Include="Model\ModelBone.cpp" />
-    <ClCompile Include="Model\ModelMesh.cpp" />
-    <ClCompile Include="Model\SkeletalMesh.cpp" />
-    <ClCompile Include="Model\Skeleton.cpp" />
-    <ClCompile Include="Model\StaticMesh.cpp" />
+    <ClCompile Include="Model\Mesh\SkeletalMeshSubset.cpp" />
     <ClCompile Include="Objects\Billboard\Billboard.cpp" />
     <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
     <ClCompile Include="Objects\PostEffect\PostEffect.cpp" />
-    <ClCompile Include="Objects\Projector\Projector.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <EnableVectorLength>NotSet</EnableVectorLength>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>Default</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <EnablePREfast>false</EnablePREfast>
-      <OmitFramePointers>false</OmitFramePointers>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="Objects\Projector\Projector.cpp" />
     <ClCompile Include="Objects\Shadow\Shadow.cpp" />
     <ClCompile Include="ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="ParticleSystem\ParticleSystem.ReadFile.cpp" />
     <ClCompile Include="Renders\Buffer\BufferBase.cpp" />
     <ClCompile Include="Renders\Buffer\CircularVertexBuffer.cpp" />
     <ClCompile Include="Renders\Buffer\ComputeShaderResource.cpp" />
-    <ClCompile Include="Renders\Buffer\IndexBuffer.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>Default</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <EnablePREfast>false</EnablePREfast>
-      <OmitFramePointers>false</OmitFramePointers>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
+    <ClCompile Include="Renders\Buffer\IndexBuffer.cpp" />
     <ClCompile Include="Renders\Buffer\RawBuffer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
@@ -485,37 +170,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
       <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -538,10 +223,10 @@
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
@@ -564,37 +249,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
       <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -615,10 +300,10 @@
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
@@ -641,37 +326,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
       <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -691,20 +376,19 @@
     <ClCompile Include="Renders\Projector\Orthographic.cpp" />
     <ClCompile Include="Renders\Projector\Perspective.cpp" />
     <ClCompile Include="Renders\Projector\Projection.cpp" />
-    <ClCompile Include="Renders\RWTexture2D.cpp" />
-    <ClCompile Include="Renders\RWTexture2DArray.cpp" />
-    <ClCompile Include="Renders\Shader\HlslComputeShader.cpp" />
-    <ClCompile Include="Renders\Shader\HlslShader.hpp">
+    <ClCompile Include="Renders\Renderable\ARenderable.cpp" />
+    <ClCompile Include="Renders\Renderable\RenderManager.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
@@ -715,6 +399,7 @@
       <EnableFuzzer>false</EnableFuzzer>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
       <FloatingPointModel>Precise</FloatingPointModel>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <GenerateModuleDependencies>false</GenerateModuleDependencies>
@@ -726,37 +411,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
       <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -768,20 +453,416 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="Renders\Shader\Hlsl2DTextureShader.cpp" />
+    <ClCompile Include="Renders\RWTexture2D.cpp" />
+    <ClCompile Include="Renders\RWTexture2DArray.cpp" />
+    <ClCompile Include="Renders\Shader\ComputeShader.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
+    <ClCompile Include="Renders\Shader\Material.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
+    <ClCompile Include="Renders\Shader\RenderingShader.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
+    <ClCompile Include="Renders\Shader\ShaderBase.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
+    <ClCompile Include="Renders\Shader\ShaderManager.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableVectorLength>NotSet</EnableVectorLength>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <OmitFramePointers>false</OmitFramePointers>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
     <ClCompile Include="Renders\Shader\VertexLayout.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
       <SupportJustMyCode>true</SupportJustMyCode>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</AssemblerListingLocation>
+      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</BrowseInformationFile>
+      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
@@ -804,37 +885,37 @@
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ModuleOutputFile>
+      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
+      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
       <OmitDefaultLibName>false</OmitDefaultLibName>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</ObjectFileName>
+      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
       <CallingConvention>Cdecl</CallingConvention>
       <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</SourceDependenciesFile>
+      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <SmallerTypeCheck>false</SmallerTypeCheck>
       <SpectreMitigation>false</SpectreMitigation>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\Framework.tlog\</TrackerLogDirectory>
+      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
       <TranslateIncludes>false</TranslateIncludes>
       <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
       <TreatWarningAsError>false</TreatWarningAsError>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Debug_Framework\</XMLDocumentationFileName>
+      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <IntelJCCErratum>false</IntelJCCErratum>
       <BuildStlModules>false</BuildStlModules>
@@ -884,9 +965,7 @@
     <ClInclude Include="Environment\Ocean\Ocean.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
-    <ClInclude Include="Environment\Weather\WeatherStructure.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
-    <ClInclude Include="Ligthing\LigthtingStruct.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Frustum.h" />
@@ -911,14 +990,7 @@
     <ClInclude Include="Model\Mesh\CSkeletal.h" />
     <ClInclude Include="Model\Mesh\CSkeletalMesh.h" />
     <ClInclude Include="Model\Mesh\CStaticMesh.h" />
-    <ClInclude Include="Model\Mesh\MeshSubset.h" />
-    <ClInclude Include="Model\Model.h" />
-    <ClInclude Include="Model\ModelAnimation.h" />
-    <ClInclude Include="Model\ModelBone.h" />
-    <ClInclude Include="Model\SubMesh.h" />
-    <ClInclude Include="Model\SkeletalMesh.h" />
-    <ClInclude Include="Model\Skeleton.h" />
-    <ClInclude Include="Model\StaticMesh.h" />
+    <ClInclude Include="Model\Mesh\SkeletalMeshSubset.h" />
     <ClInclude Include="Objects\Billboard\Billboard.h" />
     <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
     <ClInclude Include="Objects\PostEffect\PostEffect.h" />
@@ -938,20 +1010,29 @@
     <ClInclude Include="Renders\Buffer\VertexBuffer.h" />
     <ClInclude Include="Renders\Context.h" />
     <ClInclude Include="Renders\ConstantDataBinder.h" />
-    <ClInclude Include="Renders\Material.h" />
     <ClInclude Include="Renders\Projector\Orthographic.h" />
     <ClInclude Include="Renders\Projector\Perspective.h" />
     <ClInclude Include="Renders\Projector\Projection.h" />
+    <ClInclude Include="Renders\Renderable\ARenderable.h" />
+    <ClInclude Include="Renders\Renderable\RenderManager.h" />
     <ClInclude Include="Renders\RWTexture2D.h" />
     <ClInclude Include="Renders\RWTexture2DArray.h" />
-    <ClInclude Include="Renders\Shader\HlslComputeShader.h" />
-    <ClInclude Include="Renders\Shader\HlslShader.h" />
-    <ClInclude Include="Renders\Shader\Hlsl2DTextureShader.h" />
+    <ClInclude Include="Renders\Shader\ComputeShader.h" />
+    <ClInclude Include="Renders\Shader\Material.h" />
+    <ClInclude Include="Renders\Shader\RenderingShader.h" />
+    <ClInclude Include="Renders\Shader\ShaderBase.h" />
+    <ClInclude Include="Renders\Shader\ShaderManager.h" />
     <ClInclude Include="Renders\Shader\VertexLayout.h" />
     <ClInclude Include="Renders\Texture.h" />
     <ClInclude Include="Renders\TextureArray.h" />
     <ClInclude Include="Renders\Transform.h" />
     <ClInclude Include="Renders\ViewPort\ViewPort.h" />
+    <ClInclude Include="Structures\D3DResource.h" />
+    <ClInclude Include="Structures\KeyFrameAnimation.h" />
+    <ClInclude Include="Structures\Ligthting.h" />
+    <ClInclude Include="Structures\Shader.h" />
+    <ClInclude Include="Structures\Structures.h" />
+    <ClInclude Include="Structures\Weather.h" />
     <ClInclude Include="Systems\D3D.h" />
     <ClInclude Include="Systems\Gui.h" />
     <ClInclude Include="Systems\IExecutable.h" />
@@ -966,13 +1047,9 @@
     <ClInclude Include="Utilites\Path.h" />
     <ClInclude Include="Utilites\ShaderSlots.h" />
     <ClInclude Include="Utilites\String.h" />
-    <ClInclude Include="Utilites\Structures.h" />
     <ClInclude Include="Viewer\Camera.h" />
     <ClInclude Include="Viewer\DepthStencil.h" />
     <ClInclude Include="Viewer\RenderTarget.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Structures\" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -1009,7 +1086,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(SolutionDir)\Debug\Debug_$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)Debug\$(ProjectName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>

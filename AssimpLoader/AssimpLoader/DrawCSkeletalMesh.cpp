@@ -1,6 +1,5 @@
 ﻿#include "Pch.h"
 #include "DrawCSkeletalMesh.h"
-
 #include "Model/Character.h"
 #include "Model/Animation/AnimationClip.h"
 
@@ -20,7 +19,6 @@ void DrawCSkeletalMesh::Initialize()
 	AnimationClip * Run_R = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_R", true);
 	AnimationClip * Run_L = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_L", true);
 	AnimationClip * RollFront = new AnimationClip(Adam->GetSkeleton(), L"Adam/RollFront", true);
-	
 
 	{
 		// Adam->AddAnimationClip("RollFront", RollFront);
@@ -75,5 +73,5 @@ void DrawCSkeletalMesh::Tick()
 
 void DrawCSkeletalMesh::Render()
 {
-	Adam->Render();
+	// Adam->Render();
 }

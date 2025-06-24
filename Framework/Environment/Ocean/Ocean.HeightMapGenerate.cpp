@@ -9,66 +9,67 @@
 
 void Ocean::SetupComputeShaders()
 {
-	constexpr UINT TextureThreadGroupSize = 32;
-	const UINT TextureDispatchSize = TextureSize / TextureThreadGroupSize;
-	const string TextureThreadGroupSizeStr = std::to_string(TextureThreadGroupSize);
-
-	const string FFTSizeStr = to_string(TextureSize);
-	const string FFTThreadGroupLengthStr = to_string(TextureSize / 2);
-	const string FFTLogN = to_string(log2(TextureSize));
-
-	const vector<D3D_SHADER_MACRO> TextureShaderMacros = {
-		{"THREAD_X", TextureThreadGroupSizeStr.c_str()},
-		{"THREAD_Y", TextureThreadGroupSizeStr.c_str()},
-		{nullptr, }
-	};
-
-	const vector<D3D_SHADER_MACRO> FFTShaderMacros = {
-		{"FFT_SIZE", FFTSizeStr.c_str()},
-		{"THREAD_GROUP_SIZE", FFTThreadGroupLengthStr.c_str()},
-		{"LOG_N", FFTLogN.c_str()},
-		{nullptr, }
-	};
-	// Init Spectrum
-	CS_SpectrumInitializer = new HlslComputeShader(
-		L"Ocean/Compute/PhilipsSpectrum.Initialize.hlsl",
-		TextureShaderMacros.data()
-	);
-	CS_SpectrumInitializer->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , 1);
-
-	// Update
-	CS_SpectrumUpdater = new HlslComputeShader(
-		L"Ocean/Compute/PhilipsSpectrum.Update.hlsl",
-		TextureShaderMacros.data()
-	);
-	CS_SpectrumUpdater->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , 1);
-
-	// Transpose
-	CS_Transpose = new HlslComputeShader(
-		L"Ocean/Compute/TransposeTextureArray.hlsl",
-		TextureShaderMacros.data()
-	);
-	CS_Transpose->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
-
-	// RowPass
-	CS_RowPassIFFT = new HlslComputeShader(
-		L"Ocean/Compute/WaveIFFT_RowPass.hlsl",
-		FFTShaderMacros.data()
-	);
-	CS_RowPassIFFT->SetDispatchSize(TextureSize, 1 , (UINT)SpectrumTextureType::MAX);
-
-	// ColPass
-	CS_ColPassIFFT = new HlslComputeShader(
-		L"Ocean/Compute/WaveIFFT_ColPass.hlsl",
-		FFTShaderMacros.data()
-	);
-	CS_ColPassIFFT->SetDispatchSize(TextureSize, 1 , (UINT)SpectrumTextureType::MAX);
-
-	CS_SimulateFoam = new HlslComputeShader(
-		L"Ocean/Compute/WaveFoamSimulation.hlsl",
-		TextureShaderMacros.data()
-	);
-	CS_SimulateFoam->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
+	// TODO : 
+	// constexpr UINT TextureThreadGroupSize = 32;
+	// const UINT TextureDispatchSize = TextureSize / TextureThreadGroupSize;
+	// const string TextureThreadGroupSizeStr = std::to_string(TextureThreadGroupSize);
+	//
+	// const string FFTSizeStr = to_string(TextureSize);
+	// const string FFTThreadGroupLengthStr = to_string(TextureSize / 2);
+	// const string FFTLogN = to_string(log2(TextureSize));
+	//
+	// const vector<D3D_SHADER_MACRO> TextureShaderMacros = {
+	// 	{"THREAD_X", TextureThreadGroupSizeStr.c_str()},
+	// 	{"THREAD_Y", TextureThreadGroupSizeStr.c_str()},
+	// 	{nullptr, }
+	// };
+	//
+	// const vector<D3D_SHADER_MACRO> FFTShaderMacros = {
+	// 	{"FFT_SIZE", FFTSizeStr.c_str()},
+	// 	{"THREAD_GROUP_SIZE", FFTThreadGroupLengthStr.c_str()},
+	// 	{"LOG_N", FFTLogN.c_str()},
+	// 	{nullptr, }
+	// };
+	// // Init Spectrum
+	// CS_SpectrumInitializer = new HlslComputeShader(
+	// 	L"Ocean/Compute/PhilipsSpectrum.Initialize.hlsl",
+	// 	TextureShaderMacros.data()
+	// );
+	// CS_SpectrumInitializer->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , 1);
+	//
+	// // Update
+	// CS_SpectrumUpdater = new HlslComputeShader(
+	// 	L"Ocean/Compute/PhilipsSpectrum.Update.hlsl",
+	// 	TextureShaderMacros.data()
+	// );
+	// CS_SpectrumUpdater->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , 1);
+	//
+	// // Transpose
+	// CS_Transpose = new HlslComputeShader(
+	// 	L"Ocean/Compute/TransposeTextureArray.hlsl",
+	// 	TextureShaderMacros.data()
+	// );
+	// CS_Transpose->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
+	//
+	// // RowPass
+	// CS_RowPassIFFT = new HlslComputeShader(
+	// 	L"Ocean/Compute/WaveIFFT_RowPass.hlsl",
+	// 	FFTShaderMacros.data()
+	// );
+	// CS_RowPassIFFT->SetDispatchSize(TextureSize, 1 , (UINT)SpectrumTextureType::MAX);
+	//
+	// // ColPass
+	// CS_ColPassIFFT = new HlslComputeShader(
+	// 	L"Ocean/Compute/WaveIFFT_ColPass.hlsl",
+	// 	FFTShaderMacros.data()
+	// );
+	// CS_ColPassIFFT->SetDispatchSize(TextureSize, 1 , (UINT)SpectrumTextureType::MAX);
+	//
+	// CS_SimulateFoam = new HlslComputeShader(
+	// 	L"Ocean/Compute/WaveFoamSimulation.hlsl",
+	// 	TextureShaderMacros.data()
+	// );
+	// CS_SimulateFoam->SetDispatchSize(TextureDispatchSize, TextureDispatchSize , (UINT)SpectrumTextureType::MAX);
 }
 
 void Ocean::SetupComputeResources()
@@ -210,7 +211,8 @@ void Ocean::FoamSimulation() const
 	CB_Foam->BindToGPU();
 	DisplacementMap->BindToGPUAsSRV(0);
 	FoamGrid->BindToGPUAsUAV(0);
-	CS_SimulateFoam->CreateSamplerState_Linear_Wrap();
+	// TODO :
+	// CS_SimulateFoam->CreateSamplerState_Linear_Wrap();
 	CS_SimulateFoam->Dispatch();
 	FoamGrid->UpdateSRV();
 }

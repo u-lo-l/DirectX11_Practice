@@ -1,9 +1,6 @@
 // ReSharper disable CppInconsistentNaming
 #pragma once
 
-constexpr int VertexSlot = 0;
-constexpr int InstancingSlot = 9;
-
 enum ShaderSlot : uint32_t
 {
 	VS_World = 0,

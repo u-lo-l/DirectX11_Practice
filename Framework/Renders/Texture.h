@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Structures/Shader.h"
 
 class Texture
 {
@@ -10,7 +11,7 @@ public:
 	explicit Texture(ID3D11ShaderResourceView * InSRV, const D3D11_TEXTURE2D_DESC & Desc);
 	~Texture();
 public:
-	void BindToGPU(UINT SlotNum = 0, UINT InShaderType = (UINT)ShaderType::PixelShader) const;
+	void BindToGPU(UINT SlotNum = 0, UINT InShaderType = (UINT)(ShaderType::PixelShader)) const;
 	UINT GetWidth() const { return TexMeta.width; }
 	UINT GetHeight() const { return TexMeta.height; }
 

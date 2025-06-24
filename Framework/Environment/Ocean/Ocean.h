@@ -141,13 +141,13 @@ private:
 	ConstantBuffer * CB_Transpose = nullptr;
 	ConstantBuffer * CB_Foam = nullptr;
 	// Shaders
-	HlslComputeShader * CS_SpectrumInitializer = nullptr;
-	HlslComputeShader * CS_SpectrumUpdater = nullptr;
-	HlslComputeShader * CS_RowPassIFFT = nullptr;
-	HlslComputeShader * CS_Transpose = nullptr;
-	HlslComputeShader * CS_ColPassIFFT = nullptr;
+	ComputeShader * CS_SpectrumInitializer = nullptr;
+	ComputeShader * CS_SpectrumUpdater = nullptr;
+	ComputeShader * CS_RowPassIFFT = nullptr;
+	ComputeShader * CS_Transpose = nullptr;
+	ComputeShader * CS_ColPassIFFT = nullptr;
 
-	HlslComputeShader * CS_SimulateFoam= nullptr;
+	ComputeShader * CS_SimulateFoam= nullptr;
 #pragma endregion Compute
 
 #pragma region Render
@@ -180,8 +180,8 @@ private:
 	const Texture * TerrainHeightMap = nullptr;
 	Texture * PerlinNoise = nullptr;
 	// Shader
-	HlslShader<VertexType> * OceanRenderer = nullptr;
-	HlslShader<CellVertexType> * CellBoundaryRenderer = nullptr;
+	RenderingShader * OceanRenderer = nullptr;
+	RenderingShader * CellBoundaryRenderer = nullptr;
 #pragma endregion Render
 };
 

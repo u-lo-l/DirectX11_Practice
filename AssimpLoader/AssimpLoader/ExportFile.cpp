@@ -1,8 +1,8 @@
 ﻿#include "Pch.h"
 #include <fstream>
 #include "ExportFile.h"
-#include "Converter2/MeshConverter.h"
-#include "Converter2/AnimationConverter.h"
+#include "Converter/MeshConverter.h"
+#include "Converter/AnimationConverter.h"
 
 namespace sdt
 {
@@ -14,7 +14,6 @@ namespace sdt
 	// const string ShaderForAnim = "Lighting/43_Instancing_Model_Animation_Lighting.hlsl";
 	// const string ShaderForNonAnim = "Lighting/43_Instancing_Model_Lighting.hlsl";
 
-	const string ShaderForModel = "Model/Model.hlsl";
 
 	ExportFile::ExportFile()
 	{
@@ -27,6 +26,8 @@ namespace sdt
 
 	void ExportFile::Initialize()
 	{
+		const string ShaderForModel = "SkeletalMesh";
+		ASSERT(ShaderManager::Get()->IsValidRenderingShaderName(ShaderForModel) == true, "ShaderName Not Valid");
 		ExportMeshes({L"Adam/Adam.fbx", L"Kachujin/Kachujin.fbx"});
 		ExportAnimations({
 			L"Adam/RollFront.fbx",
@@ -42,7 +43,7 @@ namespace sdt
 		});
 	}
 
-	void ExportFile::ExportMeshes(const vector<wstring>& FBXFileNames)
+	void ExportFile::ExportMeshes(const vector<wstring> & FBXFileNames)
 	{
 		MeshConverter * meshConverter = new MeshConverter();
 		for (const wstring & fileName : FBXFileNames)

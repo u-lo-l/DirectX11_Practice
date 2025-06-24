@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Shader/ComputeShader.h"
 
 class RWTexture2DArray
 {

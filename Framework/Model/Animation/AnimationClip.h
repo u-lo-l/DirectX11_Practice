@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "AnimationController.h"
 
 class AnimationClip
 {
@@ -10,6 +9,8 @@ private:
 	// 	DirectX::PackedVector::XMHALF4 Rotation;
 	// 	DirectX::PackedVector::XMHALF4 Scale;
 	// };
+
+	
 	struct TRSDesc
 	{
 		Vector Translation;

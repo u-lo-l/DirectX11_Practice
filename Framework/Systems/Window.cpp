@@ -21,6 +21,8 @@ WPARAM Window::Run(IExecutable * InMain)
 	sdt::SystemTimer::Create();
 	Context::Create();
 	LightingManager::Create();
+	ShaderManager::Create();
+	RenderManager::Create();
 
 	Window::GameThread = new std::thread(RunGameLogic);
 	Window::PhysicsThread = new std::thread(RunPhysics);
@@ -176,24 +178,25 @@ void Window::MainRender()
 	Context::Get()->Tick();				//
 	LightingManager::Get()->Tick();
 	Main->Tick();						// Main에 Push된 IExecutable들 실행
-
-	{
-		Main->PreRender();
-	}
+	RenderManager::Get()->Tick();
 	
+	// {
+	// 	Main->PreRender();
+	// }
 	{
 		D3D::Get()->SetRenderTarget();
 		D3D::Get()->ClearRenderTargetView(D3D::GetDesc().Background);
 		D3D::Get()->ClearDepthStencilView();
 		LightingManager::Get()->Render();
 		Context::Get()->Render();
-		Main->Render();
+		// Main->Render();
+		RenderManager::Get()->Render();
 	}
-	
-	{
-		Main->PostRender();
-	}
+	// {
+	// 	Main->PostRender();
+	// }
 	Gui::Get()->Render();
+
 	D3D::Get()->Present();
 }
 
