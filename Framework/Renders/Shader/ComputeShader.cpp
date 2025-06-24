@@ -10,8 +10,12 @@ ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
 	Desc.ShaderFileName = W_SHADER_PATH + Desc.ShaderFileName;
 	const wstring ShaderDirectory = Path::GetDirectoryName(Desc.ShaderFileName);
 	Desc.PreCompiledShaderFileDirectory = ShaderDirectory + L"PreCompiled/";
-
+	
 	LoadShader();
+	
+	Pass.DispatchX = InDesc.DispatchX;
+	Pass.DispatchY = InDesc.DispatchY;
+	Pass.DispatchZ = InDesc.DispatchZ;
 	
 	for ( const auto & Item : Desc.SamplerStateNames)
 	{
@@ -26,6 +30,7 @@ ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
 
 ComputeShader::~ComputeShader()
 {
+	SAFE_RELEASE(Pass.Shader);
 }
 
 void ComputeShader::Dispatch() const
@@ -36,7 +41,7 @@ void ComputeShader::Dispatch() const
 void ComputeShader::LoadShader()
 {
 	ID3DBlob * ShaderBlob;
-	const wstring PreCompiledFilePath = Desc.PreCompiledShaderFileDirectory + L"_" + GetEntryPoint() + L".cso";
+	const wstring PreCompiledFilePath = Desc.PreCompiledShaderFileDirectory +  Path::GetFileNameWithoutExtension(Desc.ShaderFileName) + L"_" + GetEntryPoint() + L".cso";
 	
 	if (Path::IsDirectoryExist(Desc.PreCompiledShaderFileDirectory) == false)
 		Path::CreateFolders(Desc.PreCompiledShaderFileDirectory);

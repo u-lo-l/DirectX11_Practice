@@ -29,8 +29,9 @@ RWStructuredBuffer::~RWStructuredBuffer()
 
 void RWStructuredBuffer::BindToGPUAsUAV(UINT SlotNum) const
 {
-	if (!!UAV)
-		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(SlotNum,1,&UAV,nullptr);
+	if (!UAV)
+		return;
+	D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(SlotNum, 1, &UAV,nullptr);
 }
 
 void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum) const
@@ -38,10 +39,9 @@ void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum) const
 	if (!SRV)
 		return ;
 	D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &SRV);
-
 }
 
-void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const
+void RWStructuredBuffer::BindToGPUAsSRV(const UINT SlotNum, const ShaderType InShaderType) const
 {
 	if (!SRV)
 		return ;

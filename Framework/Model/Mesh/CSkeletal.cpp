@@ -81,8 +81,6 @@ void CSkeletal::BindToGPU(int OffsetMatrixCBRegister, int BoneMatrixSRVRegister)
 {
 	if (!!SB_BoneMatrices)
 	{
-		array<Matrix, MAX_BONE_COUNT> AnimBoneMatrix;
-		SB_BoneMatrices->GetResult(AnimBoneMatrix.data());
 		SB_BoneMatrices->BindToGPUAsSRV(BoneMatrixSRVRegister, ShaderType::VertexShader);
 	}
 	if (!!CB_OffsetMatrices)

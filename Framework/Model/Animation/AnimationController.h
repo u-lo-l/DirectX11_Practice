@@ -38,7 +38,7 @@ public:
 
 	void SetCurrentAnimation(AnimationClip * Clip);
 	void SetCurrentBlendSpace(AnimationBlendSpace1D * BlendSpace1D);
-	void SetCurrentBlendSpace(AnimationBlendSpace2D* BlendSpace1D);
+	void SetCurrentBlendSpace(AnimationBlendSpace2D * BlendSpace2D);
 
 private:
 	static AnimationInfoDesc GetInfo(const AnimationClip * Clip, float InNormalizedPlayTime);
@@ -46,14 +46,18 @@ private:
 	float NormalizedPlayTime = 0.0f;
 	
 	Animation_ConstantDesc Animation_ConstantData;
+	// TODO : unique_ptr
 	ConstantBuffer * CB_AnimationData;
-
-	//TODO :
-	// HlslComputeShader * AnimationBoneTransformCalculator = nullptr;
+	// TODO : unique_ptr
+	ComputeShader * KeyFrameAnimationCalculator = nullptr;
 	map<string, AnimationClip *> AnimationClips;
 
+	// TODO : shared_ptr
 	CSkeletal * TargetSkeletal = nullptr;
+	// TODO : shared_ptr
 	AnimationClip * CurrentAnimation = nullptr;
+	// TODO : shared_ptr
 	AnimationBlendSpace1D * CurrentBlendSpace = nullptr;
+	// TODO : shared_ptr
 	AnimationBlendSpace2D * CurrentBlendSpace2D = nullptr;
 };

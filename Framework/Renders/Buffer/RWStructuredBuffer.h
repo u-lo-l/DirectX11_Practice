@@ -10,7 +10,7 @@ public:
 		UINT InCount = 0,
 		UINT InStride = 0
 	);
-	~RWStructuredBuffer() override;
+	virtual ~RWStructuredBuffer() override;
 	void BindToGPUAsUAV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const;
@@ -21,7 +21,7 @@ public:
 private:
 	void CreateUAV();
 	void CreateResultBuffer();
-	void BindToGPU() override;
+	virtual void BindToGPU() override;
 	int RegisterIndex;
 	UINT DataSize = 0;
 	bool bIsStatic = false;

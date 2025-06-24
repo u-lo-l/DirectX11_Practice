@@ -7,7 +7,9 @@
 
 #include "../../ComputeShader/Transform.hlsl"
 
-Texture2D<float4> Anim[3] : register(t0);
+Texture2D<float4> Anim0 : register(t0);
+Texture2D<float4> Anim1 : register(t1);
+Texture2D<float4> Anim2 : register(t2);
 
 RWStructuredBuffer<BoneMatrix_t> BoneMatrices : register(u0);
 
@@ -26,22 +28,33 @@ cbuffer CB_Info : register(b0)
 [numthreads(THREAD_X, 1, 1)]
 void CSMain(uint3 DTid : SV_DISPATCHTHREADID)
 {
+	const uint BoneIndex = DTid.x;
 	BoneTRS_t TRS[3];
 
-	const uint BoneIndex = DTid.x;
 	uint StructCount, StructStride;
 	BoneMatrices.GetDimensions(StructCount, StructStride);
 	[flatten]
 	if (BoneIndex >= StructCount)
 		return ;
 
-	[unroll]
-	for (int i = 0 ; i < 3 ; i++)
-	{
-		TRS[i] = GetInterpolatedBoneTRS(
-			Anim[i], BoneIndex, AnimData[i].CurrentFrame, AnimData[i].NextFrame, AnimData[i].LerpRate
-		);
-	}
+	// [unroll]
+	// for (int i = 0 ; i < 3 ; i++)
+	// {
+	// 	TRS[i] = GetInterpolatedBoneTRS(
+	// 		Anim[i], BoneIndex, AnimData[i].CurrentFrame, AnimData[i].NextFrame, AnimData[i].LerpRate
+	// 	);
+	// }
+
+	TRS[0] = GetInterpolatedBoneTRS(
+		Anim0, BoneIndex, AnimData[0].CurrentFrame, AnimData[0].NextFrame, AnimData[0].LerpRate
+	);
+	TRS[1] = GetInterpolatedBoneTRS(
+		Anim1, BoneIndex, AnimData[1].CurrentFrame, AnimData[1].NextFrame, AnimData[1].LerpRate
+	);
+	TRS[2] = GetInterpolatedBoneTRS(
+		Anim2, BoneIndex, AnimData[2].CurrentFrame, AnimData[2].NextFrame, AnimData[2].LerpRate
+	);
+
 	BoneMatrices[BoneIndex].M = ToMatrix(
 		barycentric(TRS[0], TRS[1], TRS[2], AnimData[0].Weight, AnimData[1].Weight, AnimData[2].Weight)
 	);

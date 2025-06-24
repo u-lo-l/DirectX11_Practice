@@ -7,7 +7,7 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 	ASSERT(!!TargetSkeletal, "Skeleton Not Valid");
 
 	CB_AnimationData = new ConstantBuffer(
-		static_cast<UINT>(ShaderType::ComputeShader),
+		ShaderType::ComputeShader,
 		0,
 		nullptr,
 		"",
@@ -15,22 +15,26 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		false
 	);
 
-	// const vector<D3D_SHADER_MACRO> Defines = {
-	// 	{"THREAD_X", "32"},
-	// 	{nullptr, nullptr}
-	// };
-	// AnimationBoneTransformCalculator = new HlslComputeShader(
-	// 	L"Mesh/Animation/AnimationBoneMatrixCalc.hlsl",
-	// 	Defines.data(),
-	// 	"CSMain",
-	// 	true
-	// );
-	// AnimationBoneTransformCalculator->SetDispatchSize(8, 1, 1);
+	const vector<D3D_SHADER_MACRO> Defines = {
+		{"THREAD_X", "32"},
+		{nullptr, nullptr}
+	};
+	ComputeShaderDesc Desc = {
+		"KeyFrameAnimationCalculator",
+		L"Mesh/Animation/AnimationBoneMatrixCalc.hlsl",
+		L"",
+		Defines.data(),
+		L"CSMain",
+		32, 1, 1,
+		{},
+		true
+	};
+	KeyFrameAnimationCalculator = new ComputeShader(Desc);
 }
 
 AnimationController::~AnimationController()
 {
-	// SAFE_DELETE(AnimationBoneTransformCalculator);
+	SAFE_DELETE(KeyFrameAnimationCalculator);
 	SAFE_DELETE(CB_AnimationData);
 }
 
@@ -57,7 +61,7 @@ void AnimationController::PlaySingleAnimationClip
 	KeyFrameTexture->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 	
-	// AnimationBoneTransformCalculator->Dispatch();
+	KeyFrameAnimationCalculator->Dispatch();
 	
 	const float NextTime = InClip->GetNextFrame(this->NormalizedPlayTime, DeltaSecond);
 	if (NextTime > 0)
@@ -102,7 +106,7 @@ void AnimationController::PlayAnimationBlendSpace1D
 	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 
-	// AnimationBoneTransformCalculator->Dispatch();
+	KeyFrameAnimationCalculator->Dispatch();
 
 	const float NextTime = InBlendSpace1D->GetNextFrame(this->NormalizedPlayTime, DeltaSecond);
 	if (NextTime > 0)
@@ -117,9 +121,9 @@ void AnimationController::PlayAnimationBlendSpace2D
 	const float ValueVertical
 )
 {
-	// if (AnimationBoneTransformCalculator == nullptr)
-	// 	return ;
-	if (!InBlendSpace2D)
+	if (KeyFrameAnimationCalculator == nullptr)
+		return ;
+	if (InBlendSpace2D == nullptr)
 		return;
 	
 	array<const AnimationClip *, 3> SampleClips;
@@ -152,6 +156,8 @@ void AnimationController::PlayAnimationBlendSpace2D
 		{255, 50, 50, 255},
 		"Anim 3 : %s (%.3f)", SampleClips[2]->GetName().c_str(), Weights[2]
 	);
+
+	
 	Animation_ConstantData = Animation_ConstantDesc(Anim1PlayingInfos, Weights);
 	CB_AnimationData->UpdateData(&Animation_ConstantData, sizeof(Animation_ConstantDesc));
 
@@ -164,9 +170,14 @@ void AnimationController::PlayAnimationBlendSpace2D
 	AnimTexture1->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	AnimTexture3->BindToGPU(2, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
-	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 
-	// AnimationBoneTransformCalculator->Dispatch();
+	static bool b = false;
+	ImGui::Checkbox("Bone", &b);
+	if (b)
+	{
+		SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
+		KeyFrameAnimationCalculator->Dispatch();
+	}
 
 	float Duration = 0.f;
 	for (int i = 0 ; i < 3 ; i++)
@@ -183,7 +194,7 @@ void AnimationController::UpdateAnimationFrameData(float DeltaSecond)
 void AnimationController::Tick()
 {
 	const float DeltaSecond = sdt::SystemTimer::Get()->GetDeltaTime();
-	UpdateAnimationFrameData(DeltaSecond);
+	// UpdateAnimationFrameData(DeltaSecond);
 	if (!!CurrentAnimation)
 	{
 		ImGui::Begin(String::Format("AnimationClip Player %s", CurrentAnimation->GetName().c_str()).c_str());
@@ -228,8 +239,9 @@ void AnimationController::Tick()
 		ImGui::SliderFloat("Forward Speed", &VerticalSpeed, -4, 4);
 		ImGui::SliderFloat("Rightward Speed", &HorizontalSpeed, -4, 4);
 		
-		PlayAnimationBlendSpace2D(CurrentBlendSpace2D, DeltaSecond, HorizontalSpeed, VerticalSpeed);
 		ImGui::End();
+	
+		PlayAnimationBlendSpace2D(CurrentBlendSpace2D, DeltaSecond, HorizontalSpeed, VerticalSpeed);
 		return ;
 	}
 }
