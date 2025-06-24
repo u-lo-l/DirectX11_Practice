@@ -19,12 +19,10 @@ void DrawCSkeletalMesh::Initialize()
 	AnimationClip * Run_R = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_R", true);
 	AnimationClip * Run_L = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Run_L", true);
 	AnimationClip * RollFront = new AnimationClip(Adam->GetSkeleton(), L"Adam/RollFront", true);
-
 	{
 		// Adam->AddAnimationClip("RollFront", RollFront);
-		// Adam->AddAnimationClip("Walk", Walk);
+		// Adam->AddAnimationClip("Walk", Walk_F);
 	}
-
 	{
 		// AnimationBlendSpace1D * BS_Locomotion = new AnimationBlendSpace1D(
 		//	Adam->GetSkeleton(),
@@ -37,7 +35,6 @@ void DrawCSkeletalMesh::Initialize()
 		// BS_Locomotion->SetWrapped(false);
 		// Adam->GetAnimationController()->SetCurrentBlendSpace(BS_Locomotion);
 	}
-
 	{
 		AnimationBlendSpace2D * BS_Locomotion = new AnimationBlendSpace2D(
 			Adam->GetSkeleton(),

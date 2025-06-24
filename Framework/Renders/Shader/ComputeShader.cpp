@@ -33,9 +33,34 @@ ComputeShader::~ComputeShader()
 	SAFE_RELEASE(Pass.Shader);
 }
 
+void ComputeShader::SetPass() const
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	DeviceContext->CSSetShader(this->Pass.Shader, nullptr, 0);
+	for ( const auto & Pair : Pass.SamplerStates)
+	{
+		const int & RegisterIndex = Pair.first;
+		ID3D11SamplerState * Sampler = Pair.second.SamplerState;
+		DeviceContext->CSSetSamplers(RegisterIndex, 0, &Sampler);
+	}
+}
+
+void ComputeShader::ClearPass()
+{
+	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
+	
+	ID3D11ShaderResourceView * NullSRV = nullptr;
+	DeviceContext->CSSetShaderResources(0, 1, &NullSRV);
+	ID3D11UnorderedAccessView * NullUAV = nullptr;
+	DeviceContext->CSSetUnorderedAccessViews(0,1, &NullUAV, nullptr);
+	DeviceContext->CSSetShader(nullptr, nullptr, 0);
+}
+
 void ComputeShader::Dispatch() const
 {
+	SetPass();
 	D3D::Get()->GetDeviceContext()->Dispatch(Pass.DispatchX, Pass.DispatchY, Pass.DispatchZ);
+	ClearPass();
 }
 
 void ComputeShader::LoadShader()

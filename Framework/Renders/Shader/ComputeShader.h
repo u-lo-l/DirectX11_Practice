@@ -30,6 +30,8 @@ class ComputeShader : public ShaderBase
 public:
 	explicit ComputeShader(const ComputeShaderDesc & InDesc);
 	virtual ~ComputeShader() override;
+	void SetPass() const;
+	static void ClearPass();
 	void Dispatch() const;
 
 private:

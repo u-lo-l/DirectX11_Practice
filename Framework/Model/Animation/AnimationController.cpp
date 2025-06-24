@@ -171,13 +171,8 @@ void AnimationController::PlayAnimationBlendSpace2D
 	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 	AnimTexture3->BindToGPU(2, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
 
-	static bool b = false;
-	ImGui::Checkbox("Bone", &b);
-	if (b)
-	{
-		SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
-		KeyFrameAnimationCalculator->Dispatch();
-	}
+	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
+	KeyFrameAnimationCalculator->Dispatch();
 
 	float Duration = 0.f;
 	for (int i = 0 ; i < 3 ; i++)
@@ -239,9 +234,8 @@ void AnimationController::Tick()
 		ImGui::SliderFloat("Forward Speed", &VerticalSpeed, -4, 4);
 		ImGui::SliderFloat("Rightward Speed", &HorizontalSpeed, -4, 4);
 		
-		ImGui::End();
-	
 		PlayAnimationBlendSpace2D(CurrentBlendSpace2D, DeltaSecond, HorizontalSpeed, VerticalSpeed);
+		ImGui::End();
 		return ;
 	}
 }

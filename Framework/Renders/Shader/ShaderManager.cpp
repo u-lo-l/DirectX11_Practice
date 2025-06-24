@@ -261,8 +261,9 @@ void ShaderManager::InitDepthStencilStates()
 
 	{
 		memset(&DepthStencilDesc, 0, sizeof(DepthStencilDesc));
-		DepthStencilDesc.DepthEnable = false;
-		DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		DepthStencilDesc.DepthEnable = true;
+		DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 		DepthStencilDesc.StencilEnable = false;
 
 		CHECK(SUCCEEDED(Device->CreateDepthStencilState(&DepthStencilDesc, &Default)));
@@ -270,8 +271,9 @@ void ShaderManager::InitDepthStencilStates()
 	
 	{
 		memset(&DepthStencilDesc, 0, sizeof(DepthStencilDesc));
-		DepthStencilDesc.DepthEnable = false;
+		DepthStencilDesc.DepthEnable = true;
 		DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 		DepthStencilDesc.StencilEnable = false;
 
 		CHECK(SUCCEEDED(Device->CreateDepthStencilState(&DepthStencilDesc, &Particle)));
@@ -313,7 +315,7 @@ void ShaderManager::InitBlendStates()
 		BlendDesc.IndependentBlendEnable = false;
 	
 		BlendDesc.RenderTarget[0].BlendEnable = true;
-		BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 		BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 		BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;

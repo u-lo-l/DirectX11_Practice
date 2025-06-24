@@ -55,7 +55,6 @@ void Context::Render() const
 		ImGui::TextColored({255, 255, 255, 255},  "Resolution : %d x %d", (int)D3D::GetDesc().WindowWidth, (int)D3D::GetDesc().WindowHeight);
 	ImGui::End();
 
-#if defined(DISPLAY_DEBUG)
 	ImGui::Begin("Camera Settings");
 		const Vector & CamPos = MainCamera->GetPosition();
 		const Vector & CamRot = MainCamera->GetEulerAngleInDegree();
@@ -85,7 +84,6 @@ void Context::Render() const
 		Planes[5].GetEquation(a,b,c,d);
 		ImGui::TextColored({255, 255, 122, 255}, "ViewFrustum Bottom : %+4.3f, %+4.3f, %+4.3f, %+4.3f", a,b,c,d);
 	ImGui::End();
-#endif
 }
 
 void Context::ResizeScreen()

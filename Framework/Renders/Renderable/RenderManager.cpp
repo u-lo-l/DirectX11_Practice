@@ -119,7 +119,6 @@ void RenderManager::AddRenderable(const ARenderable* InRenderable)
 
 void RenderManager::Tick()
 {
-#if defined(DISPLAY_DEBUG)
 	ImGui::Begin("Render Manager");
 	ImGui::Text("Render Queue Size : %d", GetRenderQueueSize());
 	ImGui::Text("Renderables Count : %d", RenderableCount);
@@ -139,7 +138,7 @@ void RenderManager::Tick()
 		}
 	}
 	ImGui::End();
-#endif
+	
 	if (!!CB_PerFrame)
 	{
 		CB_PerFrameData = {

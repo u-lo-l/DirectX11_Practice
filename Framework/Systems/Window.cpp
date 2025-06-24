@@ -189,6 +189,7 @@ void Window::MainRender()
 		D3D::Get()->ClearDepthStencilView();
 		LightingManager::Get()->Render();
 		Context::Get()->Render();
+		Main->Render();
 		RenderManager::Get()->Render();
 	}
 	// {
