@@ -206,6 +206,10 @@ void RenderingShader::SetPass(int PassIndex) const
 		if (Type & ShaderType::PixelShader)
 			DeviceContext->PSSetSamplers(RegisterIndex, 0, &Sampler);
 	}
+	if (!!Pass.RasterizerState)
+	{
+		DeviceContext->RSSetState(Pass.RasterizerState);
+	}
 }
 
 void RenderingShader::ClearPass()

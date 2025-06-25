@@ -4,6 +4,14 @@ class RenderingShader;
 
 class Material
 {
+private:
+	static constexpr UINT bUseNormalTexture = 1 << 0;
+	static constexpr UINT bUseDiffuseTexture = 1 << 1;
+	static constexpr UINT bUseSpecularTexture = 1 << 2;
+	static constexpr UINT bUseShininessTexture = 1 << 3;
+	static constexpr UINT bUseAlbedoTexture = 1 << 3;
+	static constexpr UINT bUseMetallicTexture = 1 << 4;
+	static constexpr UINT bUseRoughnessTexture = 1 << 5;
 public:
 	static constexpr UINT TexturePerSurface = 1;
 	enum MaterialType
@@ -27,8 +35,9 @@ private:
 		Color Diffuse = {1.0f,1.0f, 1.0f,0};
 		Color Specular = {0,0,0,0};
 		float Metallic = 0.0f;
-		float Roughness = 1.f;
-		float Padding[2];
+		float Glossiness = 1.f;
+		UINT TextureUsageFlag = 0;
+		float Padding;
 	};
 public:
 	Material(const Json::Value & InValue, const string& InMaterialName, MaterialType InMaterialType);
@@ -60,7 +69,13 @@ private:
 	
 	bool bDirty = false;
 	ConstantBuffer * CB_MaterialInfo = nullptr;
-	Texture * DiffuseTex = nullptr;
-	Texture * NormalMap = nullptr;
-	Texture * SpecularMap = nullptr;
+	Texture * NormalMap = nullptr;	// 0
+	Texture * DiffuseTex = nullptr; // 1
+	Texture * SpecularMap = nullptr; // 2
+	Texture * ShininessMap = nullptr; // 3
+
+	Texture * AlbedoMap = nullptr; // 4
+	Texture * MetallicMap = nullptr; // 5
+	Texture * RoughnessMap = nullptr; // 6
+
 };

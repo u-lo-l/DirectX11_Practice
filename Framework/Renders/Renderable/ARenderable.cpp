@@ -89,8 +89,9 @@ const RenderingShader* ARenderable::GetShader() const
 	return Shader;
 }
 
-void ARenderable::Render(const RenderingShader * InShader) const
+void ARenderable::Render(const RenderingShader * InShader, int & DrawCallCount) const
 {
 	BindResources();
 	RenderingShader::Draw(VBuffer, IBuffer, InstBuffer);
+	DrawCallCount++;
 }

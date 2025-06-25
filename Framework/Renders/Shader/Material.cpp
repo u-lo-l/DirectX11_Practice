@@ -30,7 +30,7 @@ Material::Material
 	this->MaterialInfo.Specular =
 		Helper::JsonToColor(InValue["Specular"].asString());
 	this->MaterialInfo.Metallic = stof(InValue["Metallic"].asString());
-	this->MaterialInfo.Roughness = stof(InValue["Roughness"].asString());
+	this->MaterialInfo.Glossiness = stof(InValue["Roughness"].asString());
 	this->bTransparent = static_cast<bool>(stoi(InValue["Transparent"].asString()));
 	
 	// Read Textures
@@ -39,16 +39,43 @@ Material::Material
 	if (TexturePath.empty() == false)
 	{
 		this->DiffuseTex = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseDiffuseTexture;
 	}
 	TexturePath = String::ToWString(InValue["SpecularMap"].asString()); 
 	if (TexturePath.empty() == false)
 	{
 		this->SpecularMap = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseSpecularTexture;
 	}
 	TexturePath = String::ToWString(InValue["NormalMap"].asString()); 
 	if (TexturePath.empty() == false)
 	{
 		this->NormalMap = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseNormalTexture;
+	}
+	TexturePath = String::ToWString(InValue["ShininessMap"].asString()); 
+	if (TexturePath.empty() == false)
+	{
+		this->ShininessMap = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseShininessTexture;
+	}
+	TexturePath = String::ToWString(InValue["AlbedoMap"].asString()); 
+	if (TexturePath.empty() == false)
+	{
+		this->AlbedoMap = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseAlbedoTexture;
+	}
+	TexturePath = String::ToWString(InValue["MetallicMap"].asString()); 
+	if (TexturePath.empty() == false)
+	{
+		this->MetallicMap = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseMetallicTexture;
+	}
+	TexturePath = String::ToWString(InValue["RoughnessMap"].asString()); 
+	if (TexturePath.empty() == false)
+	{
+		this->RoughnessMap = new Texture(TexturePath, true);
+		this->MaterialInfo.TextureUsageFlag |= bUseRoughnessTexture;
 	}
 	
 	CB_MaterialInfo = new ConstantBuffer(
@@ -78,12 +105,23 @@ void Material::Tick()
 
 void Material::BindToGpu(int RegisterIndex) const
 {
-	if (DiffuseTex != nullptr)
-		DiffuseTex->BindToGPU(0);
 	if (NormalMap != nullptr)
-		NormalMap->BindToGPU(1);
+		NormalMap->BindToGPU(0);
+	
+	if (DiffuseTex != nullptr)
+		DiffuseTex->BindToGPU(1);
 	if (SpecularMap != nullptr)
 		SpecularMap->BindToGPU(2);
+	if (ShininessMap != nullptr)
+		ShininessMap->BindToGPU(3);
+
+	if (AlbedoMap != nullptr)
+		AlbedoMap->BindToGPU(4);
+	if (MetallicMap != nullptr)
+		MetallicMap->BindToGPU(5);
+	if (RoughnessMap != nullptr)
+		RoughnessMap->BindToGPU(6);
+	
 	if (CB_MaterialInfo != nullptr)
 		CB_MaterialInfo->BindToGPU(RegisterIndex);
 }
@@ -110,7 +148,7 @@ void Material::SetMetallic(float InMetallic)
 
 void Material::SetRoughness(float InRoughness)
 {
-	MaterialInfo.Roughness = InRoughness;
+	MaterialInfo.Glossiness = InRoughness;
 }
 
 void Material::SetDiffuseMap(const wstring& InFilePath)

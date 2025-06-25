@@ -5,7 +5,7 @@
 class SkeletalMeshSubset final : public ARenderable
 {
 private:
-	using VertexType = SkeletalMeshVertex;
+	using VertexType = VertexSkeletalMesh;
 public:
 	struct MeshSubsetDesc
 	{

@@ -81,8 +81,21 @@ const vector<D3D11_INPUT_ELEMENT_DESC> &  VertexTextureNormal::GetVertexInputLay
 	return InputLayoutElements;
 }
 
-// float3 Position, float2 UV, float4 Color, float3 Normal, float3 Tangent, float4 Indices, float4 Weights;
-const vector<D3D11_INPUT_ELEMENT_DESC> & SkeletalMeshVertex::GetVertexInputLayoutElements()
+const vector<D3D11_INPUT_ELEMENT_DESC>& VertexStaticMesh::GetVertexInputLayoutElements()
+{
+	static vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements
+{
+	INPUT_ELEMENT_VERTEX_FLOAT3("POSITION"),
+	INPUT_ELEMENT_VERTEX_FLOAT2("UV"),
+	INPUT_ELEMENT_VERTEX_FLOAT4("COLOR"),
+	INPUT_ELEMENT_VERTEX_FLOAT3("NORMAL"),
+	INPUT_ELEMENT_VERTEX_FLOAT3("TANGENT"),
+	INPUT_ELEMENT_INSTANCE_MATRIX
+};
+	return InputLayoutElements;
+}
+
+const vector<D3D11_INPUT_ELEMENT_DESC> & VertexSkeletalMesh::GetVertexInputLayoutElements()
 {
 	static vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements
 	{
@@ -93,7 +106,6 @@ const vector<D3D11_INPUT_ELEMENT_DESC> & SkeletalMeshVertex::GetVertexInputLayou
 		INPUT_ELEMENT_VERTEX_FLOAT3("TANGENT"),
 		INPUT_ELEMENT_VERTEX_FLOAT4("BLENDINDICES"),
 		INPUT_ELEMENT_VERTEX_FLOAT4("BLENDWEIGHTS"),
-		INPUT_ELEMENT_INSTANCE_MATRIX
 	};
 	return InputLayoutElements;
 }

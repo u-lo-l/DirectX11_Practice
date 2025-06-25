@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "CBone.h"
-#include "Renders/Renderable/ARenderable.h"
 
 class CSkeletal;
 class SkeletalMeshSubset;
@@ -8,7 +7,7 @@ class SkeletalMeshSubset;
 //일단 No Instancing
 class CSkeletalMesh 
 {
-	using VertexType = SkeletalMeshVertex;
+	using VertexType = VertexSkeletalMesh;
 public:
 	// InMeshNames : Adam/Mesh/Adam.mesh
 	explicit CSkeletalMesh(const wstring & InModelName);

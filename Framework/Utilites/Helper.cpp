@@ -35,3 +35,12 @@ Quaternion Helper::JsonToQuaternion(const string & InJsonString)
 	
 	return Quaternion(stof(v[0]), stof(v[1]), stof(v[2]), stof(v[3]));
 }
+
+Vector Helper::ConvertRhZUpNormalToLhYUp(const Vector& InNormal)
+{
+	Vector Normal;
+	Normal.X = InNormal.X;
+	Normal.Y = InNormal.Z;
+	Normal.Z = -InNormal.Y;
+	return Normal;
+}

@@ -16,8 +16,6 @@ struct Vertex
 	explicit Vertex(const Vector & Position)
 	: Position(Position) {}
 	Vector Position;
-	
-
 };
 
 //---------------------------------------------------------------------------//
@@ -34,8 +32,6 @@ struct VertexColor
 	, Color(Color.R, Color.G, Color.B, Color.A) {}
 	Vector Position;
 	Color Color;
-	
-
 };
 
 //---------------------------------------------------------------------------//
@@ -52,8 +48,6 @@ struct VertexTexture
 		, UV(UV) {}
 	Vector Position;
 	Vector2D UV;
-	
-
 };
 
 //---------------------------------------------------------------------------//
@@ -75,8 +69,6 @@ struct VertexTextureColor
 	Vector Position;
 	Vector2D UV;
 	Color Color;
-	
-
 };
 
 //---------------------------------------------------------------------------//
@@ -91,8 +83,6 @@ struct VertexNormal
 		: Position(Position), Normal(Normal) {}
 	Vector Position;
 	Vector Normal;
-	
-
 };
 
 //---------------------------------------------------------------------------//
@@ -108,13 +98,23 @@ struct VertexTextureNormal
 	Vector Position;
 	Vector2D UV;
 	Vector Normal;
-	
-
 };
 
 //---------------------------------------------------------------------------//
 
-typedef struct VertexTextureColorNormalTangentBlend
+struct VertexStaticMesh
+{
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
+	Vector Position;
+	Vector2D UV;
+	Color Color;
+	Vector Normal;
+	Vector Tangent;
+};
+
+//---------------------------------------------------------------------------//
+
+struct VertexSkeletalMesh
 {
 	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 	Vector Position;
@@ -124,9 +124,7 @@ typedef struct VertexTextureColorNormalTangentBlend
 	Vector Tangent;
 	Vector4 Indices {0, };
 	Vector4 Weights {0, };
-
-
-} SkeletalMeshVertex;
+};
 
 //---------------------------------------------------------------------------//
 
@@ -142,8 +140,6 @@ struct VertexBillboard
 	Vector Position;
 	Vector2D Scale;
 	UINT MapIndex;
-
-
 };
 
 //---------------------------------------------------------------------------//
@@ -160,8 +156,6 @@ struct VertexPrecipitation
 	Vector Position;
 	Vector2D Scale;
 	Vector2D Random;
-
-
 };
 
 //---------------------------------------------------------------------------//

@@ -156,7 +156,6 @@ void AnimationController::PlayAnimationBlendSpace2D
 		{255, 50, 50, 255},
 		"Anim 3 : %s (%.3f)", SampleClips[2]->GetName().c_str(), Weights[2]
 	);
-
 	
 	Animation_ConstantData = Animation_ConstantDesc(Anim1PlayingInfos, Weights);
 	CB_AnimationData->UpdateData(&Animation_ConstantData, sizeof(Animation_ConstantDesc));
@@ -192,9 +191,13 @@ void AnimationController::Tick()
 	// UpdateAnimationFrameData(DeltaSecond);
 	if (!!CurrentAnimation)
 	{
+		#ifdef DISPLAY_IMGUI_DEBUG_INFO
 		ImGui::Begin(String::Format("AnimationClip Player %s", CurrentAnimation->GetName().c_str()).c_str());
+		#endif
 		PlaySingleAnimationClip(CurrentAnimation, DeltaSecond);
+		#ifdef DISPLAY_IMGUI_DEBUG_INFO
 		ImGui::End();
+		#endif
 		return ;
 	}
 	if (!!CurrentBlendSpace)
@@ -278,4 +281,3 @@ AnimationController::AnimationInfoDesc AnimationController::GetInfo(const Animat
 		CurrentPlayTime
 	};
 }
-

@@ -289,6 +289,8 @@ void ShaderManager::InitBlendStates()
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 
 	ID3D11BlendState * Opaque;
+	ID3D11BlendState * Transparent;
+	ID3D11BlendState * Discard;
 	ID3D11BlendState * Additive;
 	ID3D11BlendState * AlphaCoverage;
 	D3D11_BLEND_DESC BlendDesc = {};
@@ -309,6 +311,36 @@ void ShaderManager::InitBlendStates()
 		CHECK(SUCCEEDED(Device->CreateBlendState(&BlendDesc, &Opaque)));
 	}
 
+	{
+		memset(&BlendDesc, 0, sizeof(BlendDesc));
+		BlendDesc.AlphaToCoverageEnable = true;
+		BlendDesc.IndependentBlendEnable = false;
+	
+		BlendDesc.RenderTarget[0].BlendEnable = true;
+		BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		CHECK(SUCCEEDED(Device->CreateBlendState(&BlendDesc, &Transparent)));
+	}
+	{
+		memset(&BlendDesc, 0, sizeof(BlendDesc));
+		BlendDesc.AlphaToCoverageEnable = false;
+		BlendDesc.IndependentBlendEnable = false;
+	
+		BlendDesc.RenderTarget[0].BlendEnable = true;
+		BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		CHECK(SUCCEEDED(Device->CreateBlendState(&BlendDesc, &Discard)));
+	}
 	{
 		memset(&BlendDesc, 0, sizeof(BlendDesc));
 		BlendDesc.AlphaToCoverageEnable = false;
@@ -342,6 +374,8 @@ void ShaderManager::InitBlendStates()
 	}
 	
 	Instance->AddBlendState("Opaque", Opaque);
+	Instance->AddBlendState("Transparent", Transparent);
+	Instance->AddBlendState("Discard", Discard);
 	Instance->AddBlendState("Additive", Additive);
 	Instance->AddBlendState("AlphaCoverage", AlphaCoverage);
 }
@@ -358,10 +392,9 @@ void ShaderManager::InitRasterizerStates()
 	ID3D11RasterizerState * Solid_NoCull;
 	ID3D11RasterizerState * Solid_CCW;
 
-	D3D11_RASTERIZER_DESC RasterizerDesc;
 	
+	D3D11_RASTERIZER_DESC RasterizerDesc;
 	{
-		memset(&RasterizerDesc, 0, sizeof(RasterizerDesc));
 		RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 		RasterizerDesc.CullMode = D3D11_CULL_BACK;
 		RasterizerDesc.FrontCounterClockwise = false;
@@ -373,15 +406,12 @@ void ShaderManager::InitRasterizerStates()
 		RasterizerDesc.MultisampleEnable = false;
 		RasterizerDesc.AntialiasedLineEnable = false;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame)));
-
 		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame_CullFront)));
 		RasterizerDesc.CullMode = D3D11_CULL_NONE;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame_NoCull)));
 	}
-
 	{
-		memset(&RasterizerDesc, 0, sizeof(RasterizerDesc));
 		RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 		RasterizerDesc.CullMode = D3D11_CULL_BACK;
 		RasterizerDesc.FrontCounterClockwise = false;
@@ -396,9 +426,11 @@ void ShaderManager::InitRasterizerStates()
 
 		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_CullFront)));
+
 		RasterizerDesc.CullMode = D3D11_CULL_NONE;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_NoCull)));
-		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
+
+		RasterizerDesc.CullMode = D3D11_CULL_BACK;
 		RasterizerDesc.FrontCounterClockwise = true;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_CCW)));
 	}
@@ -430,13 +462,27 @@ void ShaderManager::InitShaders()
 	RenderingShaderDesc Desc;
 	{
 		Desc.ShaderName = "SkeletalMesh";
-		Desc.ShaderFileName = L"Mesh/Mesh.hlsl";
-		Desc.pInputLayoutElements = &(SkeletalMeshVertex::GetVertexInputLayoutElements());
+		Desc.ShaderFileName = L"Mesh/SkeletalMesh.hlsl";
+		Desc.pInputLayoutElements = &(VertexSkeletalMesh::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		Desc.ShaderMacros = nullptr;
 		Desc.TargetShaderType = ShaderType::VP;
 		Desc.RasterizerStateName = "Solid";
-		Desc.BlendStateName = "Opaque";
+		Desc.BlendStateName = "Discard";
+		Desc.DepthStencilStateName = "Default";
+		Desc.SamplerStateNames.push_back({0, ShaderType::PixelShader, "Anisotropic_Wrap"});
+		Desc.bForceRecompile = true;
+		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
+	}
+	{
+		Desc.ShaderName = "StaticMesh";
+		Desc.ShaderFileName = L"Mesh/StaticMesh.hlsl";
+		Desc.pInputLayoutElements = &(VertexStaticMesh::GetVertexInputLayoutElements());
+		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		Desc.ShaderMacros = nullptr;
+		Desc.TargetShaderType = ShaderType::VP;
+		Desc.RasterizerStateName = "Solid";
+		Desc.BlendStateName = "Transparent";
 		Desc.DepthStencilStateName = "Default";
 		Desc.SamplerStateNames.push_back({0, ShaderType::PixelShader, "Linear_Wrap"});
 		Desc.bForceRecompile = true;
@@ -449,7 +495,7 @@ void ShaderManager::InitShaders()
 		};
 		Desc.ShaderName = "Terrain";
 		Desc.ShaderFileName = L"Terrain/TerrainCell.hlsl";
-		Desc.pInputLayoutElements = &(SkeletalMeshVertex::GetVertexInputLayoutElements());
+		Desc.pInputLayoutElements = &(VertexSkeletalMesh::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		Desc.ShaderMacros = Defines.data();
 		Desc.TargetShaderType = ShaderType::VHDP;
@@ -460,9 +506,6 @@ void ShaderManager::InitShaders()
 		Desc.SamplerStateNames.push_back({1, ShaderType::VDP, "Anisotropic_Wrap"});
 		Desc.bForceRecompile = true;
 		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
-	}
-	{
-		// Sprite
 	}
 	{
 		// Foliage

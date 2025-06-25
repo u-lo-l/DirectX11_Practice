@@ -6,9 +6,11 @@
 void DrawCSkeletalMesh::Initialize()
 {
 	Context::Get()->GetCamera()->SetPosition(0, 10, -20);
-	// Context::Get()->GetCamera()->SetRotation({0, Math::Pi, 0});
 	Adam = new Character();
 	Adam->SetSkeletalMesh(L"Adam");
+
+	// return ;
+
 	AnimationClip * Idle = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Stop", true);
 	AnimationClip * Walk_F = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Walk_F", true);
 	AnimationClip * Walk_B = new AnimationClip(Adam->GetSkeleton(), L"Adam/Locomotion/Walk_B", true);
@@ -65,7 +67,8 @@ void DrawCSkeletalMesh::Destroy()
 
 void DrawCSkeletalMesh::Tick()
 {
-	Adam->Tick();
+	if (!!Adam)
+		Adam->Tick();
 }
 
 void DrawCSkeletalMesh::Render()

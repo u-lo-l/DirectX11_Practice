@@ -9,7 +9,7 @@ public :
 	explicit MaterialBatch(const Material * InMaterial);
 	void AddRenderable(const ARenderable * InRenderable);
 	void Tick();
-	void Render(const RenderingShader * InShader) const;
+	void Render(const RenderingShader* InShader, int& DrawCallCount) const;
 	const Material * GetMaterial() const { return Mat; }
 	size_t GetRenderableCount() const { return Elements.size(); }
 	const vector<const ARenderable *> & GetElements() const { return Elements; }
@@ -34,7 +34,7 @@ public:
 	explicit ShaderBatch(const Material * InMaterial);
 	void AddRenderable(const ARenderable * InRenderable);
 	void Tick();
-	void Render() const;
+	void Render(int& DrawCallCount) const;
 	size_t GetMaterialBatchCount() const { return Batches.size(); }
 	const vector<MaterialBatch *> & GetBatches() const { return Batches; }
 private:
@@ -51,7 +51,7 @@ public:
 	static RenderManager * Get();
 	void AddRenderable(const ARenderable * InRenderable);
 	void Tick();
-	void Render() const;
+	void Render();
 	size_t GetRenderQueueSize() const { return RenderQueue.size(); }
 	const vector<ShaderBatch *> & GetRenderQueue() const { return RenderQueue; }
 private:
@@ -67,8 +67,6 @@ private:
 
 	struct CB_PerFrameDesc
 	{
-		Matrix View;
-		Matrix Projection;
 		Matrix ViewProjection;
 		Vector CameraPosition;
 		float Padding1;
@@ -79,4 +77,5 @@ private:
 	
 	ConstantBuffer * CB_PerFrame = nullptr;
 	StructuredBuffer * SB_PerFrame = nullptr;
+	int DrawCallCount = 0;
 };

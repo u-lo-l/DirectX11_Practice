@@ -5,8 +5,9 @@
       "DiffuseMap" : "../_Models/Adam/Textures/Ch08_1001_Diffuse.png",
       "Metallic" : "0.000000",
       "NormalMap" : "../_Models/Adam/Textures/Ch08_1001_Normal.png",
-      "Roughness" : "0.000000",
+      "Roughness" : "0.552786",
       "ShaderName" : "SkeletalMesh",
+      "ShininessMap" : "../_Models/Adam/Textures/Ch08_1001_Glossiness.png",
       "Specular" : "0.500000,0.500000,0.500000,20.000000",
       "SpecularMap" : "../_Models/Adam/Textures/Ch08_1001_Specular.png",
       "Transparent" : "0"
@@ -17,8 +18,9 @@
       "DiffuseMap" : "../_Models/Adam/Textures/Ch08_1002_Diffuse.png",
       "Metallic" : "0.000000",
       "NormalMap" : "../_Models/Adam/Textures/Ch08_1002_Normal.png",
-      "Roughness" : "0.000000",
+      "Roughness" : "0.552786",
       "ShaderName" : "SkeletalMesh",
+      "ShininessMap" : "../_Models/Adam/Textures/Ch08_1002_Glossiness.png",
       "Specular" : "0.500000,0.500000,0.500000,20.000000",
       "SpecularMap" : "../_Models/Adam/Textures/Ch08_1002_Specular.png",
       "Transparent" : "0"
@@ -28,7 +30,7 @@
       "Diffuse" : "0.800000,0.800000,0.800000,1.000000",
       "DiffuseMap" : "../_Models/Adam/Textures/Ch08_1003_Diffuse.png",
       "Metallic" : "0.000000",
-      "Roughness" : "0.000000",
+      "Roughness" : "0.552786",
       "ShaderName" : "SkeletalMesh",
       "Specular" : "0.000000,0.000000,0.000000,20.000000",
       "Transparent" : "0"

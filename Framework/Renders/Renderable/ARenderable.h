@@ -11,7 +11,7 @@ public:
 	virtual ~ARenderable();
 	Transform * GetTransform() const { return Tf; }
 	void Tick() const;
-	void Render(const RenderingShader * InShader) const;
+	void Render(const RenderingShader* InShader, int& DrawCallCount) const;
 	
 	void CreateVertexBuffer(void * InData, int InCount, int InStride);
 	void CreateIndexBuffer(UINT* InData, int InCount);

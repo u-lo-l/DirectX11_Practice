@@ -127,6 +127,7 @@
     <ClCompile Include="Model\Mesh\CSkeletalMesh.cpp" />
     <ClCompile Include="Model\Mesh\CStaticMesh.cpp" />
     <ClCompile Include="Model\Mesh\SkeletalMeshSubset.cpp" />
+    <ClCompile Include="Model\Mesh\StaticMeshSubset.cpp" />
     <ClCompile Include="Objects\Billboard\Billboard.cpp" />
     <ClCompile Include="Objects\CrossQuad\CrossQuad.cpp" />
     <ClCompile Include="Objects\PostEffect\PostEffect.cpp" />
@@ -991,6 +992,7 @@
     <ClInclude Include="Model\Mesh\CSkeletalMesh.h" />
     <ClInclude Include="Model\Mesh\CStaticMesh.h" />
     <ClInclude Include="Model\Mesh\SkeletalMeshSubset.h" />
+    <ClInclude Include="Model\Mesh\StaticMeshSubset.h" />
     <ClInclude Include="Objects\Billboard\Billboard.h" />
     <ClInclude Include="Objects\CrossQuad\CrossQuad.h" />
     <ClInclude Include="Objects\PostEffect\PostEffect.h" />

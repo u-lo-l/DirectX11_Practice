@@ -14,7 +14,6 @@ namespace sdt
 	// const string ShaderForAnim = "Lighting/43_Instancing_Model_Animation_Lighting.hlsl";
 	// const string ShaderForNonAnim = "Lighting/43_Instancing_Model_Lighting.hlsl";
 
-
 	ExportFile::ExportFile()
 	{
 		bTickable = false;
@@ -28,7 +27,7 @@ namespace sdt
 	{
 		const string ShaderForModel = "SkeletalMesh";
 		ASSERT(ShaderManager::Get()->IsValidRenderingShaderName(ShaderForModel) == true, "ShaderName Not Valid");
-		ExportMeshes({L"Adam/Adam.fbx", L"Kachujin/Kachujin.fbx"});
+		ExportMeshes({L"Adam/Adam.fbx", L"Cylinder/Cylinder.fbx", L"Cube/Cube.fbx"});
 		ExportAnimations({
 			L"Adam/RollFront.fbx",
 			L"Adam/Locomotion/Stop.fbx",

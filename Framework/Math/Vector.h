@@ -12,10 +12,12 @@ public:
 	explicit Vector(float value);
 	Vector(float x, float y, float z);
 	Vector(const Vector& v);
+	// ReSharper disable once CppNonExplicitConvertingConstructor
 	Vector(const DirectX::PackedVector::XMHALF4 & Other);
 	Vector& operator=(const Vector& v);
+	// ReSharper disable once CppNonExplicitConvertingConstructor
+	Vector(const aiVector3D & v);
 
-	explicit Vector(const aiVector3D & v);
 	
 	Vector operator -() const;
 
@@ -72,7 +74,7 @@ public:
 
 	static float Dot( const Vector & value1, const Vector & value2);
 	static Vector Normalize( const Vector & value);
-
+	
 	static Vector Cross( const Vector & vector1, const Vector & vector2);
 	static Vector Reflect( const Vector & vector, const Vector & normal);
 

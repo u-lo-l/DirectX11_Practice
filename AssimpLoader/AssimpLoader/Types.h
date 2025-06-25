@@ -13,9 +13,15 @@ struct MaterialData
 	float Roughness;
 	bool Transparent;
 	
-	string DiffuseFileName;
 	string NormalFileName;
+	
+	string DiffuseFileName;
 	string SpecularFileName;
+	string ShininessFileName;
+
+	string AlbedoFileName;
+	string MetallicFileName;
+	string RoughnessFileName;
 
 	void CollectTexturePaths(const aiMaterial * Material, aiTextureType InTextureType);
 };
@@ -33,7 +39,7 @@ struct BoneData
 
 struct MeshData
 {
-	using VertexType = SkeletalMeshVertex;
+	using VertexType = VertexSkeletalMesh;
 	
 	string Name;
 

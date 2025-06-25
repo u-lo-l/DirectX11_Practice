@@ -1,4 +1,5 @@
-﻿#include "Pch.h"
+﻿// ReSharper disable CppClangTidyBugproneBranchClone
+#include "Pch.h"
 #include "MeshConverter.h"
 
 #include <fstream>
@@ -12,16 +13,15 @@ MeshConverter::~MeshConverter() = default;
 void MeshConverter::ReadAiScene(const wstring& InFileName)
 {
 	const string Path = ASSET_PATH + String::ToString(InFileName);
-	const aiScene * Scene = Importer->ReadFile(
-		Path.c_str(),
-		ConvertFlag
-	);
+	const aiScene * Scene = Importer->ReadFile(Path.c_str(),ConvertFlag);
 	ASSERT(!!Scene, Importer->GetErrorString());
+
+	ParseMetaData(InFileName, Scene);
 
 	ExportMaterial(InFileName, Scene);
 	ExportMesh(InFileName, Scene);
 	ExportAsset(Path::GetFileNameWithoutExtension(InFileName));
-	
+
 	Importer->FreeScene();
 }
 
@@ -104,37 +104,39 @@ void MeshConverter::ReadMaterial(const aiScene * Scene, vector<MaterialData*> & 
 		OutMaterialData[i]->ShaderName = "SkeletalMesh";
 
 		aiColor4D color;
-		Material->Get(AI_MATKEY_COLOR_AMBIENT, color);
-		OutMaterialData[i]->Ambient = Color(color.r, color.g, color.b, color.a);
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_COLOR_AMBIENT, color))
+			OutMaterialData[i]->Ambient = Color(color.r, color.g, color.b, color.a);
 		
-		Material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-		OutMaterialData[i]->Diffuse = Color(color.r, color.g, color.b, color.a);
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
+			OutMaterialData[i]->Diffuse = Color(color.r, color.g, color.b, color.a);
 		
 		float shininess = 0.0f;
-		Material->Get(AI_MATKEY_SHININESS, shininess);
-		Material->Get(AI_MATKEY_COLOR_SPECULAR, color);
-		OutMaterialData[i]->Specular = Color(color.r, color.g, color.b, shininess);
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_SHININESS, shininess))
+			OutMaterialData[i]->Specular.A = shininess;
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_COLOR_SPECULAR, color))
+			OutMaterialData[i]->Specular = Color(color.r, color.g, color.b, OutMaterialData[i]->Specular.A);
+
+		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_NORMALS);
 		
 		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_DIFFUSE);
 		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_SPECULAR);
-		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_NORMALS);
+		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_SHININESS);
 
-		float Metallic;
-		Material->Get(AI_MATKEY_METALLIC_FACTOR, Metallic);
+		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_BASE_COLOR);
+		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_METALNESS);
+		OutMaterialData[i]->CollectTexturePaths(Material, aiTextureType_DIFFUSE_ROUGHNESS);
 		
+		float Metallic;
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_METALLIC_FACTOR, Metallic))
+			OutMaterialData[i]->Metallic = Metallic;
+		
+		float Roughness;
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_ROUGHNESS_FACTOR, Roughness))
+			OutMaterialData[i]->Roughness = Roughness;
 		
 		float Opacity = 1.0f;
-		if (Material->Get(AI_MATKEY_OPACITY, Opacity) == AI_SUCCESS)
-		{
-			if (Opacity < 1.0f)
-			{
-				// TODO : Set Material Transparent
-			}
-			else
-			{
-				// TODO : Set Material Opaque
-			}
-		}
+		if (AI_SUCCESS == Material->Get(AI_MATKEY_OPACITY, Opacity))
+			OutMaterialData[i]->Transparent = Opacity < 1.0f;
 	}
 }
 
@@ -177,9 +179,29 @@ void MeshConverter::WriteMaterial(
 				Value["SpecularMap"]= TexturePath;
 		}
 		{
+			const string & TexturePath = SaveTextureAsFile(InScene, TextureDirectory, Path::GetFileName(Data->ShininessFileName));
+			if (TexturePath.empty() == false)
+				Value["ShininessMap"]= TexturePath;
+		}
+		{
 			const string & TexturePath = SaveTextureAsFile(InScene, TextureDirectory, Path::GetFileName(Data->NormalFileName));
 			if (TexturePath.empty() == false)
 				Value["NormalMap"]= TexturePath;
+		}
+		{
+			const string & TexturePath = SaveTextureAsFile(InScene, TextureDirectory, Path::GetFileName(Data->AlbedoFileName));
+			if (TexturePath.empty() == false)
+				Value["AlbedoMap"]= TexturePath;
+		}
+		{
+			const string & TexturePath = SaveTextureAsFile(InScene, TextureDirectory, Path::GetFileName(Data->MetallicFileName));
+			if (TexturePath.empty() == false)
+				Value["MetallicMap"]= TexturePath;
+		}
+		{
+			const string & TexturePath = SaveTextureAsFile(InScene, TextureDirectory, Path::GetFileName(Data->RoughnessFileName));
+			if (TexturePath.empty() == false)
+				Value["RoughnessMap"]= TexturePath;
 		}
 		Root[Data->Name.c_str()] = Value;
 	}
@@ -195,7 +217,12 @@ void MeshConverter::WriteMaterial(
 	OutputFileStream.close();
 }
 
-string MeshConverter::SaveTextureAsFile(const aiScene * InScene, const string & InSaveFolder, const string & InFilePath)
+string MeshConverter::SaveTextureAsFile
+(
+	const aiScene * InScene,
+	const string & InSaveFolder,
+	const string & InFilePath
+)
 {
 	if(InFilePath.empty())
 		return "";
@@ -288,7 +315,8 @@ void MeshConverter::ReadBoneRecursive(const aiNode* InNode, int InIndex, int InP
 	}
 	else
 	{
-		Bone->Transform = Bone->Transform * Matrix::CreateFromEulerAngleInRadian({0, PRE_Y_ROTATION, 0});
+		Bone->Transform = Bone->Transform * CoordinateConvertMatrix;
+		// Bone->Transform = Bone->Transform;
 	}
 	OutBones.push_back(Bone);
 
@@ -316,12 +344,12 @@ void MeshConverter::ReadMesh(const aiScene* InScene, vector<MeshData *> & OutMes
 		OutMeshes[i] = new MeshData();
 		const aiMesh * const AiMesh = InScene->mMeshes[i];
 		const aiNode * MeshNode = InScene->mRootNode->FindNode(AiMesh->mName);
-		aiMatrix4x4 MeshTransform = aiMatrix4x4();
+		aiMatrix4x4 MeshTransform_ColMajor = aiMatrix4x4();
 
 		// MeshNode의 ParentNode가 Bone임을 가정. 아니면 UB
 		// 실제론 ParentNode가 Bone임을 보장하지 않음.
 		if (MeshNode != nullptr)
-			MeshTransform = MeshNode->mTransformation;
+			MeshTransform_ColMajor = MeshNode->mTransformation;
 			
 		// Read Material Data
 		const UINT MatIndex = AiMesh->mMaterialIndex;
@@ -332,7 +360,7 @@ void MeshConverter::ReadMesh(const aiScene* InScene, vector<MeshData *> & OutMes
 		OutMeshes[i]->Vertices.reserve(VerticesCount);
 		for (UINT v = 0; v < VerticesCount; v++)
 		{
-			OutMeshes[i]->Vertices.emplace_back(ReadSingleVertex(AiMesh, v, MeshTransform));
+			OutMeshes[i]->Vertices.emplace_back(ReadSingleVertex(AiMesh, v, MeshTransform_ColMajor));
 		}
 
 		// Read Indices Data
@@ -392,7 +420,7 @@ void MeshConverter::ReadSkinningWeight(
 				MeshData::VertexType & TargetVertex = InOutMeshes[MeshIndex]->Vertices[VertexId];
 				Vector4 & TargetIndices = TargetVertex.Indices;
 				Vector4 & TargetWeights = TargetVertex.Weights;
-
+				
 				// 최대 영향을 받을거 4개다.
 				for (UINT v = 0; v < 4; v++)
 				{
@@ -442,18 +470,43 @@ void MeshConverter::WriteSkin(
 	SAFE_DELETE(MeshDataWriter);
 }
 
-MeshData::VertexType MeshConverter::ReadSingleVertex( const aiMesh * Mesh, UINT VertexIndex, const aiMatrix4x4 & InMeshTransform )
+MeshData::VertexType MeshConverter::ReadSingleVertex( const aiMesh * Mesh, const UINT VertexIndex, const aiMatrix4x4 & InMeshTransform_ColMajor ) const
 {
-	aiMatrix4x4 PreRotation;
-	aiMatrix4x4::RotationY(PRE_Y_ROTATION, PreRotation);
-
+	const Matrix & M = this->CoordinateConvertMatrix; // ColumnMajor
+	aiMatrix4x4 PreRotation_ColMajor;
+	PreRotation_ColMajor = {
+		M.M11, M.M21, M.M31, M.M41,
+		M.M12, M.M22, M.M32, M.M42,
+		M.M13, M.M23, M.M33, M.M43,
+		M.M14, M.M24, M.M34, M.M44
+	};
+	PreRotation_ColMajor = {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
 	MeshData::VertexType Vertex;
 	if (true)
 	{
 		const aiVector3D & LocalVertex = Mesh->mVertices[VertexIndex];
-		const aiVector3D TransformedVertex = PreRotation * InMeshTransform * LocalVertex;
-		// const aiVector3D TransformedVertex = LocalVertex;
+		// !! assimp의 Matrix는 Column-Major이기 떄문에 MeshSpaceVertex를 MeshTransform -> 전체 Rotation 순으로 곱한다.
+		const aiVector3D TransformedVertex = PreRotation_ColMajor * InMeshTransform_ColMajor * LocalVertex;
 		memcpy_s(&Vertex.Position, sizeof(Vector), &TransformedVertex, sizeof(Vector));
+	}
+	if (Mesh->HasNormals() == true)
+	{
+		const aiVector3D & TangentSpaceNormal = Mesh->mNormals[VertexIndex];
+		memcpy_s(&Vertex.Normal, sizeof(Vector), &TangentSpaceNormal, sizeof(Vector));
+	}
+	if (Mesh->HasTangentsAndBitangents() == true)
+	{
+		const aiVector3D & TangentSpaceTangent = Mesh->mTangents[VertexIndex];
+		memcpy_s(&Vertex.Tangent, sizeof(Vector), &TangentSpaceTangent, sizeof(Vector));
+	}
+	else
+	{
+		Vertex.Tangent = {1,0,0};
 	}
 	if (Mesh->HasTextureCoords(0) == true)
 	{
@@ -462,24 +515,6 @@ MeshData::VertexType MeshConverter::ReadSingleVertex( const aiMesh * Mesh, UINT 
 	if (Mesh->HasVertexColors(0) == true)
 	{
 		memcpy_s(&Vertex.Color, sizeof(Color), Mesh->mColors[0] + VertexIndex, sizeof(Color));
-	}
-	if (Mesh->HasNormals() == true)
-	{
-		const aiVector3D & LocalNormal = Mesh->mNormals[VertexIndex];
-		const aiVector3D TransformedNormal = PreRotation * InMeshTransform * LocalNormal;
-		// const aiVector3D TransformedNormal = LocalNormal;
-		memcpy_s(&Vertex.Normal, sizeof(Vector), &TransformedNormal, sizeof(Vector));
-	}
-	if (Mesh->HasTangentsAndBitangents() == true)
-	{
-		const aiVector3D & LocalTangent = Mesh->mTangents[VertexIndex];
-		const aiVector3D TransformedTangent = PreRotation * InMeshTransform * LocalTangent;
-		// const aiVector3D TransformedTangent = LocalTangent;
-		memcpy_s(&Vertex.Tangent, sizeof(Vector), &TransformedTangent, sizeof(Vector));
-	}
-	else
-	{
-		Vertex.Tangent = {1,0,0};
 	}
 	return Vertex;
 }

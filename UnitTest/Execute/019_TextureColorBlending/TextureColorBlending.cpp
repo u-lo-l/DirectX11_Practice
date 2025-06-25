@@ -105,7 +105,7 @@ namespace Sdt
 		
 		{
 			D3D11_RASTERIZER_DESC RasterizerDesc;
-			RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+			RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 			RasterizerDesc.CullMode = D3D11_CULL_NONE;
 			RasterizerDesc.FrontCounterClockwise = true;
 			RasterizerDesc.DepthBias = 0;

@@ -22,6 +22,7 @@ void Character::SetSkeletalMesh(const wstring& InMeshName)
 	SAFE_DELETE(AnimController);
 	this->SkeletalMesh = new CSkeletalMesh(InMeshName);
 	this->SkeletalMesh->GetTransform()->SetParent(this->Tf);
+	this->SkeletalMesh->GetTransform()->AddLocalRotation({0, Math::PI, 0});
 	this->AnimController = new AnimationController(this->SkeletalMesh->GetSkeletal());
 }
 

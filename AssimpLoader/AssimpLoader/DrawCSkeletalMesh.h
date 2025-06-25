@@ -12,5 +12,5 @@ public:
 	virtual void Tick() override;
 	virtual void Render() override;
 
-	Character * Adam; 
+	Character * Adam = nullptr;
 };

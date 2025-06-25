@@ -21,13 +21,13 @@ void MaterialBatch::Tick()
 	}
 }
 
-void MaterialBatch::Render(const RenderingShader* InShader) const
+void MaterialBatch::Render(const RenderingShader* InShader, int & DrawCallCount) const
 {
 	ASSERT(!!Mat, "Material Not Valid")
 	Mat->BindToGpu(1);
 	for ( const ARenderable * Elem : Elements)
 	{
-		Elem->Render(InShader);
+		Elem->Render(InShader, DrawCallCount);
 	}
 }
 
@@ -65,13 +65,13 @@ void ShaderBatch::Tick()
 	}
 }
 
-void ShaderBatch::Render() const
+void ShaderBatch::Render(int & DrawCallCount) const
 {
 	Shader->SetPass(0);
 	// TODO : Bind Resources Per Shader
 	for (const MaterialBatch * MatBatch : Batches)
 	{
-		MatBatch->Render(Shader);
+		MatBatch->Render(Shader, DrawCallCount);
 	}
 	RenderingShader::ClearPass();
 }
@@ -119,6 +119,7 @@ void RenderManager::AddRenderable(const ARenderable* InRenderable)
 
 void RenderManager::Tick()
 {
+#ifdef DISPLAY_IMGUI_DEBUG_INFO
 	ImGui::Begin("Render Manager");
 	ImGui::Text("Render Queue Size : %d", GetRenderQueueSize());
 	ImGui::Text("Renderables Count : %d", RenderableCount);
@@ -132,18 +133,15 @@ void RenderManager::Tick()
 			int ElementIndex = 0;
 			ImGui::Text("  Batch #%d : %s", ++BatchIndex, M->GetMaterial()->GetMaterialName().c_str());
 			for (const ARenderable * R : M->GetElements())
-			{
 				ImGui::Text("    Element #%d : %s", ++ElementIndex, R->GetName().c_str());
-			}
 		}
 	}
 	ImGui::End();
+#endif
 	
 	if (!!CB_PerFrame)
 	{
 		CB_PerFrameData = {
-			Context::Get()->GetCamera()->GetViewMatrix(),
-			Context::Get()->GetCamera()->GetProjectionMatrix(),
 			Context::Get()->GetCamera()->GetViewProjectionMatrix(),
 			Context::Get()->GetCamera()->GetPosition(),
 			0,
@@ -160,16 +158,18 @@ void RenderManager::Tick()
 	}
 }
 
-void RenderManager::Render() const
+void RenderManager::Render()
 {
 	if (!!CB_PerFrame)
 	{
 		CB_PerFrame->BindToGPU(ShaderType::VP, 0);
 	}
+	DrawCallCount = 0;
 	for (const ShaderBatch * Batch : RenderQueue)
 	{
-		Batch->Render();
+		Batch->Render(this->DrawCallCount);
 	}
+	ImGui::Text("Draw Call Count: %d", DrawCallCount);
 }
 
 RenderManager::RenderManager()

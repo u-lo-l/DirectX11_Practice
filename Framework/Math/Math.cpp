@@ -2,26 +2,26 @@
 #include "Math.h"
 #include <cstdlib>
 
-const float Math::E = 2.71828175f;
-const float Math::LOG2_E = 1.442695f;
-const float Math::LOG10_E = 0.4342945f;
-const float Math::PI = 3.14159274f;
-const float Math::TWO_PI = 6.28318548f;
-const float Math::PI_OVER2 = 1.57079637f;
-const float Math::PI_OVER3 = 1.0471975f;
-const float Math::PI_OVER4 = 0.7853982f;
-const float Math::PI_OVER6 = 0.5235987f;
-const float Math::DEG_TO_RADIAN = 0.0174533f;
-const float Math::RADIAN_TO_DEG = 57.2957764f;
+constexpr float Math::E = 2.71828175f;
+constexpr float Math::LOG2_E = 1.442695f;
+constexpr float Math::LOG10_E = 0.4342945f;
+constexpr float Math::PI = 3.14159274f;
+constexpr float Math::TWO_PI = 6.28318548f;
+constexpr float Math::PI_OVER2 = 1.57079637f;
+constexpr float Math::PI_OVER3 = 1.0471975f;
+constexpr float Math::PI_OVER4 = 0.7853982f;
+constexpr float Math::PI_OVER6 = 0.5235987f;
+constexpr float Math::DEG_TO_RADIAN = 0.0174533f;
+constexpr float Math::RADIAN_TO_DEG = 57.2957764f;
 
 #pragma warning( disable : 4146)
-const int Math::INT_MIN_VALUE = -2147483648;
-const int Math::INT_MAX_VALUE = 2147483647;
-const float Math::FLOAT_MIN_VALUE = -3.402823E+38f;
-const float Math::FLOAT_MAX_VALUE = 3.402823E+38f;
+constexpr int Math::INT_MIN_VALUE = -2147483648;
+constexpr int Math::INT_MAX_VALUE = 2147483647;
+constexpr float Math::FLOAT_MIN_VALUE = -3.402823E+38f;
+constexpr float Math::FLOAT_MAX_VALUE = 3.402823E+38f;
 #pragma warning( default : 4146)
 
-const float Math::EPSILON = 1e-6f;
+constexpr float Math::EPSILON = 1e-6f;
 
 float Math::AngleOfInclineY(Vector value)
 {

@@ -1,7 +1,8 @@
 #pragma once
 
-// #define DO_DEBUG
-
+// #ifndef DISPLAY_IMGUI_DEBUG_INFO
+// # define DISPLAY_IMGUI_DEBUG_INFO
+// #endif
 #include <Windows.h>
 #include <assert.h>
 
@@ -116,8 +117,10 @@ using namespace std;
 	#include "Model/Mesh/CBone.h"
 	#include "Model/Mesh/CMesh.h"
 	#include "Model/Mesh/CSkeletal.h"
-	#include "Model/Mesh/CSkeletalMesh.h"
 	#include "Model/Mesh/SkeletalMeshSubset.h"
+	#include "Model/Mesh/StaticMeshSubset.h"
+	#include "Model/Mesh/CSkeletalMesh.h"
+	#include "Model/Mesh/CStaticMesh.h"
 
 	#include "Model/Animation/AnimationClip.h"
 	#include "Model/Animation/AnimationBlendSpace1D.h"

@@ -102,7 +102,7 @@ Matrix Camera::GetProjectionMatrix() const
 
 Matrix Camera::GetViewProjectionMatrix() const
 {
-	return GetProjectionMatrix() * GetViewMatrix();
+	return GetViewMatrix() * GetProjectionMatrix();
 }
 
 void Camera::SetPosition(float X, float Y, float Z) const

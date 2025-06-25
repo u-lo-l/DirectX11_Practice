@@ -18,6 +18,7 @@ void AnimationConverter::ReadAiScene(const wstring& InFileName)
 	const aiScene * Scene = Importer->ReadFile(FullPath.c_str(),ConvertFlag);
 	ASSERT(!!Scene, Importer->GetErrorString());
 
+	ParseMetaData(InFileName, Scene);
 	ExportAnimation(InFileName, Scene);
 
 	Importer->FreeScene();
@@ -92,7 +93,7 @@ void AnimationConverter::ReadPosKeySequences( vector<FrameDataVec> & OutPosKeys,
 		for (UINT i = 0; i < PosKeyCount; i++)
 		{
 			const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[i];
-			OutPosKeys.emplace_back(static_cast<float>(PosKey.mTime), static_cast<Vector>(PosKey.mValue));
+			OutPosKeys.emplace_back(static_cast<float>(PosKey.mTime), PosKey.mValue);
 		}
 	}
 	else
@@ -106,13 +107,13 @@ void AnimationConverter::ReadPosKeySequences( vector<FrameDataVec> & OutPosKeys,
 		{
 			const aiVectorKey & PosKey = InNodeAnim->mPositionKeys[KeySequenceIndex];
 			const aiVectorKey & NextPosKey = InNodeAnim->mPositionKeys[NextKeySequenceIndex];
-			const UINT TargetFrame = static_cast<UINT>(NextPosKey.mTime * (DefaultTicksPerSecond));
+			const UINT TargetFrame = static_cast<UINT>(NextPosKey.mTime * DefaultTicksPerSecond);
 			if (i > TargetFrame)
 			{
 				KeySequenceIndex = min(KeySequenceIndex + 1, MaxKeySequenceIndex);
 				NextKeySequenceIndex = min(NextKeySequenceIndex + 1, MaxKeySequenceIndex);
 			}
-			OutPosKeys.emplace_back(static_cast<float>(i), static_cast<Vector>(PosKey.mValue));
+			OutPosKeys.emplace_back(static_cast<float>(i), (PosKey.mValue));
 		}
 	}
 }
@@ -126,7 +127,7 @@ void AnimationConverter::ReadScaleKeySequences( vector<FrameDataVec> & OutScaleK
 		for (UINT i = 0; i < ScaleKeyCount; i++)
 		{
 			const aiVectorKey & ScaleKey =  InNodeAnim->mScalingKeys[i];
-			OutScaleKeys.emplace_back(static_cast<float>(ScaleKey.mTime), static_cast<Vector>(ScaleKey.mValue));
+			OutScaleKeys.emplace_back(static_cast<float>(ScaleKey.mTime), ScaleKey.mValue);
 		}
 	}
 	else
@@ -146,7 +147,7 @@ void AnimationConverter::ReadScaleKeySequences( vector<FrameDataVec> & OutScaleK
 				KeySequenceIndex = min(KeySequenceIndex + 1, MaxKeySequenceIndex);
 				NextKeySequenceIndex = min(NextKeySequenceIndex + 1, MaxKeySequenceIndex);
 			}
-			OutScaleKeys.emplace_back(static_cast<float>(i), static_cast<Vector>(ScaleKey.mValue));
+			OutScaleKeys.emplace_back(static_cast<float>(i), ScaleKey.mValue);
 		}
 	}
 }
