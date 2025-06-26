@@ -5,71 +5,71 @@
 
 float3 NormalMapping
 (
-    float2 uv,
-    float3 normal,
-    float3 tangent,
-    float3 normalMapTexelValue
+	float2 uv,
+	float3 normal,
+	float3 tangent,
+	float3 normalMapTexelValue
 )
 {
-    [flatten]
-    if (any(normalMapTexelValue.rgb) == false) // 잘못된 TBN-coord가 생성됨.
-        return normal;
-    
-    float3 NewLocalNormal = normalMapTexelValue * 2.0f - 1.0f; //-1.0f ~ +1.0f
-    
-    float3 N = normalize(normal); // z
-    float3 T = -normalize(tangent - dot(tangent, N) * N); // x
-    float3 B = cross(N, T); // y
+	[flatten]
+	if (any(normalMapTexelValue.rgb) == false) // 잘못된 TBN-coord가 생성됨.
+		return normal;
 
-    return normalize(mul(NewLocalNormal, float3x3(T, B, N)));
+	float3 NewLocalNormal = normalMapTexelValue * 2.0f - 1.0f; //-1.0f ~ +1.0f
+
+	float3 N = normalize(normal); // z
+	float3 T = -normalize(tangent - dot(tangent, N) * N); // x
+	float3 B = cross(N, T); // y
+
+	return normalize(mul(NewLocalNormal, float3x3(T, B, N)));
 }
 
 ColorDesc ComputeLight
 (
-    in float3 LightDirection,
-    in float3 ViewPosition,
-    in float3 Normal,
-    in float3 WorldPosition,
-    in float4 GlobalAmbient,
-    in ColorDesc MaterialColor,
-    in LightingCoefficent Coeff
+	in float3 LightDirection,
+	in float3 ViewPosition,
+	in float3 Normal,
+	in float3 WorldPosition,
+	in float4 GlobalAmbient,
+	in ColorDesc MaterialColor,
+	in LightingCoefficent Coeff
 )
 {
-    ColorDesc Phong;
-    float3 L = normalize(LightDirection);
-    float3 N = normalize(Normal);
-    Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
+	ColorDesc Phong;
+	float3 L = normalize(LightDirection);
+	float3 N = normalize(Normal);
+	Phong.Ambient = Coeff.Ambient * GlobalAmbient * MaterialColor.Ambient;
 
-    float NdotL = saturate(dot(-L, N));
-    Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse * NdotL;
+	float NdotL = saturate(dot(-L, N));
+	Phong.Diffuse = Coeff.Diffuse * MaterialColor.Diffuse * NdotL;
 
-    float ns = saturate(MaterialColor.Specular.a) * 128 + 1;
-    float3 R = normalize(reflect(L, N));
-    float3 V = normalize(ViewPosition - WorldPosition); // also called as E for Eye-Vector
-    float VdotR = saturate(dot(V, R));
-    Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);
+	float ns = saturate(MaterialColor.Specular.a) * 128 + 1;
+	float3 R = normalize(reflect(L, N));
+	float3 V = normalize(ViewPosition - WorldPosition); // also called as E for Eye-Vector
+	float VdotR = saturate(dot(V, R));
+	Phong.Specular = Coeff.Specular * MaterialColor.Specular * pow(VdotR, ns);
 
-    return Phong;
+	return Phong;
 }
 
 ColorDesc ComputeLight(
-    in float3 LightDirection,
-    in float3 ViewPosition,
-    in float3 Normal,
-    in float3 WorldPosition,
-    in ColorDesc Color
+	in float3 LightDirection,
+	in float3 ViewPosition,
+	in float3 Normal,
+	in float3 WorldPosition,
+	in ColorDesc Color
 )
 {
-    LightingCoefficent Coeff = {1,1,1};
-    return ComputeLight(
-        LightDirection,
-        ViewPosition,
-        Normal,
-        WorldPosition,
-        float4(0,0,0,0),
-        Color,
-        Coeff
-    );
+	LightingCoefficent Coeff = {1,1,1};
+	return ComputeLight(
+		LightDirection,
+		ViewPosition,
+		Normal,
+		WorldPosition,
+		float4(0,0,0,0),
+		Color,
+		Coeff
+	);
 }
 
 float4 ComputeRimLight(
@@ -242,11 +242,11 @@ ColorDesc ApplySpotLights(
 float4 ApplyProjector_PS(in float4 Color, in float4 ProjectorNDCPosition)
 {
     float3 uvw = 0;
-    
+
     uvw.x =  ProjectorNDCPosition.x  * 0.5f + 0.5f;
     uvw.y = -ProjectorNDCPosition.y  * 0.5f + 0.5f;
     uvw.z =  ProjectorNDCPosition.z ;
-    
+
     [flatten]
     if (saturate(uvw.x) == uvw.x && saturate(uvw.y) == uvw.y && saturate(uvw.z) == uvw.z)
     {
@@ -266,7 +266,7 @@ ColorDesc ApplyAllLights_PS(VertexOutput input)
 
     float4 NomalMapTexel = MaterialMaps[MATERIAL_TEXTURE_NORMAL].Sample(LinearSampler , input.Uv);
     float3 NewNormal = NormalMapping(input.Uv, input.Normal, input.Tangent, NomalMapTexel.xyz);
-    
+
     ColorDesc MatColor;
     MatColor.Ambient = Ambient;
     MatColor.Diffuse = MaterialMaps[MATERIAL_TEXTURE_DIFFUSE].Sample(LinearSampler, input.Uv) * Diffuse;
@@ -298,7 +298,7 @@ ColorDesc ApplyAllLights_PS(VertexOutput input)
     OutPut.Ambient  = GlobalAmbient + DirectionalLightColor.Ambient  + PointLightColor.Ambient  + SpotLightColor.Ambient;
     OutPut.Diffuse  =                 DirectionalLightColor.Diffuse  + PointLightColor.Diffuse  + SpotLightColor.Diffuse;
     OutPut.Specular =                 DirectionalLightColor.Specular + PointLightColor.Specular + SpotLightColor.Specular;
-    
+
     OutPut.Ambient  *= MatColor.Ambient;
     OutPut.Diffuse  *= MatColor.Diffuse;
     OutPut.Specular *= MatColor.Specular;
@@ -322,7 +322,7 @@ ColorDesc ApplyShadow(in ColorDesc Color, float4 ShadowPosition, float Bias)
     ShadowPosition.x =  ShadowPosition.x * 0.5f + 0.5f;
     ShadowPosition.y = -ShadowPosition.y * 0.5f + 0.5f;
     ShadowPosition.z =  ShadowPosition.z - Bias;
-    
+
     { // No - PCF
         depth = ShadowMap.Sample(AnisotropicSampler, ShadowPosition.xy).r;
         factor = (float) (depth >= ShadowPosition.z);

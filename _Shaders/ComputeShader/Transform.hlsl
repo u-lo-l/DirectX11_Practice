@@ -6,7 +6,7 @@
 #endif
 #ifndef EPSILON
 # define EPSILON (1e-7f)
-#endif 
+#endif
 
 struct BoneMatrix_t
 {
@@ -19,7 +19,6 @@ struct BoneTRS_t
 	float4 Rotation;
 	float3 Scale;
 };
-
 
 float4 slerp(float4 a, float4 b, float t);
 BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t);
@@ -77,7 +76,7 @@ BoneTRS_t lerp(in BoneTRS_t a, in BoneTRS_t b, float t)
 		return a;
 	else if (t == 1)
 		return b;
-	
+
 	BoneTRS_t Result;
 	Result.Translation = lerp(a.Translation, b.Translation, t);
 	Result.Rotation = slerp(a.Rotation, b.Rotation, t);
@@ -92,7 +91,7 @@ float4 slerp(float4 a, float4 b, float t)
 		return a;
 	else if (t == 1)
 		return b;
-	
+
 	float4 q0 = normalize(a);
 	float4 q1 = normalize(b);
 	float dot_product = dot(q0, q1);
@@ -117,6 +116,7 @@ float4 slerp(float4 a, float4 b, float t)
 
 // https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb281615(v=vs.85)
 // the BaryCentric method implements the following series of spherical linear interpolation
+// w0 >= w1 >= w2
 BoneTRS_t barycentric
 (
 	in BoneTRS_t a,

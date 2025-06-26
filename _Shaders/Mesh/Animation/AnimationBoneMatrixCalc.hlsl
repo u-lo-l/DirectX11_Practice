@@ -2,7 +2,7 @@
 #define __ANIMATION_BONE_MATRIX_CALC_HLSL__
 
 # ifndef THREAD_X
-# error "NumThread Size Not Defined"
+# error "NumThread Dimension Not Defined"
 # endif
 
 #include "../../ComputeShader/Transform.hlsl"
@@ -28,7 +28,7 @@ void CSMain(uint3 DTid : SV_DISPATCHTHREADID)
 {
 	const uint BoneIndex = DTid.x;
 	BoneTRS_t TRS[3];
-	
+
 	uint StructCount, StructStride;
 	BoneMatrices.GetDimensions(StructCount, StructStride);
 	[flatten]
