@@ -47,10 +47,4 @@ AnimationController* Character::GetAnimationController() const
 void Character::Tick()
 {
 	this->AnimController->Tick();
-	// this->SkeletalMesh->Tick();
-}
-
-void Character::Render()
-{
-	// this->SkeletalMesh->Render();
 }

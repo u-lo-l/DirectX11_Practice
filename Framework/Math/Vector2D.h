@@ -117,3 +117,6 @@ public:
 	};
 };
 
+Vector2D operator/(float Lhs, const Vector2D& Rhs);
+
+

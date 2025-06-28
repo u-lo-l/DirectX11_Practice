@@ -87,7 +87,7 @@ void LandScape::Render() const
 	CB_Tessellation->BindToGPU();
 
 	if (!!HeightMap)
-		HeightMap->BindToGPU(0, static_cast<UINT>(ShaderType::VDP));
+		HeightMap->BindToGPU(0,(ShaderType::VDP));
 	if (!!VariationMap)
 		VariationMap->BindToGPU(1);
 	if (!!DetailDiffuseMaps)

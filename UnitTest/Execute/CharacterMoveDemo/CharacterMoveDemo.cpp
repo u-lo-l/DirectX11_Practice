@@ -1,8 +1,6 @@
 ﻿#include "Pch.h"
 #include "CharacterMoveDemo.h"
-
 #include "Model/Character.h"
-#include "Systems/RenderManager.h"
 
 namespace sdt
 {
@@ -12,8 +10,8 @@ namespace sdt
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 0, 10, -50 );
 
-		// SetTerrain();
-		SetCharacter();
+		SetTerrain();
+		// SetCharacter();
 	}
 
 	void CharacterMoveDemo::Destroy()
@@ -79,8 +77,8 @@ namespace sdt
 
 	void CharacterMoveDemo::Render()
 	{
-		if (!!Terrain) Terrain->Render();
-		if (!!Adam) Adam->Render();
+		// if (!!Terrain) Terrain->Render();
+		// if (!!Adam) Adam->Render();
 	}
 
 	void CharacterMoveDemo::PostRender()
@@ -92,8 +90,8 @@ namespace sdt
 	{
 		LandScape::LandScapeDesc Desc =
 		{
-			Vector(2048, 2048, 2048),
-			256,
+			Vector(4096, 4096, 4096),
+			512,
 			64,
 			L"Terrain/GrandMountain/Height Map TIF.tif",
 			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},

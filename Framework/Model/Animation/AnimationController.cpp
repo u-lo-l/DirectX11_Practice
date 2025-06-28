@@ -26,6 +26,7 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		Defines.data(),
 		L"CSMain",
 		32, 1, 1,
+		0, 0, 0,
 		{},
 		true
 	};
@@ -58,7 +59,7 @@ void AnimationController::PlaySingleAnimationClip
 	RWStructuredBuffer * const SB_BoneMatrices = TargetSkeletal->GetBoneMatrices_Buffer();
 
 	CB_AnimationData->BindToGPU();
-	KeyFrameTexture->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
+	KeyFrameTexture->BindToGPU(0,ShaderType::ComputeShader); //SRV
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 	
 	KeyFrameAnimationCalculator->Dispatch();
@@ -102,9 +103,9 @@ void AnimationController::PlayAnimationBlendSpace1D
 	RWStructuredBuffer * const SB_BoneMatrices = TargetSkeletal->GetBoneMatrices_Buffer();
 	
 	CB_AnimationData->BindToGPU();
-	AnimTexture1->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
-	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
-	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
+	AnimTexture1->BindToGPU(0,ShaderType::ComputeShader); //SRV
+	AnimTexture2->BindToGPU(1, ShaderType::ComputeShader);  //SRV
+	SB_BoneMatrices->BindToGPUAsUAV(0);                     //UAV
 
 	KeyFrameAnimationCalculator->Dispatch();
 
@@ -166,9 +167,9 @@ void AnimationController::PlayAnimationBlendSpace2D
 	RWStructuredBuffer * const SB_BoneMatrices = TargetSkeletal->GetBoneMatrices_Buffer();
 
 	CB_AnimationData->BindToGPU();
-	AnimTexture1->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
-	AnimTexture2->BindToGPU(1, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
-	AnimTexture3->BindToGPU(2, static_cast<UINT>(ShaderType::ComputeShader)); //SRV
+	AnimTexture1->BindToGPU(0,ShaderType::ComputeShader);  //SRV
+	AnimTexture2->BindToGPU(1, ShaderType::ComputeShader); //SRV
+	AnimTexture3->BindToGPU(2, ShaderType::ComputeShader); //SRV
 
 	SB_BoneMatrices->BindToGPUAsUAV(0); //UAV
 	KeyFrameAnimationCalculator->Dispatch();

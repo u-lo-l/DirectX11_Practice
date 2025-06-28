@@ -8,6 +8,8 @@ class ShaderBase;
 class ShaderManager
 {
 public:
+	static constexpr int PerFrameBindSlot = 0;
+	static constexpr int PerMaterialBindSlot = 1;
 	static void Create();
 	static void Destroy();
 	static ShaderManager * Get();
@@ -43,7 +45,8 @@ private:
 	void InitDepthStencilStates();
 	void InitBlendStates();
 	void InitRasterizerStates();
-	void InitShaders();
+	void InitRenderingShaders();
+	void InitComputeShaders();
 	
 	void AddRenderShader(const wstring & InName, RenderingShader * InShader);
 	void AddComputeShader(const wstring & InName, ComputeShader * InShader);

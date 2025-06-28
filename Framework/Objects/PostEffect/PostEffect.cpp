@@ -51,7 +51,7 @@ PostEffect::PostEffect(const wstring& InShaderFileName, RenderTarget * InRenderT
 	Bloom_DS = new DepthStencil(ScreenWidth, ScreenHeight, false);
 
 	// TODO :
-	// UINT ShaderTarget = (UINT)ShaderType::VertexShader | (UINT)ShaderType::PixelShader;
+	// ShaderType ShaderTarget = ShaderType::VertexShader | ShaderType::PixelShader;
 	// Bloom_Shader[0] = new HlslShader<VertexType>(ShaderPath, ShaderTarget, nullptr, false, "VSMain", "PS_Bloom_Separate");
 	// Bloom_Shader[0]->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	// CHECK(SUCCEEDED(Bloom_Shader[0]->CreateSamplerState_Linear_Clamp()));

@@ -19,17 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Execute\CharacterMoveDemo\CharacterMoveDemo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Execute\CharacterMoveDemo\CharacterMoveDemo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Execute\" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

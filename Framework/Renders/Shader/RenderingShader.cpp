@@ -2,9 +2,13 @@
 #include <fstream>
 #include "RenderingShader.h"
 
+
 RenderingShader::RenderingShader( const RenderingShaderDesc& InDesc )
 	: Desc(InDesc)
 {
+	// string OutMessage;
+	// ASSERT(Verify(InDesc,OutMessage) == true, OutMessage.c_str());
+	
 	ShaderManager * const ShaderManagerInst = ShaderManager::Get();
 	ASSERT(!Desc.ShaderFileName.empty(), "Shader Name Empty");
 	
@@ -13,12 +17,18 @@ RenderingShader::RenderingShader( const RenderingShaderDesc& InDesc )
 	Desc.PreCompiledShaderFileDirectory = ShaderDirectory + L"PreCompiled/";
 
 	Pass.Topology = Desc.Topology;
-	for (UINT T = (UINT)ShaderType::PixelShader; T <= (UINT)ShaderType::DomainShader; T = T << 1)
-	{
-		ShaderType Type = static_cast<ShaderType>(T);
-		if (Desc.TargetShaderType & Type)
-			LoadShader(Type);
-	}
+	
+	if (Desc.TargetShaderType & ShaderType::PixelShader)
+		LoadShader(ShaderType::PixelShader);
+	if (Desc.TargetShaderType & ShaderType::VertexShader)
+		LoadShader(ShaderType::VertexShader);
+	if (Desc.TargetShaderType & ShaderType::DomainShader)
+		LoadShader(ShaderType::DomainShader);
+	if (Desc.TargetShaderType & ShaderType::HullShader)
+		LoadShader(ShaderType::HullShader);
+	if (Desc.TargetShaderType & ShaderType::GeometryShader)
+		LoadShader(ShaderType::GeometryShader);
+	
 	for ( const auto & Item : Desc.SamplerStateNames)
 	{
 		int RegisterIndex = std::get<0>(Item);
@@ -93,17 +103,17 @@ void RenderingShader::Draw(UINT VertexCount, UINT StartVertexLocation)
 	D3D::Get()->GetDeviceContext()->Draw(VertexCount, StartVertexLocation);
 }
 
-void RenderingShader::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, int BaseVertexLocation)
+void RenderingShader::DrawIndexed(const UINT IndexCount, const UINT StartIndexLocation, const int BaseVertexLocation)
 {
 	D3D::Get()->GetDeviceContext()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
 }
 
 void RenderingShader::DrawInstanced
 (
-	UINT VertexCountPerInstance,
-	UINT InstanceCount,
-	UINT StartVertexLocation,
-	UINT StartInstanceLocation
+	const UINT VertexCountPerInstance,
+	const UINT InstanceCount,
+	const UINT StartVertexLocation,
+	const UINT StartInstanceLocation
 )
 {
 	D3D::Get()->GetDeviceContext()->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
@@ -111,11 +121,11 @@ void RenderingShader::DrawInstanced
 
 void RenderingShader::DrawIndexedInstanced
 (
-	UINT IndexCountPreInstance,
-	UINT InstanceCount,
-	UINT StartIndexLocation,
-	int BaseVertexLocation,
-	UINT StartInstanceLocation
+	const UINT IndexCountPreInstance,
+	const UINT InstanceCount,
+	const UINT StartIndexLocation,
+	const int BaseVertexLocation,
+	const UINT StartInstanceLocation
 )
 {
 	D3D::Get()->GetDeviceContext()->DrawIndexedInstanced(
@@ -160,6 +170,23 @@ void RenderingShader::InitializeInputLayout(ID3DBlob * InVertexShaderBlob)
 	ASSERT((Hr >= 0), "Failed to create input layout")
 }
 
+bool RenderingShader::Verify(const RenderingShaderDesc& InDesc, string & OutMessage)
+{
+	OutMessage = "";
+	if (InDesc.ShaderFileName.empty())
+		OutMessage = "Shader file not specified";
+	else if (InDesc.pInputLayoutElements->size() == 0)
+		OutMessage = "Input Layout is empty";
+	else if (
+		D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST <= InDesc.Topology &&
+		InDesc.Topology <= D3D_PRIMITIVE_TOPOLOGY_32_CONTROL_POINT_PATCHLIST &&
+		(InDesc.TargetShaderType & ShaderType::HD) == false 
+	)
+		OutMessage = "Tessellation Stage Needed";
+	
+	return OutMessage == "";
+}
+
 // TODO : MultiPass
 void RenderingShader::SetPass(int PassIndex) const
 {
@@ -196,15 +223,15 @@ void RenderingShader::SetPass(int PassIndex) const
 		const ShaderType & Type = Pair.second.TargetShader;
 		ID3D11SamplerState * Sampler = Pair.second.SamplerState;
 		if (Type & ShaderType::VertexShader)
-			DeviceContext->VSSetSamplers(RegisterIndex, 0, &Sampler);
+			DeviceContext->VSSetSamplers(RegisterIndex, 1, &Sampler);
 		if (Type & ShaderType::GeometryShader)
-			DeviceContext->GSSetSamplers(RegisterIndex, 0, &Sampler);
+			DeviceContext->GSSetSamplers(RegisterIndex, 1, &Sampler);
 		if (Type & ShaderType::DomainShader)
-			DeviceContext->DSSetSamplers(RegisterIndex, 0, &Sampler);
+			DeviceContext->DSSetSamplers(RegisterIndex, 1, &Sampler);
 		if (Type & ShaderType::HullShader)
-			DeviceContext->HSSetSamplers(RegisterIndex, 0, &Sampler);
+			DeviceContext->HSSetSamplers(RegisterIndex, 1, &Sampler);
 		if (Type & ShaderType::PixelShader)
-			DeviceContext->PSSetSamplers(RegisterIndex, 0, &Sampler);
+			DeviceContext->PSSetSamplers(RegisterIndex, 1, &Sampler);
 	}
 	if (!!Pass.RasterizerState)
 	{

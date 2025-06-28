@@ -4,6 +4,7 @@
 # define MAX_BONE_COUNT 256
 # define MAX_BLENDING_BONE_COUNT 4
 
+# include "../PerFrame.hlsli"
 # include "../ComputeShader/Transform.hlsl"
 # include "../Texture.Func.hlsli"
 # include "../Shading.Func.hlsli"
@@ -43,17 +44,6 @@ struct DepthOutput
 {
     float4 ShadowPosition : SV_Position;
 };
-
-cbuffer CB_PerFrame : register(b0)
-{
-    matrix ViewProjection;
-    float3 CameraWorldPosition;
-    float  Padding;
-    float4 LightColor;
-    float3 LightDirection;
-    float  Padding2;
-}
-
 cbuffer CB_PerMaterial : register(b1)
 {
     float4 Ambient;
@@ -93,7 +83,7 @@ VS_Output VSMain(VS_Input Input)
     Output.Position = mul(Output.Position, World);
     Output.WorldPosition = Output.Position.xyz;
 
-    Output.Position = mul(Output.Position, ViewProjection);
+    Output.Position = mul(Output.Position, mul(View, Projection));
 
     Output.ProjectorNDCPosition = float4(0,0,0,1);
     Output.ShadowPosition = float4(0,0,0,1);
@@ -108,7 +98,7 @@ float4 PSMain(VS_Output Input) : SV_TARGET
 {
 	float3 TangentSpaceNormal = HasNormalTexture(TextureUsageFlags) ?
         MaterialMaps[NormalMap].Sample(LinearSampler, Input.Uv).rgb : float3(0.5f, 0.5f, 1.f);
-	float3 Normal = ApplyNormalMap(TangentSpaceNormal, Input.Normal, Input.Tangent);
+	float3 Normal = ApplyNormalMap((TangentSpaceNormal + 1.f) * 0.5f, Input.Normal, Input.Tangent);
 
     BlinnPhongInput BlinnPhongDesc;
 

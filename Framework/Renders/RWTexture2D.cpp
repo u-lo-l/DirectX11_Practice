@@ -2,10 +2,20 @@
 #include "RWTexture2D.h"
 
 
-RWTexture2D::RWTexture2D(const UINT Width, const UINT Height, const DXGI_FORMAT InTextureFormat)
-	: Width(Width), Height(Height), TextureFormat(InTextureFormat)
+RWTexture2D::RWTexture2D
+(
+	const UINT Width, 
+	const UINT Height, 
+	const DXGI_FORMAT InTextureFormat
+)
+: Width(Width)
+, Height(Height)
+, TextureFormat(InTextureFormat)
 {
-	CreateOutputTextureAndUAV();
+	ASSERT(Verify(), "Texture Format Not Valid for UAV");
+	CreateOutputTexture();
+	CreateUAV();
+	CreateSRV();
 	CreateResultTexture();
 }
 
@@ -33,23 +43,23 @@ void RWTexture2D::BindToGPUAsSRV(const UINT SlotNum) const
 	D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &SRV);
 }
 
-void RWTexture2D::BindToGPUAsSRV(const UINT SlotNum, const UINT InShaderType) const
+void RWTexture2D::BindToGPUAsSRV(const UINT SlotNum, const ShaderType InShaderType) const
 {
 	if (!SRV)
 		return ;
-	if(InShaderType & static_cast<UINT>(ShaderType::VertexShader))
+	if(InShaderType & ShaderType::VertexShader)
 		D3D::Get()->GetDeviceContext()->VSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::PixelShader))
+	if(InShaderType & ShaderType::PixelShader)
 		D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::HullShader))
+	if(InShaderType & ShaderType::HullShader)
 		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::DomainShader))
+	if(InShaderType & ShaderType::DomainShader)
 		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+	if(InShaderType & ShaderType::ComputeShader)
 		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &SRV);
 }
 
-void RWTexture2D::UpdateSRV()
+void RWTexture2D::CreateSRV()
 {
 	ID3D11Device * Device =  D3D::Get()->GetDevice();
 
@@ -60,6 +70,7 @@ void RWTexture2D::UpdateSRV()
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	SRVDesc.Texture2D.MipLevels = 1;
 	SRVDesc.Texture2D.MostDetailedMip = 0;
+	
 	const HRESULT Hr = Device->CreateShaderResourceView(OutputTexture, &SRVDesc, &SRV);
 	CHECK(SUCCEEDED(Hr));
 }
@@ -89,9 +100,9 @@ void RWTexture2D::SaveOutputAsFile(const wstring& FileName) const
 	D3D11_TEXTURE2D_DESC TextureDesc;
 	OutputTexture->GetDesc(&TextureDesc);
 	if (
-		TextureDesc.Format != DXGI_FORMAT_R8G8B8A8_UNORM ||
-		TextureDesc.Format != DXGI_FORMAT_R32G32B32A32_FLOAT ||
-		TextureDesc.Format != DXGI_FORMAT_R32_FLOAT
+		(TextureDesc.Format != DXGI_FORMAT_R8G8B8A8_UNORM) &&
+		(TextureDesc.Format != DXGI_FORMAT_R32G32B32A32_FLOAT) &&
+		(TextureDesc.Format != DXGI_FORMAT_R32_FLOAT)
 	)
 		ASSERT(false, "Texture format does not valid to save as file");
 		
@@ -119,7 +130,7 @@ void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D&
 		Vector2D::Zero
 	};
 	ConstantBuffer * CB_Resolution = new ConstantBuffer(
-		(UINT)ShaderType::ComputeShader,
+		ShaderType::ComputeShader,
 		0,
 		&ResolutionData,
 		"Sampling Resolution",
@@ -134,7 +145,7 @@ void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D&
 		to_string(ThreadDim[0]),
 		to_string(ThreadDim[1])
 	};
-	//TODO:
+	// TODO:
 	// const vector<D3D_SHADER_MACRO> Defines{
 	// 		{"THREAD_X", ThreadDimStr[0].c_str()},
 	// 		{"THREAD_Y", ThreadDimStr[1].c_str()},
@@ -143,22 +154,35 @@ void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D&
 	// 	};
 	// HlslComputeShader * TextureColorExtractor = new HlslComputeShader(L"ComputeShader/GetTextureData.hlsl", Defines.data());
 	// TextureColorExtractor->CreateSamplerState_Linear_Clamp();
+	ComputeShader * TextureColorExtractor = ShaderManager::Get()->GetComputeShader("TextureColorExtractor");
 
 	CB_Resolution->BindToGPU();
-	this->BindToGPUAsSRV(0, (UINT)ShaderType::ComputeShader);
+	this->BindToGPUAsSRV(0, ShaderType::ComputeShader);
 	RWBuffer->BindOutputToGPU(0);
 	const uint32_t ThreadGroupX = static_cast<uint32_t>(ceil(VertexNum.X / static_cast<float>(ThreadDim[0])));
 	const uint32_t ThreadGroupY = static_cast<uint32_t>(ceil(VertexNum.Y / static_cast<float>(ThreadDim[1])));
-	//TODO:
-	// TextureColorExtractor->Dispatch(ThreadGroupX, ThreadGroupY, 1);
-	// RWBuffer->GetOutputData(OutPixels.data());
+	// TODO:
+	// TextureColorExtractor->Dispatch(TODO, TODO, TODO);
+	RWBuffer->GetOutputData(OutPixels.data());
 
 	SAFE_DELETE(RWBuffer);
 	SAFE_DELETE(CB_Resolution);
-	// SAFE_DELETE(TextureColorExtractor);
 }
 
-void RWTexture2D::CreateOutputTextureAndUAV()
+bool RWTexture2D::Verify() const
+{
+	D3D11_FEATURE_DATA_FORMAT_SUPPORT2 FormatSupport = {};
+	FormatSupport.InFormat = this->TextureFormat;
+	
+	HRESULT Hr = D3D::Get()->GetDevice()->CheckFeatureSupport(
+		D3D11_FEATURE_FORMAT_SUPPORT2,
+		&FormatSupport,
+		sizeof(FormatSupport)
+	);
+	return SUCCEEDED(Hr);
+}
+
+void RWTexture2D::CreateOutputTexture()
 {
 	ID3D11Device * Device =  D3D::Get()->GetDevice();
 	D3D11_TEXTURE2D_DESC RWTexture2DDesc;
@@ -172,37 +196,31 @@ void RWTexture2D::CreateOutputTextureAndUAV()
 	RWTexture2DDesc.SampleDesc.Quality = 0;
 	
 	RWTexture2DDesc.Usage = D3D11_USAGE_DEFAULT;
-	// RW
 	RWTexture2DDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-	// Write Only
-	// RWTexture2DDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
 	RWTexture2DDesc.CPUAccessFlags = 0;
 	RWTexture2DDesc.MiscFlags = 0;
 
 	HRESULT Hr = Device->CreateTexture2D(&RWTexture2DDesc, nullptr, &OutputTexture);
 	CHECK(SUCCEEDED(Hr));
+}
 
+void RWTexture2D::CreateUAV()
+{
+	ID3D11Device * Device =  D3D::Get()->GetDevice();
+	
 	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
 	ZeroMemory(&UAVDesc, sizeof(UAVDesc));
 	UAVDesc.Format = TextureFormat;
 	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	UAVDesc.Texture2D.MipSlice = 0;
-	Hr = Device->CreateUnorderedAccessView(OutputTexture, &UAVDesc,	&UAV);
+	HRESULT Hr = Device->CreateUnorderedAccessView(OutputTexture, &UAVDesc,	&UAV);
 	CHECK(SUCCEEDED(Hr));
-
-	// D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-	// ZeroMemory(&SRVDesc, sizeof(SRVDesc));
-	// SRVDesc.Format = TextureFormat;
-	// SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	// SRVDesc.Texture2D.MipLevels = 1;
-	// SRVDesc.Texture2D.MostDetailedMip = 0;
-	// Hr = Device->CreateShaderResourceView(OutputTexture, &SRVDesc,	&SRV);
-	// CHECK(SUCCEEDED(Hr));
 }
 
 void RWTexture2D::CreateResultTexture()
 {
 	ID3D11Device * Device =  D3D::Get()->GetDevice();
+	
 	D3D11_TEXTURE2D_DESC RWTexture2DDesc;
 	ZeroMemory(&RWTexture2DDesc, sizeof(D3D11_TEXTURE2D_DESC));
 	RWTexture2DDesc.Width = Width;

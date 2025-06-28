@@ -21,16 +21,22 @@ void ARenderable::Tick() const
 
 void ARenderable::CreateVertexBuffer(void* InData, const int InCount, const int InStride)
 {
+	if (!InData || InCount == 0 || InStride == 0)
+		ASSERT(false, "Failed to create vertex buffer");
 	VBuffer = new VertexBuffer(InData, InCount, InStride, 0);
 }
 
 void ARenderable::CreateIndexBuffer(UINT* InData, const int InCount)
 {
+	if (!InData || InCount == 0)
+		ASSERT(false, "Failed to create index buffer");
 	IBuffer = new IndexBuffer(InData, InCount);
 }
 
 void ARenderable::CreateInstanceBuffer(void* InData, const int InCount, const int InStride)
 {
+	if (!InData || InCount == 0 || InStride == 0)
+		ASSERT(false, "Failed to create instance buffer");
 	InstBuffer = new InstanceBuffer(InData, InCount, InStride);
 }
 
@@ -47,6 +53,20 @@ void ARenderable::SetMaterial(const Material* InMaterial)
 void ARenderable::SetInputLayOut(ID3D11InputLayout * InInputLayout)
 {
 	this->VertexInputLayout = InInputLayout;
+}
+
+void ARenderable::SetShader()
+{
+	Shader = Mat->GetRenderingShader();
+	VertexInputLayout = Shader->GetInputLayout();
+}
+
+void ARenderable::BindBuffer() const
+{
+	CHECK(!!VBuffer);
+	VBuffer->BindToGPU();
+	if (IBuffer)	IBuffer->BindToGPU();
+	if (InstBuffer)	InstBuffer->BindToGPU();
 }
 
 const string& ARenderable::GetName() const

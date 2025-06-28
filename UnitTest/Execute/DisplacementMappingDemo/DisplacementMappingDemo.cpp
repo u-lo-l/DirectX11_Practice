@@ -59,7 +59,7 @@ namespace sdt
 		VBuffer = new VertexBuffer(Vertices.data(), Vertices.size(), sizeof(VertexType));
 		IBuffer = new IndexBuffer(Indices.data(), Indices.size());
 		WVPBuffer_DS = new ConstantBuffer(
-			(UINT)ShaderType::VHDP,
+			ShaderType::VHDP,
 			0,
 			&WVP,
 			"World View Projection",
@@ -67,7 +67,7 @@ namespace sdt
 			false
 		);
 		DisplacementBuffer_DS = new ConstantBuffer(
-			(UINT)ShaderType::VD,
+			ShaderType::VD,
 			1,
 			&DisplacementFactor,
 			"DisplacementFactor",
@@ -103,7 +103,7 @@ namespace sdt
 	{
 		VBuffer->BindToGPU();
 		IBuffer->BindToGPU();
-		HeightMap->BindToGPU(0, (UINT)ShaderType::VertexShader | (UINT)ShaderType::DomainShader);
+		HeightMap->BindToGPU(0, ShaderType::VertexShader | ShaderType::DomainShader);
 		WVPBuffer_DS->BindToGPU();
 		DisplacementBuffer_DS->BindToGPU();
 		DisplacementMappingShader->DrawIndexed(Indices.size());

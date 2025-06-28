@@ -67,7 +67,8 @@ private:
 
 	struct CB_PerFrameDesc
 	{
-		Matrix ViewProjection;
+		Matrix View;
+		Matrix Projection;
 		Vector CameraPosition;
 		float Padding1;
 		Color LightColor;

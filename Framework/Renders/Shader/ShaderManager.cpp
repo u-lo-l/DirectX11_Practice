@@ -12,7 +12,8 @@ void ShaderManager::Create()
 	Instance->InitDepthStencilStates();
 	Instance->InitBlendStates();
 	Instance->InitRasterizerStates();
-	Instance->InitShaders();
+	Instance->InitRenderingShaders();
+	Instance->InitComputeShaders();
 }
 
 void ShaderManager::Destroy()
@@ -106,14 +107,14 @@ ID3D11RasterizerState* ShaderManager::GetRasterizerState(const string& InName)
 ID3D11SamplerState* ShaderManager::GetSamplerState(const string& InName)
 {
 	const auto & It = SamplerStateTable.find(InName);
-		if (It == SamplerStateTable.cend())
+	if (It == SamplerStateTable.cend())
 		return nullptr;
 	return It->second;}
 
 ID3D11DepthStencilState* ShaderManager::GetDepthStencilState(const string& InName)
 {
 	const auto & It = DepthStencilStateTable.find(InName);
-		if (It == DepthStencilStateTable.cend())
+	if (It == DepthStencilStateTable.cend())
 		return nullptr;
 	return It->second;}
 
@@ -182,56 +183,45 @@ void ShaderManager::InitSamplerStates()
 	ID3D11SamplerState * Anisotropic_Clamp = nullptr;
 
 	D3D11_SAMPLER_DESC SamplerDesc = {};
-	{
-		memset(&SamplerDesc, 0, sizeof(SamplerDesc));
-		SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
-		SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
-		SamplerDesc.MinLOD = 0;
-		SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Point_Wrap)));
+	memset(&SamplerDesc, 0, sizeof(SamplerDesc));
+	SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
+	SamplerDesc.MinLOD = 0;
+	SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	SamplerDesc.MaxAnisotropy = 16;
+	
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Point_Wrap)));
 
-		SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
-		SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-		SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-		CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Point_Clamp)));
-	}
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Point_Clamp)));
 
-	{
-		memset(&SamplerDesc, 0, sizeof(SamplerDesc));
-		SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
-		SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
-		SamplerDesc.MinLOD = 0;
-		SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Linear_Wrap)));
+	SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Linear_Wrap)));
 
-		SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
-		SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-		SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-		CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Linear_Clamp)));
-	}
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Linear_Clamp)));
 
-	{
-		memset(&SamplerDesc, 0, sizeof(SamplerDesc));
-		SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-		SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
-		SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		SamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;  // 비교 함수 설정 (기본값: 사용 안함)
-		SamplerDesc.MinLOD = 0;
-		SamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Anisotropic_Wrap)));
+	SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Anisotropic_Wrap)));
 
-		SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
-		SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-		SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-		CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Anisotropic_Clamp)));
-	}
+	SamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;  // 주소 모드 설정 (기본값: 반복)
+	SamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	CHECK(SUCCEEDED(Device->CreateSamplerState(&SamplerDesc, &Anisotropic_Clamp)));
+	
 	Instance->AddSamplerState("Point_Wrap", Point_Wrap);
 	Instance->AddSamplerState("Point_Clamp", Point_Clamp);
 	Instance->AddSamplerState("Linear_Wrap", Linear_Wrap);
@@ -394,43 +384,31 @@ void ShaderManager::InitRasterizerStates()
 
 	
 	D3D11_RASTERIZER_DESC RasterizerDesc;
+	RasterizerDesc.DepthClipEnable = true;
+	RasterizerDesc.ScissorEnable = false;
+	RasterizerDesc.MultisampleEnable = false;
+	RasterizerDesc.AntialiasedLineEnable = false;
+	RasterizerDesc.FrontCounterClockwise = false;
+	RasterizerDesc.DepthBias = 0;
+	RasterizerDesc.DepthBiasClamp = 0.0f;
+	RasterizerDesc.SlopeScaledDepthBias = 0.0f;
 	{
 		RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-		RasterizerDesc.CullMode = D3D11_CULL_BACK;
-		RasterizerDesc.FrontCounterClockwise = false;
-		RasterizerDesc.DepthBias = 0;
-		RasterizerDesc.DepthBiasClamp = 0.0f;
-		RasterizerDesc.SlopeScaledDepthBias = 0.0f;
-		RasterizerDesc.DepthClipEnable = true;
-		RasterizerDesc.ScissorEnable = false;
-		RasterizerDesc.MultisampleEnable = false;
-		RasterizerDesc.AntialiasedLineEnable = false;
-		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame)));
-		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
-		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame_CullFront)));
 		RasterizerDesc.CullMode = D3D11_CULL_NONE;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame_NoCull)));
+		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
+		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame_CullFront)));
+		RasterizerDesc.CullMode = D3D11_CULL_BACK;
+		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &WireFrame)));
 	}
 	{
 		RasterizerDesc.FillMode = D3D11_FILL_SOLID;
-		RasterizerDesc.CullMode = D3D11_CULL_BACK;
-		RasterizerDesc.FrontCounterClockwise = false;
-		RasterizerDesc.DepthBias = 0;
-		RasterizerDesc.DepthBiasClamp = 0.0f;
-		RasterizerDesc.SlopeScaledDepthBias = 0.0f;
-		RasterizerDesc.DepthClipEnable = true;
-		RasterizerDesc.ScissorEnable = false;
-		RasterizerDesc.MultisampleEnable = false;
-		RasterizerDesc.AntialiasedLineEnable = false;
-		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid)));
-
-		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
-		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_CullFront)));
-
 		RasterizerDesc.CullMode = D3D11_CULL_NONE;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_NoCull)));
-
+		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
+		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_CullFront)));
 		RasterizerDesc.CullMode = D3D11_CULL_BACK;
+		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid)));
 		RasterizerDesc.FrontCounterClockwise = true;
 		CHECK(SUCCEEDED(Device->CreateRasterizerState(&RasterizerDesc, &Solid_CCW)));
 	}
@@ -444,7 +422,7 @@ void ShaderManager::InitRasterizerStates()
 	Instance->AddRasterizerState("Solid_CCW", Solid_CCW);
 }
 
-void ShaderManager::InitShaders()
+void ShaderManager::InitRenderingShaders()
 {
 	/**
 	 * - RENDERER
@@ -456,8 +434,6 @@ void ShaderManager::InitShaders()
 	 * -- Particle
 	 * -- Sprite
 	 * -- Line
-	 * - COMPUTE
-	 * -- KeyFrame
 	 */
 	RenderingShaderDesc Desc;
 	{
@@ -494,16 +470,16 @@ void ShaderManager::InitShaders()
 			{nullptr, nullptr}
 		};
 		Desc.ShaderName = "Terrain";
-		Desc.ShaderFileName = L"Terrain/TerrainCell.hlsl";
-		Desc.pInputLayoutElements = &(VertexSkeletalMesh::GetVertexInputLayoutElements());
-		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		Desc.ShaderFileName = L"Terrain/TerrainCellInstance.hlsl";
+		Desc.pInputLayoutElements = &(VertexTerrainCell::GetVertexInputLayoutElements());
+		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
 		Desc.ShaderMacros = Defines.data();
 		Desc.TargetShaderType = ShaderType::VHDP;
 		Desc.RasterizerStateName = "Solid";
 		Desc.BlendStateName = "Opaque";
 		Desc.DepthStencilStateName = "Default";
-		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Clamp"});
-		Desc.SamplerStateNames.push_back({1, ShaderType::VDP, "Anisotropic_Wrap"});
+		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Wrap"});
+		Desc.SamplerStateNames.push_back({1, ShaderType::VDP, "Linear_Clamp"});
 		Desc.bForceRecompile = true;
 		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
 	}
@@ -517,6 +493,38 @@ void ShaderManager::InitShaders()
 	ComputeShader * KeyFrame = nullptr;
 	{
 		// Animation
+	}
+}
+
+void ShaderManager::InitComputeShaders()
+{
+	/**
+	 * - COMPUTE
+	 * -- KeyFrame
+	 * -- NormalMapCreator
+	 */
+	ComputeShaderDesc Desc;
+	{
+		Desc = {};
+		const vector<D3D_SHADER_MACRO> Defines{
+			{"THREAD_X", "32"},
+			{"THREAD_Y", "32"},
+			{nullptr, nullptr}
+		};
+		Desc.ShaderName = "NormalMapCreator";
+		Desc.ShaderFileName = L"ComputeShader/ComputeNormalTangentMap.hlsl";
+		Desc.PreCompiledShaderFileDirectory = L"";
+		Desc.ShaderMacros = Defines.data();
+		Desc.EntryPoint = L"CSMain";
+		Desc.NumThreadDimX = 16;
+		Desc.NumThreadDimY = 16;
+		Desc.NumThreadDimZ = 1;
+		Desc.DispatchX = 0;
+		Desc.DispatchY = 0;
+		Desc.DispatchZ = 0;
+		Desc.SamplerStateNames = {};
+		Desc.bForceRecompile = true;
+		Instance->ComputeShaderMap[Desc.ShaderName.c_str()] = new ComputeShader(Desc);
 	}
 }
 

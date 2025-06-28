@@ -16,7 +16,7 @@ public:
 	AnimationController * GetAnimationController() const;
 	Transform * GetTransform() const { return Tf; }
 	void Tick();
-	void Render();
+	// void Render();
 private:
 	Transform * Tf = nullptr;
 	// TODO : Collider * BoundingCapsule = nullptr;

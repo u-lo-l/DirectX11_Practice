@@ -15,7 +15,7 @@ CSkeletal::CSkeletal(const vector<CBone*>& InBones)
 		OffsetMatrices[BoneIndex] = Matrix::Invert(BoneMatrix, true);
 	}
 	SB_BoneMatrices = new RWStructuredBuffer(
-		static_cast<UINT>(ShaderType::VertexShader),
+		ShaderType::VertexShader,
 		0,
 		BoneMatrices.data(),
 		BoneMatrices.size(),

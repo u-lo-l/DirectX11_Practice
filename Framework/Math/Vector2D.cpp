@@ -518,9 +518,15 @@ Vector2D Vector2D::TransformNormal(Vector2D normal, Matrix matrix)
 	float x = normal.X * matrix.M11 + normal.Y * matrix.M21;
 	float single = normal.X * matrix.M12 + normal.Y * matrix.M22;
 
-	Vector2D vector2;
-	vector2.X = x;
-	vector2.Y = single;
+	Vector2D Result;
+	Result.X = x;
+	Result.Y = single;
 
-	return vector2;
+	return Result;
+}
+
+Vector2D operator/(const float Lhs, const Vector2D& Rhs)
+{
+	ASSERT(Math::IsZero(Rhs.X) == false && Math::IsZero(Rhs.Y) == false, "Dividing By Zero")
+	return {Lhs / Rhs.X, Lhs / Rhs.Y};
 }

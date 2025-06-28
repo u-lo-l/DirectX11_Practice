@@ -8,13 +8,13 @@ namespace sdt
 	class CharacterMoveDemo : public IExecutable
 	{
 	public:
-		void Initialize() override;
-		void Destroy() override;
+		virtual void Initialize() override;
+		virtual void Destroy() override;
 
-		void Tick() override;
-		void PreRender() override;
-		void Render() override;
-		void PostRender() override;
+		virtual void Tick() override;
+		virtual void PreRender() override;
+		virtual void Render() override;
+		virtual void PostRender() override;
 
 	private:
 		void SetTerrain();

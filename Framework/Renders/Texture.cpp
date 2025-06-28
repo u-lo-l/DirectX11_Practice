@@ -98,17 +98,17 @@ Texture::~Texture()
 	SAFE_RELEASE(this->SRV);
 }
 
-void Texture::BindToGPU(UINT SlotNum, UINT InShaderType) const
+void Texture::BindToGPU(UINT SlotNum, ShaderType InShaderType) const
 {
-	if(InShaderType & static_cast<UINT>(ShaderType::VertexShader))
+	if(InShaderType & ShaderType::VertexShader)
 		D3D::Get()->GetDeviceContext()->VSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::PixelShader))
+	if(InShaderType & ShaderType::PixelShader)
 		D3D::Get()->GetDeviceContext()->PSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::HullShader))
+	if(InShaderType & ShaderType::HullShader)
 		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::DomainShader))
+	if(InShaderType & ShaderType::DomainShader)
 		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &this->SRV);
-	if(InShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+	if(InShaderType & ShaderType::ComputeShader)
 		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &this->SRV);
 }
 
@@ -189,7 +189,7 @@ void Texture::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& Ver
 		Vector2D::Zero
 	};
 	ConstantBuffer * CB_Resolution = new ConstantBuffer(
-		(UINT)ShaderType::ComputeShader,
+		ShaderType::ComputeShader,
 		0,
 		&ResolutionData,
 		"Sampling Resolution",
@@ -214,7 +214,7 @@ void Texture::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& Ver
 	// TextureColorExtractor->CreateSamplerState_Linear_Clamp();
 
 	CB_Resolution->BindToGPU();
-	this->BindToGPU(0, (UINT)ShaderType::ComputeShader);
+	this->BindToGPU(0, ShaderType::ComputeShader);
 	RWBuffer->BindOutputToGPU(0);
 	const uint32_t ThreadGroupX = static_cast<uint32_t>(ceil(VertexNum.X / static_cast<float>(ThreadDim[0])));
 	const uint32_t ThreadGroupY = static_cast<uint32_t>(ceil(VertexNum.Y / static_cast<float>(ThreadDim[1])));

@@ -102,6 +102,7 @@ public:
 	void InitializeInputLayout(ID3DBlob* InVertexShaderBlob);
 
 private:
+	static bool Verify(const RenderingShaderDesc& InDesc, string& OutMessage);
 	void LoadShader(ShaderType InType);
 	
 	virtual wstring GetEntryPoint(ShaderType Type = ShaderType::None) const override;

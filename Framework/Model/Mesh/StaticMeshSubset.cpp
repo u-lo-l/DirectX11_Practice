@@ -6,8 +6,8 @@ StaticMeshSubset::StaticMeshSubset(const MeshSubsetDesc& Desc)
 {
 	ARenderable::SetName(Desc.Name);
 	ARenderable::SetMaterial(Desc.Material);
-	Shader = Mat->GetRenderingShader();
-	VertexInputLayout = Shader->GetInputLayout();
+	ARenderable::SetShader();
+
 	Vertices = Desc.Vertices;
 	Indices = Desc.Indices;
 
@@ -17,21 +17,10 @@ StaticMeshSubset::StaticMeshSubset(const MeshSubsetDesc& Desc)
 }
 
 StaticMeshSubset::~StaticMeshSubset()
-{
-	SAFE_DELETE(VBuffer);
-	SAFE_DELETE(IBuffer);
-}
+= default;
 
 void StaticMeshSubset::BindResources() const
 {
-	// CHECK(!!VertexInputLayout);
-	// CHECK(!!InShader);
-	CHECK(!!VBuffer);
-	CHECK(!!IBuffer);
-	CHECK(!!Mat);
-	
-	VBuffer->BindToGPU();
-	IBuffer->BindToGPU();
-	InstBuffer->BindToGPU();
-	Mat->BindToGpu(1);
+	BindBuffer();
+	// Mat->BindToGpu(1);
 }

@@ -24,7 +24,7 @@ void MaterialBatch::Tick()
 void MaterialBatch::Render(const RenderingShader* InShader, int & DrawCallCount) const
 {
 	ASSERT(!!Mat, "Material Not Valid")
-	Mat->BindToGpu(1);
+	Mat->BindToGpu(ShaderManager::PerMaterialBindSlot);
 	for ( const ARenderable * Elem : Elements)
 	{
 		Elem->Render(InShader, DrawCallCount);
@@ -142,7 +142,8 @@ void RenderManager::Tick()
 	if (!!CB_PerFrame)
 	{
 		CB_PerFrameData = {
-			Context::Get()->GetCamera()->GetViewProjectionMatrix(),
+			Context::Get()->GetCamera()->GetViewMatrix(),
+			Context::Get()->GetCamera()->GetProjectionMatrix(),
 			Context::Get()->GetCamera()->GetPosition(),
 			0,
 			Context::Get()->GetLightColor(),
@@ -162,7 +163,7 @@ void RenderManager::Render()
 {
 	if (!!CB_PerFrame)
 	{
-		CB_PerFrame->BindToGPU(ShaderType::VP, 0);
+		CB_PerFrame->BindToGPU(ShaderType::ALL, ShaderManager::PerFrameBindSlot);
 	}
 	DrawCallCount = 0;
 	for (const ShaderBatch * Batch : RenderQueue)
@@ -175,7 +176,7 @@ void RenderManager::Render()
 RenderManager::RenderManager()
 {
 	CB_PerFrame = new ConstantBuffer (
-		ShaderType::VP,
+		ShaderType::ALL,
 		0,
 		&CB_PerFrameData,
 		sizeof(CB_PerFrameDesc),

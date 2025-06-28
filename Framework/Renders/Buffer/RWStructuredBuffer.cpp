@@ -2,7 +2,7 @@
 
 RWStructuredBuffer::RWStructuredBuffer
 (
-	UINT TargetShaderType,
+	ShaderType TargetShaderType,
 	int RegisterIndex,
 	void* InData,
 	UINT InCount,
@@ -17,6 +17,7 @@ RWStructuredBuffer::RWStructuredBuffer
 	Stride = InStride;
 
 	CreateUAV();
+	CreateSRV();
 	CreateResultBuffer();
 }
 
@@ -57,12 +58,13 @@ void RWStructuredBuffer::BindToGPUAsSRV(const UINT SlotNum, const ShaderType InS
 		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &SRV);
 }
 
-void RWStructuredBuffer::UpdateSRV()
+void RWStructuredBuffer::CreateSRV()
 {
 	ID3D11Device * Device =  D3D::Get()->GetDevice();
 
 	SAFE_RELEASE(SRV);
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+	ZeroMemory(&SRVDesc, sizeof(SRVDesc));
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	SRVDesc.Format = DXGI_FORMAT_UNKNOWN; // StructuredBuffer일 땐 UNKNOWN
 	SRVDesc.Buffer.FirstElement = 0;
@@ -114,7 +116,7 @@ void RWStructuredBuffer::CreateUAV()
 	UAVDesc.Buffer.NumElements = Count;
 	CHECK(Device->CreateUnorderedAccessView(Buffer, &UAVDesc, &UAV) >= 0);
 
-	UpdateSRV();
+	CreateSRV();
 }
 
 void RWStructuredBuffer::CreateResultBuffer()
@@ -136,4 +138,5 @@ void RWStructuredBuffer::CreateResultBuffer()
 
 void RWStructuredBuffer::BindToGPU()
 {
+	ASSERT(false, "Use BindToGPUAsUAV() or BindToGPUAsSRV()");
 }

@@ -30,14 +30,14 @@ struct PBRInput
 	float3 WorldSpaceCameraPosition;
 };
 
-float4 BlinnPhong(in BlinnPhongInput Input)
+void BlinnPhong
+(
+	in BlinnPhongInput Input,
+	out float4 Ambient,
+	out float4 Diffuse,
+	out float4 Specular
+)
 {
-	float4 Result = 0;
-	float4 Ambient = 0;
-	float4 Diffuse = 0;
-	float4 Specular = 0;
-	float4 Rim = 0;
-
 	const float3 L = normalize(Input.LightDirection);
 	const float3 N = normalize(Input.Normal);
 	const float NdotL = saturate(dot(-L, N));
@@ -61,7 +61,18 @@ float4 BlinnPhong(in BlinnPhongInput Input)
 	Diffuse.rgb	= Input.Diffuse.rgb * NdotL;
 	Diffuse.a 	= Input.Diffuse.a;
 	Specular	= Input.Specular * pow(NdotH, ns);
-	Rim.rgb		= pow(smoothstep(a, b, c) * LdotV, 3);
+}
+
+float4 BlinnPhong(in BlinnPhongInput Input)
+{
+	float4 Result = 0;
+	float4 Ambient = 0;
+	float4 Diffuse = 0;
+	float4 Specular = 0;
+	float4 Rim = 0;
+
+	BlinnPhong(Input, Ambient, Diffuse, Specular);
+	// Rim.rgb		= pow(smoothstep(a, b, c) * LdotV, 3);
 
 	Result.rgb  += Ambient.rgb;
 	Result.rgba += Diffuse;

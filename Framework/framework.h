@@ -105,10 +105,13 @@ using namespace std;
 	#include "Renders/Shader/RenderingShader.h"
 	#include "Renders/Shader/ComputeShader.h"
 	#include "Renders/Shader/ShaderManager.h"
-	#include "Renders/Shader/Material.h"
-#include "Renders/Renderable/ARenderable.h"
+	#include "Renders/Renderable/ARenderable.h"
 	#include "Renders/Renderable/RenderManager.h"
 
+	#include "Material/Material.h"
+	#include "Material/MeshMaterial.h"
+	#include "Material/TerrainMaterial.h"
+	#include "Material/LineMaterial.h"
 
 	#include "Viewer/Camera.h"
 	#include "Viewer/DepthStencil.h"
@@ -130,9 +133,9 @@ using namespace std;
 
 	#include "Environment/LandScape/SceneryCell.h"
 	#include "Environment/LandScape/LandScape.h"
-	#include "Environment/Ocean/Ocean.h"
+	// #include "Environment/Ocean/Ocean.h"
 	#include "Environment/SkySphere.h"
-	#include "Environment/Foliage.h"
+	// #include "Environment/Foliage.h"
 
 	#include "ParticleSystem/ParticleSystem.h"
 

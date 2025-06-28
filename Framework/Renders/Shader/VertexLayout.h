@@ -100,6 +100,18 @@ struct VertexTextureNormal
 	Vector Normal;
 };
 
+struct VertexTerrainCell
+{
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
+
+	VertexTerrainCell()
+		: Position(0, 0, 0){}
+	VertexTerrainCell(const Vector& Position, const Vector2D & UV)
+		: Position(Position), UV(UV) {}
+	Vector Position;
+	Vector2D UV;
+};
+
 //---------------------------------------------------------------------------//
 
 struct VertexStaticMesh

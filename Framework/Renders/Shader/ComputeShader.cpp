@@ -13,9 +13,9 @@ ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
 	
 	LoadShader();
 	
-	Pass.DispatchX = InDesc.DispatchX;
-	Pass.DispatchY = InDesc.DispatchY;
-	Pass.DispatchZ = InDesc.DispatchZ;
+	Pass.DispatchX = InDesc.NumThreadDimX;
+	Pass.DispatchY = InDesc.NumThreadDimY;
+	Pass.DispatchZ = InDesc.NumThreadDimZ;
 	
 	for ( const auto & Item : Desc.SamplerStateNames)
 	{
@@ -45,6 +45,13 @@ void ComputeShader::SetPass() const
 	}
 }
 
+void ComputeShader::GetThreadDim(UINT& X, UINT& Y, UINT& Z) const
+{
+	X = this->Desc.NumThreadDimX;
+	Y = this->Desc.NumThreadDimY;
+	Z = this->Desc.NumThreadDimZ;
+}
+
 void ComputeShader::ClearPass()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
@@ -55,11 +62,17 @@ void ComputeShader::ClearPass()
 	DeviceContext->CSSetUnorderedAccessViews(0,1, &NullUAV, nullptr);
 	DeviceContext->CSSetShader(nullptr, nullptr, 0);
 }
-
 void ComputeShader::Dispatch() const
 {
+	ASSERT(Pass.DispatchX > 0 && Pass.DispatchY > 0 && Pass.DispatchZ > 0, "Use Dispatch(X, Y, Z)");
 	SetPass();
 	D3D::Get()->GetDeviceContext()->Dispatch(Pass.DispatchX, Pass.DispatchY, Pass.DispatchZ);
+	ClearPass();
+}
+void ComputeShader::Dispatch(const UINT X, const UINT Y, const UINT Z) const
+{
+	SetPass();
+	D3D::Get()->GetDeviceContext()->Dispatch(X, Y, Z);
 	ClearPass();
 }
 

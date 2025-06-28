@@ -1,6 +1,9 @@
 #ifndef __NORMAL_FUNC_HLSLI__
 #define __NORMAL_FUNC_HLSLI__
 
+static const uint bUseNormalTexture = 1 << 0;
+bool HasNormalTexture(uint Flag) { return (Flag & bUseNormalTexture) != 0; }
+
 static const float3 Color_PosX = float3(1, 0, 0);
 static const float3 Color_PosY = float3(0, 1, 0);
 static const float3 Color_PosZ = float3(0, 0, 1);
@@ -11,15 +14,13 @@ static const float3 Color_NegZ = float3(1, 1, 0);
 const static float handed = -1; // for LeftHanded Coordinate
 float3 ApplyNormalMap(in float3 TangentSpaceNormal, in float3 WorldSpaceNormal, in float3 WorldSpaceTangent)
 {
-	float3 Normal = TangentSpaceNormal * 2.f - 1.f;
-
-    float3 N = normalize(WorldSpaceNormal); // Z
-    float3 T = normalize(WorldSpaceTangent); // X
-    float3 B = cross(N, T); // Y
+	float3 N = normalize(WorldSpaceNormal); // Z
+	float3 T = normalize(WorldSpaceTangent); // X
+	float3 B = cross(N, T); // Y
 
 	float3x3 TBN =  float3x3(T, B, N);
-    float3 WorldNormal = mul(Normal, TBN);
-    return WorldNormal;
+	float3 WorldNormal = mul(TangentSpaceNormal, TBN);
+	return WorldNormal;
 }
 
 float4 VisualizeNormal(in float3 Normal, float Alpha)

@@ -3,7 +3,7 @@
 
 StructuredBuffer::StructuredBuffer
 (
-	UINT TargetShaderType,
+	ShaderType TargetShaderType,
 	int RegisterIndex,
 	void * InData,
 	UINT InCount,
@@ -82,16 +82,16 @@ void StructuredBuffer::BindToGPU()
 {
 	ID3D11DeviceContext * DeviceContext = D3D::Get()->GetDeviceContext();
 
-	if (TargetShaderType & static_cast<UINT>(ShaderType::VertexShader))
+	if (TargetShaderType & ShaderType::VertexShader)
 		DeviceContext->VSSetShaderResources(RegisterIndex, 1, &SRV);
-	if (TargetShaderType & static_cast<UINT>(ShaderType::PixelShader))
+	if (TargetShaderType & ShaderType::PixelShader)
 		DeviceContext->PSSetShaderResources(RegisterIndex, 1, &SRV);
-	if (TargetShaderType & static_cast<UINT>(ShaderType::HullShader))
+	if (TargetShaderType & ShaderType::HullShader)
 		DeviceContext->HSSetShaderResources(RegisterIndex, 1, &SRV);
-	if (TargetShaderType & static_cast<UINT>(ShaderType::DomainShader))
+	if (TargetShaderType & ShaderType::DomainShader)
 		DeviceContext->DSSetShaderResources(RegisterIndex, 1, &SRV);
-	if (TargetShaderType & static_cast<UINT>(ShaderType::GeometryShader))
+	if (TargetShaderType & ShaderType::GeometryShader)
 		DeviceContext->GSSetShaderResources(RegisterIndex, 1, &SRV);
-	if (TargetShaderType & static_cast<UINT>(ShaderType::ComputeShader))
+	if (TargetShaderType & ShaderType::ComputeShader)
 		DeviceContext->CSSetShaderResources(RegisterIndex, 1, &SRV);
 }

@@ -52,7 +52,7 @@ cbuffer CB_DistanceBlend : register(b3) // PS
     float FarSize;
     float StartOffset; //(음수)
     float Range;
-    
+
     float NoiseAmount = 1;
     float NoisePower  = 1;
 
@@ -62,7 +62,7 @@ cbuffer CB_DistanceBlend : register(b3) // PS
     float LowHeight;
     float HighHeight;
     float HeightSharpness;
-    
+
     uint Padding3;
 }
 
@@ -146,7 +146,7 @@ HS_CONSTANT_OUTPUT HSConstant
 )
 {
     HS_CONSTANT_OUTPUT output;
-    
+
     matrix WorldView = mul(World, View);
     float4 Points[4]; // Camera-Space Positions
     [unroll]
@@ -229,7 +229,7 @@ DS_OUTPUT DSMain
     output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
 
     output.DebugColor = float4(MeanTessFactor / MaxTessFactor, MeanTessFactor / MaxTessFactor, MeanTessFactor / MaxTessFactor, 1);
-    
+
     return output;
 }
 
@@ -256,10 +256,10 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
 
     float3 DirtColor =  DistanceBasedColor(DIRT, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
     float3 DirtNormal = DistanceBasedNormal(DIRT, Tiling, input.UV, input.LOD, SmoothedBlendFactor);;
-    
+
     float3 RockColor = DistanceBasedColor(ROCK, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
     float3 RockNormal = DistanceBasedNormal(ROCK, Tiling, input.UV, input.LOD, SmoothedBlendFactor);;
-    
+
     float3 SandColor = DistanceBasedColor(SAND, Tiling, input.UV, input.LOD, SmoothedBlendFactor);
     float3 SandNormal = DistanceBasedNormal(SAND, Tiling, input.UV, input.LOD, SmoothedBlendFactor);;
 
@@ -286,7 +286,7 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     const float Specular = 0.1f;
     const float Ambient = 0.2f;
     const float Diffuse = (1 - Specular);
-    
+
     float3 Color = TerrainColor * Ambient
                  + Specular * (LightColor).rgb
                  + TerrainColor * saturate(LDotN) * Diffuse * (LightColor).rgb
@@ -305,7 +305,7 @@ float3x3 CalculateNormal(float2 UV)
 {
 // HeightMap Normal
     float2 dUV[4] = {
-        float2(-HeightMapTexelSize.x, 0), 
+        float2(-HeightMapTexelSize.x, 0),
         float2(+HeightMapTexelSize.x, 0),
         float2(0, -HeightMapTexelSize.y),
         float2(0, +HeightMapTexelSize.y)

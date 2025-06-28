@@ -1,8 +1,7 @@
 ﻿#pragma once
+#include "Material.h"
 
-class RenderingShader;
-
-class Material
+class MeshMaterial final : public Material
 {
 private:
 	static constexpr UINT bUseNormalTexture = 1 << 0;
@@ -12,24 +11,17 @@ private:
 	static constexpr UINT bUseAlbedoTexture = 1 << 3;
 	static constexpr UINT bUseMetallicTexture = 1 << 4;
 	static constexpr UINT bUseRoughnessTexture = 1 << 5;
-public:
-	static constexpr UINT TexturePerSurface = 1;
-	enum MaterialType
-	{
-		Line = 0,
-		Sprite,
-		Mesh,
-		Terrain,
-		Foliage,
-		Ocean,
-		Particle,
-	};
-private:
 	enum class TextureMapType : uint8_t  // NOLINT(performance-enum-size)
 	{
-		Diffuse = 0, Specular, Normal, Max
+		Normal = 0,
+		Diffuse,
+		Specular,
+		Shininess,
+		Metallic,
+		Roughness,
+		Max
 	};
-	struct MaterialDesc
+	struct PerMaterialDesc
 	{
 		Color Ambient = {0.1f,0.1f,0.1f,0};
 		Color Diffuse = {1.0f,1.0f, 1.0f,0};
@@ -40,10 +32,13 @@ private:
 		float Padding;
 	};
 public:
-	Material(const Json::Value & InValue, const string& InMaterialName, MaterialType InMaterialType);
-	~Material();
-	void Tick();
-	void BindToGpu(int RegisterIndex) const;
+	MeshMaterial(const Json::Value & InValue, const string& InMaterialName);
+	virtual ~MeshMaterial();
+	virtual void Tick() override;
+	virtual void BindToGpu(int RegisterIndex) const override;
+	
+	[[nodiscard]] const PerMaterialDesc & GetMaterialData() const;
+	[[nodiscard]] bool IsTransparent() const { return bTransparent; }
 	
 	void SetAmbient(const Color& InAmbient);
 	void SetDiffuse(const Color& InDiffuse);
@@ -53,22 +48,10 @@ public:
 	void SetDiffuseMap(const wstring & InFilePath);
 	void SetNormalMap(const wstring & InFilePath);
 	void SetSpecularMap(const wstring & InFilePath);
-	
-	const ConstantBuffer * GetConstantBuffer() const;
-	const string & GetMaterialName() const;
-	const string & GetShaderName() const;
-	const RenderingShader * GetRenderingShader() const;
-	const MaterialDesc & GetMaterialData() const;
-	bool IsTransparent() const { return bTransparent; };
 private:
-	string Name;
-	string ShaderName;
-	RenderingShader * Shader;
-	MaterialDesc MaterialInfo;
+	PerMaterialDesc PerMaterialData;
 	bool bTransparent = false;
 	
-	bool bDirty = false;
-	ConstantBuffer * CB_MaterialInfo = nullptr;
 	Texture * NormalMap = nullptr;	// 0
 	Texture * DiffuseTex = nullptr; // 1
 	Texture * SpecularMap = nullptr; // 2
@@ -77,5 +60,4 @@ private:
 	Texture * AlbedoMap = nullptr; // 4
 	Texture * MetallicMap = nullptr; // 5
 	Texture * RoughnessMap = nullptr; // 6
-
 };

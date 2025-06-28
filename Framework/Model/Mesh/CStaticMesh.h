@@ -3,6 +3,7 @@
 class StaticMeshSubset;
 class CStaticMesh
 {
+	using MaterialType = MeshMaterial;
 	using VertexType = VertexStaticMesh;
 public:
 	explicit CStaticMesh(const wstring & InModelName);

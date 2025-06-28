@@ -76,6 +76,6 @@ void sdt::GaussianRandomDemo::Tick()
 
 void sdt::GaussianRandomDemo::Render()
 {
-	GaussianRandom->BindToGPU(0, (UINT)ShaderType::PixelShader);
+	GaussianRandom->BindToGPU(0, ShaderType::PixelShader);
 	Shader->Render();
 }

@@ -18,8 +18,11 @@
     <ClCompile Include="Environment\Foliage.cpp" />
     <ClCompile Include="Environment\LandScape\LandScape.cpp" />
     <ClCompile Include="Environment\LandScape\SceneryCell.cpp" />
-    <ClCompile Include="Environment\Ocean\Ocean.cpp" />
-    <ClCompile Include="Environment\Ocean\Ocean.HeightMapGenerate.cpp">
+    <ClCompile Include="Environment\SkySphere.cpp" />
+    <ClCompile Include="Environment\Weather\Precipitation.cpp" />
+    <ClCompile Include="Ligthing\LightingManager.cpp" />
+    <ClCompile Include="Material\LineMaterial.cpp" />
+    <ClCompile Include="Material\Material.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
@@ -30,6 +33,7 @@
       <BrowseInformation>false</BrowseInformation>
       <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
       <CompileAs>Default</CompileAs>
+      <UseDynamicDebugging>false</UseDynamicDebugging>
       <ConformanceMode>true</ConformanceMode>
       <DiagnosticsFormat>Column</DiagnosticsFormat>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
@@ -94,12 +98,11 @@
       <EnablePREfast>false</EnablePREfast>
       <OmitFramePointers>false</OmitFramePointers>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;C:\Users\jeffk\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="Environment\SkySphere.cpp" />
-    <ClCompile Include="Environment\Weather\Precipitation.cpp" />
-    <ClCompile Include="Ligthing\LightingManager.cpp" />
+    <ClCompile Include="Material\MeshMaterial.cpp" />
+    <ClCompile Include="Material\TerrainMaterial.cpp" />
     <ClCompile Include="Math\Box.cpp" />
     <ClCompile Include="Math\Color.cpp" />
     <ClCompile Include="Math\Frustum.cpp" />
@@ -538,85 +541,6 @@
       <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="Renders\Shader\Material.cpp">
-      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <Optimization>Disabled</Optimization>
-      <SupportJustMyCode>true</SupportJustMyCode>
-      <AssemblerOutput>NoListing</AssemblerOutput>
-      <AssemblerListingLocation>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</AssemblerListingLocation>
-      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
-      <BrowseInformation>false</BrowseInformation>
-      <BrowseInformationFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</BrowseInformationFile>
-      <CompileAs>Default</CompileAs>
-      <UseDynamicDebugging>false</UseDynamicDebugging>
-      <ConformanceMode>true</ConformanceMode>
-      <DiagnosticsFormat>Column</DiagnosticsFormat>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <ErrorReporting>Prompt</ErrorReporting>
-      <ExpandAttributedSource>false</ExpandAttributedSource>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <EnableASAN>false</EnableASAN>
-      <EnableFuzzer>false</EnableFuzzer>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <EnableVectorLength>NotSet</EnableVectorLength>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <GenerateModuleDependencies>false</GenerateModuleDependencies>
-      <GenerateSourceDependencies>false</GenerateSourceDependencies>
-      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <LanguageStandard>Default</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ModuleDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleDependenciesFile>
-      <ModuleOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ModuleOutputFile>
-      <OmitDefaultLibName>false</OmitDefaultLibName>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <ObjectFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</ObjectFileName>
-      <CallingConvention>Cdecl</CallingConvention>
-      <ProgramDataBaseFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\Debug\Framework.pdb</ProgramDataBaseFileName>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.pch</PrecompiledHeaderOutputFile>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <ShowIncludes>false</ShowIncludes>
-      <SourceDependenciesFile>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</SourceDependenciesFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <SmallerTypeCheck>false</SmallerTypeCheck>
-      <SpectreMitigation>false</SpectreMitigation>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <TrackerLogDirectory>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\Framework.tlog\</TrackerLogDirectory>
-      <TranslateIncludes>false</TranslateIncludes>
-      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <UseFullPaths>true</UseFullPaths>
-      <WarningLevel>Level3</WarningLevel>
-      <XMLDocumentationFileName>D:\WorkSpace\Atents_SDT\SDT_DX\U2411_DX\\Debug\Framework\</XMLDocumentationFileName>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <IntelJCCErratum>false</IntelJCCErratum>
-      <BuildStlModules>false</BuildStlModules>
-      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
-      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
-      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
-      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
-      <EnablePREfast>false</EnablePREfast>
-      <OmitFramePointers>false</OmitFramePointers>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../_Libraries;;D:\WorkSpace\WindowsPractice\vcpkg\installed\x86-windows\include</AdditionalIncludeDirectories>
-      <LibCompiled>true</LibCompiled>
-    </ClCompile>
     <ClCompile Include="Renders\Shader\RenderingShader.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -963,10 +887,13 @@
     <ClInclude Include="Environment\Foliage.h" />
     <ClInclude Include="Environment\LandScape\LandScape.h" />
     <ClInclude Include="Environment\LandScape\SceneryCell.h" />
-    <ClInclude Include="Environment\Ocean\Ocean.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
+    <ClInclude Include="Material\LineMaterial.h" />
+    <ClInclude Include="Material\Material.h" />
+    <ClInclude Include="Material\MeshMaterial.h" />
+    <ClInclude Include="Material\TerrainMaterial.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Frustum.h" />
@@ -1020,7 +947,6 @@
     <ClInclude Include="Renders\RWTexture2D.h" />
     <ClInclude Include="Renders\RWTexture2DArray.h" />
     <ClInclude Include="Renders\Shader\ComputeShader.h" />
-    <ClInclude Include="Renders\Shader\Material.h" />
     <ClInclude Include="Renders\Shader\RenderingShader.h" />
     <ClInclude Include="Renders\Shader\ShaderBase.h" />
     <ClInclude Include="Renders\Shader\ShaderManager.h" />

@@ -8,7 +8,7 @@ CBone::CBone(const BoneDesc& Desc)
 	ParentIndex = Desc.ParentIndex;
 	MatrixData = { Desc.RootTransform, Desc.OffsetMatrix };
 	// CB_BoneMatrix = new ConstantBuffer(
-	// 	(UINT)ShaderType::VertexShader,
+	// 	ShaderType::VertexShader,
 	// 	0, // TODO
 	// 	&MatrixData,
 	// 	"Bone Matrix Data",

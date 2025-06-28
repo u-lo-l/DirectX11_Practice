@@ -3,7 +3,7 @@
 GlobalViewProjectionCBuffer::GlobalViewProjectionCBuffer()
 {
 	ViewProjectionBuffer = new ConstantBuffer(
-		(UINT)ShaderType::VertexShader,
+		ShaderType::VertexShader,
 		VS_ViewProjection,
 		nullptr,
 		"ViewProjection",
@@ -11,7 +11,7 @@ GlobalViewProjectionCBuffer::GlobalViewProjectionCBuffer()
 		false
 	);
 	LightDirectionBuffer = new ConstantBuffer(
-		(UINT)ShaderType::PixelShader,
+		ShaderType::PixelShader,
 		PS_LightDirection,
 		nullptr,
 		"LightDirection",

@@ -6,21 +6,16 @@ SkeletalMeshSubset::SkeletalMeshSubset(const MeshSubsetDesc& Desc)
 {
 	ARenderable::SetName(Desc.Name);
 	ARenderable::SetMaterial(Desc.Material);
-	Shader = Mat->GetRenderingShader();
-	VertexInputLayout = Shader->GetInputLayout();
+	ARenderable::SetShader();
 	Vertices = Desc.Vertices;
 	Indices = Desc.Indices;
-	
-	ARenderable::CreateVertexBuffer(Vertices.data(), Vertices.size(), sizeof(VertexSkeletalMesh));
+
+	ARenderable::CreateVertexBuffer(Vertices.data(), Vertices.size(), sizeof(VertexType));
 	ARenderable::CreateIndexBuffer(Indices.data(), Indices.size());
-	InstBuffer = nullptr;
 }
 
 SkeletalMeshSubset::~SkeletalMeshSubset()
-{
-	SAFE_DELETE(VBuffer);
-	SAFE_DELETE(IBuffer);
-}
+= default;
 
 void SkeletalMeshSubset::SetSkeletal(const CSkeletal* Skeletal)
 {
@@ -32,17 +27,12 @@ void SkeletalMeshSubset::BindResources() const
 {
 	constexpr static int BoneMatrixSRVSlot = 6;
 	constexpr static int OffsetMatrixCBSlot = 2;
-	// CHECK(!!VertexInputLayout);
-	// CHECK(!!InShader);
-	CHECK(!!VBuffer);
-	CHECK(!!IBuffer);
-	CHECK(!!Mat);
+
 	CHECK(!!Skeleton);
 	CHECK(!!Tf);
 	
-	VBuffer->BindToGPU();
-	IBuffer->BindToGPU();
-	Mat->BindToGpu(1);
+	BindBuffer();
+	// Mat->BindToGpu(1);
 	Skeleton->BindToGPU(OffsetMatrixCBSlot, BoneMatrixSRVSlot);
 	Tf->BindToGPU(3);
 }

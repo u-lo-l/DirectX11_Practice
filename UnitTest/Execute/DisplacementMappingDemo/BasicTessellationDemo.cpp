@@ -68,7 +68,7 @@ void sdt::BasicTessellationDemo::Initialize()
 	IBuffer = new IndexBuffer(Indices.data(), Indices.size());
 
 	WVPBuffer_DS = new ConstantBuffer(
-		(UINT)ShaderType::DomainShader,
+		ShaderType::DomainShader,
 		0,
 		&WVP,
 		"World View Projection",
@@ -77,7 +77,7 @@ void sdt::BasicTessellationDemo::Initialize()
 	);
 	
 	TessellationFactorBuffer_HS = new ConstantBuffer(
-		(UINT)ShaderType::HullShader,
+		ShaderType::HullShader,
 		1,
 		&TessellationFactor,
 		"TessellationFactor",

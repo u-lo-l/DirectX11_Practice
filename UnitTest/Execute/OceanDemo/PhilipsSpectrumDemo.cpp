@@ -262,7 +262,7 @@ namespace sdt
 
 	void PhilipsSpectrumDemo::GenerateInitialSpectrum() const
 	{
-		GaussianRandomTexture2D->BindToGPU(0, static_cast<UINT>(ShaderType::ComputeShader)); // SRV
+		GaussianRandomTexture2D->BindToGPU(0,(ShaderType::ComputeShader)); // SRV
 		InitialSpectrumTexture2D->BindToGPUAsUAV(0); // UAV
 		CB_PhillipsInit->BindToGPU();
 		

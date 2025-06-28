@@ -6,9 +6,9 @@ struct DispatchPass
 	// TODO : unique_ptr
 	ID3D11ComputeShader * Shader = nullptr;
 	map<int, SamplerStateDesc> SamplerStates;
-	unsigned int DispatchX = 1;
-	unsigned int DispatchY = 1;
-	unsigned int DispatchZ = 1;
+	UINT DispatchX = 0;
+	UINT DispatchY = 0;
+	UINT DispatchZ = 0;
 };
 
 struct ComputeShaderDesc
@@ -18,9 +18,12 @@ struct ComputeShaderDesc
 	wstring PreCompiledShaderFileDirectory;
 	const D3D_SHADER_MACRO * ShaderMacros = nullptr;
 	wstring EntryPoint = L"CSMain";
-	unsigned int DispatchX = 1;
-	unsigned int DispatchY = 1;
-	unsigned int DispatchZ = 1;
+	UINT NumThreadDimX = 1;
+	UINT NumThreadDimY = 1;
+	UINT NumThreadDimZ = 1;
+	UINT DispatchX = 0;
+	UINT DispatchY = 0;
+	UINT DispatchZ = 0;
 	vector<tuple<int, ShaderType, string>> SamplerStateNames;
 	bool bForceRecompile = false;
 };
@@ -31,8 +34,10 @@ public:
 	explicit ComputeShader(const ComputeShaderDesc & InDesc);
 	virtual ~ComputeShader() override;
 	void SetPass() const;
+	void GetThreadDim(UINT & X, UINT & Y, UINT & Z) const;
 	static void ClearPass();
 	void Dispatch() const;
+	void Dispatch(UINT X, UINT Y, UINT Z) const;
 
 private:
 	void LoadShader();

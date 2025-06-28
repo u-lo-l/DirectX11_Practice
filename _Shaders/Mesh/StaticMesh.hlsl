@@ -1,6 +1,7 @@
 #ifndef __STATIC_MESH_HLSL__
 #define __STATIC_MESH_HLSL__
 
+# include "../PerFrame.hlsli"
 # include "../ComputeShader/Transform.hlsl"
 # include "../Texture.Func.hlsli"
 # include "../Shading.Func.hlsli"
@@ -39,16 +40,6 @@ struct DepthOutput
     float4 ShadowPosition : SV_Position;
 };
 
-cbuffer CB_PerFrame : register(b0)
-{
-    matrix ViewProjection;
-    float3 CameraWorldPosition;
-    float  Padding;
-    float4 LightColor;
-    float3 LightDirection;
-    float  Padding2;
-}
-
 cbuffer CB_PerMaterial : register(b1)
 {
     float4 Ambient;
@@ -71,7 +62,7 @@ VS_Output VSMain(VS_Input Input)
     Output.Position = mul(Input.Position, Input.WorldTfPerInstance);
     Output.WorldPosition = Output.Position.xyz;
 
-    Output.Position = mul(Output.Position, ViewProjection);
+    Output.Position = mul(Output.Position, mul(View, Projection));
 
     Output.ProjectorNDCPosition = float4(0,0,0,1);
     Output.ShadowPosition = float4(0,0,0,1);

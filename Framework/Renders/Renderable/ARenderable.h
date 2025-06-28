@@ -18,8 +18,6 @@ public:
 	void CreateInstanceBuffer(void * InData, int InCount, int InStride);
 
 	void SetTransform(const Matrix & InMatrix) const;
-	void SetMaterial(const Material * InMaterial);
-	void SetInputLayOut(ID3D11InputLayout * InInputLayout);
 	const string & GetName() const;
 
 	const Material * GetMaterial() const;
@@ -30,18 +28,22 @@ public:
 	const IndexBuffer * GetIndexBuffer() const;
 	const InstanceBuffer * GetInstanceBuffer() const;
 
-	void SetName(const string & InName);
 	virtual void BindResources() const = 0;
-protected:
 
+protected:
+	void SetName(const string & InName);
+	void SetMaterial(const Material * InMaterial);
+	void SetInputLayOut(ID3D11InputLayout * InInputLayout);
+	void SetShader();
+	void BindBuffer() const;
 	// TODO : Change To unique_ptr
 	Transform * Tf = nullptr;
 	string Name;
 	// TODO : Change To shared_ptr
-	const Material * Mat = nullptr;
-
-	// TODO : Change To shared_ptr
 	const RenderingShader * Shader = nullptr;
+private:
+	// TODO : Change To shared_ptr
+	const Material * Mat = nullptr;
 	// TODO : Change To shared_ptr
 	const ID3D11InputLayout * VertexInputLayout = nullptr;
 	// TODO : Change To unique_ptr

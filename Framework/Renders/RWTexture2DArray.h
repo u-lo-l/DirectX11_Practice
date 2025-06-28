@@ -12,7 +12,7 @@ public:
 	);
 	~RWTexture2DArray();
 	void BindToGPUAsUAV(UINT SlotNum = 0) const;
-	void BindToGPUAsSRV(UINT SlotNum = 0, UINT InShaderType = (UINT)ShaderType::ComputeShader) const;
+	void BindToGPUAsSRV(UINT SlotNum = 0, ShaderType InShaderType = ShaderType::ComputeShader) const;
 	void UpdateSRV();
 	UINT GetWidth() const;
 	UINT GetHeight() const;

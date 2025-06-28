@@ -14,8 +14,7 @@ public:
 	 */
 	void BindToGPUAsUAV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum = 0) const;
-	void BindToGPUAsSRV(UINT SlotNum, UINT InShaderType) const;
-	void UpdateSRV();
+	void BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const;
 	UINT GetWidth() const;
 	UINT GetHeight() const;
 	ID3D11UnorderedAccessView * GetUAV() const;
@@ -24,7 +23,10 @@ public:
 	void ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const;
 
 private:
-	void CreateOutputTextureAndUAV(); // GPU Only
+	bool Verify() const;
+	void CreateOutputTexture();
+	void CreateUAV();
+	void CreateSRV();
 	void CreateResultTexture(); // for CPU Write
 	UINT Width = 0;
 	UINT Height = 0;
