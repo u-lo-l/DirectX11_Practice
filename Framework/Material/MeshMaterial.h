@@ -32,8 +32,8 @@ private:
 		float Padding;
 	};
 public:
-	MeshMaterial(const Json::Value & InValue, const string& InMaterialName);
-	virtual ~MeshMaterial();
+	MeshMaterial(const Json::Value & InValue, const string& InMaterialName, const string & InShaderName);
+	virtual ~MeshMaterial() override;
 	virtual void Tick() override;
 	virtual void BindToGpu(int RegisterIndex) const override;
 	

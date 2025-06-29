@@ -1,69 +1,43 @@
 ﻿#pragma once
 
-class Foliage
+class Foliage : public ARenderable
 {
 private:
-	using VertexType = VertexBillboard;
-	struct WVPDesc
-	{
-		Matrix World;
-		Matrix View;
-		Matrix Projection;
-	};
-	struct TerrainHeightDesc
-	{
-		Color LightColor;
-		Vector LightDirection = Vector(0, 0, 0);
-		float HeightScaler = 30.f;
-		Vector2D TerrainSize;
-		Vector2D TexelSize;
-	};
-	struct DensityDistanceDesc
-	{
-		Vector CameraPosition;
-		float Padding;
-
-		float MinAltitude = 0;
-		float MaxAltitude = 0;
-		float Near = 100;
-		float Far = 400;
-	};
-	WVPDesc WVPData;
-	Matrix ViewInverse_GS;
-	TerrainHeightDesc TerrainHeightData;
-	DensityDistanceDesc DensityDistanceData;
+	using VertexType = VertexFoliage;
 public:
-	explicit Foliage(const LandScape * InTerrain, float MinAltitude = 0, float MaxAltitude = 100);
-	~Foliage();
-
+	struct FoliageDesc
+	{
+		string Name;
+		string MaterialName;
+		string ShaderName;
+		const LandScape * TargetTerrain;
+		Vector2D AltitudeRange = {0.f, 100.f};
+		float Stride = 1.f;
+		float Scaler = 1.f;
+		wstring DensityMapName;
+		vector<wstring> Textures;
+	};
+	explicit Foliage(const FoliageDesc & InDesc);
+	virtual ~Foliage() override;
+	virtual void BindResources() const override;
 	void Tick();
-	void Render() const;
-
-	void Add(const vector<VertexType>& InVertices);
-	void Add(const Vector& InPosition, const Vector2D& InScale, UINT InMapIndex);
-	void AddTexture(const wstring& InPath);
-	void CreateRandomFoliage();
-	void SetTerrainHeightScaler(float InTerrainHeightScaler);
 private:
-	void UpdateVBuffer();
+	void CreateVertices(float TerrainDimensionX, float TerrainDimensionZ, UINT CellSize);
+	struct CB_PerFoliageDesc
+	{
+		Matrix TerrainBaseWorldTF;
 
-	float FoliageStride = 1.f;
-
-	wstring ShaderName;
-
-	// TODO
-	// HlslShader<VertexType> * CrossQuadShader = nullptr;
-
-	vector<VertexType> Vertices;
-	UINT VertexCount;
-
-	VertexBuffer * VBuffer;
+		float  HeightScaler;
+		Vector DistanceRange;
+		
+		Vector2D AltitudeRange;
+		Vector2D TerrainMapSize;
+	} CB_PerFoliageData;
 	
-	vector<wstring> TextureNames;
-	TextureArray * CrossQuadTextures;
-	const LandScape * Terrain;
+	FoliageDesc Info;
+	UINT CellSize;
+	vector<VertexType> Vertices = {};
 	
-	ConstantBuffer * WVPBuffer;
-	ConstantBuffer * TerrainHeightCBuffer;
-	ConstantBuffer * DensityDistanceCBuffer;
+	ConstantBuffer * CB_PerFoliage = nullptr;
+	const RWTexture2D * NormalMap = nullptr;
 };

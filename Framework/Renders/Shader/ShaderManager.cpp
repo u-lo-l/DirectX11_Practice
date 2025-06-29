@@ -484,7 +484,19 @@ void ShaderManager::InitRenderingShaders()
 		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
 	}
 	{
-		// Foliage
+		Desc.ShaderName = "Foliage";
+		Desc.ShaderFileName = L"Terrain/Foliage/Foliage.hlsl";
+		Desc.pInputLayoutElements = &(VertexFoliage::GetVertexInputLayoutElements());
+		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+		Desc.ShaderMacros = nullptr;
+		Desc.TargetShaderType = ShaderType::VGP;
+		Desc.RasterizerStateName = "Solid_NoCull";
+		// Desc.BlendStateName = "AlphaCoverage";
+		Desc.BlendStateName = "Opaque";
+		Desc.DepthStencilStateName = "Default";
+		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Clamp"});
+		Desc.bForceRecompile = true;
+		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
 	}
 	{
 		// Particle

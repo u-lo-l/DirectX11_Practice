@@ -11,12 +11,12 @@
 SamplerState LinearSampler_Wrap			: register(s0); // VS DS PS
 SamplerState LinearSampler_Clamp		: register(s1); // VS DS PS
 
-Texture2D<float> TerrainHeightMap		: register(t0);		// VS DS
-Texture2D<float4> TerrainNormalMap		: register(t1);		// PS
-Texture2D<float4> TerrainTangentMap		: register(t2);		// PS
+Texture2D<float>  TerrainHeightMap		: register(t0);	// VS DS
+Texture2D<float4> TerrainNormalMap		: register(t1);	// PS
+Texture2D<float4> TerrainTangentMap		: register(t2);	// PS
 
-Texture2D<float> MacroVariationMap		: register(t3);		// 3-Textures PS
-Texture2D<float> PerlinNoise			: register(t4);
+Texture2D<float> MacroVariationMap		: register(t3);	// 3-Textures PS
+Texture2D<float> PerlinNoise			: register(t4); // PS
 Texture2DArray<float4> DetailDiffuses	: register(t5);	// 4-Textures PS
 Texture2DArray<float4> DetailNormals	: register(t6);	// 4-Textures PS
 
@@ -43,7 +43,7 @@ cbuffer CB_PerMaterial : register(b1) // PS
 	uint TextureUsageFlags;
 }
 
-cbuffer CB_PerTerrain : register(b2) // DS HS
+cbuffer CB_PerRenderable : register(b2) // DS HS
 {
 	matrix BaseWorldTF;
 
@@ -68,6 +68,8 @@ VS_OUTPUT VSMain(VS_INPUT input)
 	output.UV = input.CellTexCoord + input.UV;
 	output.Transform = input.Transform;
 
+	float Height = TerrainHeightMap.SampleLevel(LinearSampler_Clamp, output.UV, 0).r;
+	output.Position.y = Height * HeightScaler;
 	return output;
 }
 
@@ -84,24 +86,36 @@ HS_CONSTANT_OUTPUT HSConstant
 	HS_CONSTANT_OUTPUT output;
 
 	float4 Points[4]; // Camera-Space Positions
+	bool bVisible = false;
 	[unroll]
 	for (int i = 0 ; i < 4 ; i++)
 	{
 		Points[i] = mul(patch[i].Position, View);
+		[flatten]
+		if(Points[i].z >= 0)
+			bVisible = true;
 	}
 
-    [unroll]
-    for (int j = 0 ; j < 4 ; j++)
-    {
-        float4 Point1 = Points[((j - 1) + 4) % 4];
-        float4 Point2 = Points[j];
-        float TessRatio = CalculateTessellationFactor(
+	[flatten]
+	if (bVisible == false)
+	{
+		output.Edge[0] = output.Edge[1] = output.Edge[2] = output.Edge[3] = output.Inside[0] = output.Inside[1] = 0;
+		return output;
+	}
+
+	[unroll]
+	for (int j = 0 ; j < 4 ; j++)
+	{
+		float4 Point1 = Points[((j - 1) + 4) % 4];
+		float4 Point2 = Points[j];
+		float TessRatio = CalculateTessellationFactor(
 			Point1, Point2,
 			ScreenDistance, ScreenDiagonal, RDRatio,
 			LODRange
 		);
-		output.Edge[j] = TessRatio > 0 ? lerp(MinTessFactor, MaxTessFactor, TessRatio) : 0;
+		output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
 	}
+
 
 	float DensityFactor = CalculateDensity(
 		patch[0].Position.xyz, patch[1].Position.xyz, patch[2].Position.xyz, patch[3].Position.xyz
@@ -113,15 +127,6 @@ HS_CONSTANT_OUTPUT HSConstant
     output.Inside[0] = Density * DensityWeight + TessFactor * SSDWeight;
     TessFactor = (output.Edge[1] + output.Edge[3]) * 0.5f;
     output.Inside[1] = Density * DensityWeight + TessFactor * SSDWeight;
-
-	{
-		// output.Inside[0] = 1;
-		// output.Inside[1] = 1;
-		// output.Edge[0] = 1;
-		// output.Edge[1] = 1;
-		// output.Edge[2] = 1;
-		// output.Edge[3] = 1;
-	}
 
     return output;
 }

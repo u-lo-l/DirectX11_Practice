@@ -37,7 +37,6 @@ protected:
 		Ocean,
 		Particle,
 	};
-	Material(const Json::Value & InValue, const string& InMaterialName, MaterialType InMaterialType);
-	Material(const string& InMaterialName, MaterialType InMaterialType);
-	~Material();
+	Material(const string& InMaterialName, const string & InShaderName, MaterialType InMaterialType);
+	virtual ~Material();
 };

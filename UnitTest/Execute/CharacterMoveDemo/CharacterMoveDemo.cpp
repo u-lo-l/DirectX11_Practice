@@ -1,5 +1,6 @@
 ﻿#include "Pch.h"
 #include "CharacterMoveDemo.h"
+#include "Environment/Foliage.h"
 #include "Model/Character.h"
 
 namespace sdt
@@ -11,7 +12,7 @@ namespace sdt
 		MainCamera->SetPosition( 0, 10, -50 );
 
 		SetTerrain();
-		// SetCharacter();
+		SetCharacter();
 	}
 
 	void CharacterMoveDemo::Destroy()
@@ -50,9 +51,9 @@ namespace sdt
 			MoveDirection.Normalize();
 		}
 		if (!!Terrain)
-		{
 			Terrain->Tick();
-		}
+		if (!!Grasses)
+			Grasses->Tick();
 		if (!!Adam)
 		{
 			ImGui::Begin("Adam Tf Info");
@@ -88,16 +89,46 @@ namespace sdt
 
 	void CharacterMoveDemo::SetTerrain()
 	{
-		LandScape::LandScapeDesc Desc =
 		{
-			Vector(4096, 4096, 4096),
-			512,
-			64,
-			L"Terrain/GrandMountain/Height Map TIF.tif",
-			{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
-			{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
-		};
-		Terrain = new LandScape(Desc);
+			LandScape::LandScapeDesc Desc =
+			{
+				Vector(4096, 4096, 4096),
+				512,
+				64,
+				L"Terrain/GrandMountain/Height Map TIF.tif",
+				{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
+				{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
+			};
+			Terrain = new LandScape(Desc);
+		}
+		{
+			Foliage::FoliageDesc Desc =
+			{
+				"Foliage","Mat_Foliage", "Foliage",
+				Terrain,
+				{0.f, 300.f },
+				3.f,
+				7.5f,
+				L"Terrain/Foliage/FoliageDensity.png",
+				{
+					L"Terrain/Foliage/grass_01.tga",
+					L"Terrain/Foliage/grass_02.tga",
+					L"Terrain/Foliage/grass_03.tga",
+					L"Terrain/Foliage/grass_04.tga",
+					L"Terrain/Foliage/grass_05.tga",
+					L"Terrain/Foliage/grass_06.tga",
+					L"Terrain/Foliage/grass_07.tga",
+					L"Terrain/Foliage/grass_08.tga",
+					L"Terrain/Foliage/grass_09.tga",
+					L"Terrain/Foliage/grass_10.tga",
+					L"Terrain/Foliage/grass_11.tga",
+					L"Terrain/Foliage/grass_12.tga",
+					L"Terrain/Foliage/grass_13.tga",
+					L"Terrain/Foliage/grass_14.tga"
+				}
+			};
+			Grasses = new Foliage(Desc);
+		}
 	}
 
 	void CharacterMoveDemo::SetCharacter()

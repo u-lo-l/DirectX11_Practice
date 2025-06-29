@@ -35,15 +35,15 @@ RenderingShader::RenderingShader( const RenderingShaderDesc& InDesc )
 		ShaderType TargetShader = std::get<1>(Item);
 		const string & SamplerStateName = std::get<2>(Item);
 		ID3D11SamplerState * SamplerState = ShaderManagerInst->GetSamplerState(SamplerStateName);
-		CHECK(!!SamplerState);
+		ASSERT(!!SamplerState, String::Format("Failed to find SamplerState : %s", SamplerStateName).c_str());
 		Pass.SamplerStates[RegisterIndex] = {SamplerState, TargetShader };
 	}
 	Pass.RasterizerState = ShaderManagerInst->GetRasterizerState(Desc.RasterizerStateName);
-	CHECK(!!Pass.RasterizerState);
+	ASSERT(!!Pass.RasterizerState, String::Format("Failed to find Rasterizer : %s", Desc.RasterizerStateName).c_str());
 	Pass.BlendState = ShaderManagerInst->GetBlendState(Desc.BlendStateName);
-	CHECK(!!Pass.BlendState);
+	ASSERT(!!Pass.BlendState, String::Format("Failed to find BlendState : %s", Desc.BlendStateName).c_str());
 	Pass.DepthStencilState = ShaderManagerInst->GetDepthStencilState(Desc.DepthStencilStateName);
-	CHECK(!!Pass.DepthStencilState);
+	ASSERT(!!Pass.DepthStencilState, String::Format("Failed to find DepthStencilState : %s", Desc.DepthStencilStateName).c_str());
 }
 
 RenderingShader::~RenderingShader()

@@ -4,8 +4,9 @@
 MeshMaterial::MeshMaterial
 (
 	const Json::Value& InValue,
-	const string & InMaterialName
-)	: Material( InValue, InMaterialName, MaterialType::Mesh )
+	const string & InMaterialName,
+	const string & InShaderName
+)	: Material(InMaterialName, InShaderName, MaterialType::Mesh )
 {
 	this->PerMaterialData.Ambient = Helper::JsonToColor(InValue["Ambient"].asString());
 	this->PerMaterialData.Diffuse = Helper::JsonToColor(InValue["Diffuse"].asString());

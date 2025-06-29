@@ -108,6 +108,8 @@ void Texture::BindToGPU(UINT SlotNum, ShaderType InShaderType) const
 		D3D::Get()->GetDeviceContext()->HSSetShaderResources(SlotNum, 1, &this->SRV);
 	if(InShaderType & ShaderType::DomainShader)
 		D3D::Get()->GetDeviceContext()->DSSetShaderResources(SlotNum, 1, &this->SRV);
+	if(InShaderType & ShaderType::GeometryShader)
+		D3D::Get()->GetDeviceContext()->GSSetShaderResources(SlotNum, 1, &this->SRV);
 	if(InShaderType & ShaderType::ComputeShader)
 		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &this->SRV);
 }

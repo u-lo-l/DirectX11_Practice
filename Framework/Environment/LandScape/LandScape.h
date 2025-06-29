@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class TerrainCell;
+
 class LandScape
 {
 public:
@@ -16,20 +18,25 @@ public:
 	explicit LandScape(const LandScapeDesc & InDesc);
 	~LandScape();
 	void Tick();
-	// void Render(bool bDrawBoundary = false) const;
-	const Vector & GetDimension() const { return Data.Dimension; }
-	// const Texture * GetHeightMap() const { return CellInstance->GetHeightMap(); }
+	const Vector & GetDimension() const;
+	const Texture * GetHeightMap() const;
+	const RWTexture2D * GetNormalMap() const;
+	const RWTexture2D * GetTangentMap() const;
+	UINT GetCellSize() const;
+	Transform * GetTransform() const;
+	float GetHeightScaler() const;
+
 private:
 	void SetupShaders();
 	void SetupResources(const LandScapeDesc& InDesc);
 	void SetupCells(const LandScapeDesc& InDesc);
-	LandScapeDesc Data;
+	LandScapeDesc Info;
 
-	TerrainCellTest * CellInstance = nullptr;
+	TerrainCell * CellInstance = nullptr;
 	// BondingVolume
 	// Foliage
-	ComputeShader   * NormalMapGenerator = nullptr;
-	Transform       * Tf;
+	ComputeShader * NormalMapGenerator = nullptr;
+	Transform * Tf;
 	Texture * HeightMap;
 };
 

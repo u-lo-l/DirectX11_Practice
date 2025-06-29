@@ -135,7 +135,19 @@ const vector<D3D11_INPUT_ELEMENT_DESC> &  VertexBillboard::GetVertexInputLayoutE
 	{
 		INPUT_ELEMENT_VERTEX_FLOAT3("POSITION"),
 		INPUT_ELEMENT_VERTEX_FLOAT2("SCALE"),
-		INPUT_ELEMENT_VERTEX_UINT("MAPINDEX")
+		INPUT_ELEMENT_VERTEX_UINT("MAPINDEX"),
+	};
+	return InputLayoutElements;
+}
+
+const vector<D3D11_INPUT_ELEMENT_DESC> &  VertexFoliage::GetVertexInputLayoutElements()
+{
+	static vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutElements
+	{
+		INPUT_ELEMENT_VERTEX_FLOAT3("POSITION"),
+		INPUT_ELEMENT_VERTEX_FLOAT2("SCALE"),
+		INPUT_ELEMENT_VERTEX_UINT("MAPINDEX"),
+		INPUT_ELEMENT_VERTEX_FLOAT("RANDOM")
 	};
 	return InputLayoutElements;
 }

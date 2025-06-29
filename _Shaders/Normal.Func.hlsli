@@ -12,6 +12,10 @@ static const float3 Color_NegY = float3(1, 0, 1);
 static const float3 Color_NegZ = float3(1, 1, 0);
 
 const static float handed = -1; // for LeftHanded Coordinate
+
+/*
+* TangentSpaceNormal : Texture에서 읽을 경우, (-1 ~ 1 로 매핑 후 전달)
+*/
 float3 ApplyNormalMap(in float3 TangentSpaceNormal, in float3 WorldSpaceNormal, in float3 WorldSpaceTangent)
 {
 	float3 N = normalize(WorldSpaceNormal); // Z
@@ -21,6 +25,11 @@ float3 ApplyNormalMap(in float3 TangentSpaceNormal, in float3 WorldSpaceNormal, 
 	float3x3 TBN =  float3x3(T, B, N);
 	float3 WorldNormal = mul(TangentSpaceNormal, TBN);
 	return WorldNormal;
+}
+
+float3 ApplyNormalMap(in float3 TangentSpaceNormal)
+{
+	return ApplyNormalMap(TangentSpaceNormal, float3(0, 1, 0), float3(1, 0 ,0));
 }
 
 float4 VisualizeNormal(in float3 Normal, float Alpha)

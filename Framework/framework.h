@@ -118,7 +118,6 @@ using namespace std;
 	#include "Viewer/RenderTarget.h"
 
 	#include "Model/Mesh/CBone.h"
-	#include "Model/Mesh/CMesh.h"
 	#include "Model/Mesh/CSkeletal.h"
 	#include "Model/Mesh/SkeletalMeshSubset.h"
 	#include "Model/Mesh/StaticMeshSubset.h"
@@ -131,8 +130,8 @@ using namespace std;
 	#include "Model/Animation/AnimationBlendSpace2D.h"
 	#include "Model/Animation/AnimationController.h"
 
-	#include "Environment/LandScape/SceneryCell.h"
-	#include "Environment/LandScape/LandScape.h"
+	#include "Environment/LandScape/TerrainCell.h"
+#include "Environment/LandScape/LandScape.h"
 	// #include "Environment/Ocean/Ocean.h"
 	#include "Environment/SkySphere.h"
 	// #include "Environment/Foliage.h"

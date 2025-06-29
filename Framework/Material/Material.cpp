@@ -3,31 +3,13 @@
 
 Material::Material
 (
-	const Json::Value & InValue,
 	const string & InMaterialName,
-	const MaterialType InMaterialType
-)
-{
-	if (InMaterialType != MaterialType::Mesh && InMaterialType != MaterialType::Terrain)
-	{
-		ASSERT(false, "Material Type Not Valid")
-		return;
-	}
-	this->Name = InMaterialName;
-	const Json::Value::Members Members = InValue.getMemberNames();
-	this->ShaderName = InValue["ShaderName"].asString();
-	this->Shader = ShaderManager::Get()->GetRenderShader(this->ShaderName);
-	ASSERT(!!this->Shader, "Shader Not Valid");
-}
-
-Material::Material
-(
-	const string & InMaterialName,
+	const string & InShaderName,
 	const MaterialType InMaterialType
 )
 {
 	this->Name = InMaterialName;
-	this->ShaderName = "Terrain";
+	this->ShaderName = InShaderName;
 	this->Shader = ShaderManager::Get()->GetRenderShader(this->ShaderName);
 	ASSERT(!!this->Shader, "Shader Not Valid");
 }

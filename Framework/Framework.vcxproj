@@ -17,10 +17,11 @@
     <ClCompile Include="BasicShapes\BasicShapes2D\Triangle2D.cpp" />
     <ClCompile Include="Environment\Foliage.cpp" />
     <ClCompile Include="Environment\LandScape\LandScape.cpp" />
-    <ClCompile Include="Environment\LandScape\SceneryCell.cpp" />
+    <ClCompile Include="Environment\LandScape\TerrainCell.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />
+    <ClCompile Include="Material\FoliageMaterial.cpp" />
     <ClCompile Include="Material\LineMaterial.cpp" />
     <ClCompile Include="Material\Material.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -125,7 +126,6 @@
     <ClCompile Include="Model\Animation\AnimationController.cpp" />
     <ClCompile Include="Model\Character.cpp" />
     <ClCompile Include="Model\Mesh\CBone.cpp" />
-    <ClCompile Include="Model\Mesh\CMesh.cpp" />
     <ClCompile Include="Model\Mesh\CSkeletal.cpp" />
     <ClCompile Include="Model\Mesh\CSkeletalMesh.cpp" />
     <ClCompile Include="Model\Mesh\CStaticMesh.cpp" />
@@ -886,10 +886,11 @@
     <ClInclude Include="BasicShapes\BasicShapes2D\Triangle2D.h" />
     <ClInclude Include="Environment\Foliage.h" />
     <ClInclude Include="Environment\LandScape\LandScape.h" />
-    <ClInclude Include="Environment\LandScape\SceneryCell.h" />
+    <ClInclude Include="Environment\LandScape\TerrainCell.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
+    <ClInclude Include="Material\FoliageMaterial.h" />
     <ClInclude Include="Material\LineMaterial.h" />
     <ClInclude Include="Material\Material.h" />
     <ClInclude Include="Material\MeshMaterial.h" />
@@ -914,7 +915,6 @@
     <ClInclude Include="Model\Animation\AnimationController.h" />
     <ClInclude Include="Model\Character.h" />
     <ClInclude Include="Model\Mesh\CBone.h" />
-    <ClInclude Include="Model\Mesh\CMesh.h" />
     <ClInclude Include="Model\Mesh\CSkeletal.h" />
     <ClInclude Include="Model\Mesh\CSkeletalMesh.h" />
     <ClInclude Include="Model\Mesh\CStaticMesh.h" />

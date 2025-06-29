@@ -69,7 +69,8 @@ void CStaticMesh::ReadMaterial(Json::Value::const_iterator::reference Root)
 		if (Materials.find(Name) != Materials.cend())
 			continue;
 		string MaterialName = String::ToString(this->Name) + "_" + Name;
-		Material * Mat = new MaterialType(Value, MaterialName);
+		string ShaderName = Value["ShaderName"].asString();
+		Material * Mat = new MaterialType(Value, MaterialName, ShaderName);
 		Materials.insert({ Name, Mat });
 	}
 }

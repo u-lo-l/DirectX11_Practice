@@ -7,7 +7,6 @@ class SkeletalMeshSubset;
 //일단 No Instancing
 class CSkeletalMesh 
 {
-	using MaterialType = MeshMaterial;
 	using VertexType = VertexSkeletalMesh;
 public:
 	// InMeshNames : Adam/Mesh/Adam.mesh

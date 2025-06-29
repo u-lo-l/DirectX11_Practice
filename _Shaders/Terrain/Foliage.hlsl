@@ -39,7 +39,7 @@ SamplerState LinearSampler : register(s0);      // VS DS PS
 SamplerState AnisotropicSampler : register(s1); // VS DS PS
 
 Texture2D      TerrainHeightMap : register(t0); // VS PS
-Texture2DArray FoliageTextures : register(t1);  // PS
+Texture2DArray FoliageTextures : register(t2);  // PS
 
 struct VS_INPUT
 {
@@ -66,7 +66,7 @@ struct GS_OUTPUT    // PS_INPUT
 VS_OUTPUT VSMain(VS_INPUT Input)
 {
     VS_OUTPUT output;
-    
+
     output.UV = float2(Input.Position.x / TerrainMapSize.x, Input.Position.z / TerrainMapSize.y);
     float Height = TerrainHeightMap.SampleLevel(AnisotropicSampler, output.UV, 0).r;
     Input.Position.y = Height * HeightScaler;
@@ -74,7 +74,7 @@ VS_OUTPUT VSMain(VS_INPUT Input)
     output.Position = mul(Input.Position, World);
     output.Scale = Input.Scale;
     output.MapIndex = Input.MapIndex;
-    
+
     return output;
 }
 
@@ -133,7 +133,7 @@ float4 PSMain(GS_OUTPUT input) : SV_Target
     const float Specular = 0.1f;
     const float Ambient = 0.2f;
     const float Diffuse = (1 - Specular);
-    
+
     float4 FoliageColor = FoliageTextures.Sample(LinearSampler, float3(input.TexCord, input.MapIndex));
     float LDotN = dot(-normalize(LightDirection), CalculateNormal(input.UV));
 
@@ -152,7 +152,7 @@ float4 PSMain(GS_OUTPUT input) : SV_Target
 float3 CalculateNormal(float2 UV)
 {
     float2 dUV[4] = {
-        float2(-TexelSize.x, 0), 
+        float2(-TexelSize.x, 0),
         float2(+TexelSize.x, 0),
         float2(0, -TexelSize.y),
         float2(0, +TexelSize.y)
@@ -183,17 +183,17 @@ void Foliage_Billboard(VS_OUTPUT Input, inout TriangleStream<GS_OUTPUT> stream)
 
     Input.Position.y += Input.Scale.y * 0.3f;
     float2 size = Input.Scale * 0.5f;
-    
+
     float4 position[4];
     position[0] = float4(Input.Position.xyz - size.x * right - size.y * up, 1);
     position[1] = float4(Input.Position.xyz - size.x * right + size.y * up, 1);
     position[2] = float4(Input.Position.xyz + size.x * right - size.y * up, 1);
     position[3] = float4(Input.Position.xyz + size.x * right + size.y * up, 1);
-    
+
     float2 uv[4] = { float2(0, 1), float2(0, 0), float2(1, 1), float2(1, 0) };
-    
+
     GS_OUTPUT output;
-    
+
     [unroll(4)]
     for (int i = 0; i < 4; i++)
     {
@@ -211,7 +211,7 @@ void Foliage_CrossQuad(VS_OUTPUT Input, inout TriangleStream<GS_OUTPUT> stream)
     float2 size = Input.Scale * 0.5f;
     float c45 = size.x * cos(radians(45));
     float s45 = size.x * sin(radians(45));
-    
+
     float2 uv[4] = { float2(0, 1), float2(0, 0), float2(1, 1), float2(1, 0) };
 
     float4 position[2][4];
@@ -226,7 +226,7 @@ void Foliage_CrossQuad(VS_OUTPUT Input, inout TriangleStream<GS_OUTPUT> stream)
     position[1][3] = Input.Position + float4(-c45, +size.y, +s45, 0);
 
     GS_OUTPUT output;
-    
+
     [unroll]
     for( int i = 0 ; i < 2 ; i++)
     {
@@ -260,7 +260,7 @@ void Foliage_Triangle(VS_OUTPUT Input, inout TriangleStream<GS_OUTPUT> stream)
     position[0][1] = Input.Position + float4(-size.x, +size.y, d * size.x, 0);
     position[0][2] = Input.Position + float4(+size.x, -size.y, d * size.x, 0);
     position[0][3] = Input.Position + float4(+size.x, +size.y, d * size.x, 0);
-    
+
     position[1][0] = Input.Position + float4(-c60, -size.y, -s60, 0) + d * float4(c30, 0, -s30, 0);
     position[1][1] = Input.Position + float4(-c60, +size.y, -s60, 0) + d * float4(c30, 0, -s30, 0);
     position[1][2] = Input.Position + float4( c60, -size.y, +s60, 0) + d * float4(c30, 0, -s30, 0);
@@ -272,7 +272,7 @@ void Foliage_Triangle(VS_OUTPUT Input, inout TriangleStream<GS_OUTPUT> stream)
     position[2][3] = Input.Position + float4(-c60, +size.y, +s60, 0) + d * float4(-c30, 0, -s30, 0);
 
     GS_OUTPUT output;
-    
+
     [unroll]
     for( int i = 0 ; i < 3 ; i++)
     {

@@ -163,7 +163,7 @@ void RenderManager::Render()
 {
 	if (!!CB_PerFrame)
 	{
-		CB_PerFrame->BindToGPU(ShaderType::ALL, ShaderManager::PerFrameBindSlot);
+		CB_PerFrame->BindToGPU(ShaderType::VHDGP, ShaderManager::PerFrameBindSlot);
 	}
 	DrawCallCount = 0;
 	for (const ShaderBatch * Batch : RenderQueue)

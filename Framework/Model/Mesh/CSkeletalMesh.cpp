@@ -80,7 +80,8 @@ void CSkeletalMesh::ReadMaterial(const Json::Value::const_iterator::reference Ro
 		if (Materials.find(Name) != Materials.cend())
 			continue;
 		string MaterialName = String::ToString(this->Name) + "_" + Name;
-		Material * Mat = new MaterialType(Value, MaterialName);
+		const string ShaderName = Value["ShaderName"].asString();
+		Material * Mat = new MeshMaterial(Value, MaterialName, ShaderName);
 		Materials.insert({ Name, Mat });
 	}
 }

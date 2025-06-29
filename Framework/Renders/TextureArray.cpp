@@ -88,6 +88,7 @@ vector<ID3D11Texture2D*> TextureArray::CreateTextures
 		DirectX::TexMetadata metaData;
 		DirectX::ScratchImage image;
 		wstring ext = Path::GetExtension(InNames[i]);
+		ASSERT(Path::IsFileExist(InNames[i]), "File does not exist");
 		if (ext == L"tga")
 		{
 			CHECK(SUCCEEDED(GetMetadataFromTGAFile(InNames[i].c_str(), metaData)));

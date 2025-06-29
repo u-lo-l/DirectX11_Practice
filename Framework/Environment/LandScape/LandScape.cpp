@@ -2,7 +2,7 @@
 #include "LandScape.h"
 
 LandScape::LandScape(const LandScapeDesc& InDesc)
-	: Data(InDesc)
+	: Info(InDesc)
 {
 	SetupShaders();
 	SetupResources(InDesc);
@@ -22,24 +22,48 @@ void LandScape::Tick()
 	if (!!CellInstance) CellInstance->Tick();
 }
 
+const Vector& LandScape::GetDimension() const
+{
+	return Info.Dimension;
+}
+
+const Texture* LandScape::GetHeightMap() const
+{
+	return CellInstance->GetHeightMap();
+}
+
+const RWTexture2D* LandScape::GetNormalMap() const
+{
+	return CellInstance->GetNormalMap();
+}
+
+const RWTexture2D* LandScape::GetTangentMap() const
+{
+	return CellInstance->GetTangentMap();
+}
+
+UINT LandScape::GetCellSize() const
+{
+	return Info.CellSize;
+}
+
+Transform * LandScape::GetTransform() const
+{
+	return Tf;
+}
+
+float LandScape::GetHeightScaler() const
+{
+	return Info.Dimension.Y;
+}
+
 void LandScape::SetupShaders()
 {
 }
 
 void LandScape::SetupResources(const LandScapeDesc& InDesc)
 {
-	// TODO : CreateTerrainNormalMap;
-	// NormalMap = new RWTexture2D(HeightMap->GetWidth(), HeightMap->GetHeight());
 	Tf = new Transform();
-	// TessellationData.HeightScaler = Dimension.Y;
-	// TessellationData.DiffuseMapCount = InDesc.DiffuseMaps.size();
-	// TessellationData.NormalMapCount = InDesc.NormalMaps.size();
-	// TessellationData.LODRange = {1, 3};
-	// TessellationData.TexelSize.X = 1.f / static_cast<float>(HeightMap->GetWidth());
-	// TessellationData.TexelSize.Y = 1.f / static_cast<float>(HeightMap->GetHeight());
-	// TessellationData.TerrainSize = Dimension.X;
-	// TessellationData.GridSize = static_cast<float>(GridSize);
-	// TessellationData.TextureSize = static_cast<float>(HeightMap->GetWidth());
 }
 
 void LandScape::SetupCells(const LandScapeDesc& InDesc)
@@ -47,7 +71,7 @@ void LandScape::SetupCells(const LandScapeDesc& InDesc)
 	this->HeightMap = new Texture(InDesc.HeightMapName, true);
 	TerrainMaterial::MaterialDesc MatDesc;
 	
-	TerrainCellTest::SceneryCellDesc Desc;
+	TerrainCell::SceneryCellDesc Desc;
 	Desc.Name = "LandScape";
 	Desc.HeightMap = this->HeightMap;
 	MatDesc.HeightMap = this->HeightMap;
@@ -55,9 +79,9 @@ void LandScape::SetupCells(const LandScapeDesc& InDesc)
 	Desc.CellSize =  InDesc.CellSize;
 	Desc.TerrainDimension = InDesc.Dimension;
 	Desc.GridSize = InDesc.GridSize;
+	Desc.Parent = this->Tf;
 
-	this->CellInstance = new TerrainCellTest(Desc);
-	this->CellInstance->GetTransform()->SetParent(this->Tf);
+	this->CellInstance = new TerrainCell(Desc);
 
 #pragma region Bounding Box
 	// CellBoxVBuffer = new VertexBuffer(BoxVertices.data(), BoxVertices.size(), sizeof(VertexColor));

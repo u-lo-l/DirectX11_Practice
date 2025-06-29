@@ -12,6 +12,7 @@ ARenderable::~ARenderable()
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE(InstBuffer);
 	SAFE_DELETE(Tf);
+	// SAFE_DELETE(Mat);
 }
 
 void ARenderable::Tick() const

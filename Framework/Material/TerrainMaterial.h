@@ -11,6 +11,10 @@ public:
 		vector<wstring> DiffuseTextures {L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"};
 		vector<wstring> NormalTextures {L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"};
 	};
+	explicit TerrainMaterial(const MaterialDesc & Desc);
+	virtual ~TerrainMaterial();
+	virtual void BindToGpu(int RegisterIndex) const override;
+	virtual void Tick() override;
 private:
 	struct PerMaterialDesc
 	{
@@ -31,15 +35,6 @@ private:
 		// Padding
 		float Padding;
 	} PerMaterialData;
-
-public:
-	explicit TerrainMaterial(const MaterialDesc & Desc);
-	virtual void BindToGpu(int RegisterIndex) const override;
-	virtual void Tick() override;
-
-private:
-	RWTexture2D * NormalMap = nullptr;
-	RWTexture2D * TangentMap = nullptr;
 	Texture * PerlinNoise = nullptr;
 	Texture * MacroVariation = nullptr;
 	TextureArray * DiffuseMaps = nullptr;

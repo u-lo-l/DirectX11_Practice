@@ -24,12 +24,6 @@ float CalculateTessellationFactor
 	float2 LODRange
 )
 {
-	[flatten]
-	if (Point1.z < 0 && Point2.z < 0)
-	{
-		return -1;
-	}
-
     float L = ScreenDistance;
     float3 Center = ((Point1 + Point2) * 0.5).xyz;
     float R = length(Point2.xyz - Point1.xyz) * 0.5;

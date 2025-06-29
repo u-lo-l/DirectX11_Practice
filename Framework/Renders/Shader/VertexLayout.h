@@ -145,13 +145,28 @@ struct VertexBillboard
 	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
 
 	VertexBillboard()
-		: Position(0, 0, 0), Scale(0, 0), MapIndex(0) {}
+		: Position(0, 0, 0), Scale(0, 0), MapIndex(0){}
 	VertexBillboard(const Vector& Position, const Vector2D& Scale, const UINT MapIndex)
-		: Position(Position), Scale(Scale), MapIndex(MapIndex) {}
+		: Position(Position), Scale(Scale), MapIndex(MapIndex){}
 	
 	Vector Position;
 	Vector2D Scale;
 	UINT MapIndex;
+};
+
+struct VertexFoliage
+{
+	static const vector<D3D11_INPUT_ELEMENT_DESC> & GetVertexInputLayoutElements();
+
+	VertexFoliage()
+		: Position(0, 0, 0), Scale(0, 0), MapIndex(0), Random(0) {}
+	VertexFoliage(const Vector& Position, const Vector2D& Scale, const UINT MapIndex, const float InRandom)
+		: Position(Position), Scale(Scale), MapIndex(MapIndex), Random(InRandom) {}
+	
+	Vector Position;
+	Vector2D Scale;
+	UINT MapIndex;
+	float Random;
 };
 
 //---------------------------------------------------------------------------//

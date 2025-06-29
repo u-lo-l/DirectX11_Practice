@@ -1,8 +1,9 @@
 ﻿#pragma once
+#include "LandScape.h"
 
 struct VertexTerrainCell;
 
-class TerrainCellTest final : public ARenderable
+class TerrainCell final : public ARenderable
 {
 private:
 	using VertexType = VertexTerrainCell;
@@ -15,6 +16,7 @@ public:
 		UINT CellSize;
 		Vector TerrainDimension;
 		float GridSize;
+		Transform * Parent;
 	};
 	struct InstanceType
 	{
@@ -25,9 +27,13 @@ public:
 		Matrix LocalTransform;
 		Vector2D TexCoord;
 	};
-	explicit TerrainCellTest(const SceneryCellDesc & InDesc);
-	virtual ~TerrainCellTest() override;
-	const Texture * GetHeightMap() const { return HeightMap; }
+	explicit TerrainCell(const SceneryCellDesc & InDesc);
+	virtual ~TerrainCell() override;
+	void CreateNormalTangentMap();
+	[[nodiscard]] const Texture * GetHeightMap() const;
+	const RWTexture2D * GetNormalMap() const;
+	const RWTexture2D * GetTangentMap() const;
+
 private:
 	struct LandScapeTessellationDesc
 	{
@@ -50,6 +56,8 @@ private:
 	virtual void BindResources() const override;
 	
 	const Texture * HeightMap = nullptr;
+	RWTexture2D * NormalMap = nullptr;
+	RWTexture2D * TangentMap = nullptr;
 	vector<VertexType> Vertices = {};
 	vector<UINT> Indices = {};
 	vector<InstanceType> Instances = {};
