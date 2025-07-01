@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 namespace std
 {
@@ -11,6 +12,7 @@ public:
 	static WPARAM Run(class IExecutable* InMain);
 
 private:
+	static std::mutex g_printMutex;
 	static void Create();
 	static void Destroy();
 
@@ -21,11 +23,15 @@ private:
 private:
 	static class IExecutable* Main;
 	static bool HandleOSEvent();
-	static void RunGameLogic();
 	static void RunPhysics();
 	static void RunRenderer();
+	static void Print(const char* format, ...);
 
-	static std::thread * GameThread;
+	static std::atomic<bool> bRenderThreadReady;
+	static std::atomic<bool> bPhysicsThreadReady;
+	static std::atomic<bool> bProgramFinished;
+	static std::atomic<bool> bMainThreadReady;
+
 	static std::thread * RenderThread;
 	static std::thread * PhysicsThread;
 };

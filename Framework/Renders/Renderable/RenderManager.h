@@ -49,11 +49,13 @@ public:
 	static void Create();
 	static void Destroy();
 	static RenderManager * Get();
+	void SetViewPort(float InWidth, float InHeight, float InX = 0, float InY = 0, float InMinDepth = 0, float InMaxDepth = 1);
 	void AddRenderable(const ARenderable * InRenderable);
 	void Tick();
 	void Render();
 	size_t GetRenderQueueSize() const { return RenderQueue.size(); }
 	const vector<ShaderBatch *> & GetRenderQueue() const { return RenderQueue; }
+	void ImGuiDebugMessage() const;
 private:
 	RenderManager();
 	~RenderManager();
@@ -78,5 +80,7 @@ private:
 	
 	ConstantBuffer * CB_PerFrame = nullptr;
 	StructuredBuffer * SB_PerFrame = nullptr;
+	ViewPort * Vp;
+	
 	int DrawCallCount = 0;
 };

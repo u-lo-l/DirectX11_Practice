@@ -23,7 +23,7 @@ RenderTarget::~RenderTarget()
 void RenderTarget::SaveTexture(const wstring& InTextureFileName) const
 {
 	const wstring FileName = L"_RT_" + InTextureFileName;
-	Texture::SaveTextureAsFile(Texture, FileName);
+	Helper::SaveTextureAsFile(Texture, FileName);
 }
 
 void RenderTarget::SetRenderTarget(const DepthStencil* InDepthStencil) const

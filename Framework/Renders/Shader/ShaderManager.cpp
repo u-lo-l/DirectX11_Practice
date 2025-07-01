@@ -39,7 +39,7 @@ ComputeShader * ShaderManager::GetComputeShader(const string& InName)
 	return It == ComputeShaderMap.cend() ? nullptr : It->second;
 }
 
-void ShaderManager::AddShader(const wstring& InName, ShaderBase* InShader)
+void ShaderManager::AddShader(const string& InName, ShaderBase * InShader)
 {
 	RenderingShader * RenderShader = dynamic_cast<RenderingShader *>(InShader);
 	if (RenderShader != nullptr)
@@ -448,7 +448,7 @@ void ShaderManager::InitRenderingShaders()
 		Desc.DepthStencilStateName = "Default";
 		Desc.SamplerStateNames.push_back({0, ShaderType::PixelShader, "Anisotropic_Wrap"});
 		Desc.bForceRecompile = true;
-		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
+		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	{
 		Desc.ShaderName = "StaticMesh";
@@ -462,7 +462,7 @@ void ShaderManager::InitRenderingShaders()
 		Desc.DepthStencilStateName = "Default";
 		Desc.SamplerStateNames.push_back({0, ShaderType::PixelShader, "Linear_Wrap"});
 		Desc.bForceRecompile = true;
-		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
+		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	{
 		vector<D3D_SHADER_MACRO> Defines {
@@ -481,7 +481,7 @@ void ShaderManager::InitRenderingShaders()
 		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Wrap"});
 		Desc.SamplerStateNames.push_back({1, ShaderType::VDP, "Linear_Clamp"});
 		Desc.bForceRecompile = true;
-		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
+		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	{
 		Desc.ShaderName = "Foliage";
@@ -496,7 +496,21 @@ void ShaderManager::InitRenderingShaders()
 		Desc.DepthStencilStateName = "Default";
 		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Clamp"});
 		Desc.bForceRecompile = true;
-		Instance->RenderShaderMap[Desc.ShaderName.c_str()] = new RenderingShader(Desc);;
+		AddShader(Desc.ShaderName, new RenderingShader(Desc));
+	}
+	{
+		Desc.ShaderName = "Ocean";
+		Desc.ShaderFileName = L"Ocean/Ocean.hlsl";
+		Desc.pInputLayoutElements = &(VertexTerrainCell::GetVertexInputLayoutElements());
+		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
+		Desc.ShaderMacros = nullptr;
+		Desc.TargetShaderType = ShaderType::VHDP;
+		Desc.RasterizerStateName = "Solid";
+		Desc.BlendStateName = "Opaque";
+		Desc.DepthStencilStateName = "Default";
+		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Wrap"});
+		Desc.bForceRecompile = true;
+		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	{
 		// Particle
@@ -540,14 +554,16 @@ void ShaderManager::InitComputeShaders()
 	}
 }
 
-void ShaderManager::AddRenderShader(const wstring& InName, RenderingShader* InShader)
+void ShaderManager::AddRenderShader(const string& InName, RenderingShader* InShader)
 {
 	ASSERT(InShader != nullptr, "InShader Not Valid")
+	Instance->RenderShaderMap[InName.c_str()] = InShader;
 }
 
-void ShaderManager::AddComputeShader(const wstring& InName, ComputeShader* InShader)
+void ShaderManager::AddComputeShader(const string& InName, ComputeShader* InShader)
 {
 	ASSERT(InShader != nullptr, "InShader Not Valid");
+	Instance->ComputeShaderMap[InName.c_str()] = InShader;
 }
 
 ShaderManager::ShaderManager()

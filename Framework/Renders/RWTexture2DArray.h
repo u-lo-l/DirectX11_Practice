@@ -4,6 +4,7 @@
 class RWTexture2DArray
 {
 public:
+
 	explicit RWTexture2DArray(
 		UINT InCount,
 		UINT InWidth = 512,
@@ -13,7 +14,6 @@ public:
 	~RWTexture2DArray();
 	void BindToGPUAsUAV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum = 0, ShaderType InShaderType = ShaderType::ComputeShader) const;
-	void UpdateSRV();
 	UINT GetWidth() const;
 	UINT GetHeight() const;
 	ID3D11UnorderedAccessView * GetUAV() const;
@@ -21,7 +21,9 @@ public:
 	void GetSRV(UINT InSlice, ID3D11ShaderResourceView** OutSRV) const;
 	void SaveOutputAsFile(const wstring & InFileName) const;
 private:
-	void CreateOutputTextureAndUAV();
+	void CreateOutputTexture();
+	void CreatUAV();
+	void CreatSRV();
 	void CreateResultTexture();
 	
 	ID3D11UnorderedAccessView * UAV;

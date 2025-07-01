@@ -9,7 +9,9 @@ RWTexture2DArray::RWTexture2DArray(
 )
 	: ArraySize(InCount), Width(InWidth), Height(InHeight), TextureFormat(InFormat)
 {
-	CreateOutputTextureAndUAV();
+	CreateOutputTexture();
+	CreatUAV();
+	CreatSRV();
 	CreateResultTexture();
 }
 
@@ -46,22 +48,6 @@ void RWTexture2DArray::BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) con
 		D3D::Get()->GetDeviceContext()->GSSetShaderResources(SlotNum, 1, &SRV);
 	if(InShaderType & ShaderType::ComputeShader)
 		D3D::Get()->GetDeviceContext()->CSSetShaderResources(SlotNum, 1, &SRV);
-}
-
-void RWTexture2DArray::UpdateSRV()
-{
-	ID3D11Device * Device =  D3D::Get()->GetDevice();
-
-	SAFE_RELEASE(SRV);
-	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-	ZeroMemory(&SRVDesc, sizeof(SRVDesc));
-	SRVDesc.Format = TextureFormat;
-	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-	SRVDesc.Texture2DArray.FirstArraySlice = 0;
-	SRVDesc.Texture2DArray.ArraySize = ArraySize;
-	SRVDesc.Texture2DArray.MipLevels = 1;
-	const HRESULT Hr = Device->CreateShaderResourceView(OutputTextureArray, &SRVDesc, &SRV);
-	CHECK(SUCCEEDED(Hr));
 }
 
 UINT RWTexture2DArray::GetWidth() const
@@ -113,24 +99,14 @@ void RWTexture2DArray::SaveOutputAsFile(const wstring& InFileName) const
 	ID3D11Device * Device=  D3D::Get()->GetDevice();
 	DeviceContext->CopyResource(ResultTextureArray, OutputTextureArray);
 
-	DirectX::ScratchImage Image;
-	// 내부적으로 InTexture를 Staging으로 변환한다.
-	HRESULT Hr = DirectX::CaptureTexture(Device, DeviceContext, ResultTextureArray, Image);
-	CHECK(SUCCEEDED(Hr));
 	for (UINT slice = 0 ; slice < ArraySize ; slice++)
 	{
-		wstring FileName = W_TEXTURE_PATH + InFileName + L"_" + to_wstring(slice) + L".png";
-		Hr = DirectX::SaveToWICFile(
-			*(Image.GetImage(0,0,slice)),
-			DirectX::WIC_FLAGS_NONE,
-			DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG),
-			FileName.c_str()
-		);
-		CHECK(SUCCEEDED(Hr));
+		wstring FileName = InFileName + L"_" + to_wstring(slice);
+		Helper::SaveTextureAsFile(ResultTextureArray, FileName, slice);
 	}
 }
 
-void RWTexture2DArray::CreateOutputTextureAndUAV()
+void RWTexture2DArray::CreateOutputTexture()
 {
 	ID3D11Device * Device =  D3D::Get()->GetDevice();
 	D3D11_TEXTURE2D_DESC RWTexture2DArrayDesc;
@@ -149,7 +125,12 @@ void RWTexture2DArray::CreateOutputTextureAndUAV()
 
 	HRESULT Hr = Device->CreateTexture2D(&RWTexture2DArrayDesc, nullptr, &OutputTextureArray);
 	CHECK(SUCCEEDED(Hr));
+}
 
+void RWTexture2DArray::CreatUAV()
+{
+	ID3D11Device * Device =  D3D::Get()->GetDevice();
+	
 	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
 	ZeroMemory(&UAVDesc, sizeof(UAVDesc));
 	UAVDesc.Format = TextureFormat;
@@ -157,9 +138,26 @@ void RWTexture2DArray::CreateOutputTextureAndUAV()
 	UAVDesc.Texture2DArray.ArraySize = ArraySize;
 	UAVDesc.Texture2DArray.MipSlice = 0;
 	UAVDesc.Texture2DArray.FirstArraySlice = 0;
-	Hr = Device->CreateUnorderedAccessView(OutputTextureArray, &UAVDesc, &UAV);
+	HRESULT Hr = Device->CreateUnorderedAccessView(OutputTextureArray, &UAVDesc, &UAV);
 	CHECK(SUCCEEDED(Hr));
 }
+
+void RWTexture2DArray::CreatSRV()
+{
+	ID3D11Device * Device =  D3D::Get()->GetDevice();
+
+	SAFE_RELEASE(SRV);
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+	ZeroMemory(&SRVDesc, sizeof(SRVDesc));
+	SRVDesc.Format = TextureFormat;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	SRVDesc.Texture2DArray.FirstArraySlice = 0;
+	SRVDesc.Texture2DArray.ArraySize = ArraySize;
+	SRVDesc.Texture2DArray.MipLevels = 1;
+	const HRESULT Hr = Device->CreateShaderResourceView(OutputTextureArray, &SRVDesc, &SRV);
+	CHECK(SUCCEEDED(Hr));
+}
+
 
 void RWTexture2DArray::CreateResultTexture()
 {

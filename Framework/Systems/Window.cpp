@@ -1,11 +1,17 @@
 ﻿#include "Framework.h"
 #include <thread>
 #include "Window.h"
-#include "IExecutable.h"
 
-std::thread * Window::GameThread = nullptr;
+#include <mutex>
+
+#include "IExecutable.h"
+std::mutex Window::g_printMutex     = {};
 std::thread * Window::PhysicsThread = nullptr;
-std::thread * Window::RenderThread = nullptr;
+std::thread * Window::RenderThread  = nullptr;
+std::atomic<bool> Window::bProgramFinished(false);
+std::atomic<bool> Window::bMainThreadReady(false);
+std::atomic<bool> Window::bRenderThreadReady(false);
+std::atomic<bool> Window::bPhysicsThreadReady(false);
 
 IExecutable * Window::Main = nullptr;
 
@@ -24,19 +30,32 @@ WPARAM Window::Run(IExecutable * InMain)
 	ShaderManager::Create();
 	RenderManager::Create();
 
-	Window::GameThread = new std::thread(RunGameLogic);
 	Window::PhysicsThread = new std::thread(RunPhysics);
 	Window::RenderThread = new std::thread(RunRenderer);
+	
+	this_thread::sleep_for(std::chrono::microseconds(100));
 
+	while (!bPhysicsThreadReady || !bRenderThreadReady)
+	{
+		Sleep(100);
+	}
+	
 	Main = InMain;
 	Main->Initialize();
-
+	bMainThreadReady.store(true);
+	
 	while (true)
 	{
 		if (HandleOSEvent() == EXIT_FAILURE)
+		{
+			bProgramFinished.store(true);
 			break;
+		}
 		MainRender();
 	}
+
+	RenderThread->join();
+	PhysicsThread->join();
 
 	Main->Destroy();
 	LightingManager::Destroy();
@@ -44,6 +63,7 @@ WPARAM Window::Run(IExecutable * InMain)
 	sdt::SystemTimer::Destroy();
 	sdt::Mouse::Destroy();
 	Keyboard::Destroy();
+	RenderManager::Destroy();
 	Gui::Destroy();
 	D3D::Destroy();
 	Destroy();
@@ -115,11 +135,7 @@ void Window::Create()
 void Window::Destroy()
 {
 	const D3DDesc desc = D3D::GetDesc();
-
-	GameThread->join();
-	RenderThread->join();
-	PhysicsThread->join();
-	SAFE_DELETE(GameThread);
+	
 	SAFE_DELETE(PhysicsThread);
 	SAFE_DELETE(RenderThread);
 	
@@ -189,14 +205,13 @@ void Window::MainRender()
 		D3D::Get()->ClearDepthStencilView();
 		LightingManager::Get()->Render();
 		Context::Get()->Render();
-		Main->Render();
 		RenderManager::Get()->Render();
 	}
 	// {
 	// 	Main->PostRender();
 	// }
-	Gui::Get()->Render();
 
+	Gui::Get()->Render();
 	D3D::Get()->Present();
 }
 
@@ -214,17 +229,47 @@ bool Window::HandleOSEvent()
 	return EXIT_SUCCESS;
 }
 
-void Window::RunGameLogic()
-{
-	printf("Run Game Logic\n");
-}
-
 void Window::RunPhysics()
 {
-	printf("Run Physics Logic\n");
+	Print("Begin Physics Logic\n");
+	bPhysicsThreadReady.store(true);
+	
+	while (bMainThreadReady.load() == false)
+		this_thread::sleep_for(std::chrono::milliseconds(1000));
+	Print("Run Physics Logic\n");
+	Print("Exit Physics Logic\n");
 }
 
 void Window::RunRenderer()
 {
-	printf("Run Render Logic\n");
+	Print("Begin Render Logic\n");
+	{
+		bRenderThreadReady.store(true);
+	}
+	{
+		while (bMainThreadReady.load() == false)
+		{
+			Print("[RenderThread] | Wait For Main Thread\n");
+			this_thread::sleep_for(std::chrono::milliseconds(1000));
+		}
+	}
+	{
+		Print("Run Render Logic\n");
+		while (bProgramFinished.load() == false) // g_bExitThreads가 true가 될 때까지 반복
+		{
+			this_thread::sleep_for(std::chrono::milliseconds(1000));
+		}
+	}
+	{
+		Print("Exit Render Logic\n");
+	}
+}
+
+void Window::Print(const char* format, ...)
+{
+	lock_guard<std::mutex> lock(g_printMutex); // 뮤텍스 잠금
+	va_list args;
+	va_start(args, format);
+	vprintf(format, args); // va_list를 받는 printf 버전
+	va_end(args);
 }

@@ -6,13 +6,15 @@ public:
 	struct MaterialDesc
 	{
 		const Texture * HeightMap = nullptr;
+		string Name = "TerrainMat";
+		string ShaderName = "Terrain";
 		wstring MacroVariation = L"Terrain/T_MacroVariation.png";
 		wstring PerlinNoise = L"Terrain/T_Perlin_Noise.png";
 		vector<wstring> DiffuseTextures {L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"};
 		vector<wstring> NormalTextures {L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"};
 	};
 	explicit TerrainMaterial(const MaterialDesc & Desc);
-	virtual ~TerrainMaterial();
+	virtual ~TerrainMaterial() override;
 	virtual void BindToGpu(int RegisterIndex) const override;
 	virtual void Tick() override;
 private:

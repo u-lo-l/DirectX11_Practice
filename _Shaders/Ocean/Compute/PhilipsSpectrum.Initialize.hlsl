@@ -47,13 +47,7 @@ float GetPhillipSpectrum(uint2 UV)
     float2 kDir = normalize(k);
     float  kDotw = dot(kDir, w);
 
-    if (kMag < EPSILON) // 아주 작은 값으로 비교하여 0 나누기 방지
-    {
-        return 0;
-    }
-
-    float PhilipsSpectrum = 2 * exp(-1 / pow(kMag * L , 2)) / pow(kMag, 4) * pow(kDotw, 2);
-    return PhilipsSpectrum;
+	return (kMag < EPSILON) ? 0 : 2 * exp(-1 / pow(kMag * L , 2)) / pow(kMag, 4) * pow(kDotw, 2);
 }
 
 #endif

@@ -250,16 +250,6 @@ Matrix::operator float*()
 	return M;
 }
 
-void Matrix::Display() const
-{
-	printf("==Matrix  Display==\n");
-	printf("%.5f %.5f %.5f %.5f\n", M11, M12, M13, M14);
-	printf("%.5f %.5f %.5f %.5f\n", M21, M22, M23, M24);
-	printf("%.5f %.5f %.5f %.5f\n", M31, M32, M33, M34);
-	printf("%.5f %.5f %.5f %.5f\n", M41, M42, M43, M44);
-	printf("===================\n");
-}
-
 std::wstring Matrix::ToWString()
 {
 	std::wstring Temp = ToStringRow1();

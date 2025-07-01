@@ -30,11 +30,14 @@ CSkeletalMesh::~CSkeletalMesh()
 {
 	SAFE_DELETE(Tf);
 	SAFE_DELETE(Skeleton);
+	for (auto & Pair : Materials)
+		SAFE_DELETE(Pair.second);
 }
 
 void CSkeletalMesh::Tick()
 {
-	// TODO
+	for (auto & Pair : Materials)
+		Pair.second->Tick();
 }
 
 CSkeletal* CSkeletalMesh::GetSkeletal() const

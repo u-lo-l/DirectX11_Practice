@@ -30,8 +30,6 @@ void Context::Tick()
 {
 	if (!!MainCamera)
 		MainCamera->Tick();
-	if (!!VP_CBuffer_VS)
-		VP_CBuffer_VS->Tick();
 	if (!!ShadowMap)
 		ShadowMap->Tick();
 	
@@ -50,13 +48,14 @@ void Context::Tick()
  */
 void Context::Render() const
 {
-	Vp->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
-	
-	ImGui::Begin("FRS");
+	// Vp->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
+// #ifdef DISPLAY_IMGUI_DEBUG_INFO
+	ImGui::Begin("Debug");
 		const int Fps = static_cast<int>(ImGui::GetIO().Framerate);
 		ImGui::TextColored({255, 255, 255, 255},  "FrameRate : %d", Fps);
 		ImGui::TextColored({255, 255, 255, 255},  "Resolution : %d x %d", (int)D3D::GetDesc().WindowWidth, (int)D3D::GetDesc().WindowHeight);
 	ImGui::End();
+// #endif
 #ifdef DISPLAY_IMGUI_DEBUG_INFO
 	ImGui::Begin("Camera Settings");
 		const Vector & CamPos = MainCamera->GetPosition();
@@ -94,7 +93,7 @@ void Context::ResizeScreen()
 {
 	const Projection * const Proj = MainCamera->GetProjection();
 	MainCamera->SetPerspective(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, Proj->GetNear(), Proj->GetFar(), Proj->GetFOV());
-	Vp->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
+	RenderManager::Get()->SetViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
 }
 
 Camera * Context::GetCamera() const
@@ -107,11 +106,6 @@ const Vector & Context::GetLightDirection() const
 	return LightDirection;
 }
 
-GlobalViewProjectionCBuffer * Context::GetViewProjectionCBuffer() const
-{
-	return VP_CBuffer_VS;
-}
-
 const Color& Context::GetLightColor() const
 {
 	return LightColor;
@@ -121,16 +115,12 @@ Context::Context()
  : MainCamera(new Camera())
 {
 	MainCamera->SetPerspective(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0.1f, 5000.f, Math::ToRadians(60.f));
-	Vp = new ViewPort(D3D::GetDesc().WindowWidth, D3D::GetDesc().WindowHeight, 0, 0, 0, 1);
-	VP_CBuffer_VS = new GlobalViewProjectionCBuffer();
 	ShadowMap = new Shadow({0,0,0}, 100, 1024, 1024);
 }
 
 Context::~Context()
 {
-	SAFE_DELETE(Vp);
 	SAFE_DELETE(MainCamera);
-	SAFE_DELETE(VP_CBuffer_VS);
 }
 
 Shadow* Context::GetShadowMap() const

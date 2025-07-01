@@ -79,7 +79,8 @@ void ParticleSystem::Render()
 		return ;
 	
 	WorldTF->BindToGPU();
-	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
+	//TODO : RenderThread 위한 구조로 변경
+	// Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	ParticleTexture->BindToGPU(Texture_Slot_PS_Particle);
 	ParticleDescCBuffer_VS->BindToGPU();
 	ParticleDescCBuffer_GS->BindToGPU();

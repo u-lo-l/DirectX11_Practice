@@ -13,9 +13,9 @@ ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
 	
 	LoadShader();
 	
-	Pass.DispatchX = InDesc.NumThreadDimX;
-	Pass.DispatchY = InDesc.NumThreadDimY;
-	Pass.DispatchZ = InDesc.NumThreadDimZ;
+	Pass.DispatchX = InDesc.DispatchX;
+	Pass.DispatchY = InDesc.DispatchY;
+	Pass.DispatchZ = InDesc.DispatchZ;
 	
 	for ( const auto & Item : Desc.SamplerStateNames)
 	{

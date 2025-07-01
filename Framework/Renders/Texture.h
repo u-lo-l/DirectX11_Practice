@@ -4,8 +4,6 @@
 class Texture
 {
 public:
-	static void SaveTextureAsFile(ID3D11Texture2D * InTexture, const wstring & FileName);
-public:
 	explicit Texture(const wstring& FileName, bool bDefaultPath = false);
 	explicit Texture(ID3D11Texture2D * InTexture, const D3D11_TEXTURE2D_DESC & Desc);
 	explicit Texture(ID3D11ShaderResourceView * InSRV, const D3D11_TEXTURE2D_DESC & Desc);
@@ -20,7 +18,7 @@ public:
 	operator ID3D11ShaderResourceView * const *() const { return &SRV; }
 	void ExtractTextureColors(vector<Color>& OutPixels) const;
 	void ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const;
-
+	void SaveTextureAsFile(const wstring & FileName) const;
 private:
 	HRESULT LoadTextureAndCreateSRV(const wstring & FullPath);
 

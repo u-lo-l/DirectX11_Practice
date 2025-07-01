@@ -1,26 +1,6 @@
 ﻿#include "framework.h"
 #include "Texture.h"
 
-
-void Texture::SaveTextureAsFile(ID3D11Texture2D * InTexture, const wstring& FileName)
-{
-	ID3D11Device * const Device = D3D::Get()->GetDevice();
-	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-
-	DirectX::ScratchImage Image;
-	// 내부적으로 InTexture를 Staging으로 변환한다.
-	HRESULT Hr = DirectX::CaptureTexture(Device, DeviceContext, InTexture, Image);
-	CHECK(SUCCEEDED(Hr));
-	
-	Hr = DirectX::SaveToWICFile(
-		*(Image.GetImage(0,0,0)),
-		DirectX::WIC_FLAGS_NONE,
-		DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG),
-		(wstring(W_TEXTURE_PATH) + FileName + L".png").c_str()
-	);
-	CHECK(SUCCEEDED(Hr));
-}
-
 Texture::Texture( const wstring & FileName, bool bDefaultPath )
 	: SRV(nullptr), TexMeta(), FileName(FileName)
 {
@@ -227,6 +207,25 @@ void Texture::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& Ver
 	SAFE_DELETE(RWBuffer);
 	SAFE_DELETE(CB_Resolution);
 	// SAFE_DELETE(TextureColorExtractor);
+}
+
+void Texture::SaveTextureAsFile(const wstring& FileName) const
+{
+	ID3D11Resource* SourceResource = nullptr;
+	ID3D11Texture2D* SourceTexture = nullptr;
+
+	this->SRV->GetResource(&SourceResource);
+	if (!SourceResource)
+	{
+		return; // 리소스 얻기 실패
+	}
+	HRESULT Hr = SourceResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&SourceTexture);
+	CHECK(SUCCEEDED(Hr));
+	
+	D3D11_TEXTURE2D_DESC TextureDesc;
+	SourceTexture->GetDesc(&TextureDesc);
+
+	Helper::SaveTextureAsFile(SourceTexture, FileName);
 }
 
 // D3DX11LoadTextureFromTexture : D3D11X.h . 더이상 권장되지 않음.

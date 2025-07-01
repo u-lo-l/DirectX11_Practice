@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Environment/Foliage.h"
 #include "Systems/IExecutable.h"
 
 class Character;
@@ -24,5 +23,6 @@ namespace sdt
 		LandScape * Terrain = nullptr;
 		Foliage * Grasses = nullptr;
 		Character * Adam = nullptr;
+		OceanScape * Ocean = nullptr; 
 	};
 }

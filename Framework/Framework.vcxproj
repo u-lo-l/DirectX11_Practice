@@ -18,6 +18,9 @@
     <ClCompile Include="Environment\Foliage.cpp" />
     <ClCompile Include="Environment\LandScape\LandScape.cpp" />
     <ClCompile Include="Environment\LandScape\TerrainCell.cpp" />
+    <ClCompile Include="Environment\Ocean\OceanCell.cpp" />
+    <ClCompile Include="Environment\Ocean\OceanScape.cpp" />
+    <ClCompile Include="Environment\Ocean\Ocean.HeightMapGenerate.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />
@@ -103,6 +106,7 @@
       <LibCompiled>true</LibCompiled>
     </ClCompile>
     <ClCompile Include="Material\MeshMaterial.cpp" />
+    <ClCompile Include="Material\OceanMaterial.cpp" />
     <ClCompile Include="Material\TerrainMaterial.cpp" />
     <ClCompile Include="Math\Box.cpp" />
     <ClCompile Include="Math\Color.cpp" />
@@ -887,6 +891,8 @@
     <ClInclude Include="Environment\Foliage.h" />
     <ClInclude Include="Environment\LandScape\LandScape.h" />
     <ClInclude Include="Environment\LandScape\TerrainCell.h" />
+    <ClInclude Include="Environment\Ocean\OceanCell.h" />
+    <ClInclude Include="Environment\Ocean\OceanScape.h" />
     <ClInclude Include="Environment\SkySphere.h" />
     <ClInclude Include="Environment\Weather\Precipitation.h" />
     <ClInclude Include="Ligthing\LightingManager.h" />
@@ -894,6 +900,7 @@
     <ClInclude Include="Material\LineMaterial.h" />
     <ClInclude Include="Material\Material.h" />
     <ClInclude Include="Material\MeshMaterial.h" />
+    <ClInclude Include="Material\OceanMaterial.h" />
     <ClInclude Include="Material\TerrainMaterial.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\Color.h" />

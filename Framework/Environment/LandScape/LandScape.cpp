@@ -5,8 +5,8 @@ LandScape::LandScape(const LandScapeDesc& InDesc)
 	: Info(InDesc)
 {
 	SetupShaders();
-	SetupResources(InDesc);
-	SetupCells(InDesc);
+	SetupResources(Info);
+	SetupCells(Info);
 }
 
 LandScape::~LandScape()
@@ -14,12 +14,14 @@ LandScape::~LandScape()
 	SAFE_DELETE(HeightMap);
 	SAFE_DELETE(CellInstance);
 	SAFE_DELETE(NormalMapGenerator);
-	SAFE_DELETE(Tf)
+	SAFE_DELETE(Tf);
+	SAFE_DELETE(Mat);
 }
 
 void LandScape::Tick()
 {
 	if (!!CellInstance) CellInstance->Tick();
+	Mat->Tick();
 }
 
 const Vector& LandScape::GetDimension() const
@@ -70,14 +72,15 @@ void LandScape::SetupCells(const LandScapeDesc& InDesc)
 {
 	this->HeightMap = new Texture(InDesc.HeightMapName, true);
 	TerrainMaterial::MaterialDesc MatDesc;
+	this->Mat = new TerrainMaterial(MatDesc);
 	
 	TerrainCell::SceneryCellDesc Desc;
 	Desc.Name = "LandScape";
 	Desc.HeightMap = this->HeightMap;
 	MatDesc.HeightMap = this->HeightMap;
-	Desc.TerrainMat = new TerrainMaterial(MatDesc);
+	Desc.TerrainMat = this->Mat;
 	Desc.CellSize =  InDesc.CellSize;
-	Desc.TerrainDimension = InDesc.Dimension;
+	Desc.Dimension = InDesc.Dimension;
 	Desc.GridSize = InDesc.GridSize;
 	Desc.Parent = this->Tf;
 

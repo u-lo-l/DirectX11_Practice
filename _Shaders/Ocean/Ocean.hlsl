@@ -1,6 +1,15 @@
 #ifndef __Ocean_HLSL__
 #define __Ocean_HLSL__
 
+#define TYPE01
+
+#include "../PerFrame.hlsli"
+#include "../Normal.Func.hlsli"
+#include "../Shading.Func.hlsli"
+#include "../Terrain/Terrain.Parameter.hlsli"
+#include "../Terrain/Terrain.Func.Tesellation.hlsli"
+#include "../Terrain/Terrain.Func.Texturing.hlsli"
+
 # define DOMAIN "quad"
 # define HS_PARTITION "integer"
 # define HS_INPUT_PATCH_SIZE 4
@@ -11,130 +20,79 @@
 # define NEAR_DISTANCE (500)
 # define FAR_DISTANCE (2500)
 
-const static float MinTessFactor = 1;
-const static float MaxTessFactor = 64;
-const static float RDRatio = 4;
-
 const static float MIPMIN = 0;
 const static float MIPMAX = 5;
 
 #define GET_MIP_LEVEL(x) (lerp(MIPMIN, MIPMAX, (x)))
 
-const static float WaterRefractionIndex = 1.33f; // 굴절률
-const static float WaterR0 = 0.02f;              // 수직 입사 반사 계수
 
-cbuffer CB_WVP : register(b0)  // VS DS HS PS
+
+cbuffer CB_PerMaterial : register(b1) // PS
 {
-    matrix World      : packoffset(c0);
-    matrix View       : packoffset(c4);
-    matrix Projection : packoffset(c8);
-    matrix ViewInverse : packoffset(c12);
+	float DisplacementMapTiling = 1.f;
+	float NoiseTiling = 1.f;
+	float WaterRefractionIndex = 1.33f; // 굴절률
+	float WaterR0 = 0.02f;              // 수직 입사 반사 계수
 }
 
-cbuffer CB_Light : register(b1)
+cbuffer CB_PerRenderable : register(b2) // DS HS
 {
-    float4 LightColor;
-    float3 LightDirection;
-    float Padding1;
-}
-cbuffer CB_HeightScaler : register(b2)
-{
-    float3 CameraPosition;
-    float  HeightScaler = 30.f;
+	float  HeightScaler = 100.f;
+	float  GridSize;
+	float2 TexelSize;
 
-    float2 LODRange;
-    float2 TexelSize;
+	float2 TerrainSize;
+	float2 TextureSize;
 
-    float  ScreenDistance;
-    float  ScreenDiagonal;
-    float  NoiseScaler = 1.f;
-    float  NoisePower = 1.f;
-
-    float2 HeightMapTiling;
-    float2 NoiseMapTiling;
-
-    float2 TerrainWorldPosition;
-    float2 TerrainDimension;
-
-    float  TerrainHeightScaler;
-    float3 Padding2;
+	float2 LODRange;
+	float  ScreenDistance;
+	float  ScreenDiagonal;
 }
 
+SamplerState		Linear_Wrap				: register(s0); // VS DS PS
+Texture2D<float4>	WaterDisplacementMap	: register(t0); // DS
+Texture2D<float4>	WaterNormalMap			: register(t1); // PS
+Texture2D<float>	FoamGrid				: register(t2); // PS
 
-SamplerState LinearSampler_Border : register(s0);    // VS DS PS
-SamplerState AnisotropicSampler_Wrap : register(s1); // VS DS PS
-Texture2D<float4>   WaterHeightMap  : register(t0);  // VS DS PS
-TextureCube SkyTexture      : register(t1);          // PS
-Texture2D<float> FoamGrid   : register(t2);          // PS
-// Texture2D<float> PerlinNoise : register(t3);         // VS DS PS
+// TextureCube		SkyTexture			: register(t3); // PS
+// Texture2D<float> PerlinNoise : register(t5);         // VS DS PS
 
 // const float GetPerlinRandom(float2 uv, uint LOD = 0)
 // {
 //     uv /= HeightMapTiling * 4;
-    
-//     float Random = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, uv, LOD); // 0 ~ 1
+
+//     float Random = PerlinNoise.SampleLevel(Linear_Wrap, uv, LOD); // 0 ~ 1
 //     return Random;
 // }
-struct VS_INPUT
-{
-    float4 Position : POSITION;
-    float2 UV : UV;
-    float3 Normal : NORMAL;
-};
 
-struct VS_OUTPUT // HS_INPUT
-{
-    float3 Position : POSITION0;
-    float2 UV       : UV;
-    float3 Normal   : NORMAL;
-};
+// struct DS_OUTPUT // PS_INPUT
+// {
+//     float4 Position : SV_Position;
+//     float2 UV       : UV;
+//     float3 Normal : NORMAL;
 
-struct HS_CONSTANT_OUTPUT
-{
-    float Edge[4] : SV_TessFactor;
-    float Inside[2] : SV_InsideTessFactor;
-};
-
-struct HS_POINT_OUTPUT // DS_INPUT
-{
-    float3 Position : POSITION;
-    float2 UV       : UV;
-    float3 Normal : NORMAL;
-};
-
-struct DS_OUTPUT // PS_INPUT
-{
-    float4 Position : SV_Position;
-    float2 UV       : UV;
-    float3 Normal : NORMAL;
-
-    float3 WorldPosition : POSITION;
-    float  LOD : LOD;
-    float  PerlinBlending : BLENDING;
-};
+//     float3 WorldPosition : POSITION;
+//     float  LOD : LOD;
+//     float  PerlinBlending : BLENDING;
+// };
 
 float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend);
 
 // VS
 VS_OUTPUT VSMain(VS_INPUT input)
 {
-    VS_OUTPUT output;
 
-    output.Position = input.Position.xyz;
-    output.UV = input.UV;
-    output.Normal = input.Normal;
+	VS_OUTPUT output;
 
-    // const float2 HeightMapUV = output.UV * HeightMapTiling;
-    // const float3 Displacement = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0).rgb ;
-    // output.Position.y += Displacement.y;
-    return output;
+	output.UV = input.CellTexCoord + input.UV;
+	output.Transform = input.Transform;
+
+	output.Position = input.Position;
+	output.Position = mul(output.Position, input.Transform);
+
+	return output;
 }
 
-float CalculateTessellationFactor(float4 Point1, float4 Point2);
-float CalculateDensity(InputPatch<VS_OUTPUT, HS_INPUT_PATCH_SIZE> patch);
-
-const static float SSDWeight = 0.7f;
-const static float DensityWeight = 0.3f;
 // HS
 HS_CONSTANT_OUTPUT HSConstant
 (
@@ -144,22 +102,36 @@ HS_CONSTANT_OUTPUT HSConstant
 {
     HS_CONSTANT_OUTPUT output;
 
-    matrix WorldView = mul(World, View);
-    float4 Points[4];
-    [unroll]
-    for (int i = 0 ; i < 4 ; i++)
-    {
-        Points[i] = mul(float4(patch[i].Position, 1), WorldView);
-    }
+	float4 Points[4]; // Camera-Space Positions
+	bool bVisible = false;
+	[unroll]
+	for (int i = 0 ; i < 4 ; i++)
+	{
+		Points[i] = mul(patch[i].Position, View);
+		[flatten]
+		if(Points[i].z >= 0)
+			bVisible = true;
+	}
+	[flatten]
+	if (bVisible == false)
+	{
+		output.Edge[0] = output.Edge[1] = output.Edge[2] = output.Edge[3] = output.Inside[0] = output.Inside[1] = 0;
+		return output;
+	}
 
-    [unroll]
-    for (int j = 0 ; j < 4 ; j++)
-    {
-        float4 Point1 = Points[((j - 1) + 4) % 4];
-        float4 Point2 = Points[j];
-        float TessRatio = CalculateTessellationFactor(Point1, Point2);
-        output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
-    }
+
+	[unroll]
+	for (int j = 0 ; j < 4 ; j++)
+	{
+		float4 Point1 = Points[((j - 1) + 4) % 4];
+		float4 Point2 = Points[j];
+		float TessRatio = CalculateTessellationFactor(
+			Point1, Point2,
+			ScreenDistance, ScreenDiagonal, RDRatio,
+			LODRange
+		);
+		output.Edge[j] = lerp(MinTessFactor, MaxTessFactor, TessRatio);
+	}
 
     float TessFactor = (output.Edge[0] + output.Edge[2]) * 0.5f;
     output.Inside[0] = TessFactor;
@@ -179,41 +151,38 @@ HS_POINT_OUTPUT HSMain
     uint id : SV_OutputControlPointID
 )
 {
-    // Pass Through
-    HS_POINT_OUTPUT output;
-
-    output.Position = patch[id].Position;
-    output.Normal = patch[id].Normal;
-    output.UV = patch[id].UV;
-
-    return output;
+	// Pass Through
+	HS_POINT_OUTPUT output;
+	output.WorldPosition = patch[id].Position;
+	output.UV = patch[id].UV;
+	return output;
 }
 
 float3 DistanceBasedDisp(float2 UV, float LOD, float Weight)
 {
-    float3 NearDisp = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 1.f, LOD).xyz;
+    float3 NearDisp = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 1.f, LOD).xyz;
 #ifndef USE_DISTANCE_BASED_BLENDING
     return NearDisp;
 #endif
-    float3 FarHDisp  = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 0.2f, LOD).xyz;
+    float3 FarHDisp  = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 0.2f, LOD).xyz;
     return lerp(NearDisp, FarHDisp, Weight);
 }
-float  DistanceBasedHeight(float2 UV, float LOD, float Weight)
-{
-    float NearHeight = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 1.f, LOD).y;
-#ifndef USE_DISTANCE_BASED_BLENDING
-    return NearHeight;
-#endif
-    float FarHeight  = WaterHeightMap.SampleLevel(AnisotropicSampler_Wrap, UV * 0.2f, LOD).y;
-    return lerp(NearHeight, FarHeight, Weight);
-}
+// float  DistanceBasedHeight(float2 UV, float LOD, float Weight)
+// {
+//     float NearHeight = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 1.f, LOD).y;
+// #ifndef USE_DISTANCE_BASED_BLENDING
+//     return NearHeight;
+// #endif
+//     float FarHeight  = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 0.2f, LOD).y;
+//     return lerp(NearHeight, FarHeight, Weight);
+// }
 float  DistanceBasedFoam(float2 UV, float LOD, float Weight)
 {
-    float NearColor = FoamGrid.SampleLevel(AnisotropicSampler_Wrap, UV * 1.f, LOD).r;
+    float NearColor = FoamGrid.SampleLevel(Linear_Wrap, UV * 1.f, LOD).r;
 #ifndef USE_DISTANCE_BASED_BLENDING
     return NearColor;
 #endif
-    float FarColor  = FoamGrid.SampleLevel(AnisotropicSampler_Wrap, UV * 0.2f, LOD).r;
+    float FarColor  = FoamGrid.SampleLevel(Linear_Wrap, UV * 0.2f, LOD).r;
     return lerp(NearColor, FarColor, Weight);
 }
 // DS
@@ -225,46 +194,35 @@ DS_OUTPUT DSMain
     const OutputPatch<HS_POINT_OUTPUT, HS_OUTPUT_PATCH_SIZE> patch
 )
 {
-    DS_OUTPUT output;
+	DS_OUTPUT output;
+	float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
+	output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
 
-    float3 v1 = lerp(patch[0].Position, patch[1].Position, UV.x);
-    float3 v2 = lerp(patch[3].Position, patch[2].Position, UV.x);
-    output.Position = float4(lerp(v1, v2, UV.y), 1);
+	float4 v1 = lerp(patch[0].WorldPosition, patch[1].WorldPosition, UV.x);
+	float4 v2 = lerp(patch[3].WorldPosition, patch[2].WorldPosition, UV.x);
+	output.Position = lerp(v1, v2, UV.y);
 
-    const float Dist = length(CameraPosition - mul(output.Position, World).xyz);
-    float DistanceBasedBlending = saturate((Dist - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
-    output.LOD = GET_MIP_LEVEL(1 - DistanceBasedBlending);
+	float2 u1 = lerp(patch[0].UV, patch[1].UV, UV.x);
+	float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
+	output.UV = lerp(u1, u2, UV.y);
 
-    float2 u1 = lerp(patch[0].UV, patch[1].UV, UV.x);
-    float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
-    output.UV = lerp(u1, u2, UV.y);
+	const float2 DisplacementMapUV = output.UV * DisplacementMapTiling;
+	const float Scaler = HeightScaler / sqrt(DisplacementMapTiling);
+	float3 Displacement = WaterDisplacementMap.SampleLevel(Linear_Wrap, DisplacementMapUV, 0).rgb * 2.f - 1.f;
+	const float Folding = abs(FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, 0)).r;
+	output.Position.y = Displacement.y * Scaler;
+	output.Position.xz += Displacement.xz * Scaler * (1 - Folding);
 
-    output.Normal = float3(0,1,0);
+	output.WorldPosition = output.Position.xyz;
+	output.Position = mul(output.Position, View);
+	output.CameraDistance = length(output.Position);
+	output.Position = mul(output.Position, Projection);
 
-    const float2 HeightMapUV = output.UV * HeightMapTiling;
-    const float2 NoiseMapUV = output.UV * NoiseMapTiling;
 
-    float3 Disp = DistanceBasedDisp(HeightMapUV, output.LOD, DistanceBasedBlending);
-
-    // float Noise = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, NoiseMapUV, 0).r;
-    // Noise = saturate(pow(abs(Noise * NoiseScaler) , NoisePower));
-    // Noise = lerp(0.75, 1.25, Noise);
-    // output.PerlinBlending = lerp(Noise, 1.f, DistanceBasedBlending);
-    output.PerlinBlending = 1;
-    
-    const float Folding = abs(FoamGrid.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0)).r;
-
-    output.Position.y = Disp.y * HeightScaler;
-    output.Position.xz += Disp.xz * HeightScaler * (1 - Folding);
-
-    output.Position = mul(output.Position, World);
-    output.WorldPosition = output.Position.xyz;
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
-
-    output.Normal = mul(output.Normal, (float3x3)World);
-
-    return output;
+	float T = (input.Inside[0] + input.Inside[1]) * 0.5f;
+	output.DebugColor = float4(T, T, T, 1);
+	output.DebugColor /= MaxTessFactor;
+	return output;
 }
 
 // PS
@@ -278,124 +236,48 @@ float3 FogBlending(float3 Color, float Dist)
 
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
-    float3 ViewRay = (input.WorldPosition - CameraPosition); // WorldSpace
+    float3 ViewRay = (input.WorldPosition - CameraWorldPosition); // WorldSpace
     const float Distance = length(ViewRay);
     float DistanceBasedBlending = saturate((Distance - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
     ViewRay = normalize(ViewRay);
 
     // float LOD = 1 - input.LOD / MIPMAX;
     // return float4(LOD, LOD, LOD, 1);
-    const float2 HeightMapUV = input.UV * HeightMapTiling;
-    const float2 NoiseUV = input.UV * NoiseMapTiling;
+    const float2 DisplacementMapUV = input.UV * DisplacementMapTiling;
+    const float2 NoiseUV = input.UV * NoiseTiling;
 
-    const float3 Normal = CalculateNormal(HeightMapUV, input.LOD, DistanceBasedBlending);
-    const float3 Light = normalize(LightDirection);
-    float LDotN = saturate(dot(-Light, Normal));
+    // const float3 Normal = CalculateNormal(DisplacementMapUV, input.LOD, DistanceBasedBlending);
+	const float3 TangentSpaceNormal = WaterNormalMap.Sample(Linear_Wrap, DisplacementMapUV).rgb * 2.f - 1.f;
+	float3 Normal = ApplyNormalMap(TangentSpaceNormal, float3(0, 1, 0), float3(1, 0 ,0));
+	Normal = lerp(Normal, float3(0, 1, 0), 1);
 
-    float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
-    float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
+	const float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
+	const float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
+	float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, DistanceBasedBlending);
+    float3 FoamColor = FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, 0).rrr;
 
-    
-    // Asume Distance to Sky : Infinity
-    float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
+	WaterColor += FoamColor;
+
+	const float3 EnvColor = float3(0.5f, 0.5f, 1.f);
+	float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
     float RDotN = dot(ReflectedRay, Normal);
-    float3 EnvColor = SkyTexture.Sample(LinearSampler_Border, ReflectedRay).rgb;
+    float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(1, 0.75, DistanceBasedBlending);
 
-    const float Ambient = 0.3f;
-    const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(1, 0.75, DistanceBasedBlending);
-    const float Refraction = (1 - Specular);
+	BlinnPhongInput	BlinnPhongParam;
+	BlinnPhongParam.Ambient = float4(0.2f, 0.2f, 0.2f, 1.f);
+	BlinnPhongParam.Diffuse = float4((1 - Specular) * WaterColor, 1);
+	BlinnPhongParam.Specular = float4(EnvColor * Specular, 1);
+	BlinnPhongParam.Shininess = 0.f;
 
-    float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 1.f);
-    float Foam = DistanceBasedFoam(HeightMapUV, input.LOD, DistanceBasedBlending);
+	BlinnPhongParam.LightColor = LightColor;
+	BlinnPhongParam.LightDirection = LightDirection;
 
-    WaterColor = 
-                   WaterColor * Ambient
-                 + EnvColor * Specular * LightColor.rgb
-                 + WaterColor * LDotN * Refraction * LightColor.rgb
-                ;
-    float3 FoamColor = Foam * LightColor.rgb * (Ambient + LDotN);// * GetPerlinRandom(NoiseUV, input.LOD);
-    float3 Color = (WaterColor + FoamColor) * input.PerlinBlending; 
-    return float4(Color, 1);
-    // return float4(FogBlending(Color, Distance), 1);
-}
+	BlinnPhongParam.Normal = Normal;
+	BlinnPhongParam.WorldPosition = input.WorldPosition;
+	BlinnPhongParam.WorldSpaceCameraPosition = CameraWorldPosition;
 
-/*======================================================================================*/
-
-float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend)
-{
-    float2 dUV[4] = {
-        float2(-TexelSize.x, 0), 
-        float2(+TexelSize.x, 0),
-        float2(0, -TexelSize.y),
-        float2(0, +TexelSize.y)
-    };
-    float height[4] = {0, 0, 0, 0};
-
-    // const float Random = GetPerlinRandom(UV, LOD);
-    [unroll]
-    for(int i = 0 ; i < 4 ; i++)
-    {
-        height[i] = DistanceBasedHeight(UV + dUV[i], LOD, DistanceBlend);// * Random;
-    }
-
-    float HeightDiffX = (height[1] - height[0]) / 2 * HeightScaler;
-    float HeightDiffZ = (height[3] - height[2]) / 2 * HeightScaler;
-
-    float3 tangent = normalize(float3(2, HeightDiffX, 0));
-    float3 bitangent = normalize(float3(0, HeightDiffZ, 2));
-    return normalize(cross(bitangent, tangent));
-}
-
-/*======================================================================================*/
-
-float CalculateTessellationFactor(float4 Point1, float4 Point2)
-{
-    float L = ScreenDistance;
-    float3 Center = ((Point1 + Point2) * 0.5).xyz;
-    float R = length(Point2.xyz - Point1.xyz) * 0.5;
-    float Distance = length(Center);
-    float Dy = sqrt(Center.y * Center.y + Center.z * Center.z);
-    float Dx = sqrt(Center.x * Center.x + Center.z * Center.z);
-    float Ssd = 0;
-    float TessRatio = 0;
-
-    [flatten]
-    if (Distance < 10.f || Distance * RDRatio < R)
-    {
-        return MaxTessFactor;
-    }
-
-    float PhiY = asin(saturate(RDRatio * R / Dy) / RDRatio);
-    float PhiX = asin(saturate(RDRatio * R / Dx) / RDRatio);
-    float LODNear = LODRange.x;
-    float LODFar = LODRange.y;
-
-# if defined (TYPE01)
-    // SSD-Based
-    const float MaxScreenDiagonal = sqrt((ScreenDiagonal)) / LODFar;
-    float ThetaY = atan2(Center.y , Center.z);
-    float ThetaX = atan2(Center.x , Center.z);
-    float SsdY = tan(ThetaY + PhiY) - tan(ThetaY - PhiY);
-    float SsdX = tan(ThetaX + PhiX) - tan(ThetaX - PhiX);
-    Ssd = pow(L * SsdX, 2) + pow(L * SsdY, 2);
-    TessRatio = pow(saturate((sqrt(Ssd) / (MaxScreenDiagonal))), LODNear);
-
-# elif defined (TYPE02) // Better
-    // Approax SSD-Based
-    const float MaxScreenDiagonal = sqrt((ScreenDiagonal)) / LODFar;
-    float SsdY = 2 * tan(PhiY);
-    float SsdX = 2 * tan(PhiX);
-    Ssd = pow(L * SsdX, 2) + pow(L * SsdY, 2);
-    TessRatio = pow(saturate((sqrt(Ssd) / (MaxScreenDiagonal))), LODNear);
-
-# elif defined (TYPE03)
-    float D = min(length(Center), LODFar);
-    TessRatio = saturate((LODFar - D) / (LODFar - LODNear));
-# else
-#  error "Either SSD Type must be defined."
-# endif
-
-    return TessRatio;
+	float4 Result = BlinnPhong(BlinnPhongParam);
+	return Result;
 }
 
 /*======================================================================================*/

@@ -47,4 +47,5 @@ AnimationController* Character::GetAnimationController() const
 void Character::Tick()
 {
 	this->AnimController->Tick();
+	this->SkeletalMesh->Tick();
 }

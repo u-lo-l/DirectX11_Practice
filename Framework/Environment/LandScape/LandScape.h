@@ -38,5 +38,6 @@ private:
 	ComputeShader * NormalMapGenerator = nullptr;
 	Transform * Tf;
 	Texture * HeightMap;
+	TerrainMaterial * Mat;
 };
 

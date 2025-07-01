@@ -15,7 +15,7 @@ public:
 	static ShaderManager * Get();
 	RenderingShader * GetRenderShader(const string& InName);
 	ComputeShader* GetComputeShader(const string& InName);
-	void AddShader(const wstring & InName, ShaderBase * InShader);
+	void AddShader(const string& InName, ShaderBase* InShader);
 
 	void AddSamplerState(const string & InName, ID3D11SamplerState *InSamplerState);
 	void AddRasterizerState(const string & InName, ID3D11RasterizerState *InRasterState);
@@ -48,8 +48,8 @@ private:
 	void InitRenderingShaders();
 	void InitComputeShaders();
 	
-	void AddRenderShader(const wstring & InName, RenderingShader * InShader);
-	void AddComputeShader(const wstring & InName, ComputeShader * InShader);
+	void AddRenderShader(const string& InName, RenderingShader* InShader);
+	void AddComputeShader(const string& InName, ComputeShader* InShader);
 	
 	unordered_map<string, RenderingShader *> RenderShaderMap;
 	unordered_map<string, ComputeShader *> ComputeShaderMap;

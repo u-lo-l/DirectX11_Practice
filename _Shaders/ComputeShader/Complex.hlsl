@@ -8,12 +8,12 @@
 #endif
 #ifndef EPSILON
 # define EPSILON (1e-7f)
-#endif 
+#endif
 
 Complex ComplexMul(Complex A, Complex B)
 {
     Complex Result;
-    
+
     Result.x = A.x * B.x - A.y * B.y;
     Result.y = A.x * B.y + A.y * B.x;
 

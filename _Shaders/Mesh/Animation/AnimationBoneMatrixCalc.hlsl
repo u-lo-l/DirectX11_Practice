@@ -23,6 +23,7 @@ cbuffer CB_Info : register(b0)
 	KeyFrameData AnimData[3];
 }
 
+// Dispatch( BoneCount / THREAD_X + 1, 1, 1 )
 [numthreads(THREAD_X, 1, 1)]
 void CSMain(uint3 DTid : SV_DISPATCHTHREADID)
 {

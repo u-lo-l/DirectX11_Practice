@@ -82,8 +82,6 @@ void Gui::Tick()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-
-	
 }
 
 void Gui::Render()
@@ -94,6 +92,7 @@ void Gui::Render()
 	ImGui::SetNextWindowSize(ViewPort->Size);
 	ImGui::SetNextWindowBgAlpha(0.0f);
 	string AppName = String::ToString(D3D::GetDesc().AppName);
+	printf("Render ImGui : %s\n", AppName.c_str());
 	// 기본 창 띄우기
 	ImGui::Begin
 	(

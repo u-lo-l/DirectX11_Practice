@@ -10,9 +10,9 @@ cbuffer CB_IFFTSize : register(b0)
     float2 Padding;
 }
 
-Texture2DArray<Complex>		InputSpectrum : register(t0);	// H_t, iH_t. ikH_t
+Texture2DArray<Complex>		InputSpectrum : register(t0);	// H_t, -ik_xH_t. -ik_zH_t
 // StructuredBuffer<Complex> TwiddleFactor : register(t1);
-RWTexture2DArray<Complex>	OutputSpectrum : register(u0);	// HEIGHT, NORMALX, NORMALZ
+RWTexture2DArray<Complex>	OutputSpectrum : register(u0);	// HEIGHT, DISP_X, DISP_Z
 
 groupshared Complex SharedData[FFT_SIZE]; // Shared Data Per ThreadGroup
 

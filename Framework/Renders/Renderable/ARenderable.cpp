@@ -12,7 +12,6 @@ ARenderable::~ARenderable()
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE(InstBuffer);
 	SAFE_DELETE(Tf);
-	// SAFE_DELETE(Mat);
 }
 
 void ARenderable::Tick() const
@@ -51,7 +50,7 @@ void ARenderable::SetMaterial(const Material* InMaterial)
 	this->Mat = InMaterial;
 }
 
-void ARenderable::SetInputLayOut(ID3D11InputLayout * InInputLayout)
+void ARenderable::SetInputLayOut(const ID3D11InputLayout * InInputLayout)
 {
 	this->VertexInputLayout = InInputLayout;
 }
@@ -66,8 +65,10 @@ void ARenderable::BindBuffer() const
 {
 	CHECK(!!VBuffer);
 	VBuffer->BindToGPU();
-	if (IBuffer)	IBuffer->BindToGPU();
-	if (InstBuffer)	InstBuffer->BindToGPU();
+	if (IBuffer)
+		IBuffer->BindToGPU();
+	if (InstBuffer)
+		InstBuffer->BindToGPU();
 }
 
 const string& ARenderable::GetName() const

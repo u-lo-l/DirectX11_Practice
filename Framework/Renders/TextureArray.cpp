@@ -61,6 +61,26 @@ TextureArray::TextureArray
 	SAFE_RELEASE(Texture2DArray);
 }
 
+TextureArray::TextureArray(const vector<ID3D11Texture2D*>& InTextures, UINT InWidth, UINT InHeight, UINT InMipLevels)
+{
+
+	D3D11_TEXTURE2D_DESC TextureDesc;
+	InTextures[0]->GetDesc(&TextureDesc);
+	const UINT ArraySize = InTextures.size();
+	TextureDesc.ArraySize = ArraySize;
+	TextureDesc.SampleDesc.Count = 1;
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+	TextureDesc.MipLevels = InMipLevels;
+	
+	ID3D11Texture2D * Texture2DArray;
+	CHECK(SUCCEEDED(D3D::Get()->GetDevice()->CreateTexture2D(&TextureDesc, nullptr, &Texture2DArray)));
+	
+}
+
 TextureArray::~TextureArray()
 {
 	SAFE_RELEASE(this->SRV);

@@ -33,7 +33,7 @@ public:
 protected:
 	void SetName(const string & InName);
 	void SetMaterial(const Material * InMaterial);
-	void SetInputLayOut(ID3D11InputLayout * InInputLayout);
+	void SetInputLayOut(const ID3D11InputLayout * InInputLayout);
 	void SetShader();
 	void BindBuffer() const;
 	// TODO : Change To unique_ptr

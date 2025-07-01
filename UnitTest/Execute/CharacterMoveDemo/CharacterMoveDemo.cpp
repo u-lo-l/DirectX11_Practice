@@ -1,7 +1,5 @@
 ﻿#include "Pch.h"
 #include "CharacterMoveDemo.h"
-#include "Environment/Foliage.h"
-#include "Model/Character.h"
 
 namespace sdt
 {
@@ -54,10 +52,13 @@ namespace sdt
 			Terrain->Tick();
 		if (!!Grasses)
 			Grasses->Tick();
+		if (!!Ocean)
+			Ocean->Tick();
 		if (!!Adam)
 		{
-			ImGui::Begin("Adam Tf Info");
 			Transform * const AdamTf = Adam->GetTransform();
+	#ifdef DISPLAY_IMGUI_DEBUG_INFO
+			ImGui::Begin("Adam Tf Info");
 			const Vector & Location = AdamTf->GetWorldPosition();
 			const Vector & Forward = AdamTf->GetForward();
 			const Vector & Right = AdamTf->GetRight();
@@ -65,6 +66,7 @@ namespace sdt
 			ImGui::TextColored({0, 255, 0, 255}, "F : %.3f, %.3f, %.3f", Forward.X, Forward.Y, Forward.Z);
 			ImGui::TextColored({0, 255, 0, 255}, "R : %.3f, %.3f, %.3f", Right.X, Right.Y, Right.Z);
 			ImGui::End();
+	#endif
 			const Vector Velocity = MoveDirection * Speed * DeltaTime * 20;
 			AdamTf->AddLocalTranslation(Velocity);
 			Adam->Tick();
@@ -90,44 +92,64 @@ namespace sdt
 	void CharacterMoveDemo::SetTerrain()
 	{
 		{
-			LandScape::LandScapeDesc Desc =
-			{
-				Vector(4096, 4096, 4096),
-				512,
-				64,
-				L"Terrain/GrandMountain/Height Map TIF.tif",
-				{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
-				{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
-			};
-			Terrain = new LandScape(Desc);
+			// LandScape::LandScapeDesc Desc =
+			// {
+			// 	Vector(4096, 4096, 4096),
+			// 	512,
+			// 	64,
+			// 	L"Terrain/GrandMountain/Height Map TIF.tif",
+			// 	{L"Terrain/Grass/Diffuse_1k.png", L"Terrain/Dirt/Diffuse_1k.jpg", L"Terrain/Rock/Diffuse_1k.png", L"Terrain/Sand/Diffuse_1k.png"},
+			// 	{L"Terrain/Grass/Normal_1k.png", L"Terrain/Dirt/Normal_1k.jpg", L"Terrain/Rock/Normal_1k.png", L"Terrain/Sand/Normal_1k.png"}
+			// };
+			// Terrain = new LandScape(Desc);
 		}
 		{
-			Foliage::FoliageDesc Desc =
+			// Foliage::FoliageDesc Desc =
+			// {
+			// 	"Foliage","Mat_Foliage", "Foliage",
+			// 	Terrain,
+			// 	{0.f, 300.f },
+			// 	3.f,
+			// 	7.5f,
+			// 	L"Terrain/Foliage/FoliageDensity.png",
+			// 	{
+			// 		L"Terrain/Foliage/grass_01.tga",
+			// 		L"Terrain/Foliage/grass_02.tga",
+			// 		L"Terrain/Foliage/grass_03.tga",
+			// 		L"Terrain/Foliage/grass_04.tga",
+			// 		L"Terrain/Foliage/grass_05.tga",
+			// 		L"Terrain/Foliage/grass_06.tga",
+			// 		L"Terrain/Foliage/grass_07.tga",
+			// 		L"Terrain/Foliage/grass_08.tga",
+			// 		L"Terrain/Foliage/grass_09.tga",
+			// 		L"Terrain/Foliage/grass_10.tga",
+			// 		L"Terrain/Foliage/grass_11.tga",
+			// 		L"Terrain/Foliage/grass_12.tga",
+			// 		L"Terrain/Foliage/grass_13.tga",
+			// 		L"Terrain/Foliage/grass_14.tga"
+			// 	}
+			// };
+			// Grasses = new Foliage(Desc);
+		}
+
+		{
+			OceanScape::OceanScapeDesc Desc
 			{
-				"Foliage","Mat_Foliage", "Foliage",
-				Terrain,
-				{0.f, 300.f },
-				3.f,
-				7.5f,
-				L"Terrain/Foliage/FoliageDensity.png",
+				Vector(1024, 0.5f, 1024),
+				64,
+				32,
+				1,
+				nullptr,
+				nullptr,
+				{0.f, 0.f},
+				{0.f, 0.f},
+				0,
 				{
-					L"Terrain/Foliage/grass_01.tga",
-					L"Terrain/Foliage/grass_02.tga",
-					L"Terrain/Foliage/grass_03.tga",
-					L"Terrain/Foliage/grass_04.tga",
-					L"Terrain/Foliage/grass_05.tga",
-					L"Terrain/Foliage/grass_06.tga",
-					L"Terrain/Foliage/grass_07.tga",
-					L"Terrain/Foliage/grass_08.tga",
-					L"Terrain/Foliage/grass_09.tga",
-					L"Terrain/Foliage/grass_10.tga",
-					L"Terrain/Foliage/grass_11.tga",
-					L"Terrain/Foliage/grass_12.tga",
-					L"Terrain/Foliage/grass_13.tga",
-					L"Terrain/Foliage/grass_14.tga"
+					512,
+					{1.f, 2.f},
 				}
 			};
-			Grasses = new Foliage(Desc);
+			Ocean = new OceanScape(Desc);
 		}
 	}
 

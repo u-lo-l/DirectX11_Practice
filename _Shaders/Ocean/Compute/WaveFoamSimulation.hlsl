@@ -17,14 +17,13 @@
 
 Texture2D<float4> DisplacementMap : register(t0);
 RWTexture2D<float> FoamTexture : register(u0);
-SamplerState LinearSampler_Wrap : register(s0);
 cbuffer CB_TextureDim : register(b0)
 {
 	float Width;
 	float Height;
 	float DeltaSeconds;
 	float FoamPower = 1.f;
-	
+
 	float FoamMultiplier = 1.f;
 	float FoamThreshold = 1.f;
 	float FoamBlur = 1.f;
@@ -41,7 +40,7 @@ const static int2 FoamSampleOffsets[5] = {
 
 uint2 GetWrappedTexCord(uint2 UV, int2 Offset);
 
-[numthreads(THREAD_X, THREAD_Y, 1)] // Dispatch(WIDTH / THREAD_X, HEIGHT / THREAD_Y, 3)
+[numthreads(THREAD_X, THREAD_Y, 1)] // Dispatch(WIDTH / THREAD_X, HEIGHT / THREAD_Y, 1)
 void CSMain(uint3 Input : SV_DISPATCHTHREADID)
 {
 	int i = 0;
@@ -51,9 +50,6 @@ void CSMain(uint3 Input : SV_DISPATCHTHREADID)
 	float2 Horizontal_Disps[5];
 	[unroll] for (i = 0 ; i < 5 ; i++)
 	{
-		// float2 TexCord = float2(UV.x / Width, UV.y / Height) + TexelSize * FoamSampleOffsets[i];
-		// Horizontal_Disps[i] = DisplacementMap.SampleLevel(LinearSampler_Wrap, TexCord, 0).xz;
-
 		uint2 TexCord = GetWrappedTexCord(UV, FoamSampleOffsets[i]);
 		Horizontal_Disps[i] = DisplacementMap[TexCord].xz;
 	}

@@ -15,6 +15,9 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		false
 	);
 
+	const int BoneCount = TargetSkeletal->GetBoneCount();
+	constexpr int NumThreadX = 32;
+	const int DispatchX = BoneCount / NumThreadX + 1;
 	const vector<D3D_SHADER_MACRO> Defines = {
 		{"THREAD_X", "32"},
 		{nullptr, nullptr}
@@ -26,7 +29,7 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 		Defines.data(),
 		L"CSMain",
 		32, 1, 1,
-		0, 0, 0,
+		DispatchX, 1, 1,
 		{},
 		true
 	};
@@ -139,6 +142,7 @@ void AnimationController::PlayAnimationBlendSpace2D
 		GetInfo(SampleClips[2], this->NormalizedPlayTime)
 	};
 
+#ifdef DISPLAY_IMGUI_DEBUG_INFO
 	ImGui::TextColored(
 		{255, 50, 50, 255},
 		"Animation Blending, Frame : %.3f | NormalizedTime : %.3f",
@@ -157,6 +161,7 @@ void AnimationController::PlayAnimationBlendSpace2D
 		{255, 50, 50, 255},
 		"Anim 3 : %s (%.3f)", SampleClips[2]->GetName().c_str(), Weights[2]
 	);
+#endif 
 	
 	Animation_ConstantData = Animation_ConstantDesc(Anim1PlayingInfos, Weights);
 	CB_AnimationData->UpdateData(&Animation_ConstantData, sizeof(Animation_ConstantDesc));
@@ -204,17 +209,23 @@ void AnimationController::Tick()
 	if (!!CurrentBlendSpace)
 	{
 		static float WalkSpeed = 0;
+		#ifdef DISPLAY_IMGUI_DEBUG_INFO
 		ImGui::Begin(String::Format("BlendSpace1D Player %s", CurrentBlendSpace->GetName().c_str()).c_str());
 		ImGui::SliderFloat("Walk Speed", &WalkSpeed, CurrentBlendSpace->GetMin(), CurrentBlendSpace->GetMax());
 		PlayAnimationBlendSpace1D(CurrentBlendSpace, DeltaSecond, WalkSpeed);
+		#endif
+		#ifdef DISPLAY_IMGUI_DEBUG_INFO
 		ImGui::End();
+		#endif
 		return ;
 	}
 	if (!!CurrentBlendSpace2D)
 	{
-		ImGui::Begin(String::Format("BlendSpace2D Player %s", CurrentBlendSpace2D->GetName().c_str()).c_str());
 		static float LerpRate = 5.f;
+#ifdef DISPLAY_IMGUI_DEBUG_INFO
+		ImGui::Begin(String::Format("BlendSpace2D Player %s", CurrentBlendSpace2D->GetName().c_str()).c_str());
 		ImGui::SliderFloat("LerpRate", &LerpRate, 1, 10);
+#endif 
 		const float Amount = DeltaSecond * LerpRate;
 		static float SpeedValue = 0;
 		static float HorizontalValue = 0;
@@ -235,11 +246,14 @@ void AnimationController::Tick()
 		
 		float VerticalSpeed = VerticalValue * SpeedValue;
 		float HorizontalSpeed = HorizontalValue * SpeedValue;
+#ifdef DISPLAY_IMGUI_DEBUG_INFO
 		ImGui::SliderFloat("Forward Speed", &VerticalSpeed, -4, 4);
 		ImGui::SliderFloat("Rightward Speed", &HorizontalSpeed, -4, 4);
-		
+#endif 
 		PlayAnimationBlendSpace2D(CurrentBlendSpace2D, DeltaSecond, HorizontalSpeed, VerticalSpeed);
+#ifdef DISPLAY_IMGUI_DEBUG_INFO
 		ImGui::End();
+#endif 
 		return ;
 	}
 }

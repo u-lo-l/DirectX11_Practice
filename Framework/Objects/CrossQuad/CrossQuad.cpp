@@ -51,7 +51,8 @@ void CrossQuad::Tick()
 
 void CrossQuad::Render() const
 {
-	Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
+	//TODO : RenderThread 위한 구조로 변경
+	// Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
 	GS_ViewProjectionBuffer->BindToGPU();
 	VBuffer->BindToGPU();
 	WorldTF->BindToGPU();

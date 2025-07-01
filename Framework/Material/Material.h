@@ -7,6 +7,7 @@ class Material
 public:
 	virtual void Tick() = 0;
 	virtual void BindToGpu(int RegisterIndex) const = 0;
+	virtual ~Material();
 
 	[[nodiscard]] const ConstantBuffer * GetConstantBuffer() const;
 	[[nodiscard]] const string & GetMaterialName() const;
@@ -38,5 +39,4 @@ protected:
 		Particle,
 	};
 	Material(const string& InMaterialName, const string & InShaderName, MaterialType InMaterialType);
-	virtual ~Material();
 };

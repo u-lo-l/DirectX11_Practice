@@ -60,15 +60,17 @@ void Foliage::BindResources() const
 
 void Foliage::Tick()
 {
+	#ifdef DISPLAY_IMGUI_DEBUG_INFO
 	ImGui::Begin("Foliage");
 	ImGui::SliderFloat("Near", &CB_PerFoliageData.DistanceRange.X, 0, CB_PerFoliageData.DistanceRange.Y - 1, "%.0f");
 	ImGui::SliderFloat("Mid ", &CB_PerFoliageData.DistanceRange.Y, CB_PerFoliageData.DistanceRange.X, CB_PerFoliageData.DistanceRange.Z - 1, "%.0f");
 	ImGui::SliderFloat("Far ", &CB_PerFoliageData.DistanceRange.Z, CB_PerFoliageData.DistanceRange.Y, 1500, "%.0f");
-
+	
 	ImGui::SliderFloat("LOW ", &CB_PerFoliageData.AltitudeRange.X, 0, CB_PerFoliageData.DistanceRange.Y, "%.2f", ImGuiSliderFlags_Logarithmic);
 	ImGui::SliderFloat("HIGH", &CB_PerFoliageData.AltitudeRange.Y, CB_PerFoliageData.DistanceRange.X, 2000, "%.0f", ImGuiSliderFlags_Logarithmic);
-
+	
 	ImGui::End();
+	#endif
 	CB_PerFoliage->UpdateData(&CB_PerFoliageData, sizeof(CB_PerFoliageDesc));
 }
 

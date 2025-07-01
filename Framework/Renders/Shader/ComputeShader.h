@@ -11,6 +11,21 @@ struct DispatchPass
 	UINT DispatchZ = 0;
 };
 
+/**
+ * - string ShaderName;
+ * - wstring ShaderFileName;
+ * - wstring PreCompiledShaderFileDirectory;
+ * - const D3D_SHADER_MACRO * ShaderMacros = nullptr;
+ * - wstring EntryPoint = L"CSMain";
+ * - UINT NumThreadDimX = 1;
+ * - UINT NumThreadDimY = 1;
+ * - UINT NumThreadDimZ = 1;
+ * - UINT DispatchX = 0;
+ * - UINT DispatchY = 0;
+ * - UINT DispatchZ = 0;
+ * - vector<tuple<int, ShaderType, string>> SamplerStateNames;
+ * - bool bForceRecompile = false;
+ */
 struct ComputeShaderDesc
 {
 	string ShaderName;

@@ -63,13 +63,15 @@ cbuffer CB_PerRenderable : register(b2) // DS HS
 VS_OUTPUT VSMain(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.Position = input.Position;
-	output.Position = mul(output.Position, input.Transform);
+
 	output.UV = input.CellTexCoord + input.UV;
 	output.Transform = input.Transform;
 
+	output.Position = input.Position;
 	float Height = TerrainHeightMap.SampleLevel(LinearSampler_Clamp, output.UV, 0).r;
 	output.Position.y = Height * HeightScaler;
+	output.Position = mul(output.Position, input.Transform);
+
 	return output;
 }
 
@@ -95,7 +97,6 @@ HS_CONSTANT_OUTPUT HSConstant
 		if(Points[i].z >= 0)
 			bVisible = true;
 	}
-
 	[flatten]
 	if (bVisible == false)
 	{
@@ -146,8 +147,7 @@ HS_POINT_OUTPUT HSMain
 	// Pass Through
 	HS_POINT_OUTPUT output;
 
-	float4 Position = patch[id].Position;
-	output.WorldPosition = Position;
+	output.WorldPosition = patch[id].Position;
 	output.UV = patch[id].UV;
 
 	return output;
@@ -271,16 +271,16 @@ float4 PSMain(DS_OUTPUT Input) : SV_TARGET
 	BlinnPhongParam.WorldSpaceCameraPosition = CameraWorldPosition;
 
 	float4 Color = BlinnPhong(BlinnPhongParam);
+	return Color;
 
-	float4 Ambient, Diffuse, Specular;
-	BlinnPhong(BlinnPhongParam, Ambient, Diffuse, Specular);
 
+	// float4 Ambient, Diffuse, Specular;
+	// BlinnPhong(BlinnPhongParam, Ambient, Diffuse, Specular);
 	// return float4(RawHeight, RawHeight, RawHeight, 1);
 	// return float4((DetailedNormal + 1) * 0.5f, 1);
 	// return float4(Diffuse.rgb, 1);
 	// return float4(Specular.rgb, 1);
 	// return float4(Ambient.rgb, 1);
-	return Color;
 	// return float4(Noise, Noise, Noise , 1);
 	// return float4(ColorMat[0], 1);
 	// return float4(ColorMat[1], 1);

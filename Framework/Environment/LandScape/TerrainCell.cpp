@@ -12,11 +12,11 @@ TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 	ARenderable::SetMaterial(InDesc.TerrainMat);
 	ARenderable::SetShader();
 	this->HeightMap = InDesc.HeightMap;
-	CreateVertices(InDesc.TerrainDimension.X, InDesc.TerrainDimension.Z, InDesc.CellSize, InDesc.GridSize);
+	CreateVertices(InDesc.Dimension.X, InDesc.Dimension.Z, InDesc.CellSize, InDesc.GridSize);
 	ASSERT(this->Vertices.empty() == false, "Vertices should not be empty");
 	CreateIndices(static_cast<float>(InDesc.CellSize), InDesc.GridSize);
 	ASSERT(this->Indices.empty() == false, "Indices should not be empty");
-	CreateInstances(InDesc.TerrainDimension.X, InDesc.TerrainDimension.Z, static_cast<float>(InDesc.CellSize));
+	CreateInstances(InDesc.Dimension.X, InDesc.Dimension.Z, static_cast<float>(InDesc.CellSize));
 	ASSERT(this->Instances.empty() == false, "Instances should not be empty");
 
 	CreateNormalTangentMap();
@@ -26,8 +26,8 @@ TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 	ARenderable::CreateInstanceBuffer(Instances.data(), Instances.size(), sizeof(InstanceType));
 
 	CB_PerTerrainData.GridSize = InDesc.GridSize;
-	CB_PerTerrainData.HeightScaler = InDesc.TerrainDimension.Y;
-	CB_PerTerrainData.TerrainSize = {InDesc.TerrainDimension.X, InDesc.TerrainDimension.Y};
+	CB_PerTerrainData.HeightScaler = InDesc.Dimension.Y;
+	CB_PerTerrainData.TerrainSize = {InDesc.Dimension.X, InDesc.Dimension.Y};
 	CB_PerTerrainData.TextureSize = {(float)HeightMap->GetWidth(), (float)HeightMap->GetWidth()} ;
 	CB_PerTerrainData.TexelSize = 1.f / CB_PerTerrainData.TextureSize;
 		
@@ -49,6 +49,8 @@ TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 TerrainCell::~TerrainCell()
 {
 	SAFE_DELETE(CB_PerTerrain);
+	SAFE_DELETE(NormalMap);
+	SAFE_DELETE(TangentMap);
 }
 
 void TerrainCell::CreateNormalTangentMap()
@@ -117,14 +119,6 @@ void TerrainCell::CreateVertices
 	float GridSize
 )
 {
-	// Vertices = {
-	// 	{Vector(-10.f, -10.f, 0), Vector2D(0, 0)},
-	// 	{Vector(-10.f, 10.f, 0), Vector2D(0, 1)},
-	// 	{Vector(10.f, 10.f, 0), Vector2D(1, 1)},
-	// 	{Vector(10.f, -10.f, 0), Vector2D(1, 0)},
-	// };
-	// return ;
-	//
 	const UINT GridPerCell     = static_cast<UINT>(CellSize / GridSize);
 	const UINT VertexPerCell_X = GridPerCell + 1;
 	const UINT VertexPerCell_Z = GridPerCell + 1;
@@ -148,10 +142,6 @@ void TerrainCell::CreateVertices
 
 void TerrainCell::CreateIndices(float CellSize, float GridSize)
 {
-	// Indices = {
-	// 	0, 1, 2, 3
-	// };
-	// return ;
 	const UINT GridPerCell = static_cast<UINT>(CellSize / GridSize);  
 	const UINT VertexPerCell = GridPerCell + 1;
 	

@@ -2,7 +2,7 @@
 #include "TerrainMaterial.h"
 
 TerrainMaterial::TerrainMaterial(const MaterialDesc& Desc)
-	: Material("TerrainMat", "Terrain", MaterialType::Terrain)
+	: Material(Desc.Name, Desc.ShaderName, MaterialType::Terrain)
 {
 	PerlinNoise = new Texture(Desc.PerlinNoise, true);
 	MacroVariation = new Texture(Desc.MacroVariation, true);

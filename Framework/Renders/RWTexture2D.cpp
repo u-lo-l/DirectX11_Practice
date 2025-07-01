@@ -73,7 +73,7 @@ void RWTexture2D::CreateSRV()
 	SRVDesc.Texture2D.MipLevels = 1;
 	SRVDesc.Texture2D.MostDetailedMip = 0;
 	
-	const HRESULT Hr = Device->CreateShaderResourceView(OutputTexture, &SRVDesc, &SRV);
+	const HRESULT Hr = Device->CreateShaderResourceView(this->OutputTexture, &SRVDesc, &this->SRV);
 	CHECK(SUCCEEDED(Hr));
 }
 
@@ -104,13 +104,14 @@ void RWTexture2D::SaveOutputAsFile(const wstring& FileName) const
 	if (
 		(TextureDesc.Format != DXGI_FORMAT_R8G8B8A8_UNORM) &&
 		(TextureDesc.Format != DXGI_FORMAT_R32G32B32A32_FLOAT) &&
+		(TextureDesc.Format != DXGI_FORMAT_R32G32_FLOAT) &&
 		(TextureDesc.Format != DXGI_FORMAT_R32_FLOAT)
 	)
 		ASSERT(false, "Texture format does not valid to save as file");
 		
 	ID3D11DeviceContext * DeviceContext =  D3D::Get()->GetDeviceContext();
 	DeviceContext->CopyResource(ResultTexture, OutputTexture);
-	Texture::SaveTextureAsFile(ResultTexture, FileName);
+	Helper::SaveTextureAsFile(ResultTexture, FileName);
 }
 
 void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const

@@ -4,7 +4,8 @@
 #define CHECK(x) assert((x) == true)
 #define ASSERT(x, message) \
 	if (!(x)) { \
-		MessageBoxA(NULL, message, "Assertion Failed", MB_ICONERROR | MB_OK); \
+		string Msg = String::Format("%s | %s", __FUNCTION__, (message));\
+		MessageBoxA(NULL, Msg.c_str(), "Assertion Failed", MB_ICONERROR | MB_OK); \
 		assert(x); \
 	}
 

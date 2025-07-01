@@ -9,6 +9,12 @@ public:
 		UINT InHeight = 256,
 		UINT InMipLevels = 1
 	);
+	explicit TextureArray(
+		const vector<ID3D11Texture2D*>& InTextures,
+		UINT InWidth = 256,
+		UINT InHeight = 256,
+		UINT InMipLevels = 1
+	);
 	~TextureArray();
 	void BindToGPU(UINT SlotNum = 0) const;
 

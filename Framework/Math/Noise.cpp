@@ -50,7 +50,52 @@ Texture * Noise::CreateGaussian2DNoise(UINT InSize)
 	return Result;
 }
 
-Texture* Noise::CreatePerlin2DNoise(UINT InSize)
+TextureArray* Noise::CreateGaussian2DNoise(UINT InSize, UINT Count)
+{
+	ID3D11Device * const Device = D3D::Get()->GetDevice();
+
+	std::default_random_engine Generator(std::random_device{}());
+	std::normal_distribution<float> Distribution(0.0f, 1.0f);
+	
+	vector<ID3D11Texture2D *> GaussianRandomTextures(Count);
+	D3D11_TEXTURE2D_DESC GaussianTextureDesc {0, };
+	GaussianTextureDesc.Width = InSize;
+	GaussianTextureDesc.Height = InSize;
+	GaussianTextureDesc.MipLevels = 1;
+	GaussianTextureDesc.ArraySize = 1;
+	GaussianTextureDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+	GaussianTextureDesc.SampleDesc.Count = 1;
+	GaussianTextureDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	GaussianTextureDesc.CPUAccessFlags = 0;
+	GaussianTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+	for (UINT c = 0 ; c < Count ; c++)
+	{
+		std::vector<complex<float>> GaussianRandomArray(InSize * InSize);
+		for (UINT i = 0 ; i < InSize * InSize ; i++)
+		{
+			complex<float> & Element = GaussianRandomArray[i];
+			Element.real(Math::Clamp(Distribution(Generator), -3, 3)); 
+			Element.imag(Math::Clamp(Distribution(Generator), -3, 3)); 
+		}
+
+		D3D11_SUBRESOURCE_DATA InitialTextureData;
+		const UINT RowPitch = InSize * 8; // R32B32라 8임.
+		InitialTextureData.pSysMem = GaussianRandomArray.data();
+		InitialTextureData.SysMemPitch = RowPitch;
+		InitialTextureData.SysMemSlicePitch = InSize * RowPitch;
+
+		const HRESULT Hr = Device->CreateTexture2D(
+			&GaussianTextureDesc,
+			&InitialTextureData,
+			&GaussianRandomTextures[c] 
+		);
+		CHECK(SUCCEEDED(Hr));
+	}
+	return new TextureArray(GaussianRandomTextures, InSize, InSize);
+}
+
+Texture * Noise::CreatePerlin2DNoise(UINT InSize)
 {
 	RWTexture2D * PerlinNoiseMap = new RWTexture2D(
 		InSize,

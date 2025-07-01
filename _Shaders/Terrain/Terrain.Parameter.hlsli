@@ -30,7 +30,6 @@ struct HS_POINT_OUTPUT // DS_INPUT
 {
     float4 WorldPosition : WPOSITION;
     float2 UV : UV;
-	// matrix Transform : INST_MATRIX;
 };
 
 struct DS_OUTPUT // PS_INPUT

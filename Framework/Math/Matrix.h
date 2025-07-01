@@ -55,7 +55,6 @@ public:
 	{
 		return Matrix2 * ScaleFactor;
 	}
-	void Display() const;
 	std::wstring ToWString();
 	std::wstring ToStringRow1();
 	std::wstring ToStringRow2();

@@ -16,6 +16,7 @@ enum class ShaderType : UINT
 	VGP = VertexShader | GeometryShader | PixelShader,
 	HD = HullShader | DomainShader,
 	DH = HullShader | DomainShader,
+	DP = DomainShader | PixelShader,
 	VD = VertexShader | DomainShader,
 	VDP = VertexShader | DomainShader | PixelShader,
 	VHDP = VertexShader | HullShader | DomainShader | PixelShader,

@@ -80,7 +80,7 @@ RenderManager * RenderManager::Instance = nullptr;
 
 void RenderManager::Create()
 {
-	ASSERT(Instance == nullptr, "Instance Already Exist");
+	ASSERT(Instance == nullptr, "Instance Already Exist")
 	Instance = new RenderManager();
 }
 
@@ -93,6 +93,11 @@ RenderManager * RenderManager::Get()
 {
 	ASSERT(Instance != nullptr, "Instance Not Exist");
 	return Instance;
+}
+
+void RenderManager::SetViewPort(float InWidth, float InHeight, float InX, float InY, float InMinDepth, float InMaxDepth)
+{
+	Vp->SetViewPort(InWidth, InHeight, InX, InY, InMinDepth, InMaxDepth);
 }
 
 void RenderManager::AddRenderable(const ARenderable* InRenderable)
@@ -120,23 +125,7 @@ void RenderManager::AddRenderable(const ARenderable* InRenderable)
 void RenderManager::Tick()
 {
 #ifdef DISPLAY_IMGUI_DEBUG_INFO
-	ImGui::Begin("Render Manager");
-	ImGui::Text("Render Queue Size : %d", GetRenderQueueSize());
-	ImGui::Text("Renderables Count : %d", RenderableCount);
-	int QueueIndex = 0;
-	for (const ShaderBatch * S : RenderQueue)
-	{
-		int BatchIndex = 0;
-		ImGui::Text("Render Queue #%d", ++QueueIndex);
-		for (const MaterialBatch * M : S->GetBatches())
-		{
-			int ElementIndex = 0;
-			ImGui::Text("  Batch #%d : %s", ++BatchIndex, M->GetMaterial()->GetMaterialName().c_str());
-			for (const ARenderable * R : M->GetElements())
-				ImGui::Text("    Element #%d : %s", ++ElementIndex, R->GetName().c_str());
-		}
-	}
-	ImGui::End();
+	ImGuiDebugMessage();
 #endif
 	
 	if (!!CB_PerFrame)
@@ -152,7 +141,6 @@ void RenderManager::Tick()
 		};
 		CB_PerFrame->UpdateData(&CB_PerFrameData, sizeof(CB_PerFrameDesc));
 	}
-
 	for (ShaderBatch * Batch : RenderQueue)
 	{
 		Batch->Tick();
@@ -170,7 +158,9 @@ void RenderManager::Render()
 	{
 		Batch->Render(this->DrawCallCount);
 	}
+#ifdef DISPLAY_IMGUI_DEBUG_INFO
 	ImGui::Text("Draw Call Count: %d", DrawCallCount);
+#endif 
 }
 
 RenderManager::RenderManager()
@@ -182,9 +172,45 @@ RenderManager::RenderManager()
 		sizeof(CB_PerFrameDesc),
 		false
 	);
+	const Vector2D LeftTop = {0.f, 0.f};
+	const Vector2D DepthRange = {0.f, 1.f};
+	Vp = new ViewPort(
+		D3D::GetDesc().WindowWidth,
+		D3D::GetDesc().WindowHeight,
+		LeftTop.X, LeftTop.Y,
+		DepthRange.X, DepthRange.Y
+	);
+	
 }
 
 RenderManager::~RenderManager()
 {
+	SAFE_DELETE(Vp);
 	SAFE_DELETE(CB_PerFrame);
+}
+
+// TODO : be thread-safe
+void RenderManager::ImGuiDebugMessage() const
+{
+	#ifdef DISPLAY_IMGUI_DEBUG_INFO
+	ImGui::Begin("Render Manager");
+	ImGui::Text("Render Queue Size : %d", GetRenderQueueSize());
+	ImGui::Text("Renderables Count : %d", RenderableCount);
+	#endif
+	int QueueIndex = 0;
+	for (const ShaderBatch * S : RenderQueue)
+	{
+		int BatchIndex = 0;
+		ImGui::Text("Render Queue #%d", ++QueueIndex);
+		for (const MaterialBatch * M : S->GetBatches())
+		{
+			int ElementIndex = 0;
+			ImGui::Text("  Batch #%d : %s", ++BatchIndex, M->GetMaterial()->GetMaterialName().c_str());
+			for (const ARenderable * R : M->GetElements())
+				ImGui::Text("    Element #%d : %s", ++ElementIndex, R->GetName().c_str());
+		}
+	}
+	#ifdef DISPLAY_IMGUI_DEBUG_INFO
+	ImGui::End();
+	#endif
 }
