@@ -38,11 +38,13 @@ void ComputeShader::SetPass() const
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
 	DeviceContext->CSSetShader(this->Pass.Shader, nullptr, 0);
 	for ( const auto & Pair : Pass.SamplerStates)
-	{
-		const int & RegisterIndex = Pair.first;
-		ID3D11SamplerState * Sampler = Pair.second.SamplerState;
-		DeviceContext->CSSetSamplers(RegisterIndex, 0, &Sampler);
-	}
+		DeviceContext->CSSetSamplers(Pair.first, 1, &Pair.second.SamplerState);
+	for ( const auto & Pair : CBs)
+		DeviceContext->CSSetConstantBuffers(Pair.first, 1, &Pair.second);
+	for ( const auto & Pair : SRVs)
+		DeviceContext->CSSetShaderResources(Pair.first, 1, &Pair.second);
+	for ( const auto & Pair : UAVs)
+		DeviceContext->CSSetUnorderedAccessViews(Pair.first, 1, &Pair.second, nullptr);
 }
 
 void ComputeShader::GetThreadDim(UINT& X, UINT& Y, UINT& Z) const
@@ -55,25 +57,57 @@ void ComputeShader::GetThreadDim(UINT& X, UINT& Y, UINT& Z) const
 void ComputeShader::ClearPass()
 {
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();
-	
-	ID3D11ShaderResourceView * NullSRV = nullptr;
-	DeviceContext->CSSetShaderResources(0, 1, &NullSRV);
 	ID3D11UnorderedAccessView * NullUAV = nullptr;
-	DeviceContext->CSSetUnorderedAccessViews(0,1, &NullUAV, nullptr);
+	ID3D11ShaderResourceView * NullSRV = nullptr;
+	ID3D11Buffer * NullBuffer = nullptr;
+	ID3D11SamplerState * NullSampler = nullptr;
+
+	for ( const auto & Pair : Pass.SamplerStates)
+		DeviceContext->CSSetSamplers(Pair.first, 1, &NullSampler);
+	for ( const auto & Pair : CBs)
+		DeviceContext->CSSetConstantBuffers(Pair.first, 1, &NullBuffer);
+	for ( const auto & Pair : SRVs)
+		DeviceContext->CSSetShaderResources(Pair.first, 1, &NullSRV);
+	for ( const auto & Pair : UAVs)
+		DeviceContext->CSSetUnorderedAccessViews(Pair.first, 1, &NullUAV, nullptr);
+
 	DeviceContext->CSSetShader(nullptr, nullptr, 0);
+	CBs.clear();
+	SRVs.clear();
+	UAVs.clear();
 }
-void ComputeShader::Dispatch() const
+void ComputeShader::Dispatch()
 {
 	ASSERT(Pass.DispatchX > 0 && Pass.DispatchY > 0 && Pass.DispatchZ > 0, "Use Dispatch(X, Y, Z)");
 	SetPass();
 	D3D::Get()->GetDeviceContext()->Dispatch(Pass.DispatchX, Pass.DispatchY, Pass.DispatchZ);
 	ClearPass();
 }
-void ComputeShader::Dispatch(const UINT X, const UINT Y, const UINT Z) const
+void ComputeShader::Dispatch(const UINT X, const UINT Y, const UINT Z)
 {
 	SetPass();
 	D3D::Get()->GetDeviceContext()->Dispatch(X, Y, Z);
 	ClearPass();
+}
+
+void ComputeShader::BindUAV(ID3D11UnorderedAccessView* InUAV, UINT SlotNum)
+{
+	UAVs[SlotNum] = InUAV;
+}
+
+void ComputeShader::BindSRV(ID3D11ShaderResourceView* InSRV, UINT SlotNum)
+{
+	SRVs[SlotNum] = InSRV;
+}
+
+void ComputeShader::BindCB(const BufferBase * InBuffer, UINT SlotNum)
+{
+	CBs[SlotNum] = InBuffer->GetBuffer();
+}
+
+void ComputeShader::BindCB(ID3D11Buffer* InConstantBuffer, UINT SlotNum)
+{
+	CBs[SlotNum] = InConstantBuffer;
 }
 
 void ComputeShader::LoadShader()

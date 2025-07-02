@@ -4,6 +4,9 @@
 FoliageMaterial::FoliageMaterial(const MaterialDesc& InDesc)
 	: Material(InDesc.Name, InDesc.ShaderName, MaterialType::Foliage)
 {
+	ASSERT(InDesc.ShaderName.empty() == false, "ShaderName Not Assigned");
+	ASSERT(InDesc.DensityMapName.empty() == false, "DensityMapName Not Assigned");
+	ASSERT(InDesc.FoliageTextureNames.empty() == false, "FoliageTextureNames Not Assigned");
 	FoliageDensity = new Texture(InDesc.DensityMapName, true);
 	FoliageTextures = new TextureArray(InDesc.FoliageTextureNames);
 	CB_PerMaterial = nullptr;

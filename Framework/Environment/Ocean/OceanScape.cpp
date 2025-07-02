@@ -11,7 +11,7 @@ OceanScape::OceanScape(const OceanScapeDesc & InDesc)
 #pragma endregion Compute
 
 #pragma region Render
-	SetupCells();
+	SetupCells(InDesc);
 #pragma endregion Render
 }
 
@@ -24,8 +24,6 @@ OceanScape::~OceanScape()
 	SAFE_DELETE(SpectrumTexture2D);
 	SAFE_DELETE(IFFT_Result_Transposed);
 	SAFE_DELETE(IFFT_Result);
-	SAFE_DELETE(DisplacementMap);
-	SAFE_DELETE(FoamGrid);
 	SAFE_DELETE(CB_PhillipsInit);
 	SAFE_DELETE(CB_PhillipsUpdate);
 		
@@ -36,6 +34,7 @@ OceanScape::~OceanScape()
 	SAFE_DELETE(CS_RowPassIFFT);
 	SAFE_DELETE(CS_Transpose);
 	SAFE_DELETE(CS_ColPassIFFT)
+	SAFE_DELETE(CS_NormalMapGenerator)
 #pragma endregion Compute
 
 #pragma region Render
@@ -53,8 +52,8 @@ void OceanScape::Tick()
 	ImGui::SliderFloat("OceanHeightScaler", &Info.Dimension.Y, 0.f, 5.f, "%.3f");
 	CellInstance->SetHeightScaler(Info.Dimension.Y);
 
-	FoamData.Width = static_cast<float>(FoamGrid->GetWidth());
-	FoamData.Height = static_cast<float>(FoamGrid->GetHeight());
+	FoamData.Width = static_cast<float>(Mat->GetDisplacementMap()->GetWidth());
+	FoamData.Height = static_cast<float>(Mat->GetDisplacementMap()->GetHeight());
 	FoamData.DeltaTime = sdt::SystemTimer::Get()->GetDeltaTime();
 	ImGui::SliderFloat("Ocean : Foam Sharpness", &FoamData.FoamSharpness, 0.1f, 5.f, "%.1f");
 	ImGui::SliderFloat("Ocean : Foam Multiplier", &FoamData.FoamMultiplier, 0.1f, 5.f, "%.1f");
@@ -64,71 +63,58 @@ void OceanScape::Tick()
 	CB_Foam->UpdateData(&FoamData, sizeof(FoamDesc));
 
 	// Update Spectrum
-	InitialSpectrumTexture2D->BindToGPUAsSRV(0);
-	SpectrumTexture2D->BindToGPUAsUAV(0);
-	CB_PhillipsUpdate->BindToGPU(ShaderType::ComputeShader, 0);
+	CS_SpectrumUpdater->BindCB(CB_PhillipsUpdate, 0);
+	CS_SpectrumUpdater->BindSRV(InitialSpectrumTexture2D->GetSRV(), 0);
+	CS_SpectrumUpdater->BindUAV(SpectrumTexture2D->GetUAV(), 0);
 	CS_SpectrumUpdater->Dispatch();
 
 	// Get DisplacementMap
 	// 	Row IFFT
-	CB_PhillipsInit->BindToGPU(ShaderType::ComputeShader, 0);
-	SpectrumTexture2D->BindToGPUAsSRV(0);
-	IFFT_Result->BindToGPUAsUAV(0);
+	CS_RowPassIFFT->BindCB(CB_PhillipsInit, 0);
+	CS_RowPassIFFT->BindSRV(SpectrumTexture2D->GetSRV(), 0);
+	CS_RowPassIFFT->BindUAV(IFFT_Result->GetUAV(), 0);
 	CS_RowPassIFFT->Dispatch();
 	// 	Transpose
-	IFFT_Result->BindToGPUAsSRV(0);
-	IFFT_Result_Transposed->BindToGPUAsUAV(0);
-	CB_Transpose->BindToGPU();
+	CS_Transpose->BindCB(CB_Transpose, 0);
+	CS_Transpose->BindSRV(IFFT_Result->GetSRV(), 0);
+	CS_Transpose->BindUAV(IFFT_Result_Transposed->GetUAV(), 0);
 	CS_Transpose->Dispatch();
 
 	// 	Col IFFT
-	CB_PhillipsInit->BindToGPU(ShaderType::ComputeShader, 0);
-	IFFT_Result_Transposed->BindToGPUAsSRV(0);
-	DisplacementMap->BindToGPUAsUAV(0);
+	CS_ColPassIFFT->BindCB(CB_PhillipsInit, 0);
+	CS_ColPassIFFT->BindSRV(IFFT_Result_Transposed->GetSRV(), 0);
+	CS_ColPassIFFT->BindUAV(Mat->GetDisplacementMap()->GetUAV(), 0);
 	CS_ColPassIFFT->Dispatch();
 	// DisplacementMap 완성
-	
+
 	// Simulate Foam
 	if (!!CS_SimulateFoam)
 	{
-		CB_Foam->BindToGPU();
-		DisplacementMap->BindToGPUAsSRV(0);
-		FoamGrid->BindToGPUAsUAV(0);
+		CS_SimulateFoam->BindCB(CB_Foam, 0);
+		CS_SimulateFoam->BindSRV(Mat->GetDisplacementMap()->GetSRV(), 0);
+		CS_SimulateFoam->BindUAV(Mat->GetFoamGridMap()->GetUAV(), 0);
 		CS_SimulateFoam->Dispatch();
 	}
-
-	// GetNormalMap;
+	
+	// GenerateNormalMap
+	if (!!CS_NormalMapGenerator)
 	{
-		// CB_Transpose->BindToGPU(0);
-		// DisplacementMap->BindToGPUAsSRV(0, ShaderType::ComputeShader);
-		// NormalMap->BindToGPUAsUAV(0);
-		// CS_NormalMapGenerator->Dispatch();
+		TransposeData.Padding[0] = this->Info.Dimension.Y;
+		TransposeData.Padding[1] = this->Mat->GetDisplacementMapTiling();
+		CB_Transpose->UpdateData(&TransposeData, sizeof(TransposeDesc));
+		CS_NormalMapGenerator->BindCB(CB_Transpose, 0);
+		CS_NormalMapGenerator->BindSRV(Mat->GetDisplacementMap()->GetSRV(), 0);
+		CS_NormalMapGenerator->BindSRV(Mat->GetFoamGridMap()->GetSRV(), 1);
+		CS_NormalMapGenerator->BindUAV(Mat->GetNormalMap()->GetUAV(), 0);
+		CS_NormalMapGenerator->Dispatch();
+		// NormalMap->SaveOutputAsFile(L"Debug/Normal");
 	}
+
 #pragma endregion Compute
 
 #pragma region Render
-	// MatrixData.World = Tf->GetMatrix();
-	// MatrixData.View = Context::Get()->GetViewMatrix();
-	// MatrixData.Projection = Context::Get()->GetProjectionMatrix();
-	// MatrixData.ViewInverse = Matrix::Invert(MatrixData.View, true);
-	// CB_WVPI->UpdateData(&MatrixData, sizeof(WVPDesc));
-	//
-	// LightData.LightDirection = Context::Get()->GetLightDirection();
-	// LightData.LightColor = Context::Get()->GetLightColor();
-	// CB_Light->UpdateData(&LightData, sizeof(DirectionalLightDesc));
-	//
-	// ImGui::SliderFloat("Ocean : Height Scaler", &TessellationData.HeightScaler, 0.f, 50.f, "%.1f");
-	// ImGui::SliderFloat("Ocean : LOD Power", &TessellationData.LODRange.X, 0.1f, 3.f, "%.1f");
-	// ImGui::SliderFloat("Ocean : Min Screen Diagonal", &TessellationData.LODRange.Y, 1, 5, "%.0f");
-	// ImGui::SliderFloat("Ocean : Noise Scaler", &TessellationData.NoiseScaler, 0.1f, 10, "%.1f");
-	// ImGui::SliderFloat("Ocean : Noise Power", &TessellationData.NoisePower, 0.1f, 5, "%.1f");
-	// TessellationData.ScreenDistance = D3D::GetDesc().WindowHeight * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;
-	// TessellationData.ScreenDiagonal = D3D::GetDesc().WindowHeight * D3D::GetDesc().WindowHeight + D3D::GetDesc().WindowWidth * D3D::GetDesc().WindowWidth;
-	//
-	// TessellationData.CameraPosition = Context::Get()->GetCamera()->GetPosition();
-	// CB_Tessellation->UpdateData(&TessellationData, sizeof(TessellationDesc));
-#pragma endregion Render
 	Mat->Tick();
+#pragma endregion Render
 }
 
 void OceanScape::SetupCSShaders()
@@ -192,19 +178,20 @@ void OceanScape::SetupCSShaders()
 	{
 		TextureDesc.ShaderName = "Wave Foam";
 		TextureDesc.ShaderFileName = L"Ocean/Compute/WaveFoamSimulation.hlsl";
+		TextureDesc.SamplerStateNames.clear();
 		CS_SimulateFoam= new ComputeShader(TextureDesc);
+	}
+	{
+		TextureDesc.ShaderName = "Normal Generator";
+		TextureDesc.ShaderFileName = L"Ocean/Compute/NormalMapGenerator.hlsl";
+		CS_NormalMapGenerator= new ComputeShader(TextureDesc);
 	}
 	{
 		TextureDesc.ShaderName = "Transpose Texture";
 		TextureDesc.ShaderFileName = L"Ocean/Compute/TransposeTextureArray.hlsl";
-		TextureDesc.DispatchZ = 3;
+		TextureDesc.DispatchZ = 2;
+		TextureDesc.SamplerStateNames.clear();
 		CS_Transpose = new ComputeShader(TextureDesc);
-	}
-	{
-		// TextureDesc.ShaderName = "Normal Generator";
-		// TextureDesc.ShaderFileName = L"Ocean/Compute/NormalMapGenerator.hlsl";
-		// TextureDesc.DispatchZ = 1;
-		// CS_NormalMapGenerator = new ComputeShader(TextureDesc);
 	}
 	{
 		FFTDesc.ShaderName = "2D IFFT RowPass";
@@ -230,10 +217,9 @@ void OceanScape::SetupCSResources()
 	PhilipsUpdateData.RunningTime = 0.f;
 	PhilipsUpdateData.InitTime = sdt::SystemTimer::Get()->GetRunningTime();
 
-	TransposeData.Width = TextureSize;
-	TransposeData.Height = TextureSize;
-	TransposeData.ArraySize = (UINT)SpectrumTextureType::MAX;
-
+	TransposeData.Width  = static_cast<float>(TextureSize);
+	TransposeData.Height = static_cast<float>(TextureSize);
+	
 	FoamData.Width = static_cast<float>(TextureSize);
 	FoamData.Height = static_cast<float>(TextureSize);
 	FoamData.FoamMultiplier = 0.9f;
@@ -247,28 +233,17 @@ void OceanScape::SetupCSResources()
 	);
 	SpectrumTexture2D = new RWTexture2DArray(
 		(UINT)SpectrumTextureType::MAX, TextureSize, TextureSize,
-		DXGI_FORMAT_R32G32_FLOAT
+		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
 	IFFT_Result = new RWTexture2DArray(
 		(UINT)SpectrumTextureType::MAX, TextureSize, TextureSize,
-		DXGI_FORMAT_R32G32_FLOAT
+		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
 	IFFT_Result_Transposed = new RWTexture2DArray(
 		(UINT)SpectrumTextureType::MAX, TextureSize, TextureSize,
-		DXGI_FORMAT_R32G32_FLOAT
-	);
-	DisplacementMap = new RWTexture2D(
-		TextureSize, TextureSize,
 		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
-	NormalMap = new RWTexture2D(
-		TextureSize, TextureSize,
-		DXGI_FORMAT_R32G32B32A32_FLOAT
-	);
-	FoamGrid = new RWTexture2D(
-		TextureSize, TextureSize,
-		DXGI_FORMAT_R32G32_FLOAT
-	);
+
 	CB_PhillipsInit = new ConstantBuffer(
 		ShaderType::ComputeShader,
 		0,
@@ -291,7 +266,7 @@ void OceanScape::SetupCSResources()
 		&TransposeData,
 		"IFFT Transpose",
 		sizeof(TransposeData),
-		true
+		false
 	);
 	CB_Foam = new ConstantBuffer(
 		ShaderType::ComputeShader,
@@ -303,27 +278,28 @@ void OceanScape::SetupCSResources()
 	);
 	
 	GaussianRandomTexture2D = Noise::CreateGaussian2DNoise(TextureSize);
-	GaussianRandomTexture2D->BindToGPU(0, ShaderType::ComputeShader);
-	InitialSpectrumTexture2D->BindToGPUAsUAV(0);
-	CB_PhillipsInit->BindToGPU( ShaderType::ComputeShader, 0);
+	CS_SpectrumInitializer->BindCB(CB_PhillipsInit, 0);
+	CS_SpectrumInitializer->BindSRV(GaussianRandomTexture2D->GetSRV(), 0);
+	CS_SpectrumInitializer->BindUAV(InitialSpectrumTexture2D->GetUAV(), 0);
 	CS_SpectrumInitializer->Dispatch();
 }
 
-void OceanScape::SetupCells()
+void OceanScape::SetupCells(const OceanScapeDesc & InDesc)
 {
 	OceanMaterial::MaterialDesc MatDesc;
-	MatDesc.DisplacementMapTiling = Info.Dimension.X / static_cast<float>(Info.CellSize); 
+	MatDesc.DisplacementMapTiling = InDesc.Dimension.X / static_cast<float>(InDesc.CellSize);
+	MatDesc.DisplacementMapSize = InDesc.FFTData.Size;
+	MatDesc.NoiseTiling = 1.f; // TODO
+	MatDesc.Name = "Ocean Material";
+	MatDesc.ShaderName = "Ocean";
 	this->Mat = new OceanMaterial(MatDesc);
-	OceanCell::SceneryCellDesc Desc {
+	OceanCell::SceneryCellDesc CellDesc {
 		"Ocean Cell",
-		this->DisplacementMap,
-		this->NormalMap,
-		this->FoamGrid,
 		Mat,
-		Info.CellSize,
-		Info.Dimension,
-		static_cast<float>(Info.GridSize),
+		InDesc.CellSize,
+		InDesc.Dimension,
+		static_cast<float>(InDesc.GridSize),
 		this->Tf,
 	};
-	CellInstance = new OceanCell(Desc);
+	CellInstance = new OceanCell(CellDesc);
 }

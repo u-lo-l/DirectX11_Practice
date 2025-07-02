@@ -12,7 +12,7 @@ public:
 	 * PixelShader에서 사용될 수도 있지만, ComputeShader에서만 사용한다고 가정.
 	 * PixelShader는 rWTexture에 쓰기 보다 RenderTarget에 그리자.
 	 */
-	void BindToGPUAsUAV(UINT SlotNum = 0) const;
+	// void BindToGPUAsUAV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const;
 	UINT GetWidth() const;
@@ -21,6 +21,7 @@ public:
 	ID3D11ShaderResourceView * GetSRV() const;
 	void SaveOutputAsFile(const wstring & FileName) const;
 	void ExtractTextureColors(vector<Color>& OutPixels, const Vector2D& VertexNum) const;
+	Vector2D GetSize() const;
 
 private:
 	bool Verify() const;

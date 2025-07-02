@@ -28,12 +28,12 @@ RWStructuredBuffer::~RWStructuredBuffer()
 	SAFE_RELEASE(UAV);
 }
 
-void RWStructuredBuffer::BindToGPUAsUAV(UINT SlotNum) const
-{
-	if (!UAV)
-		return;
-	D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(SlotNum, 1, &UAV,nullptr);
-}
+// void RWStructuredBuffer::BindToGPUAsUAV(UINT SlotNum) const
+// {
+// 	if (!UAV)
+// 		return;
+// 	D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(SlotNum, 1, &UAV,nullptr);
+// }
 
 void RWStructuredBuffer::BindToGPUAsSRV(UINT SlotNum) const
 {
@@ -140,5 +140,5 @@ void RWStructuredBuffer::CreateResultBuffer()
 
 void RWStructuredBuffer::BindToGPU()
 {
-	ASSERT(false, "Use BindToGPUAsUAV() or BindToGPUAsSRV()");
+	ASSERT(false, "DELETED");
 }

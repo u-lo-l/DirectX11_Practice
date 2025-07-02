@@ -49,14 +49,10 @@ cbuffer CB_PerRenderable : register(b2) // DS HS
 
 	float  HeightScaler = 100.f;
 	float  GridSize;
-	float2 TexelSize;
+	float2 Padding_PerRenderable;
 
 	float2 TerrainSize;
-	float2 TextureSize;
-
 	float2 LODRange;
-	float  ScreenDistance;
-	float  ScreenDiagonal;
 }
 
 

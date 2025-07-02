@@ -38,14 +38,10 @@ private:
 
 		float HeightScaler = 100.f;
 		float GridSize;
-		Vector2D TexelSize;
+		Vector2D Padding;
 
 		Vector2D TerrainSize;
-		Vector2D TextureSize;
-		
 		Vector2D LODRange;
-		float    ScreenDistance;
-		float    ScreenDiagonal;
 	} CB_PerTerrainData;
 	void CreateVertices(float TerrainDimensionX, float TerrainDimensionZ, UINT CellSize, float GridSize);
 	void CreateIndices(float CellSize, float GridSize);

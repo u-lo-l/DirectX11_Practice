@@ -2,8 +2,16 @@
 #include "TerrainMaterial.h"
 
 TerrainMaterial::TerrainMaterial(const MaterialDesc& Desc)
-	: Material(Desc.Name, Desc.ShaderName, MaterialType::Terrain)
+: Material(Desc.Name, Desc.ShaderName, MaterialType::Terrain)
 {
+	ASSERT(!!Desc.HeightMap, "Height Map Not Assigned");
+	ASSERT(Desc.ShaderName.empty() == false, "ShaderName Not Assigned");
+	ASSERT(Desc.MacroVariation.empty() == false, "MacroVariation Not Assigned");
+	ASSERT(Desc.PerlinNoise.empty() == false, "PerlinNoise Not Assigned");
+	ASSERT(Desc.DiffuseTextures.empty() == false, "DiffuseTextures Not Assigned");
+	ASSERT(Desc.NormalTextures.empty() == false, "NormalTextures Not Assigned");
+	ASSERT(Desc.NormalTextures.size() == Desc.DiffuseTextures.empty(), "Detail Texture Count Doesnt Match");
+
 	PerlinNoise = new Texture(Desc.PerlinNoise, true);
 	MacroVariation = new Texture(Desc.MacroVariation, true);
 

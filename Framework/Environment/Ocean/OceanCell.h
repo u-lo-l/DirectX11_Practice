@@ -8,9 +8,6 @@ public:
 	struct SceneryCellDesc
 	{
 		string Name;
-		const RWTexture2D * DisplacementMap;
-		const RWTexture2D * NormalMap;
-		const RWTexture2D * FoamGrid;
 		const Material * OceanMat;
 		UINT CellSize;
 		Vector Dimension;
@@ -35,23 +32,12 @@ private:
 	{
 		float HeightScaler = 100.f;
 		float GridSize;
-		Vector2D TexelSize;
-
-		Vector2D TerrainSize;
-		Vector2D TextureSize;
-		
 		Vector2D LODRange;
-		float    ScreenDistance;
-		float    ScreenDiagonal;
 	} CB_PerOceanData;
 	void CreateVertices(float DimensionX, float DimensionZ, UINT CellSize, float GridSize);
 	void CreateIndices(float CellSize, float GridSize);
 	void CreateInstances(float TerrainDimensionX, float TerrainDimensionZ, float CellSize);
 	virtual void BindResources() const override;
-	
-	const RWTexture2D * DisplacementMap = nullptr;
-	const RWTexture2D * NormalMap = nullptr;
-	const RWTexture2D * FoamGrid = nullptr;
 	
 	vector<VertexType> Vertices = {};
 	vector<UINT> Indices = {};

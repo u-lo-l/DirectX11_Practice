@@ -134,10 +134,10 @@ void RenderManager::Tick()
 			Context::Get()->GetCamera()->GetViewMatrix(),
 			Context::Get()->GetCamera()->GetProjectionMatrix(),
 			Context::Get()->GetCamera()->GetPosition(),
-			0,
+			Context::Get()->GetCamera()->GetScreenDistance(),
 			Context::Get()->GetLightColor(),
 			Context::Get()->GetLightDirection(),
-			0
+			D3D::GetDesc().WindowDiagonal
 		};
 		CB_PerFrame->UpdateData(&CB_PerFrameData, sizeof(CB_PerFrameDesc));
 	}

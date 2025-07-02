@@ -20,7 +20,6 @@
     <ClCompile Include="Environment\LandScape\TerrainCell.cpp" />
     <ClCompile Include="Environment\Ocean\OceanCell.cpp" />
     <ClCompile Include="Environment\Ocean\OceanScape.cpp" />
-    <ClCompile Include="Environment\Ocean\Ocean.HeightMapGenerate.cpp" />
     <ClCompile Include="Environment\SkySphere.cpp" />
     <ClCompile Include="Environment\Weather\Precipitation.cpp" />
     <ClCompile Include="Ligthing\LightingManager.cpp" />

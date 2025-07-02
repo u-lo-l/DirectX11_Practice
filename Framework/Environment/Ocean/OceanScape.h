@@ -32,17 +32,17 @@ public:
 private:
 	void SetupCSShaders();
 	void SetupCSResources();
-	void SetupCells();
+	void SetupCells(const OceanScapeDesc& InDesc);
 	OceanScapeDesc Info;
 	Transform * Tf;
 	OceanCell * CellInstance = nullptr;
 	OceanMaterial * Mat;
+
 #pragma region Compute
 	enum class SpectrumTextureType
 	{
 		Height = 0,
-		Disp_X,
-		Disp_Z,
+		Displacement,
 		MAX
 	};
 	struct PhillipsInitDesc
@@ -60,10 +60,9 @@ private:
 	} PhilipsUpdateData;
 	struct TransposeDesc
 	{
-		UINT Width;
-		UINT Height;
-		UINT ArraySize = static_cast<UINT>(SpectrumTextureType::MAX);
-		UINT Padding;
+		float Width;
+		float Height;
+		float Padding[2];
 	} TransposeData;
 	struct FoamDesc
 	{
@@ -72,7 +71,7 @@ private:
 		float DeltaTime;
 		float FoamSharpness = 1.f;
 
-		float FoamMultiplier = 1.5f;
+		float FoamMultiplier = 1.f;
 		float FoamThreshold = 1.f;
 		float FoamBlur = 1.f;
 		float FoamFade = 0.1f;
@@ -83,9 +82,9 @@ private:
 	RWTexture2DArray * SpectrumTexture2D = nullptr;		// H_t, DispX_t, DispZ_t 생성
 	RWTexture2DArray * IFFT_Result = nullptr;
 	RWTexture2DArray * IFFT_Result_Transposed = nullptr;
-	RWTexture2D * DisplacementMap = nullptr;
-	RWTexture2D * NormalMap = nullptr;
-	RWTexture2D * FoamGrid = nullptr;
+	// RWTexture2D * DisplacementMap = nullptr;
+	// RWTexture2D * NormalMap = nullptr;
+	// RWTexture2D * FoamGrid = nullptr;
 
 	ConstantBuffer * CB_PhillipsInit = nullptr;
 	ConstantBuffer * CB_PhillipsUpdate = nullptr;
@@ -118,7 +117,6 @@ private:
 	 */
 	ComputeShader * CS_SimulateFoam = nullptr;
 	ComputeShader * CS_NormalMapGenerator = nullptr;
-	
 #pragma endregion
 };
 

@@ -1,8 +1,6 @@
 ﻿// ReSharper disable CppClangTidyBugproneNarrowingConversions
-
 #include "framework.h"
 #include "TerrainCell.h"
-
 
 TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 	: ARenderable()
@@ -25,15 +23,12 @@ TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 	ARenderable::CreateIndexBuffer(Indices.data(), Indices.size());
 	ARenderable::CreateInstanceBuffer(Instances.data(), Instances.size(), sizeof(InstanceType));
 
-	CB_PerTerrainData.GridSize = InDesc.GridSize;
 	CB_PerTerrainData.HeightScaler = InDesc.Dimension.Y;
+	CB_PerTerrainData.GridSize = InDesc.GridSize;
 	CB_PerTerrainData.TerrainSize = {InDesc.Dimension.X, InDesc.Dimension.Y};
-	CB_PerTerrainData.TextureSize = {(float)HeightMap->GetWidth(), (float)HeightMap->GetWidth()} ;
-	CB_PerTerrainData.TexelSize = 1.f / CB_PerTerrainData.TextureSize;
-		
+	// CB_PerTerrainData.TextureSize = {(float)HeightMap->GetWidth(), (float)HeightMap->GetWidth()} ;
+	// CB_PerTerrainData.TexelSize = 1.f / CB_PerTerrainData.TextureSize;
 	CB_PerTerrainData.LODRange = {1, 3};
-	CB_PerTerrainData.ScreenDistance = D3D::GetDesc().WindowHeight * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;;
-	CB_PerTerrainData.ScreenDiagonal = Vector2D(D3D::GetDesc().WindowHeight, D3D::GetDesc().WindowWidth).Length();
 	
 	CB_PerTerrain = new ConstantBuffer(
 		ShaderType::HD,
@@ -55,7 +50,7 @@ TerrainCell::~TerrainCell()
 
 void TerrainCell::CreateNormalTangentMap()
 {
-	const ComputeShader * const NormalMapCreator = ShaderManager::Get()->GetComputeShader("NormalMapCreator");
+	ComputeShader * const NormalMapCreator = ShaderManager::Get()->GetComputeShader("NormalMapCreator");
 	ASSERT(!!NormalMapCreator, "NormalMapCreate Not Found");
 	const UINT TextureWidth  = HeightMap->GetWidth();
 	const UINT TextureHeight = HeightMap->GetHeight();
@@ -75,10 +70,10 @@ void TerrainCell::CreateNormalTangentMap()
 		ShaderType::ComputeShader,0,
 		&CB_Data,sizeof(CB_Data),true
 	);
-	CB.BindToGPU(ShaderType::ComputeShader, 0);
-	HeightMap->BindToGPU(0, ShaderType::ComputeShader);
-	NormalMap->BindToGPUAsUAV(0);
-	TangentMap->BindToGPUAsUAV(1);
+	NormalMapCreator->BindCB(CB.GetBuffer(), 0);
+	NormalMapCreator->BindSRV(HeightMap->GetSRV(), 0);
+	NormalMapCreator->BindUAV(NormalMap->GetUAV(), 0);
+	NormalMapCreator->BindUAV(TangentMap->GetUAV(), 1);
 	UINT X, Y, Z;
 	NormalMapCreator->GetThreadDim(X, Y, Z);
 	NormalMapCreator->Dispatch(TextureWidth / X, TextureHeight / Y, 1);

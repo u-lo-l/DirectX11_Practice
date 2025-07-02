@@ -190,6 +190,11 @@ Vector Camera::GetUp() const
 	return Tf->GetUp();
 }
 
+float Camera::GetScreenDistance() const
+{
+	return D3D::GetDesc().WindowHeight * 0.5f * GetProjectionMatrix().M22;
+}
+
 Vector Camera::At() const
 {
 	return Tf->GetWorldPosition() + Tf->GetForward();

@@ -12,7 +12,7 @@ public:
 		DXGI_FORMAT InFormat = DXGI_FORMAT_R8G8B8A8_UNORM
 	);
 	~RWTexture2DArray();
-	void BindToGPUAsUAV(UINT SlotNum = 0) const;
+	// void BindToGPUAsUAV(UINT SlotNum = 0) const;
 	void BindToGPUAsSRV(UINT SlotNum = 0, ShaderType InShaderType = ShaderType::ComputeShader) const;
 	UINT GetWidth() const;
 	UINT GetHeight() const;

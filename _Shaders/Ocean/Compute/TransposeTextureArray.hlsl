@@ -9,15 +9,14 @@
 #  error "THREAD_Y Not Defined"
 # endif
 
-Texture2DArray<Complex> InputTexture : register(t0);
-RWTexture2DArray<Complex> Transposed : register(u0);
+Texture2DArray<float4> InputTexture : register(t0);
+RWTexture2DArray<float4> Transposed : register(u0);
 
 cbuffer CB_Const : register(b0)
 {
     uint Width;
     uint Height;
-    uint ArraySize;
-    uint Padding;
+    uint2 Padding;
 };
 
 // In-Place방식은 Out-of-Place방식보다 성능이 낮을 수 있다.

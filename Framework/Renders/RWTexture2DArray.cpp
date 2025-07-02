@@ -21,16 +21,16 @@ RWTexture2DArray::~RWTexture2DArray()
 	SAFE_RELEASE(SRV)
 }
 
-void RWTexture2DArray::BindToGPUAsUAV(UINT SlotNum) const
-{
-	if (!!UAV)
-		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(
-			SlotNum,
-			1,
-			&UAV,
-			nullptr
-		);
-}
+// void RWTexture2DArray::BindToGPUAsUAV(UINT SlotNum) const
+// {
+// 	if (!!UAV)
+// 		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(
+// 			SlotNum,
+// 			1,
+// 			&UAV,
+// 			nullptr
+// 		);
+// }
 
 void RWTexture2DArray::BindToGPUAsSRV(UINT SlotNum, ShaderType InShaderType) const
 {

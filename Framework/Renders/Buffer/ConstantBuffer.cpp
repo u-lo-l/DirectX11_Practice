@@ -61,10 +61,9 @@ ConstantBuffer::~ConstantBuffer()
 
 void ConstantBuffer::UpdateData( void * InData, UINT InDataSize )
 {
-	if (bIsStatic == true)
-		return ;
-	if (DataSize != InDataSize)
-		return;
+	ASSERT(bIsStatic == false, "ConstantBuffer::UpdateData: bIsStatic");
+	ASSERT(DataSize == InDataSize, "ConstantBuffer::UpdateData: DataSize Does not Match");
+
 	Data = InData;
 
 	ID3D11DeviceContext * const DeviceContext = D3D::Get()->GetDeviceContext();

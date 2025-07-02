@@ -16,7 +16,7 @@ public:
 	operator const ID3D11ShaderResourceView*() const {return SRV;}
 
 	void SaveTexture(const wstring & InTextureFileName) const;
-	void SetRenderTarget(const class DepthStencil * InDepthStencil) const;
+	void SetRenderTarget(const DepthStencil * InDepthStencil) const;
 	void ClearRenderTarget() const;
 	void ClearRenderTarget(const Color & InColor) const;
 	void ResizeRenderTarget(UINT InWidth, UINT InHeight);

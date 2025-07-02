@@ -18,12 +18,23 @@
 /// <description> - Background : 애플리케이션의 기본 배경색을 나타낸다. RGBA 형식으로 정의된다.</description>
 struct D3DDesc
 {
+	D3DDesc();
+	D3DDesc(
+		const wstring & InAppName,
+		HINSTANCE InInstance,
+		HWND InWindowHandle,
+		float WindowWidth,
+		float WindowHeight,
+		const Color & Background
+	);
+
 	wstring AppName;
 	HINSTANCE Instance;
 	HWND Handle;
 
 	float WindowWidth;
 	float WindowHeight;
+	float WindowDiagonal;
 
 	Color Background;
 };

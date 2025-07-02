@@ -6,22 +6,32 @@ public:
 	struct MaterialDesc
 	{
 		const Texture * HeightMap = nullptr;
-		float DisplacementMapTiling = 1.f;
-		float NoiseTiling = 1.f;
-		string Name = "OceanMat";
-		string ShaderName = "Ocean";
+		UINT DisplacementMapSize = 0;
+		float DisplacementMapTiling = 0.f;
+		float NoiseTiling = 0.f;
+		string Name;
+		string ShaderName;
 	};
 	explicit OceanMaterial(const MaterialDesc & Desc);
 	virtual ~OceanMaterial() override;
 	virtual void BindToGpu(int RegisterIndex) const override;
 	virtual void Tick() override;
-
+	float GetDisplacementMapTiling() const { return PerMaterialData.DisplacementMapTiling; }
+	float GetNoiseTiling() const { return PerMaterialData.NoiseTiling; }
+	
+	RWTexture2D * GetDisplacementMap() const { return DisplacementMap; }
+	RWTexture2D * GetNormalMap() const { return NormalMap; }
+	RWTexture2D * GetFoamGridMap() const { return FoamGrid; }
 private:
 	struct PerMaterialDesc
 	{
 		float DisplacementMapTiling = 1.f;
 		float NoiseTiling = 1.f;
-		float WaterRefractionIndex = 1.33f; // 굴절률
-		float WaterR0 = 0.02f;              // 수직 입사 반사 계수
+		Vector2D TextureSize;
 	} PerMaterialData;
+	string Name;
+	string ShaderName;
+	RWTexture2D * DisplacementMap = nullptr;
+	RWTexture2D * NormalMap = nullptr;
+	RWTexture2D * FoamGrid = nullptr;
 };

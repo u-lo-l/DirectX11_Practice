@@ -24,9 +24,9 @@ cbuffer CB_Const : register(b0)
 // ========== OUTPUT =========
 
 const static uint T_HT = 0;
-const static uint T_DISP_X = 1;
-const static uint T_DISP_Z = 2;
-RWTexture2DArray<float2> Disp_t : register(u0); // ArraySize : 3 -> H_t, -ik_xH_t. -ik_zH_t
+const static uint T_DISP = 1;
+const static uint T_NORM = 2;
+RWTexture2DArray<float4> Disp_t : register(u0); // ArraySize : 3 -> H_t, -ik_xH_t. -ik_zH_t
 
 // Dispatch(Size / THREAD_X, Size / THREAD_Y, 1)
 [numthreads(THREAD_X, THREAD_Y, 1)]
@@ -51,12 +51,11 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 
 
 	// Height에 대한 스펙트럼은 Ht이다.
-	Disp_t[uint3(UV, T_HT)] = Ht;
+	Disp_t[uint3(UV, T_HT)] = float4(Ht, 0, 0);
 
-	iHt *= -OneOverLenghtK;
-	// 수평 성분에 대한 스펙트럼은 -i(hat_k)Ht이다.
-	Disp_t[uint3(UV, T_DISP_X)] = iHt * k.x;
-	Disp_t[uint3(UV, T_DISP_Z)] = iHt * k.y;
+	iHt *= OneOverLenghtK;
+	// 수평 성분에 대한 스펙트럼은 i(hat_k)Ht이다.
+	Disp_t[uint3(UV, T_DISP)] = float4(iHt * k.x, iHt * k.y);
 }
 
 #endif

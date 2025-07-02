@@ -25,16 +25,16 @@ RWTexture2D::~RWTexture2D()
 	SAFE_RELEASE(SRV);
 }
 
-void RWTexture2D::BindToGPUAsUAV(const UINT SlotNum) const
-{
-	if (!!UAV)
-		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(
-			SlotNum,
-			1,
-			&UAV,
-			nullptr
-		);
-}
+// void RWTexture2D::BindToGPUAsUAV(const UINT SlotNum) const
+// {
+// 	if (!!UAV)
+// 		D3D::Get()->GetDeviceContext()->CSSetUnorderedAccessViews(
+// 			SlotNum,
+// 			1,
+// 			&UAV,
+// 			nullptr
+// 		);
+// }
 
 void RWTexture2D::BindToGPUAsSRV(const UINT SlotNum) const
 {
@@ -170,6 +170,11 @@ void RWTexture2D::ExtractTextureColors(vector<Color>& OutPixels, const Vector2D&
 
 	SAFE_DELETE(RWBuffer);
 	SAFE_DELETE(CB_Resolution);
+}
+
+Vector2D RWTexture2D::GetSize() const
+{
+	return Vector2D(static_cast<float>(Width), static_cast<float>(Height));
 }
 
 bool RWTexture2D::Verify() const

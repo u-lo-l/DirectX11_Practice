@@ -50,10 +50,14 @@ public:
 	virtual ~ComputeShader() override;
 	void SetPass() const;
 	void GetThreadDim(UINT & X, UINT & Y, UINT & Z) const;
-	static void ClearPass();
-	void Dispatch() const;
-	void Dispatch(UINT X, UINT Y, UINT Z) const;
-
+	void ClearPass();
+	void Dispatch();
+	void Dispatch(UINT X, UINT Y, UINT Z);
+	void BindUAV(ID3D11UnorderedAccessView* InUAV, UINT SlotNum);
+	void BindSRV(ID3D11ShaderResourceView* InSRV, UINT SlotNum);
+	void BindCB(const BufferBase* InBuffer, UINT SlotNum);
+	void BindCB(ID3D11Buffer* InConstantBuffer, UINT SlotNum);
+	
 private:
 	void LoadShader();
 	virtual wstring GetEntryPoint(ShaderType Type = ShaderType::None) const override;
@@ -64,4 +68,7 @@ private:
 
 	DispatchPass Pass;
 	ComputeShaderDesc Desc;
+	map<UINT, ID3D11Buffer*> CBs = {};
+	map<UINT, ID3D11ShaderResourceView*> SRVs = {};
+	map<UINT, ID3D11UnorderedAccessView*> UAVs = {};
 };

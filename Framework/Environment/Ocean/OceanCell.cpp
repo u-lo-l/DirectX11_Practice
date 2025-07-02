@@ -8,9 +8,7 @@ OceanCell::OceanCell(const SceneryCellDesc& InDesc)
 	ARenderable::SetName(InDesc.Name);
 	ARenderable::SetMaterial(InDesc.OceanMat);
 	ARenderable::SetShader();
-	this->DisplacementMap = InDesc.DisplacementMap;
-	this->NormalMap = InDesc.NormalMap;
-	this->FoamGrid = InDesc.FoamGrid;
+
 	CreateVertices(InDesc.Dimension.X, InDesc.Dimension.Z, InDesc.CellSize, InDesc.GridSize);
 	ASSERT(this->Vertices.empty() == false, "Vertices should not be empty");
 	CreateIndices(static_cast<float>(InDesc.CellSize), InDesc.GridSize);
@@ -24,13 +22,7 @@ OceanCell::OceanCell(const SceneryCellDesc& InDesc)
 
 	CB_PerOceanData.GridSize = InDesc.GridSize;
 	CB_PerOceanData.HeightScaler = InDesc.Dimension.Y;
-	CB_PerOceanData.TerrainSize = {InDesc.Dimension.X, InDesc.Dimension.Y};
-	CB_PerOceanData.TextureSize = {(float)DisplacementMap->GetWidth(), (float)DisplacementMap->GetWidth()} ;
-	CB_PerOceanData.TexelSize = 1.f / CB_PerOceanData.TextureSize;
-
 	CB_PerOceanData.LODRange = {1, 3};
-	CB_PerOceanData.ScreenDistance = D3D::GetDesc().WindowHeight * 0.5f * Context::Get()->GetCamera()->GetProjectionMatrix().M22;;
-	CB_PerOceanData.ScreenDiagonal = Vector2D(D3D::GetDesc().WindowHeight, D3D::GetDesc().WindowWidth).Length();
 	
 	CB_PerOcean = new ConstantBuffer(
 		ShaderType::HD,
@@ -39,14 +31,12 @@ OceanCell::OceanCell(const SceneryCellDesc& InDesc)
 		sizeof(LandScapeTessellationDesc),
 		false
 	);
-	
 	RenderManager::Get()->AddRenderable(this);
 }
 
 OceanCell::~OceanCell()
 {
 	SAFE_DELETE(CB_PerOcean);
-	SAFE_DELETE(NormalMap);
 	Vertices.clear();
 	Instances.clear();
 }
@@ -59,22 +49,9 @@ void OceanCell::SetHeightScaler(float InHeightScaler)
 	CB_PerOcean->UpdateData(&CB_PerOceanData, sizeof(CB_PerOceanData));
 }
 
-void OceanCell::BindResources() const
+	void OceanCell::BindResources() const
 {
 	BindBuffer();
-
-	static bool Capture = false;
-	ImGui::Checkbox("Capture", &Capture);
-	if (Capture == true)
-	{
-		DisplacementMap->SaveOutputAsFile(L"Debug/DisplaceTEST");
-		Capture = false;
-	}
-	
-	CHECK(!!DisplacementMap);
-	DisplacementMap->BindToGPUAsSRV(0, ShaderType::VDP);
-	NormalMap->BindToGPUAsSRV(1, ShaderType::PixelShader);
-	FoamGrid->BindToGPUAsSRV(2, ShaderType::DP);
 	if (!!CB_PerOcean)
 		CB_PerOcean->BindToGPU(ShaderType::ALL, 2);
 }

@@ -5,6 +5,29 @@ D3D * D3D::Instance = nullptr;
 
 D3DDesc D3D::D3dDesc = D3DDesc();
 
+D3DDesc::D3DDesc()
+: Instance(nullptr), Handle(nullptr), WindowWidth(0), WindowHeight(0), WindowDiagonal(0)
+{
+}
+
+D3DDesc::D3DDesc
+(
+	const wstring & InAppName,
+	HINSTANCE InInstance,
+	HWND InWindowHandle,
+	float WindowWidth,
+	float WindowHeight,
+	const Color& Background
+)
+: AppName(InAppName)
+, Instance(InInstance)
+, Handle(InWindowHandle)
+, WindowWidth(WindowWidth)
+, WindowHeight(WindowHeight)
+, WindowDiagonal(sqrt(WindowWidth * WindowWidth + WindowHeight + WindowHeight))
+, Background(Background)
+{ }
+
 D3D * D3D::Get()
 {
 	assert(Instance != nullptr);
@@ -56,6 +79,7 @@ void D3D::ResizeScreen( float InWidth, float InHeight )
 	}
 	D3dDesc.WindowWidth = InWidth;
 	D3dDesc.WindowHeight = InHeight;
+	D3dDesc.WindowDiagonal = sqrt(D3dDesc.WindowWidth * D3dDesc.WindowWidth + D3dDesc.WindowHeight * D3dDesc.WindowHeight);
 
 	SAFE_RELEASE(RenderTargetView);
 

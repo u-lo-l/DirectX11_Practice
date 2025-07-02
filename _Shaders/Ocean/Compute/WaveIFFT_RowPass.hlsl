@@ -10,11 +10,11 @@ cbuffer CB_IFFTSize : register(b0)
     float2 Padding;
 }
 
-Texture2DArray<Complex>		InputSpectrum : register(t0);	// H_t, -ik_xH_t. -ik_zH_t
+Texture2DArray<float4> InputSpectrum : register(t0);   // H_t, -ik_xH_t. -ik_zH_t
 // StructuredBuffer<Complex> TwiddleFactor : register(t1);
-RWTexture2DArray<Complex>	OutputSpectrum : register(u0);	// HEIGHT, DISP_X, DISP_Z
+RWTexture2DArray<float4> OutputSpectrum : register(u0);	// {H_t}, {-ik_xH_t. -ik_zH_t}
 
-groupshared Complex SharedData[FFT_SIZE]; // Shared Data Per ThreadGroup
+groupshared float4 SharedData[FFT_SIZE]; // Shared Data Per ThreadGroup
 
 struct CSInput
 {
@@ -27,7 +27,7 @@ uint BitReverse(uint x, uint LogN);
 /*
 * One ThreadGroup Per Row
 */
-[numthreads(THREAD_GROUP_SIZE, 1, 1)] // Dispatch(FFT_SIZE, 1, 3)
+[numthreads(THREAD_GROUP_SIZE, 1, 1)] // Dispatch(FFT_SIZE, 1, 2)
 void CSMain(CSInput Input)
 {
 	uint3 DTID_1 = uint3(Input.GTid.x, Input.GroupId.x, Input.GroupId.z);
@@ -53,10 +53,16 @@ void CSMain(CSInput Input)
 		GetFFTValues(s, DTID_1.x, WaveVector.x, u, v, Twiddle);
 
 		// Butterfly Op
-		Complex EvenTerm = SharedData[u];
-		Complex OddTermTwiddle = ComplexMul(Twiddle, SharedData[v]);
-		SharedData[u] = EvenTerm + OddTermTwiddle;
-		SharedData[v] = EvenTerm - OddTermTwiddle;
+		Complex EvenTerm = SharedData[u].xy;
+		Complex OddTermTwiddle = ComplexMul(Twiddle, SharedData[v].xy);
+		SharedData[u].xy = EvenTerm + OddTermTwiddle;
+		SharedData[v].xy = EvenTerm - OddTermTwiddle;
+		GroupMemoryBarrierWithGroupSync();
+
+		EvenTerm = SharedData[u].zw;
+		OddTermTwiddle = ComplexMul(Twiddle, SharedData[v].zw);
+		SharedData[u].zw = EvenTerm + OddTermTwiddle;
+		SharedData[v].zw = EvenTerm - OddTermTwiddle;
 		GroupMemoryBarrierWithGroupSync();
 	}
 

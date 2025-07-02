@@ -22,31 +22,24 @@
 
 const static float MIPMIN = 0;
 const static float MIPMAX = 5;
+const static float WaterRefractionIndex = 1.33f; // 굴절률
+const static float WaterR0 = 0.02f;              // 수직 입사 반사 계수
 
 #define GET_MIP_LEVEL(x) (lerp(MIPMIN, MIPMAX, (x)))
 
 
-
 cbuffer CB_PerMaterial : register(b1) // PS
 {
-	float DisplacementMapTiling = 1.f;
-	float NoiseTiling = 1.f;
-	float WaterRefractionIndex = 1.33f; // 굴절률
-	float WaterR0 = 0.02f;              // 수직 입사 반사 계수
+	float  DisplacementMapTiling = 1.f;
+	float  NoiseTiling = 1.f;
+	float2 TextureSize;
 }
 
 cbuffer CB_PerRenderable : register(b2) // DS HS
 {
 	float  HeightScaler = 100.f;
 	float  GridSize;
-	float2 TexelSize;
-
-	float2 TerrainSize;
-	float2 TextureSize;
-
 	float2 LODRange;
-	float  ScreenDistance;
-	float  ScreenDiagonal;
 }
 
 SamplerState		Linear_Wrap				: register(s0); // VS DS PS
@@ -81,14 +74,11 @@ float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend);
 // VS
 VS_OUTPUT VSMain(VS_INPUT input)
 {
-
 	VS_OUTPUT output;
 
 	output.UV = input.CellTexCoord + input.UV;
 	output.Transform = input.Transform;
-
-	output.Position = input.Position;
-	output.Position = mul(output.Position, input.Transform);
+	output.Position = mul(input.Position, input.Transform);
 
 	return output;
 }
@@ -158,33 +148,6 @@ HS_POINT_OUTPUT HSMain
 	return output;
 }
 
-float3 DistanceBasedDisp(float2 UV, float LOD, float Weight)
-{
-    float3 NearDisp = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 1.f, LOD).xyz;
-#ifndef USE_DISTANCE_BASED_BLENDING
-    return NearDisp;
-#endif
-    float3 FarHDisp  = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 0.2f, LOD).xyz;
-    return lerp(NearDisp, FarHDisp, Weight);
-}
-// float  DistanceBasedHeight(float2 UV, float LOD, float Weight)
-// {
-//     float NearHeight = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 1.f, LOD).y;
-// #ifndef USE_DISTANCE_BASED_BLENDING
-//     return NearHeight;
-// #endif
-//     float FarHeight  = WaterDisplacementMap.SampleLevel(Linear_Wrap, UV * 0.2f, LOD).y;
-//     return lerp(NearHeight, FarHeight, Weight);
-// }
-float  DistanceBasedFoam(float2 UV, float LOD, float Weight)
-{
-    float NearColor = FoamGrid.SampleLevel(Linear_Wrap, UV * 1.f, LOD).r;
-#ifndef USE_DISTANCE_BASED_BLENDING
-    return NearColor;
-#endif
-    float FarColor  = FoamGrid.SampleLevel(Linear_Wrap, UV * 0.2f, LOD).r;
-    return lerp(NearColor, FarColor, Weight);
-}
 // DS
 [domain(DOMAIN)]
 DS_OUTPUT DSMain
@@ -207,7 +170,8 @@ DS_OUTPUT DSMain
 	output.UV = lerp(u1, u2, UV.y);
 
 	const float2 DisplacementMapUV = output.UV * DisplacementMapTiling;
-	const float Scaler = HeightScaler / sqrt(DisplacementMapTiling);
+	const float Scaler = HeightScaler / DisplacementMapTiling * 10;
+
 	float3 Displacement = WaterDisplacementMap.SampleLevel(Linear_Wrap, DisplacementMapUV, 0).rgb * 2.f - 1.f;
 	const float Folding = abs(FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, 0)).r;
 	output.Position.y = Displacement.y * Scaler;
@@ -236,32 +200,31 @@ float3 FogBlending(float3 Color, float Dist)
 
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
-    float3 ViewRay = (input.WorldPosition - CameraWorldPosition); // WorldSpace
-    const float Distance = length(ViewRay);
-    float DistanceBasedBlending = saturate((Distance - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
-    ViewRay = normalize(ViewRay);
-
-    // float LOD = 1 - input.LOD / MIPMAX;
-    // return float4(LOD, LOD, LOD, 1);
-    const float2 DisplacementMapUV = input.UV * DisplacementMapTiling;
-    const float2 NoiseUV = input.UV * NoiseTiling;
-
-    // const float3 Normal = CalculateNormal(DisplacementMapUV, input.LOD, DistanceBasedBlending);
+	const float2 DisplacementMapUV = input.UV * DisplacementMapTiling;
+	const float2 NoiseUV = input.UV * NoiseTiling;
 	const float3 TangentSpaceNormal = WaterNormalMap.Sample(Linear_Wrap, DisplacementMapUV).rgb * 2.f - 1.f;
+	const float3 FoamColor = FoamGrid.Sample(Linear_Wrap, DisplacementMapUV).rrr;
+
+	float3 ViewRay = (input.WorldPosition - CameraWorldPosition); // WorldSpace
+	const float Distance = length(ViewRay);
+	float DistanceBasedBlending = saturate((Distance - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
+	// float DistanceBasedBlending = 0;
+	ViewRay = normalize(ViewRay);
+
+
 	float3 Normal = ApplyNormalMap(TangentSpaceNormal, float3(0, 1, 0), float3(1, 0 ,0));
-	Normal = lerp(Normal, float3(0, 1, 0), 1);
+	Normal = lerp(Normal, float3(0, 1, 0), 0);
 
 	const float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
 	const float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
 	float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, DistanceBasedBlending);
-    float3 FoamColor = FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, 0).rrr;
 
 	WaterColor += FoamColor;
 
 	const float3 EnvColor = float3(0.5f, 0.5f, 1.f);
 	float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
-    float RDotN = dot(ReflectedRay, Normal);
-    float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN)) * lerp(1, 0.75, DistanceBasedBlending);
+	float RDotN = dot(ReflectedRay, Normal);
+	float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN));
 
 	BlinnPhongInput	BlinnPhongParam;
 	BlinnPhongParam.Ambient = float4(0.2f, 0.2f, 0.2f, 1.f);

@@ -72,10 +72,10 @@ private:
 		Matrix View;
 		Matrix Projection;
 		Vector CameraPosition;
-		float Padding1;
+		float ScreenDistance;
 		Color LightColor;
 		Vector LightDirection;
-		float Padding2;
+		float ScreenDiagonal;
 	} CB_PerFrameData ;
 	
 	ConstantBuffer * CB_PerFrame = nullptr;

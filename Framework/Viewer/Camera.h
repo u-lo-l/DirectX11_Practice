@@ -31,6 +31,7 @@ public:
 	Vector GetRight() const;
 	Vector GetUp() const;
 
+	float GetScreenDistance() const;
 private :
 	Vector At() const;
 	Transform * Tf;

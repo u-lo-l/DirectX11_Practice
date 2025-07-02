@@ -6,10 +6,10 @@ cbuffer CB_PerFrame : register(b0)
 	matrix View;
 	matrix Projection;
     float3 CameraWorldPosition;
-    float  Padding;
+    float  ScreenDistance;
     float4 LightColor;
     float3 LightDirection;
-    float  Padding2;
+    float  ScreenDiagonal;
 }
 
 #endif
