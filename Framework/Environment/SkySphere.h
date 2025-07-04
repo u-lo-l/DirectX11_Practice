@@ -1,34 +1,25 @@
 ﻿#pragma once
 
-class SkySphere
+class SkySphere : public ARenderable
 {
 	using VertexType = Vertex;
 public:
-	explicit SkySphere(wstring InFilePath = L"Environments/SkyDawn.dds", float InRadius = 0.5f, UINT InSliceCount = 20);
-	~SkySphere();
-
+	struct Desc
+	{
+		string Name = "Sky";
+		string ShaderName = "Skybox";
+	};
+	explicit SkySphere(Desc InDesc);
+	virtual ~SkySphere() override;
+	virtual void BindResources() const override;
 	void Tick();
-	void Render();
-	const Texture * GetTexture() const { return SkyTexture; }
-
 private:
-	void CreateVertexBuffer();
-	void CreateIndexBuffer();
-
-private:
-	// TODO :
-	// HlslShader<VertexType> * SkyShader;
-	
-	Transform * CameraTF;
-
-	VertexBuffer * VBuffer;
-	UINT VertexCount;
-
-	IndexBuffer * IBuffer;
-	UINT IndexCount;
-private:
-	float Radius;
-	UINT SliceCount;
-private:
-	Texture * SkyTexture;
+	void CreateVertices();
+	void CreateIndices();
+	SkyMaterial * Mat;
+	vector<VertexType> Vertices = {};
+	vector<UINT> Indices = {};
+	Desc Info;
+	float Radius = 1.f;
+	UINT SliceCount = 32;
 };

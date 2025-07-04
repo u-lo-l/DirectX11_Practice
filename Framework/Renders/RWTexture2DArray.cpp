@@ -106,6 +106,11 @@ void RWTexture2DArray::SaveOutputAsFile(const wstring& InFileName) const
 	}
 }
 
+Vector2D RWTexture2DArray::GetSize() const
+{
+	return {static_cast<float>(Width), static_cast<float>(Height)};
+}
+
 void RWTexture2DArray::CreateOutputTexture()
 {
 	ID3D11Device * Device =  D3D::Get()->GetDevice();

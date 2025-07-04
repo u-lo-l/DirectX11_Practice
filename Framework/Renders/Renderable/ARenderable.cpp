@@ -12,6 +12,7 @@ ARenderable::~ARenderable()
 	SAFE_DELETE(IBuffer);
 	SAFE_DELETE(InstBuffer);
 	SAFE_DELETE(Tf);
+	SAFE_DELETE(CB_PerElement);
 }
 
 void ARenderable::Tick() const
@@ -31,6 +32,11 @@ void ARenderable::CreateIndexBuffer(UINT* InData, const int InCount)
 	if (!InData || InCount == 0)
 		ASSERT(false, "Failed to create index buffer");
 	IBuffer = new IndexBuffer(InData, InCount);
+}
+
+void ARenderable::CreateIndexBuffer(vector<UINT> & InIndices)
+{
+	CreateIndexBuffer(InIndices.data(), InIndices.size());
 }
 
 void ARenderable::CreateInstanceBuffer(void* InData, const int InCount, const int InStride)

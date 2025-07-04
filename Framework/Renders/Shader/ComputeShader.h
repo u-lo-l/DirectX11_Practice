@@ -28,10 +28,26 @@ struct DispatchPass
  */
 struct ComputeShaderDesc
 {
+	ComputeShaderDesc() {};
+	explicit  ComputeShaderDesc(const ComputeShaderDesc& InDesc);
+	ComputeShaderDesc(
+		string InShaderName,
+		wstring InShaderFileName,
+		const vector<pair<string, string>> & InShaderMacros,
+		wstring InEntryPoint,
+		UINT InNumThreadDimX,
+		UINT InNumThreadDimY,
+		UINT InNumThreadDimZ,
+		UINT InDispatchX,
+		UINT InDispatchY,
+		UINT InDispatchZ,
+		const vector<tuple<int, ShaderType, string>>& InSamplerStateNames,
+		bool InbForceRecompile
+	);
 	string ShaderName;
 	wstring ShaderFileName;
 	wstring PreCompiledShaderFileDirectory;
-	const D3D_SHADER_MACRO * ShaderMacros = nullptr;
+	vector<pair<string, string>> ShaderMacros = {};
 	wstring EntryPoint = L"CSMain";
 	UINT NumThreadDimX = 1;
 	UINT NumThreadDimY = 1;
@@ -48,6 +64,7 @@ class ComputeShader : public ShaderBase
 public:
 	explicit ComputeShader(const ComputeShaderDesc & InDesc);
 	virtual ~ComputeShader() override;
+	void Recompile();
 	void SetPass() const;
 	void GetThreadDim(UINT & X, UINT & Y, UINT & Z) const;
 	void ClearPass();
@@ -62,7 +79,7 @@ private:
 	void LoadShader();
 	virtual wstring GetEntryPoint(ShaderType Type = ShaderType::None) const override;
 	virtual string GetShaderTarget(ShaderType Type = ShaderType::None) const override;
-	virtual ID3DBlob * CompileShader(const wstring& InFileName, const D3D_SHADER_MACRO* InMacros = nullptr, ShaderType InType = ShaderType::None) override;
+	virtual ID3DBlob * CompileShader(const wstring& InFileName, const vector<pair<string, string>>& InMacros = {}, ShaderType InType = ShaderType::None) override;
 	virtual ID3DBlob * LoadPreCompiled(const wstring& InFilename) override;
 	virtual HRESULT CreateShader(ID3DBlob* ShaderBlob, ShaderType InType = ShaderType::None) override;
 

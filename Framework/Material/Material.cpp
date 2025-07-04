@@ -38,3 +38,8 @@ const RenderingShader* Material::GetRenderingShader() const
 {
 	return Shader;
 }
+
+RenderingShader* Material::GetRenderingShader()
+{
+	return Shader;
+}

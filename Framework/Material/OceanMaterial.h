@@ -19,9 +19,9 @@ public:
 	float GetDisplacementMapTiling() const { return PerMaterialData.DisplacementMapTiling; }
 	float GetNoiseTiling() const { return PerMaterialData.NoiseTiling; }
 	
-	RWTexture2D * GetDisplacementMap() const { return DisplacementMap; }
-	RWTexture2D * GetNormalMap() const { return NormalMap; }
-	RWTexture2D * GetFoamGridMap() const { return FoamGrid; }
+	RWTexture2DArray * GetDisplacementMaps() const { return DisplacementMap; }
+	RWTexture2DArray * GetNormalMaps() const { return NormalMap; }
+	RWTexture2DArray * GetFoamGridMaps() const { return FoamGrid; }
 private:
 	struct PerMaterialDesc
 	{
@@ -31,7 +31,8 @@ private:
 	} PerMaterialData;
 	string Name;
 	string ShaderName;
-	RWTexture2D * DisplacementMap = nullptr;
-	RWTexture2D * NormalMap = nullptr;
-	RWTexture2D * FoamGrid = nullptr;
+	constexpr static int CascadeCount = 3;
+	RWTexture2DArray * DisplacementMap = nullptr;
+	RWTexture2DArray * NormalMap = nullptr;
+	RWTexture2DArray * FoamGrid = nullptr;
 };

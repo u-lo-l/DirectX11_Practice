@@ -1,11 +1,11 @@
 #include "Slot.SkyBox.hlsl"
 cbuffer CB_World : register(Const_VS_World)
-{ 
+{
     matrix WorldTF;
 }
 
 cbuffer CB_ViewProjection : register(Const_VS_ViewProjection)
-{ 
+{
     matrix View;
     matrix ViewInv;
     matrix Projection;
@@ -23,15 +23,15 @@ struct VertexOutput
 };
 
 VertexOutput VSMain(VertexInput input)
-{    
+{
     VertexOutput output;
-    
+
     output.LocalPosition = input.Position.xyz;
-    
+
     output.Position = mul(input.Position, WorldTF);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
-    
+
     return output;
 }
 

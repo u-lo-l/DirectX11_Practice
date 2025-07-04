@@ -1,26 +1,11 @@
 #ifndef __SHADING_FUNC_HLSLI__
 #define __SHADING_FUNC_HLSLI__
-
 struct BlinnPhongInput
 {
 	float4 Ambient;
 	float4 Diffuse;
 	float4 Specular;
 	float Shininess;
-
-	float4 LightColor;
-	float3 LightDirection;
-
-	float3 Normal;
-	float3 WorldPosition;
-	float3 WorldSpaceCameraPosition;
-};
-
-struct PBRInput
-{
-	float4 Albedo;
-	float Metalic;
-	float Roughness;
 
 	float4 LightColor;
 	float3 LightDirection;
@@ -79,13 +64,69 @@ float4 BlinnPhong(in BlinnPhongInput Input)
 	return Result;
 }
 
-void PBR(in PBRInput Input ,out float4 Result)
+struct PBRInput
 {
+	float4 Albedo;
+	float Metalic;
+	float Roughness;
+
+	float4 LightColor;
+	float3 LightDirection;
+
+	float3 Normal;
+	float3 WorldPosition;
+	float3 WorldSpaceCameraPosition;
+};
+struct PBRInputFresnel
+{
+	float4 Albedo;
+	float  Fresnel;
+
+	float4 LightColor;
+	float3 LightDirection;
+
+	float3 Normal;
+	float3 WorldPosition;
+	float3 WorldSpaceCameraPosition;
+};
+float SchlickApproximation(float Fresnel, float VDotN);
+
+float4 PBR(in PBRInputFresnel Input)
+{
+	float4 Color;
 	const float3 L = normalize(Input.LightDirection);
 	const float3 N = normalize(Input.Normal);
 	const float NdotL = saturate(dot(-L, N));
 
 	const float3 R = normalize(reflect(L, N));
 	const float3 V = normalize(Input.WorldSpaceCameraPosition - Input.WorldPosition); // also called as E for Eye-Vector
+	const float VDotN = dot(V, N);
+
+	const float Specular = SchlickApproximation(0, VDotN);
+
+	return Color;
+}
+
+float4 PBR(in PBRInput Input)
+{
+	float4 Color;
+	const float3 L = normalize(Input.LightDirection);
+	const float3 N = normalize(Input.Normal);
+	const float NdotL = saturate(dot(-L, N));
+
+	const float3 R = normalize(reflect(L, N));
+	const float3 V = normalize(Input.WorldSpaceCameraPosition - Input.WorldPosition); // also called as E for Eye-Vector
+	const float VDotN = dot(V, N);
+
+	const float Specular = SchlickApproximation(0, VDotN);
+
+	return Color;
+}
+
+
+float SchlickApproximation(float Fresnel, float VDotN)
+{
+    VDotN = max(0, VDotN);
+    return (Fresnel + (1 - Fresnel) * pow(1 - VDotN, 5));
 }
 #endif

@@ -52,19 +52,16 @@ struct RenderingShaderDesc
 	wstring ShaderFileName;
 	/// @brief PreCompliedShaderFileDirectory : .cso 파일의 절대경로  
 	wstring PreCompiledShaderFileDirectory;
-	
 	/// @brief InputLayoutElements : InputLayout 생성에 사용될 Data
 	const vector<D3D11_INPUT_ELEMENT_DESC> * pInputLayoutElements;
 	/// @brief Topology : Primitive Topology (default : TriangleList)
 	D3D11_PRIMITIVE_TOPOLOGY Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	/// @brief ShaderMacros : 추가적인 ShaderMacro
-	const D3D_SHADER_MACRO * ShaderMacros = nullptr;
-
+	vector<pair<string, string>> ShaderMacros = {};
 	/// @brief TargetShader : VS, DS, HS, GS, PS 중 어떤 쉐이더들이 사용될 지
 	ShaderType TargetShaderType = ShaderType::VP;
 	/// @brief EntryPoints : 각 쉐이더의 EntryPoint
 	ShaderEntryPoints EntryPoints;
-
 	/// @brief RasterizerStateName : ShaderManager에 등록된 RasterizerState 이름
 	string RasterizerStateName;
 	/// @brief DepthStencilStateName : ShaderManager에 등록된 DepthStencilState 이름
@@ -73,7 +70,6 @@ struct RenderingShaderDesc
 	string BlendStateName;
 	/// @brief SamplerStateNames : ShaderManager에 등록된 SamplerState의 이름과 TargetShader
 	vector<tuple<int, ShaderType, string>> SamplerStateNames;
-	
 	/// @brief bForceRecomplie :
 	bool bForceRecompile = false;
 };
@@ -86,11 +82,12 @@ public:
 public:
 	explicit RenderingShader(const RenderingShaderDesc & InDesc);
 	virtual ~RenderingShader() override;
-
+	virtual void Recompile() override;
+	
 	ID3D11InputLayout* GetInputLayout();
 	const ID3D11InputLayout* GetInputLayout() const;
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const;
-	
+
 	static void Draw(VertexBuffer * VB, IndexBuffer * IB, InstanceBuffer * InstB);
 	static void Draw(UINT VertexCount, UINT StartVertexLocation = 0);
 	static void DrawIndexed(UINT IndexCount, UINT StartIndexLocation = 0, int BaseVertexLocation = 0);
@@ -100,14 +97,15 @@ public:
 	static void ClearPass();
 	void SetPass(int PassIndex = 0) const;
 	void InitializeInputLayout(ID3DBlob* InVertexShaderBlob);
-
+	bool IsDepthEnabled() const;
 private:
 	static bool Verify(const RenderingShaderDesc& InDesc, string& OutMessage);
 	void LoadShader(ShaderType InType);
+	void Recompile(ShaderType InShaderType);
 	
 	virtual wstring GetEntryPoint(ShaderType Type = ShaderType::None) const override;
 	virtual string GetShaderTarget(ShaderType Type = ShaderType::None) const override;
-	virtual ID3DBlob * CompileShader(const wstring& InFileName, const D3D_SHADER_MACRO* InMacros, ShaderType InType = ShaderType::None) override;
+	virtual ID3DBlob * CompileShader(const wstring& InFileName, const vector<pair<string, string>>& InMacros, ShaderType InType = ShaderType::None) override;
 	virtual ID3DBlob * LoadPreCompiled(const wstring& InFilename) override;
 	virtual HRESULT CreateShader(ID3DBlob* ShaderBlob, ShaderType InType = ShaderType::None) override;
 

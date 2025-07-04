@@ -1,14 +1,16 @@
-#ifndef __Ocean_HLSL__
-#define __Ocean_HLSL__
+#ifndef __OCEAN_HLSL__
+#define __OCEAN_HLSL__
 
 #define TYPE01
 
 #include "../PerFrame.hlsli"
 #include "../Normal.Func.hlsli"
 #include "../Shading.Func.hlsli"
+#include "../Texture.Func.hlsli"
 #include "../Terrain/Terrain.Parameter.hlsli"
 #include "../Terrain/Terrain.Func.Tesellation.hlsli"
 #include "../Terrain/Terrain.Func.Texturing.hlsli"
+#include "./OceanShading.hlsli"
 
 # define DOMAIN "quad"
 # define HS_PARTITION "integer"
@@ -42,32 +44,11 @@ cbuffer CB_PerRenderable : register(b2) // DS HS
 	float2 LODRange;
 }
 
-SamplerState		Linear_Wrap				: register(s0); // VS DS PS
-Texture2D<float4>	WaterDisplacementMap	: register(t0); // DS
-Texture2D<float4>	WaterNormalMap			: register(t1); // PS
-Texture2D<float>	FoamGrid				: register(t2); // PS
-
-// TextureCube		SkyTexture			: register(t3); // PS
-// Texture2D<float> PerlinNoise : register(t5);         // VS DS PS
-
-// const float GetPerlinRandom(float2 uv, uint LOD = 0)
-// {
-//     uv /= HeightMapTiling * 4;
-
-//     float Random = PerlinNoise.SampleLevel(Linear_Wrap, uv, LOD); // 0 ~ 1
-//     return Random;
-// }
-
-// struct DS_OUTPUT // PS_INPUT
-// {
-//     float4 Position : SV_Position;
-//     float2 UV       : UV;
-//     float3 Normal : NORMAL;
-
-//     float3 WorldPosition : POSITION;
-//     float  LOD : LOD;
-//     float  PerlinBlending : BLENDING;
-// };
+SamplerState			Linear_Wrap				: register(s0); // VS DS PS
+Texture2DArray<float4>	WaterDisplacementMap	: register(t0); // DS
+Texture2DArray<float4>	WaterNormalMap			: register(t1); // PS
+Texture2DArray<float>	FoamGrid				: register(t2); // PS
+TextureCube<float4>		SkyTexture				: register(t10); // PS
 
 float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend);
 
@@ -158,30 +139,46 @@ DS_OUTPUT DSMain
 )
 {
 	DS_OUTPUT output;
-	float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
-	output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
+
+	// Process Input
+	float2 u1 = lerp(patch[0].UV, patch[1].UV, UV.x);
+	float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
+	output.UV = lerp(u1, u2, UV.y);
 
 	float4 v1 = lerp(patch[0].WorldPosition, patch[1].WorldPosition, UV.x);
 	float4 v2 = lerp(patch[3].WorldPosition, patch[2].WorldPosition, UV.x);
 	output.Position = lerp(v1, v2, UV.y);
 
-	float2 u1 = lerp(patch[0].UV, patch[1].UV, UV.x);
-	float2 u2 = lerp(patch[3].UV, patch[2].UV, UV.x);
-	output.UV = lerp(u1, u2, UV.y);
+	float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
+	output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
 
-	const float2 DisplacementMapUV = output.UV * DisplacementMapTiling;
-	const float Scaler = HeightScaler / DisplacementMapTiling * 10;
+	//Set Constants
+	const float DispScaler = 1 / DisplacementMapTiling;
+	const float Scaler = HeightScaler * DispScaler;
+	const float3 DisplacementMapUV = float3(output.UV * DisplacementMapTiling, 0);
 
-	float3 Displacement = WaterDisplacementMap.SampleLevel(Linear_Wrap, DisplacementMapUV, 0).rgb * 2.f - 1.f;
-	const float Folding = abs(FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, 0)).r;
-	output.Position.y = Displacement.y * Scaler;
-	output.Position.xz += Displacement.xz * Scaler * (1 - Folding);
+	//Read Texture
+	const float3 TangentSpaceDisplacement =
+		WaterDisplacementMap.SampleLevel(Linear_Wrap, DisplacementMapUV, output.LOD).rgb;
+	const float Folding =
+		saturate(1 - FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, output.LOD).r);
+
+
+	float3 WorldSpaceDisplacement = TangentSpaceToLocalSpace(
+		TangentSpaceDisplacement,
+		// World좌표계 기준 TangentSpace의 Basis
+		float3(1, 0, 0),  // Tanjent (Right)
+		float3(0, 0, -1), // Bitanjent
+		float3(0, 1, 0)   // Normal  (Outward)
+	);
+
+	output.Position.y   = WorldSpaceDisplacement.y * Scaler;
+	output.Position.xz += WorldSpaceDisplacement.xz * Folding * DispScaler;
 
 	output.WorldPosition = output.Position.xyz;
 	output.Position = mul(output.Position, View);
 	output.CameraDistance = length(output.Position);
 	output.Position = mul(output.Position, Projection);
-
 
 	float T = (input.Inside[0] + input.Inside[1]) * 0.5f;
 	output.DebugColor = float4(T, T, T, 1);
@@ -190,66 +187,130 @@ DS_OUTPUT DSMain
 }
 
 // PS
-float GetSpecularCoef(float VDotL);
-float3 FogBlending(float3 Color, float Dist)
-{
-    float blend = saturate((Dist - 1000) / (5000 - 1000));
-    const float3 FogColor = 0.8f;
-    return lerp(Color, FogColor, blend);
-}
-
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
-	const float2 DisplacementMapUV = input.UV * DisplacementMapTiling;
+	// Set Constants
+	const float DispScaler = 1 / DisplacementMapTiling;
+	const float Scaler = HeightScaler * DispScaler;
+	const float3 DisplacementMapUV = float3(input.UV * DisplacementMapTiling, 0);
 	const float2 NoiseUV = input.UV * NoiseTiling;
-	const float3 TangentSpaceNormal = WaterNormalMap.Sample(Linear_Wrap, DisplacementMapUV).rgb * 2.f - 1.f;
-	const float3 FoamColor = FoamGrid.Sample(Linear_Wrap, DisplacementMapUV).rrr;
 
-	float3 ViewRay = (input.WorldPosition - CameraWorldPosition); // WorldSpace
-	const float Distance = length(ViewRay);
-	float DistanceBasedBlending = saturate((Distance - NEAR_DISTANCE) / (FAR_DISTANCE - NEAR_DISTANCE));
-	// float DistanceBasedBlending = 0;
-	ViewRay = normalize(ViewRay);
+	// Read Texture
+	float3 TangentSpaceNormal =
+		 WaterNormalMap.SampleLevel(Linear_Wrap, DisplacementMapUV, input.LOD).rgb;
+	float  FoamAmount =
+		 FoamGrid.SampleLevel(Linear_Wrap, DisplacementMapUV, 0);
+
+	float3 WorldSpaceNormal = TangentSpaceToLocalSpace(
+		TangentSpaceNormal * 2.f - 1.f,	float3x3(1, 0, 0, 0, 0, -1, 0, 1, 0)
+	);
 
 
-	float3 Normal = ApplyNormalMap(TangentSpaceNormal, float3(0, 1, 0), float3(1, 0 ,0));
-	Normal = lerp(Normal, float3(0, 1, 0), 0);
+	// Shading Constants
+	const float3 P = input.WorldPosition;
+	const float3 E = CameraWorldPosition;
+	const float3 dPE = P - E;
+	const float  Dist = length(dPE) / 1000;
+	const float3 nL = normalize(-LightDirection);
+	const float3 nN = normalize(WorldSpaceNormal);
+	const float3 nV = normalize(dPE);
+	const float NDotL = saturate(dot(nL, nN));
 
-	const float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
-	const float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
-	float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, DistanceBasedBlending);
+    float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
+    float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
 
-	WaterColor += FoamColor;
 
-	const float3 EnvColor = float3(0.5f, 0.5f, 1.f);
-	float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
-	float RDotN = dot(ReflectedRay, Normal);
-	float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN));
+    // Asume Distance to Sky : Infinity
+    float3 nR = reflect(-nL, nN); // WorldSpace
+    // float RDotN = dot(nR, nN);
+    float3 EnvColor = SkyTexture.Sample(Linear_Wrap, reflect(nV, nN)).rgb;
 
-	BlinnPhongInput	BlinnPhongParam;
-	BlinnPhongParam.Ambient = float4(0.2f, 0.2f, 0.2f, 1.f);
-	BlinnPhongParam.Diffuse = float4((1 - Specular) * WaterColor, 1);
-	BlinnPhongParam.Specular = float4(EnvColor * Specular, 1);
-	BlinnPhongParam.Shininess = 0.f;
+	const float3 AirBubbleColor = float3(0.35, 0.51, 0.69);
+	const float3 SpecularColor = float3(1,1,1);
+	const float3 WaterScatteringColor = DeepWaterColor;
+	const float OceanHeight = input.WorldPosition.y;
+	const float BubbleDensity = 0.2f;
+	const float AmbientFactor = 0.2f;
+	const float ScatterFactor1 = 0.05f;
+	const float ScatterFactor2 = 0.5f;
+	const float ReflectFactor = 1.f;
+	float Fresnel;
 
-	BlinnPhongParam.LightColor = LightColor;
-	BlinnPhongParam.LightDirection = LightDirection;
 
-	BlinnPhongParam.Normal = Normal;
-	BlinnPhongParam.WorldPosition = input.WorldPosition;
-	BlinnPhongParam.WorldSpaceCameraPosition = CameraWorldPosition;
+	float3 L_a, L_ss, L_s, L_r;
+	float3 Color = OceanShading(
+		L_a, L_ss, L_s, L_r, Fresnel,
+ 		nN, nL, -nV, nR,
+		LightColor.rgb, AirBubbleColor, SpecularColor, WaterScatteringColor, EnvColor,
+		OceanHeight, BubbleDensity,
+		AmbientFactor,
+		ScatterFactor1,
+		ScatterFactor2,
+		ReflectFactor
+	);
+	// return float4(L_a, 1);
+	// return float4(Fresnel.xxx, 1);
+	// return float4(L_r, 1);
+	// return float4(L_ss, 1);
+	// return float4(L_s, 1);
+	if (FoamAmount > 0.75f)
+		return float4(FoamAmount.xxx, 1);
+	else
+		return float4(Color, 1);
 
-	float4 Result = BlinnPhong(BlinnPhongParam);
-	return Result;
+    // const float Ambient = 0.1f;
+    // const float Specular = lerp(0, 0.8f, GetSpecularCoef(RDotN));
+    // const float Refraction = (1 - Specular);
+
+    // float3 WaterColor = lerp(DeepWaterColor, ShallowWaterColor, exp(-Dist * 10));
+
+
+	// float3 Diffuse = WaterColor * Refraction;
+    // WaterColor = WaterColor * Ambient
+    //            + EnvColor * Specular * LightColor.rgb
+    //            + Diffuse * NDotL * LightColor.rgb;
+	// float3 FoamColor = float3(FoamAmount.r, 0, 0) * LightColor.rgb;
+
+	// if (FoamColor.r > 0.75f)
+	// 	return float4(1, 0, 1, 1);
+	// else
+	// 	return float4(WaterColor, 1);
+    // return float4(WaterColor + FoamColor, 1);
+
+
+	// // Water Shading - PBR
+	// const float3 UpWelling = float3(0.0f, 0.2f, 0.3f);
+	// const float3 SkyColor = float3(0.69f, 0.84f, 1.f);
+	// const float3 AirColor = float3(0.1f, 0.1f, 0.1f);
+	// const float nSnell = 1.34f;
+	// const float KDiffuse = 0.91f;
+
+	// const float VDotN = abs(dot(nV, nN));
+	// const float Theta_i = acos(VDotN);
+	// const float SinTheta_t = sin(Theta_i) / nSnell;
+	// const float Theat_t = asin(SinTheta_t);
+
+	// float reflecity = 0.f;
+	// if (Theta_i == 0.f)
+	// {
+	// 	reflecity = (nSnell - 1) / (nSnell + 1);
+	// 	reflecity *= reflecity;
+	// }
+	// else
+	// {
+	// 	float fs = sin(Theat_t - Theta_i) / sin(Theat_t + Theta_i);
+	// 	float ts = tan(Theat_t - Theta_i) / tan(Theat_t + Theta_i);
+	// 	reflecity = 0.5f * (fs * fs + ts * ts);
+	// }
+	// float Distance = length(dPE) * KDiffuse;
+	// Distance = exp(-Distance / 1000);
+
+    // float3 WaterColor = lerp(DeepWaterColor, ShallowWaterColor, exp(-Dist * 10));
+	// float3 Color = lerp(AirColor, reflecity * SkyColor + (1 - SkyColor) * WaterColor, Distance);
+	// Color.r += FoamAmount.r;
+	// return float4(Color, 1.f);
 }
 
 /*======================================================================================*/
-
-// Fresnel
-float GetSpecularCoef(float VDotN)
-{
-    VDotN = max(0, VDotN);
-    return (WaterR0 + (1 - WaterR0) * pow(1 - VDotN, 5));
-}
 
 #endif

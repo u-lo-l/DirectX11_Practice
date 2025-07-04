@@ -106,6 +106,7 @@
     </ClCompile>
     <ClCompile Include="Material\MeshMaterial.cpp" />
     <ClCompile Include="Material\OceanMaterial.cpp" />
+    <ClCompile Include="Material\SkyMaterial.cpp" />
     <ClCompile Include="Material\TerrainMaterial.cpp" />
     <ClCompile Include="Math\Box.cpp" />
     <ClCompile Include="Math\Color.cpp" />
@@ -900,6 +901,7 @@
     <ClInclude Include="Material\Material.h" />
     <ClInclude Include="Material\MeshMaterial.h" />
     <ClInclude Include="Material\OceanMaterial.h" />
+    <ClInclude Include="Material\SkyMaterial.h" />
     <ClInclude Include="Material\TerrainMaterial.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\Color.h" />

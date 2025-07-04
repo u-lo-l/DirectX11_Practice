@@ -4,12 +4,19 @@
 static const uint bUseNormalTexture = 1 << 0;
 bool HasNormalTexture(uint Flag) { return (Flag & bUseNormalTexture) != 0; }
 
-static const float3 Color_PosX = float3(1, 0, 0);
-static const float3 Color_PosY = float3(0, 1, 0);
-static const float3 Color_PosZ = float3(0, 0, 1);
-static const float3 Color_NegX = float3(0, 1, 1);
-static const float3 Color_NegY = float3(1, 0, 1);
-static const float3 Color_NegZ = float3(1, 1, 0);
+#define RED float3(1, 0, 0);
+#define GREEN float3(0, 1, 0);
+#define BLUE float3(0, 0, 1);
+#define CYAN float3(0, 1, 1);
+#define MAGENTA float3(1, 0, 1);
+#define YELLOW float3(1, 1, 0);
+
+static const float3 Color_PosX = RED;
+static const float3 Color_PosY = GREEN;
+static const float3 Color_PosZ = BLUE;
+static const float3 Color_NegX = CYAN;
+static const float3 Color_NegY = MAGENTA;
+static const float3 Color_NegZ = YELLOW;
 
 const static float handed = -1; // for LeftHanded Coordinate
 
@@ -34,7 +41,7 @@ float3 ApplyNormalMap(in float3 TangentSpaceNormal)
 
 float4 VisualizeNormal(in float3 Normal, float Alpha)
 {
-	float3 N = normalize(Normal);
+	float3 N = Normal;
 	float4 Color = float4(0, 0, 0, Alpha);
 	{
 		float3 Temp = N.x >= 0 ? Color_PosX : Color_NegX;

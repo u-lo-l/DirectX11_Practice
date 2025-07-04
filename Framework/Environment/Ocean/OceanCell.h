@@ -42,6 +42,4 @@ private:
 	vector<VertexType> Vertices = {};
 	vector<UINT> Indices = {};
 	vector<InstanceType> Instances = {};
-
-	ConstantBuffer * CB_PerOcean = nullptr;
 };

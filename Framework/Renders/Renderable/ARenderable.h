@@ -14,9 +14,13 @@ public:
 	void Render(const RenderingShader* InShader, int& DrawCallCount) const;
 	
 	void CreateVertexBuffer(void * InData, int InCount, int InStride);
+	template<class T>
+	void CreateVertexBuffer(vector<T> & Vertices);
 	void CreateIndexBuffer(UINT* InData, int InCount);
+	void CreateIndexBuffer(vector<UINT> & InIndices);
 	void CreateInstanceBuffer(void * InData, int InCount, int InStride);
-
+	template<class T>
+	void CreateInstanceBuffer(vector<T> & Instances);
 	void SetTransform(const Matrix & InMatrix) const;
 	const string & GetName() const;
 
@@ -29,18 +33,19 @@ public:
 	const InstanceBuffer * GetInstanceBuffer() const;
 
 	virtual void BindResources() const = 0;
-
 protected:
 	void SetName(const string & InName);
 	void SetMaterial(const Material * InMaterial);
 	void SetInputLayOut(const ID3D11InputLayout * InInputLayout);
 	void SetShader();
 	void BindBuffer() const;
+	string Name;
 	// TODO : Change To unique_ptr
 	Transform * Tf = nullptr;
-	string Name;
 	// TODO : Change To shared_ptr
 	const RenderingShader * Shader = nullptr;
+	// TODO : Change To unique_ptr
+	ConstantBuffer * CB_PerElement = nullptr;
 private:
 	// TODO : Change To shared_ptr
 	const Material * Mat = nullptr;
@@ -52,4 +57,18 @@ private:
 	IndexBuffer * IBuffer = nullptr;
 	// TODO : Change To unique_ptr
 	InstanceBuffer * InstBuffer = nullptr;
+
 };
+
+template <class T>
+void ARenderable::CreateVertexBuffer(vector<T>& Vertices)
+{
+	ARenderable::CreateVertexBuffer(Vertices.data(), Vertices.size(), sizeof(T));
+}
+
+template <class T>
+void ARenderable::CreateInstanceBuffer(vector<T>& Instances)
+{
+	ARenderable::CreateInstanceBuffer(Instances.data(), Instances.size(), sizeof(T));
+}
+

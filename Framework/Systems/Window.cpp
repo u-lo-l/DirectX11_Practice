@@ -170,11 +170,11 @@ LRESULT CALLBACK Window::WndProc(HWND InHandle, UINT InMessage, WPARAM InwParam,
 
 	if (InMessage == WM_KEYDOWN)
 	{
-		if (InwParam == VK_ESCAPE)
-		{
-			PostQuitMessage(0);
-			return 0;
-		}
+		// if (InwParam == VK_ESCAPE)
+		// {
+		// 	PostQuitMessage(0);
+		// 	return 0;
+		// }
 	}
 
 	if (InMessage == WM_CLOSE || InMessage == WM_DESTROY)

@@ -3,12 +3,12 @@
 
 namespace sdt
 {
-	
 	void CharacterMoveDemo::Initialize()
 	{
 		Camera * const MainCamera = Context::Get()->GetCamera();
 		MainCamera->SetPosition( 0, 10, -50 );
 
+		SetSky();
 		SetTerrain();
 		SetCharacter();
 	}
@@ -48,6 +48,8 @@ namespace sdt
 			}
 			MoveDirection.Normalize();
 		}
+		if (!!Sky)
+			Sky->Tick();
 		if (!!Terrain)
 			Terrain->Tick();
 		if (!!Grasses)
@@ -87,6 +89,14 @@ namespace sdt
 	void CharacterMoveDemo::PostRender()
 	{
 
+	}
+
+	void CharacterMoveDemo::SetSky()
+	{
+		SkySphere::Desc SkyDesc;
+		SkyDesc.Name = "Sky";
+		SkyDesc.ShaderName = "Skybox";
+		Sky = new SkySphere(SkyDesc);
 	}
 
 	void CharacterMoveDemo::SetTerrain()
@@ -135,8 +145,8 @@ namespace sdt
 		{
 			OceanScape::OceanScapeDesc Desc
 			{
-				Vector(2048, 1.f, 2048),
-				256,
+				Vector(1024 * 16, 1.f, 1024 * 16),
+				1024,
 				64,
 				1,
 				nullptr,
@@ -146,7 +156,7 @@ namespace sdt
 				0,
 				{
 					512,
-					{10.f, 5.f},
+					{2000.f, 2000.f},
 				}
 			};
 			Ocean = new OceanScape(Desc);

@@ -63,6 +63,7 @@ private:
 
 private:
 	map<const RenderingShader * , int> QueueIndices;
+	ShaderBatch * RenderNoDepth = nullptr;
 	vector<ShaderBatch *> RenderQueue;
 	int BatchCount = 0;
 	int RenderableCount = 0;

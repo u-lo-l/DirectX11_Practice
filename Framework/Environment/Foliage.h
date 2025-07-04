@@ -5,7 +5,7 @@ class Foliage : public ARenderable
 private:
 	using VertexType = VertexFoliage;
 public:
-	struct FoliageDesc
+	struct Desc
 	{
 		string Name;
 		string MaterialName;
@@ -17,7 +17,7 @@ public:
 		wstring DensityMapName;
 		vector<wstring> Textures;
 	};
-	explicit Foliage(const FoliageDesc & InDesc);
+	explicit Foliage(const Desc & InDesc);
 	virtual ~Foliage() override;
 	virtual void BindResources() const override;
 	void Tick();
@@ -34,10 +34,9 @@ private:
 		Vector2D TerrainMapSize;
 	} CB_PerFoliageData;
 	
-	FoliageDesc Info;
+	Desc Info;
 	UINT CellSize;
 	vector<VertexType> Vertices = {};
 	
-	ConstantBuffer * CB_PerFoliage = nullptr;
 	const RWTexture2D * NormalMap = nullptr;
 };

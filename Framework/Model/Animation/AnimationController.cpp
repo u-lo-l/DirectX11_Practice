@@ -18,15 +18,13 @@ AnimationController::AnimationController(CSkeletal* InSkeletal)
 	const UINT BoneCount = TargetSkeletal->GetBoneCount();
 	constexpr UINT NumThreadX = 32;
 	const UINT DispatchX = BoneCount / NumThreadX + 1;
-	const vector<D3D_SHADER_MACRO> Defines = {
+	const vector<pair<string, string>> Defines = {
 		{"THREAD_X", "32"},
-		{nullptr, nullptr}
 	};
 	ComputeShaderDesc Desc = {
 		"KeyFrameAnimationCalculator",
 		L"Mesh/Animation/AnimationBoneMatrixCalc.hlsl",
-		L"",
-		Defines.data(),
+		Defines,
 		L"CSMain",
 		32, 1, 1,
 		DispatchX, 1, 1,

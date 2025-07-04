@@ -90,6 +90,11 @@ const Vector& Camera::GetPosition() const
 	return Tf->GetWorldPosition();
 }
 
+Matrix Camera::GetWorldMatrix() const
+{
+	return Tf->GetWorldMatrix();
+}
+
 Matrix Camera::GetViewMatrix() const
 {
 	return Matrix::Invert(Tf->GetMatrix(), true);

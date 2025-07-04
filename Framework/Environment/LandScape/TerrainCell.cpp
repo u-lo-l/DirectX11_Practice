@@ -30,7 +30,7 @@ TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 	// CB_PerTerrainData.TexelSize = 1.f / CB_PerTerrainData.TextureSize;
 	CB_PerTerrainData.LODRange = {1, 3};
 	
-	CB_PerTerrain = new ConstantBuffer(
+	CB_PerElement = new ConstantBuffer(
 		ShaderType::HD,
 		2,
 		&CB_PerTerrainData,
@@ -43,7 +43,6 @@ TerrainCell::TerrainCell(const SceneryCellDesc& InDesc)
 
 TerrainCell::~TerrainCell()
 {
-	SAFE_DELETE(CB_PerTerrain);
 	SAFE_DELETE(NormalMap);
 	SAFE_DELETE(TangentMap);
 }
@@ -102,8 +101,8 @@ void TerrainCell::BindResources() const
 	HeightMap->BindToGPU(0, ShaderType::VDP);
 	NormalMap->BindToGPUAsSRV(1, ShaderType::VDP);
 	TangentMap->BindToGPUAsSRV(2, ShaderType::VDP);
-	if (!!CB_PerTerrain)
-		CB_PerTerrain->BindToGPU(ShaderType::ALL, 2);
+	if (!!CB_PerElement)
+		CB_PerElement->BindToGPU(ShaderType::ALL, 2);
 }
 
 void TerrainCell::CreateVertices
@@ -129,7 +128,7 @@ void TerrainCell::CreateVertices
 			Vertices[Index].Position = Vector(static_cast<float>(X), 0, static_cast<float>(Z)) * GridSize;
 			Vertices[Index].UV = Vector2D(
 				(Vertices[Index].Position.X) / TerrainDimensionX,
-				(Vertices[Index].Position.Z) / TerrainDimensionZ
+				1 - (Vertices[Index].Position.Z) / TerrainDimensionZ
 			);
 		}
 	}

@@ -13,7 +13,8 @@ public:
 	[[nodiscard]] const string & GetMaterialName() const;
 	[[nodiscard]] const string & GetShaderName() const;
 	[[nodiscard]] const RenderingShader * GetRenderingShader() const;
-	
+	RenderingShader * GetRenderingShader();
+
 protected:
 	string Name;
 	string ShaderName;
@@ -37,6 +38,7 @@ protected:
 		Foliage,
 		Ocean,
 		Particle,
+		SkyBox,
 	};
 	Material(const string& InMaterialName, const string & InShaderName, MaterialType InMaterialType);
 };

@@ -27,7 +27,7 @@ void CSMain(uint3 DTid  : SV_DispatchThreadID)
 {
 	if (DTid.x >= Width || DTid.y >= Height)
         return;
-    Transposed[uint3(DTid.yxz)] = InputTexture.Load(uint4(DTid, 0));
+    Transposed[uint3(DTid.yxz)] = InputTexture.Load(uint4(DTid.xyz, 0));
 }
 
 #endif

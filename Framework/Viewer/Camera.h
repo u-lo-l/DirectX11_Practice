@@ -10,6 +10,7 @@ public:
 
 public:
 	const Vector& GetPosition() const;
+	Matrix GetWorldMatrix() const;
 	Matrix GetViewMatrix() const;
 	Matrix GetProjectionMatrix() const;
 	Matrix GetViewProjectionMatrix() const;

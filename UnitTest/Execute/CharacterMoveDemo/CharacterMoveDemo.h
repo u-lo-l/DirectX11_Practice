@@ -17,12 +17,14 @@ namespace sdt
 		virtual void PostRender() override;
 
 	private:
+		void SetSky();
 		void SetTerrain();
 		void SetCharacter();
 		
 		LandScape * Terrain = nullptr;
 		Foliage * Grasses = nullptr;
 		Character * Adam = nullptr;
-		OceanScape * Ocean = nullptr; 
+		OceanScape * Ocean = nullptr;
+		SkySphere * Sky = nullptr;
 	};
 }

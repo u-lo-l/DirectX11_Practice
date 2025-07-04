@@ -104,6 +104,17 @@ void RenderManager::AddRenderable(const ARenderable* InRenderable)
 {
 	const Material * Mat = InRenderable->GetMaterial();
 	const RenderingShader * Shader = InRenderable->GetShader();
+
+	if (InRenderable->GetMaterial()->GetRenderingShader()->IsDepthEnabled() == false)
+	{
+		if (!RenderNoDepth)
+			RenderNoDepth = new ShaderBatch(Mat);
+		else
+			ASSERT(false, "There Can be Only 1 DepthDisable Renderable")
+		RenderNoDepth->AddRenderable(InRenderable);
+		RenderableCount++;
+		return;
+	}
 	
 	const auto & Cit = QueueIndices.find(Shader);
 	int BatchIndex;
@@ -153,7 +164,11 @@ void RenderManager::Render()
 	{
 		CB_PerFrame->BindToGPU(ShaderType::VHDGP, ShaderManager::PerFrameBindSlot);
 	}
-	DrawCallCount = 0;
+	this->DrawCallCount = 0;
+	if (!!RenderNoDepth)
+	{
+		RenderNoDepth->Render(this->DrawCallCount);
+	}
 	for (const ShaderBatch * Batch : RenderQueue)
 	{
 		Batch->Render(this->DrawCallCount);

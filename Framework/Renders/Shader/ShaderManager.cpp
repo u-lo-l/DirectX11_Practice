@@ -441,7 +441,7 @@ void ShaderManager::InitRenderingShaders()
 		Desc.ShaderFileName = L"Mesh/SkeletalMesh.hlsl";
 		Desc.pInputLayoutElements = &(VertexSkeletalMesh::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		Desc.ShaderMacros = nullptr;
+		Desc.ShaderMacros = {};
 		Desc.TargetShaderType = ShaderType::VP;
 		Desc.RasterizerStateName = "Solid";
 		Desc.BlendStateName = "Discard";
@@ -455,7 +455,7 @@ void ShaderManager::InitRenderingShaders()
 		Desc.ShaderFileName = L"Mesh/StaticMesh.hlsl";
 		Desc.pInputLayoutElements = &(VertexStaticMesh::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		Desc.ShaderMacros = nullptr;
+		Desc.ShaderMacros = {} ;
 		Desc.TargetShaderType = ShaderType::VP;
 		Desc.RasterizerStateName = "Solid";
 		Desc.BlendStateName = "Transparent";
@@ -465,15 +465,14 @@ void ShaderManager::InitRenderingShaders()
 		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	{
-		vector<D3D_SHADER_MACRO> Defines {
+		vector<pair<string, string>> Defines {
 			{"TYPE01", ""},
-			{nullptr, nullptr}
 		};
 		Desc.ShaderName = "Terrain";
 		Desc.ShaderFileName = L"Terrain/TerrainCellInstance.hlsl";
 		Desc.pInputLayoutElements = &(VertexTerrainCell::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
-		Desc.ShaderMacros = Defines.data();
+		Desc.ShaderMacros = Defines;
 		Desc.TargetShaderType = ShaderType::VHDP;
 		Desc.RasterizerStateName = "Solid";
 		Desc.BlendStateName = "Opaque";
@@ -488,10 +487,9 @@ void ShaderManager::InitRenderingShaders()
 		Desc.ShaderFileName = L"Terrain/Foliage/Foliage.hlsl";
 		Desc.pInputLayoutElements = &(VertexFoliage::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
-		Desc.ShaderMacros = nullptr;
+		Desc.ShaderMacros = {} ;
 		Desc.TargetShaderType = ShaderType::VGP;
 		Desc.RasterizerStateName = "Solid_NoCull";
-		// Desc.BlendStateName = "AlphaCoverage";
 		Desc.BlendStateName = "Opaque";
 		Desc.DepthStencilStateName = "Default";
 		Desc.SamplerStateNames.push_back({0, ShaderType::VDP, "Linear_Clamp"});
@@ -500,10 +498,10 @@ void ShaderManager::InitRenderingShaders()
 	}
 	{
 		Desc.ShaderName = "Ocean";
-		Desc.ShaderFileName = L"Ocean/Ocean.hlsl";
+		Desc.ShaderFileName = L"Ocean/OceanCascade.hlsl";
 		Desc.pInputLayoutElements = &(VertexTerrainCell::GetVertexInputLayoutElements());
 		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
-		Desc.ShaderMacros = nullptr;
+		Desc.ShaderMacros = {} ;
 		Desc.TargetShaderType = ShaderType::VHDP;
 		Desc.RasterizerStateName = "Solid";
 		Desc.BlendStateName = "Opaque";
@@ -513,7 +511,18 @@ void ShaderManager::InitRenderingShaders()
 		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	{
-		// Particle
+		Desc.ShaderName = "Skybox";
+		Desc.ShaderFileName = L"SkyBox/SkyBox.hlsl";
+		Desc.pInputLayoutElements = &(Vertex::GetVertexInputLayoutElements());
+		Desc.Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		Desc.ShaderMacros = {} ;
+		Desc.TargetShaderType = ShaderType::VP;
+		Desc.RasterizerStateName = "Solid_CCW";
+		Desc.BlendStateName = "Opaque";
+		Desc.DepthStencilStateName = "NoDepth";
+		Desc.SamplerStateNames.push_back({0, ShaderType::VP, "Linear_Wrap"});
+		Desc.bForceRecompile = true;
+		AddShader(Desc.ShaderName, new RenderingShader(Desc));
 	}
 	
 	ComputeShader * KeyFrame = nullptr;
@@ -532,15 +541,13 @@ void ShaderManager::InitComputeShaders()
 	ComputeShaderDesc Desc;
 	{
 		Desc = {};
-		const vector<D3D_SHADER_MACRO> Defines{
+		const vector<pair<string, string>> Defines{
 			{"THREAD_X", "32"},
 			{"THREAD_Y", "32"},
-			{nullptr, nullptr}
 		};
 		Desc.ShaderName = "NormalMapCreator";
 		Desc.ShaderFileName = L"ComputeShader/ComputeNormalTangentMap.hlsl";
-		Desc.PreCompiledShaderFileDirectory = L"";
-		Desc.ShaderMacros = Defines.data();
+		Desc.ShaderMacros = Defines;
 		Desc.EntryPoint = L"CSMain";
 		Desc.NumThreadDimX = 16;
 		Desc.NumThreadDimY = 16;

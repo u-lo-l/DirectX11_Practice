@@ -10,16 +10,16 @@ OceanMaterial::OceanMaterial(const MaterialDesc& Desc)
 	ASSERT(Desc.ShaderName.empty() == false, "ShaderName Not Assigned");
 	bDirty = true;
 	
-	DisplacementMap = new RWTexture2D(
-		Desc.DisplacementMapSize, Desc.DisplacementMapSize,
+	DisplacementMap = new RWTexture2DArray(
+		CascadeCount, Desc.DisplacementMapSize, Desc.DisplacementMapSize,
 		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
-	NormalMap = new RWTexture2D(
-		Desc.DisplacementMapSize, Desc.DisplacementMapSize,
+	NormalMap = new RWTexture2DArray(
+		CascadeCount, Desc.DisplacementMapSize, Desc.DisplacementMapSize,
 		DXGI_FORMAT_R32G32B32A32_FLOAT
 	);
-	FoamGrid = new RWTexture2D(
-		Desc.DisplacementMapSize, Desc.DisplacementMapSize,
+	FoamGrid = new RWTexture2DArray(
+		CascadeCount,Desc.DisplacementMapSize, Desc.DisplacementMapSize,
 		DXGI_FORMAT_R32G32_FLOAT
 	);
 	Name = Desc.Name;
@@ -39,7 +39,6 @@ OceanMaterial::OceanMaterial(const MaterialDesc& Desc)
 
 OceanMaterial::~OceanMaterial()
 {
-	// SAFE_DELETE(PerlinNoise);
 	SAFE_DELETE(CB_PerMaterial);
 	SAFE_DELETE(DisplacementMap);
 	SAFE_DELETE(NormalMap);
@@ -52,9 +51,9 @@ void OceanMaterial::BindToGpu(int RegisterIndex) const
 		CB_PerMaterial->BindToGPU(ShaderType::DP, RegisterIndex);
 	// PerlinNoise->BindToGPU(5, ShaderType::PixelShader);
 	CHECK(!!DisplacementMap);
-	DisplacementMap->BindToGPUAsSRV(0, ShaderType::VDP);
-	NormalMap->BindToGPUAsSRV(1, ShaderType::VDP);
-	FoamGrid->BindToGPUAsSRV(2, ShaderType::VDP);
+	DisplacementMap->BindToGPUAsSRV(0, ShaderType::DomainShader);
+	NormalMap->BindToGPUAsSRV(1, ShaderType::PixelShader);
+	FoamGrid->BindToGPUAsSRV(2, ShaderType::DP);
 }
 
 void OceanMaterial::Tick()

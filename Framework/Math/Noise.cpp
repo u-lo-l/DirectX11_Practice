@@ -50,7 +50,7 @@ Texture * Noise::CreateGaussian2DNoise(UINT InSize)
 	return Result;
 }
 
-TextureArray* Noise::CreateGaussian2DNoise(UINT InSize, UINT Count)
+TextureArray* Noise::CreateGaussian2DNoiseArray(UINT InSize, UINT Count)
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
 

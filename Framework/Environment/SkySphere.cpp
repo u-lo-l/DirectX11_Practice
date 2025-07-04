@@ -1,66 +1,63 @@
 ﻿#include "framework.h"
 #include "SkySphere.h"
 
-SkySphere::SkySphere(wstring InFilePath, float InRadius, UINT InSliceCount)
-	: Radius(InRadius), SliceCount(InSliceCount)
+SkySphere::SkySphere(Desc InDesc)
+: ARenderable(), Info(std::move(InDesc))
 {
-	// SkyShader = new HlslShader<VertexType>(L"Weather/40_SkyBox.hlsl");
-	// CHECK(SkyShader->CreateSamplerState_Linear_Clamp() >= 0);	
-	// CHECK(SkyShader->CreateRasterizerState_Solid_CW() >= 0);
-	// CHECK(SkyShader->CreateDepthStencilState_NoDepth() >= 0);
-	CameraTF = new Transform();
+	Tf->SetParent(nullptr);
+	SkyMaterial::MaterialDesc MatDesc;
+	MatDesc.Name = "M_Sky";
+	MatDesc.ShaderName = Info.ShaderName;
+	MatDesc.SkyTextureName =  L"Environments/SkyDawn.dds";
+	this->Mat = new SkyMaterial(MatDesc);
+	ARenderable::SetName(Info.Name);
+	ARenderable::SetMaterial(this->Mat);
+	ARenderable::SetShader();
 
-	CreateVertexBuffer();
-	CreateIndexBuffer();
+	CreateVertices();
+	ASSERT(this->Vertices.empty() == false, "Vertices should not be empty");
+	CreateIndices();
+	ASSERT(this->Indices.empty() == false, "Indices should not be empty");
 
-	InFilePath = W_TEXTURE_PATH + InFilePath;
-	
-	// CHECK(Helper::CreateShaderResourceViewFromFile(D3D::Get()->GetDevice(), InFilePath, &SkySRV) >= 0);
-	SkyTexture = new Texture(InFilePath, true);
+	ARenderable::CreateVertexBuffer(Vertices);
+	ARenderable::CreateIndexBuffer(Indices);
+
+	CB_PerElement = new ConstantBuffer(
+		ShaderType::VertexShader,
+		1,
+		nullptr,
+		sizeof(Matrix),
+		false
+	);
+
+	RenderManager::Get()->AddRenderable(this);
 }
 
 SkySphere::~SkySphere()
 {
+	SAFE_DELETE(Mat);
+}
 
-	SAFE_DELETE(VBuffer);
-	SAFE_DELETE(IBuffer);
-
-	SAFE_DELETE(CameraTF);
-
-	// SAFE_DELETE(SkyShader);
-	SAFE_DELETE(SkyTexture);
+void SkySphere::BindResources() const
+{
+	if (!!CB_PerElement)
+		CB_PerElement->BindToGPU(ShaderType::VP, 1);
 }
 
 void SkySphere::Tick()
 {
-	Vector position = Context::Get()->GetCamera()->GetPosition();
-	CameraTF->SetWorldPosition(position);
-	CameraTF->Tick();
+	const Vector & CamPos =Context::Get()->GetCamera()->GetPosition(); 
+	Matrix CameraWorldTf = Matrix::CreateTranslation(CamPos);
+	CB_PerElement->UpdateData(&CameraWorldTf, sizeof(Matrix));
 }
 
-void SkySphere::Render()
+void SkySphere::CreateVertices()
 {
-	// ID3D11DeviceContext * Context = D3D::Get()->GetDeviceContext();
-	// CameraTF->BindToGPU();
-	// Context::Get()->GetViewProjectionCBuffer()->BindToGPU();
-	// VBuffer->BindToGPU();
-	// IBuffer->BindToGPU();
-	//
-	// // Context->PSSetShaderResources(PS_SkyBox, 1, &SkySRV);
-	// SkyTexture->BindToGPU(PS_SkyBox, (UINT)(::ShaderType::PixelShader));
-	// Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// SkyShader->DrawIndexed(IndexCount);
-}
-
-void SkySphere::CreateVertexBuffer()
-{
-	vector<VertexType> VertexData;
-	VertexData.push_back(VertexType({0, Radius, 0}));
-
+	Vertices.clear();
+	Vertices.push_back(VertexType({0, Radius, 0}));
 	const float Denominator = 1 / static_cast<float>(SliceCount);
 	const float DeltaPhi = Math::PI * Denominator;
 	const float DeltaTheta = 2.0f * Math::PI * Denominator;
-
 	for (UINT i = 1; i <= SliceCount - 1; i++)
 	{
 		float Phi = static_cast<float>(i) * DeltaPhi;
@@ -74,51 +71,44 @@ void SkySphere::CreateVertexBuffer()
 				(Radius * cos(Phi)),
 				(Radius * sinf(Phi) * sinf(Theta))
 			};
-
-			VertexData.push_back(VertexType({Point.X, Point.Y, Point.Z}));
+			Vertices.push_back(VertexType({Point.X, Point.Y, Point.Z}));
 		}
 	}
-	VertexData.push_back(VertexType({0, -Radius, 0}));
-
-	VertexCount = VertexData.size();
-	VBuffer = new VertexBuffer(VertexData.data(), VertexCount, sizeof(VertexType));
+	Vertices.push_back(VertexType({0, -Radius, 0}));
 }
 
-void SkySphere::CreateIndexBuffer()
+void SkySphere::CreateIndices()
 {
-	vector<UINT> IndexData;
+	CHECK(Vertices.empty() == false);
+
+	Indices.clear();
 	for (UINT k = 1; k <= SliceCount; k++)
 	{
-		IndexData.push_back(0);
-		IndexData.push_back(k + 1);
-		IndexData.push_back(k);
+		Indices.push_back(0);
+		Indices.push_back(k + 1);
+		Indices.push_back(k);
 	}
-
 	UINT baseIndex = 1;
 	UINT ringVertexCount = SliceCount + 1;
 	for (UINT k = 0; k < SliceCount - 2; k++)
 	{
 		for (UINT j = 0; j < SliceCount; j++)
 		{
-			IndexData.push_back(baseIndex + k * ringVertexCount + j);
-			IndexData.push_back(baseIndex + k * ringVertexCount + j + 1);
-			IndexData.push_back(baseIndex + (k + 1) * ringVertexCount + j);
+			Indices.push_back(baseIndex + k * ringVertexCount + j);
+			Indices.push_back(baseIndex + k * ringVertexCount + j + 1);
+			Indices.push_back(baseIndex + (k + 1) * ringVertexCount + j);
 
-			IndexData.push_back(baseIndex + (k + 1) * ringVertexCount + j);
-			IndexData.push_back(baseIndex + k * ringVertexCount + j + 1);
-			IndexData.push_back(baseIndex + (k + 1) * ringVertexCount + j + 1);
+			Indices.push_back(baseIndex + (k + 1) * ringVertexCount + j);
+			Indices.push_back(baseIndex + k * ringVertexCount + j + 1);
+			Indices.push_back(baseIndex + (k + 1) * ringVertexCount + j + 1);
 		}
 	}
-
-	const UINT SouthPoleIndex = VertexCount - 1;
+	const UINT SouthPoleIndex = Vertices.size() - 1;
 	baseIndex = SouthPoleIndex - ringVertexCount;
-
 	for (UINT k = 0; k < SliceCount; k++)
 	{
-		IndexData.push_back(SouthPoleIndex);
-		IndexData.push_back(baseIndex + k);
-		IndexData.push_back(baseIndex + k + 1);
+		Indices.push_back(SouthPoleIndex);
+		Indices.push_back(baseIndex + k);
+		Indices.push_back(baseIndex + k + 1);
 	}
-	IndexCount = IndexData.size();
-	IBuffer = new IndexBuffer(IndexData.data(), IndexCount);
 }

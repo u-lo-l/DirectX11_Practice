@@ -71,7 +71,7 @@ Texture2D<float> FoamGrid   : register(t2);          // PS
 // const float GetPerlinRandom(float2 uv, uint LOD = 0)
 // {
 //     uv /= HeightMapTiling * 4;
-    
+
 //     float Random = PerlinNoise.SampleLevel(AnisotropicSampler_Wrap, uv, LOD); // 0 ~ 1
 //     return Random;
 // }
@@ -251,7 +251,7 @@ DS_OUTPUT DSMain
     // Noise = lerp(0.75, 1.25, Noise);
     // output.PerlinBlending = lerp(Noise, 1.f, DistanceBasedBlending);
     output.PerlinBlending = 1;
-    
+
     const float Folding = abs(FoamGrid.SampleLevel(AnisotropicSampler_Wrap, HeightMapUV, 0)).r;
 
     output.Position.y = Disp.y * HeightScaler;
@@ -295,7 +295,7 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
     float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
 
-    
+
     // Asume Distance to Sky : Infinity
     float3 ReflectedRay = reflect(ViewRay, Normal); // WorldSpace
     float RDotN = dot(ReflectedRay, Normal);
@@ -308,13 +308,13 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
     float3 WaterColor = lerp(ShallowWaterColor, DeepWaterColor, 1.f);
     float Foam = DistanceBasedFoam(HeightMapUV, input.LOD, DistanceBasedBlending);
 
-    WaterColor = 
+    WaterColor =
                    WaterColor * Ambient
                  + EnvColor * Specular * LightColor.rgb
                  + WaterColor * LDotN * Refraction * LightColor.rgb
                 ;
     float3 FoamColor = Foam * LightColor.rgb * (Ambient + LDotN);// * GetPerlinRandom(NoiseUV, input.LOD);
-    float3 Color = (WaterColor + FoamColor) * input.PerlinBlending; 
+    float3 Color = (WaterColor + FoamColor) * input.PerlinBlending;
     return float4(Color, 1);
     // return float4(FogBlending(Color, Distance), 1);
 }
@@ -324,7 +324,7 @@ float4 PSMain(DS_OUTPUT input) : SV_TARGET
 float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend)
 {
     float2 dUV[4] = {
-        float2(-TexelSize.x, 0), 
+        float2(-TexelSize.x, 0),
         float2(+TexelSize.x, 0),
         float2(0, -TexelSize.y),
         float2(0, +TexelSize.y)

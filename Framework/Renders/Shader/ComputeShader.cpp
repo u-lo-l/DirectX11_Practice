@@ -2,6 +2,51 @@
 #include <fstream>
 #include "ComputeShader.h"
 
+ComputeShaderDesc::ComputeShaderDesc(const ComputeShaderDesc& InDesc)
+{
+	ShaderName = InDesc.ShaderName;
+	ShaderFileName = InDesc.ShaderFileName;
+	ShaderMacros = InDesc.ShaderMacros;
+	EntryPoint = InDesc.EntryPoint;
+	NumThreadDimX = InDesc.NumThreadDimX;
+	NumThreadDimY = InDesc.NumThreadDimY;
+	NumThreadDimZ = InDesc.NumThreadDimZ;
+	DispatchX = InDesc.DispatchX;
+	DispatchY = InDesc.DispatchY;
+	DispatchZ = InDesc.DispatchZ;
+	SamplerStateNames = InDesc.SamplerStateNames;
+	bForceRecompile = InDesc.bForceRecompile;
+}
+
+ComputeShaderDesc::ComputeShaderDesc(
+	string InShaderName,
+	wstring InShaderFileName,
+	const vector<pair<string, string>> & InShaderMacros,
+	wstring InEntryPoint,
+	UINT InNumThreadDimX,
+	UINT InNumThreadDimY,
+	UINT InNumThreadDimZ,
+	UINT InDispatchX,
+	UINT InDispatchY,
+	UINT InDispatchZ,
+	const vector<tuple<int, ShaderType, string>>& InSamplerStateNames,
+	bool InbForceRecompile
+)
+{
+	ShaderName = InShaderName;
+	ShaderFileName = InShaderFileName;
+	ShaderMacros = InShaderMacros;
+	EntryPoint = InEntryPoint;
+	NumThreadDimX = InNumThreadDimX;
+	NumThreadDimY = InNumThreadDimY;
+	NumThreadDimZ = InNumThreadDimZ;
+	DispatchX = InDispatchX;
+	DispatchY = InDispatchY;
+	DispatchZ = InDispatchZ;
+	SamplerStateNames = InSamplerStateNames;
+	bForceRecompile = InbForceRecompile;
+}
+
 ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
 	: Desc(InDesc)
 {
@@ -31,6 +76,24 @@ ComputeShader::ComputeShader(const ComputeShaderDesc& InDesc)
 ComputeShader::~ComputeShader()
 {
 	SAFE_RELEASE(Pass.Shader);
+}
+
+void ComputeShader::Recompile()
+{
+	const wstring PreCompiledFilePath = Desc.PreCompiledShaderFileDirectory +  Path::GetFileNameWithoutExtension(Desc.ShaderFileName) + L"_" + GetEntryPoint() + L".cso";
+	
+	if (Path::IsDirectoryExist(Desc.PreCompiledShaderFileDirectory) == false)
+		Path::CreateFolders(Desc.PreCompiledShaderFileDirectory);
+	
+	ID3DBlob* ShaderBlob = CompileShader(Desc.ShaderFileName, Desc.ShaderMacros);
+	std::ofstream outFile(PreCompiledFilePath, std::ios::binary);
+	outFile.write((char*)ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize());
+	outFile.close();
+
+	SAFE_RELEASE(Pass.Shader);
+	CHECK(SUCCEEDED(CreateShader(ShaderBlob, ShaderType::ComputeShader)));
+	
+	SAFE_RELEASE(ShaderBlob);
 }
 
 void ComputeShader::SetPass() const
@@ -148,21 +211,30 @@ string ComputeShader::GetShaderTarget(ShaderType Type) const
 ID3DBlob* ComputeShader::CompileShader
 (
 	const wstring& InFileName,
-	const D3D_SHADER_MACRO* InMacros,
+	const vector<pair<string, string>> & InMacros,
 	ShaderType InType
 )
 {
+	vector<D3D_SHADER_MACRO> ShaderMacros;
+	for (const pair<string, string> & Macro : InMacros)
+	{
+		ShaderMacros.push_back({Macro.first.c_str(), Macro.second.c_str()});
+	}
+	ShaderMacros.push_back({nullptr, nullptr});
+	
 	ID3DBlob * ShaderBlob = nullptr;
 	ID3DBlob * ErrorBlob = nullptr;
 	int Flag = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR |
 		   D3DCOMPILE_OPTIMIZATION_LEVEL3 |
 		   D3DCOMPILE_WARNINGS_ARE_ERRORS;
+	string EntryPoint = String::ToString(GetEntryPoint());
+	string TargetName = GetShaderTarget();
 	HRESULT Hr = D3DCompileFromFile(
 		InFileName.c_str(),
-		InMacros,
+		ShaderMacros.data(),
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // HLSL내에서 #include 쓸 수 있게 해줌. custom ID3DInclude도 가능.
-		String::ToString(GetEntryPoint()).c_str(),
-		GetShaderTarget().c_str(),
+		EntryPoint.c_str(),
+		TargetName.c_str(),
 		Flag,
 		0,
 		&ShaderBlob,

@@ -33,13 +33,13 @@ void Context::Tick()
 	if (!!ShadowMap)
 		ShadowMap->Tick();
 	
-#ifdef DISPLAY_IMGUI_DEBUG_INFO
+// #ifdef DISPLAY_IMGUI_DEBUG_INFO
 	ImGui::Begin("Directional Light Setting");
 	ImGui::SliderFloat3("LightDirection", LightDirection, -1, +1);
 	LightDirection.Y = -abs(LightDirection.Y);
 	ImGui::ColorEdit4("LightColor", LightColor);
 	ImGui::End();
-#endif 
+// #endif 
 }
 /**
  *	@brief :

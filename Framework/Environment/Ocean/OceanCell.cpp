@@ -24,7 +24,7 @@ OceanCell::OceanCell(const SceneryCellDesc& InDesc)
 	CB_PerOceanData.HeightScaler = InDesc.Dimension.Y;
 	CB_PerOceanData.LODRange = {1, 3};
 	
-	CB_PerOcean = new ConstantBuffer(
+	CB_PerElement = new ConstantBuffer(
 		ShaderType::HD,
 		2,
 		&CB_PerOceanData,
@@ -36,7 +36,6 @@ OceanCell::OceanCell(const SceneryCellDesc& InDesc)
 
 OceanCell::~OceanCell()
 {
-	SAFE_DELETE(CB_PerOcean);
 	Vertices.clear();
 	Instances.clear();
 }
@@ -46,14 +45,14 @@ void OceanCell::SetHeightScaler(float InHeightScaler)
 	if (CB_PerOceanData.HeightScaler == InHeightScaler)
 		return;
 	CB_PerOceanData.HeightScaler = InHeightScaler;
-	CB_PerOcean->UpdateData(&CB_PerOceanData, sizeof(CB_PerOceanData));
+	CB_PerElement->UpdateData(&CB_PerOceanData, sizeof(CB_PerOceanData));
 }
 
 	void OceanCell::BindResources() const
 {
 	BindBuffer();
-	if (!!CB_PerOcean)
-		CB_PerOcean->BindToGPU(ShaderType::ALL, 2);
+	if (!!CB_PerElement)
+		CB_PerElement->BindToGPU(ShaderType::ALL, 2);
 }
 
 void OceanCell::CreateVertices(float DimensionX, float DimensionZ, UINT CellSize, float GridSize)
@@ -73,7 +72,7 @@ void OceanCell::CreateVertices(float DimensionX, float DimensionZ, UINT CellSize
 			Vertices[Index].Position = Vector(static_cast<float>(X), 0, static_cast<float>(Z)) * GridSize;
 			Vertices[Index].UV = Vector2D(
 				(Vertices[Index].Position.X) / DimensionX,
-				(Vertices[Index].Position.Z) / DimensionZ
+				1 - (Vertices[Index].Position.Z) / DimensionZ
 			);
 		}
 	}

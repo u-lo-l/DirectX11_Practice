@@ -18,7 +18,7 @@
 // https://graphics.stanford.edu/~seander/bithacks.html#BitReverseObvious
 // 01 swap odd and even bits
 // 02 swap consecutixe pairs
-// 03 swap nibbles ... 
+// 03 swap nibbles ...
 // 04 swap bytes
 // 05 swap 2-byte long pairs
 uint BitReverse(uint x, uint LogN)

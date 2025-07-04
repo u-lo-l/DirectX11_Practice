@@ -1,6 +1,11 @@
 #ifndef __COMPUTE_NORMAL_MAP_HLSL__
 # define __COMPUTE_NORMAL_MAP_HLSL__
 
+#define LEFT 0
+#define RIGHT 1
+#define BOTTOM 2
+#define TOP 3
+
 # ifndef THREAD_X
 #  error "THREAD_X Not Defined"
 # endif
@@ -17,7 +22,7 @@ cbuffer CB_WeightMapCreate : register(b0)
     float HeightScaler;
 	uint  TextureWidth;
 	uint  TextureHeight;
-    float Padding;
+    float Tiling;
 }
 
 [numthreads(THREAD_X, THREAD_Y, 1)]
@@ -25,12 +30,11 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 {
     const uint2 UV = DTID.xy;
 
-    float2 dUV[4] = {
-        float2(-1, 0),
-        float2(+1, 0),
-        float2(0, -1),
-        float2(0, +1)
-    };
+	int2 dUV[4];
+	dUV[LEFT] = int2(-1, 0);
+	dUV[RIGHT] = int2(+1, 0);
+	dUV[BOTTOM] = int2(0, +1);
+	dUV[TOP] = int2(0, -1);
     float height[4] = {0, 0, 0, 0};
 
     [unroll]
@@ -41,8 +45,8 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 
     float StrideX = ((UV.x == 0) || (UV.x == TextureWidth - 1)) ? 1.f : 2.f;
     float StrideY = ((UV.y == 0) || (UV.y == TextureHeight - 1)) ? 1.f : 2.f;
-    float HeightDiffX = (height[1] - height[0]);
-    float HeightDiffY = (height[3] - height[2]);
+    float HeightDiffX = (height[RIGHT] - height[LEFT]);
+    float HeightDiffY = (height[TOP] - height[BOTTOM]);
 
 	float3 Tangent = normalize(float3(StrideX, 0, HeightDiffX));
     float3 Bitangent = normalize(float3(0, StrideY, HeightDiffY));  // y

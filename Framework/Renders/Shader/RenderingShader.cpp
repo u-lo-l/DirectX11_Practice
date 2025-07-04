@@ -55,6 +55,20 @@ RenderingShader::~RenderingShader()
 	SAFE_RELEASE(Pass.DomainShader)
 }
 
+void RenderingShader::Recompile()
+{
+	if (Desc.TargetShaderType & ShaderType::PixelShader)
+		Recompile(ShaderType::PixelShader);
+	if (Desc.TargetShaderType & ShaderType::VertexShader)
+		Recompile(ShaderType::VertexShader);
+	if (Desc.TargetShaderType & ShaderType::DomainShader)
+		Recompile(ShaderType::DomainShader);
+	if (Desc.TargetShaderType & ShaderType::HullShader)
+		Recompile(ShaderType::HullShader);
+	if (Desc.TargetShaderType & ShaderType::GeometryShader)
+		Recompile(ShaderType::GeometryShader);
+}
+
 ID3D11InputLayout * RenderingShader::GetInputLayout()
 {
 	return Pass.InputLayout;
@@ -156,10 +170,10 @@ void RenderingShader::InitializeInputLayout(ID3DBlob * InVertexShaderBlob)
 		// HRESULT로부터 에러 메시지를 얻기
 		FormatMessageA(
 			FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-			NULL,
+			nullptr,
 			Hr,
 			0,
-			(LPSTR)&errorMessage,
+			reinterpret_cast<LPSTR>(&errorMessage),
 			0,
 			NULL
 		);
@@ -168,6 +182,13 @@ void RenderingShader::InitializeInputLayout(ID3DBlob * InVertexShaderBlob)
 		LocalFree(errorMessage);
 	}
 	ASSERT((Hr >= 0), "Failed to create input layout")
+}
+
+bool RenderingShader::IsDepthEnabled() const
+{
+	D3D11_DEPTH_STENCIL_DESC desc;
+	Pass.DepthStencilState->GetDesc(&desc);
+	return desc.DepthEnable;
 }
 
 bool RenderingShader::Verify(const RenderingShaderDesc& InDesc, string & OutMessage)
@@ -264,7 +285,7 @@ wstring RenderingShader::GetEntryPoint(const ShaderType Type) const
 	case ShaderType::HullShader:     return String::ToWString(Desc.EntryPoints.HSEntryPoint);
 	case ShaderType::DomainShader:   return String::ToWString(Desc.EntryPoints.DSEntryPoint);
 	default :
-		ASSERT(false, "Unknown Shader Type : ShaderEntryPoint")
+		ASSERT(false, String::Format("Unknown Shader Type : ShaderEntryPoint : %d", Type).c_str());
 		return L"";
 	}
 }
@@ -310,6 +331,22 @@ void RenderingShader::LoadShader(ShaderType InType)
 	SAFE_RELEASE(ShaderBlob);
 }
 
+void RenderingShader::Recompile(ShaderType InShaderType)
+{
+	const wstring PreCompiledFilePath = Desc.PreCompiledShaderFileDirectory +  Path::GetFileNameWithoutExtension(Desc.ShaderFileName) + L"_" + GetEntryPoint(InShaderType) + L".cso";
+	if (Path::IsDirectoryExist(Desc.PreCompiledShaderFileDirectory) == false)
+		Path::CreateFolders(Desc.PreCompiledShaderFileDirectory);
+	
+	ID3DBlob * ShaderBlob = CompileShader(Desc.ShaderFileName, Desc.ShaderMacros, InShaderType);
+	std::ofstream outFile(PreCompiledFilePath, std::ios::binary);
+	outFile.write((char*)ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize());
+	outFile.close();
+
+	CHECK(SUCCEEDED(CreateShader(ShaderBlob, InShaderType)));
+	
+	SAFE_RELEASE(ShaderBlob);
+}
+
 HRESULT RenderingShader::CreateShader(ID3DBlob* ShaderBlob, ShaderType InType)
 {
 	ID3D11Device * const Device = D3D::Get()->GetDevice();
@@ -319,17 +356,30 @@ HRESULT RenderingShader::CreateShader(ID3DBlob* ShaderBlob, ShaderType InType)
 	const UINT BufferSize = ShaderBlob->GetBufferSize();
 	if (InType == ShaderType::VertexShader)
 	{
+		SAFE_RELEASE(Pass.VertexShader)
 		Hr = Device->CreateVertexShader(BufferAddr, BufferSize, nullptr, &Pass.VertexShader);
 		InitializeInputLayout(ShaderBlob);
 	}
 	else if (InType == ShaderType::HullShader)
+	{
+		SAFE_RELEASE(Pass.HullShader)
 		Hr = Device->CreateHullShader(BufferAddr, BufferSize, nullptr, &Pass.HullShader);
+	}
 	else if (InType == ShaderType::DomainShader)
+	{
+		SAFE_RELEASE(Pass.DomainShader)
 		Hr = Device->CreateDomainShader(BufferAddr, BufferSize, nullptr, &Pass.DomainShader);
+	}
 	else if (InType == ShaderType::GeometryShader)
+	{
+		SAFE_RELEASE(Pass.GeometryShader)
 		Hr = Device->CreateGeometryShader(BufferAddr, BufferSize, nullptr, &Pass.GeometryShader);
+	}
 	else if (InType == ShaderType::PixelShader)
+	{
+		SAFE_RELEASE(Pass.PixelShader)
 		Hr = Device->CreatePixelShader(BufferAddr, BufferSize, nullptr, &Pass.PixelShader);
+	}
 	else
 		ASSERT(false, "Shader Type Not Supported")
 	return Hr;
@@ -338,10 +388,17 @@ HRESULT RenderingShader::CreateShader(ID3DBlob* ShaderBlob, ShaderType InType)
 ID3DBlob* RenderingShader::CompileShader
 (
 	const wstring& InFileName,
-	const D3D_SHADER_MACRO* InMacros,
+	const vector<pair<string, string>>& InMacros,
 	ShaderType InType
 )
 {
+	vector<D3D_SHADER_MACRO> ShaderMacros;
+	for (const pair<string, string> & Macro : InMacros)
+	{
+		ShaderMacros.push_back({Macro.first.c_str(), Macro.second.c_str()});
+	}
+	ShaderMacros.push_back({nullptr, nullptr});
+	
 	ID3DBlob * ShaderBlob = nullptr;
 	ID3DBlob * ErrorBlob = nullptr;
 	
@@ -357,7 +414,7 @@ ID3DBlob* RenderingShader::CompileShader
 	const string & ShaderTarget = GetShaderTarget(InType);
 	HRESULT Hr = D3DCompileFromFile(
 		InFileName.c_str(),
-		InMacros,
+		ShaderMacros.data(),
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // HLSL내에서 #include 쓸 수 있게 해줌. custom ID3DInclude도 가능.
 		String::ToString(EntryPoint).c_str(),
 		ShaderTarget.c_str(),

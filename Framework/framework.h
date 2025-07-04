@@ -109,10 +109,11 @@ using namespace std;
 	#include "Renders/Renderable/RenderManager.h"
 
 	#include "Material/Material.h"
+	#include "Material/LineMaterial.h"
 	#include "Material/MeshMaterial.h"
+	#include "Material/SkyMaterial.h"
 	#include "Material/TerrainMaterial.h"
 	#include "Material/OceanMaterial.h"
-	#include "Material/LineMaterial.h"
 
 	#include "Viewer/Camera.h"
 	#include "Viewer/DepthStencil.h"

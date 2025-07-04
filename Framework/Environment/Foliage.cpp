@@ -3,7 +3,7 @@
 
 #include "Material/FoliageMaterial.h"
 
-Foliage::Foliage(const FoliageDesc& InDesc)
+Foliage::Foliage(const Desc& InDesc)
 	: ARenderable(), Info(InDesc), CellSize(InDesc.TargetTerrain->GetCellSize())
 {
 	FoliageMaterial::MaterialDesc Desc = {
@@ -36,7 +36,7 @@ Foliage::Foliage(const FoliageDesc& InDesc)
 	CB_PerFoliageData.TerrainMapSize.X *= Tf->GetScale().X;
 	CB_PerFoliageData.TerrainMapSize.Y *= Tf->GetScale().Z;
 	
-	CB_PerFoliage = new ConstantBuffer(
+	CB_PerElement = new ConstantBuffer(
 		ShaderType::VGP,
 		2,
 		nullptr,
@@ -48,14 +48,13 @@ Foliage::Foliage(const FoliageDesc& InDesc)
 
 Foliage::~Foliage()
 {
-	SAFE_DELETE(CB_PerFoliage);
 }
 
 void Foliage::BindResources() const
 {
 	Info.TargetTerrain->GetHeightMap()->BindToGPU(0, ShaderType::VP);
 	NormalMap->BindToGPUAsSRV(1, ShaderType::GP);
-	CB_PerFoliage->BindToGPU(ShaderType::VGP, 2);
+	CB_PerElement->BindToGPU(ShaderType::VGP, 2);
 }
 
 void Foliage::Tick()
@@ -71,7 +70,7 @@ void Foliage::Tick()
 	
 	ImGui::End();
 	#endif
-	CB_PerFoliage->UpdateData(&CB_PerFoliageData, sizeof(CB_PerFoliageDesc));
+	CB_PerElement->UpdateData(&CB_PerFoliageData, sizeof(CB_PerFoliageDesc));
 }
 
 void Foliage::CreateVertices(float TerrainDimensionX, float TerrainDimensionZ, UINT CellSize)
