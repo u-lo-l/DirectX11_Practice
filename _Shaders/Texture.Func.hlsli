@@ -14,10 +14,10 @@ bool HasMetallicTexture(uint Flag) { return (Flag & bUseMetallicTexture) != 0; }
 
 float3 TangentSpaceToLocalSpace
 (
-	in float3 TextureSpaceVector,
-	in float3 LocalRight,
-	in float3 LocalUp,
-	in float3 LocalForward
+	float3 TextureSpaceVector,
+	float3 LocalRight,
+	float3 LocalUp,
+	float3 LocalForward
 )
 {
 	float3x3 TBN = float3x3(
@@ -31,7 +31,7 @@ float3 TangentSpaceToLocalSpace
 
 float3 TangentSpaceToLocalSpace
 (
-	in float3 TextureSpaceVector,
+	float3 TextureSpaceVector,
 	in float3x3 TBN
 )
 {

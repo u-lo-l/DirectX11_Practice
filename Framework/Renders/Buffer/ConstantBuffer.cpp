@@ -12,7 +12,7 @@ ConstantBuffer::ConstantBuffer
 )
 	: RegisterIndex(RegisterIndex), DataSize(InDataSize), DataName(move(InDataName)), bIsStatic(bStatic), TargetShaderType(TargetShaderType)
 {
-	ASSERT(InDataSize % 16 == 0, "ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16")
+	ASSERT(InDataSize % 16 == 0, String::Format("%s ByteWidth value of D3D11_BUFFER_DESC MUST BE multiples of 16", InDataName).c_str())
 
 	Data = InData;
 	ID3D11Device * Device = D3D::Get()->GetDevice();

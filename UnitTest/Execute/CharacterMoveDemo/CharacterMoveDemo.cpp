@@ -145,8 +145,8 @@ namespace sdt
 		{
 			OceanScape::OceanScapeDesc Desc
 			{
-				Vector(1024 * 16, 1.f, 1024 * 16),
-				1024,
+				Vector(1024 * 8, 1.f, 1024 * 8),
+				512,
 				64,
 				1,
 				nullptr,
@@ -155,7 +155,7 @@ namespace sdt
 				{0.f, 0.f},
 				0,
 				{
-					512,
+					256,
 					{2000.f, 2000.f},
 				}
 			};

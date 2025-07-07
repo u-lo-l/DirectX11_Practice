@@ -1,6 +1,7 @@
 #ifndef __WAVE_FOAM_SIMULATION_HLSL__
 #define __WAVE_FOAM_SIMULATION_HLSL__
 # include "../../ComputeShader/Complex.hlsl"
+# include "../Ocean.Common.hlsli"
 
 # ifndef THREAD_X
 #  error "THREAD_X Not Defined"
@@ -15,21 +16,9 @@
 # define BOTTOM 3
 # define CENTER 4
 
-#define SHADER_DEBUG_FOAM
+// #define SHADER_DEBUG_FOAM
 Texture2DArray<float4> DisplacementMap : register(t0); // Y-up
 RWTexture2DArray<float> FoamTexture : register(u0);
-
-#ifdef SHADER_DEBUG_FOAM
-	struct OutputDesc
-	{
-		float J[4];
-		float Det;
-		float MinEigen;
-		float MaxEigen;
-		float2 Disp[4];
-	};
-	RWStructuredBuffer<OutputDesc> DebugArray : register(u1);
-#endif
 
 cbuffer CB_TextureDim : register(b0)
 {
@@ -51,7 +40,6 @@ const static int2 dUV[5] = {
 	int2( 0,  1), // BOTTOM
 	int2( 0,  0) // CENTER
 };
-
 uint2 GetWrappedTexCord(uint2 UV, int2 Offset);
 
 
@@ -63,14 +51,14 @@ uint2 GetWrappedTexCord(uint2 UV, int2 Offset);
  * J21 :     s{partial(Dz) / partial(x)}
  * J22 : 1 + s{partial(Dz) / partial(z)}
 */
-[numthreads(THREAD_X, THREAD_Y, 1)] // Dispatch(WIDTH / THREAD_X, HEIGHT / THREAD_Y, 1)
+[numthreads(THREAD_X, THREAD_Y, 1)] // Dispatch(WIDTH / THREAD_X, HEIGHT / THREAD_Y, 3)
 void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 {
 	int i = 0;
 	int2 UV = DTID.xy;
-	const float DispScaler = 1 / DisplacementMapTiling;
-	const float Scaler = HeightScaler * DispScaler;
-	if (Scaler == 0)
+	const float HorizontalScaler = GetHorizontalScaler(DisplacementMapTiling);
+	const float VerticalScaler = GetVerticalScaler(HeightScaler, DisplacementMapTiling);
+	if (HeightScaler == 0)
 	{
 		FoamTexture[DTID] = 0;
 		return ;
@@ -81,44 +69,22 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 	for(i = 0 ; i < 5 ; i++) // Left->Right->Top->Bottom
 	{
 		uint2 WrappedUV = GetWrappedTexCord(UV, dUV[i]);
-		HDisp[i] = DisplacementMap.Load(uint4(WrappedUV, DTID.z, 0)).xy ;
+		HDisp[i] = DisplacementMap.Load(uint4(WrappedUV, DTID.z, 0)).xy * HorizontalScaler;
 	}
-	float2x2 Jacobi; // JacobiacobianMat
-	Jacobi._11 = 1.f + (HDisp[RIGHT].x - HDisp[LEFT].x) * 0.5f;
-	Jacobi._21 =       (HDisp[RIGHT].y - HDisp[LEFT].y) * 0.5f;
-	Jacobi._12 =       (HDisp[BOTTOM].x - HDisp[TOP].x) * 0.5f;
-	Jacobi._22 = 1.f + (HDisp[BOTTOM].y - HDisp[TOP].y) * 0.5f;
-	const float Det = (Jacobi._11 * Jacobi._22) - (Jacobi._12 * Jacobi._21);
+	float2x2 J; // JacobianMat
+	J._11 = 1.f + (HDisp[RIGHT].x - HDisp[LEFT].x) * 0.5f;
+	J._21 =       (HDisp[RIGHT].y - HDisp[LEFT].y) * 0.5f;
+	J._12 =       (HDisp[TOP].x - HDisp[RIGHT].x) * 0.5f;
+	J._22 = 1.f + (HDisp[TOP].y - HDisp[RIGHT].y) * 0.5f;
+	const float Det = (J._11 * J._22) - (J._12 * J._21);
+	const float MinEigen = (J._11 + J._22) - sqrt((J._11 + J._22) * (J._11 + J._22) - 4 * Det);
+	float CurrFoam = FoamMultiplier * saturate(1 - MinEigen + FoamThreshold);
+	CurrFoam = pow(abs(CurrFoam) * 10, FoamSharpness);
 
-	// const float Jocobian = Jacobi._11 * Jacobi._22 - Jacobi._12 * Jacobi._12;
-	// const float MinEigen = ((Jacobi._11 + Jacobi._22) - sqrt((Jacobi._11 + Jacobi._22) * (Jacobi._11 + Jacobi._22) - 4 * Det)) * 0.5f;
-	// const float MaxEigen = ((Jacobi._11 + Jacobi._22) + sqrt((Jacobi._11 + Jacobi._22) * (Jacobi._11 + Jacobi._22) - 4 * Det)) * 0.5f;
+	// CurrFoam = pow(abs(CurrFoam) , FoamSharpness) * FoamMultiplier;
+	// FoamTexture[DTID] = CurrFoam;
+	// return ;
 
-	const float MinEigen = 0.5f * (Jacobi._11 + Jacobi._22) - 0.5f * pow(pow((Jacobi._11 - Jacobi._22), 2) + 4 * (Jacobi._12 * Jacobi._12), 0.5f);
-	const float MaxEigen = 0.5f * (Jacobi._11 + Jacobi._22) + 0.5f * pow(pow((Jacobi._11 - Jacobi._22), 2) + 4 * (Jacobi._12 * Jacobi._12), 0.5f);
-	const float J = MinEigen * MaxEigen;
-
-	float CurrFoam = saturate(FoamThreshold - J);
-	// float CurrFoam = FoamMultiplier * saturate(1 - MinEigen + FoamThreshold);
-	CurrFoam = FoamMultiplier * pow(abs(CurrFoam), FoamSharpness);
-
-
-#ifdef SHADER_DEBUG_FOAM
-		OutputDesc Output;
-		Output.J[0] = Jacobi._11;
-		Output.J[1] = Jacobi._12;
-		Output.J[2] = Jacobi._21;
-		Output.J[3] = Jacobi._22;
-		Output.Det = Det;
-		Output.MinEigen = MinEigen;
-		Output.MaxEigen = MaxEigen;
-		Output.Disp[0] = HDisp[0].xy;
-		Output.Disp[1] = HDisp[1].xy;
-		Output.Disp[2] = HDisp[2].xy;
-		Output.Disp[3] = HDisp[3].xy;
-		DebugArray[DTID.y * Width + DTID.x] = Output;
-		DeviceMemoryBarrierWithGroupSync();
-#endif
 
 	float PrevFoam = FoamTexture[DTID];
 	float AccumulatedFoamValue = 0.f;
@@ -131,10 +97,10 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 	}
 	DeviceMemoryBarrierWithGroupSync();
 
-	const static float FoamBlur = 0.8f;
+	const static float FoamBlur = 1.f;
 	PrevFoam = lerp(PrevFoam, AccumulatedFoamValue, saturate(DeltaSeconds) * FoamBlur);
-	const float FoamFade = 0.8f;
-	PrevFoam = saturate(PrevFoam - FoamFade * DeltaSeconds);
+	const float FoamFade = 0.055f;
+	PrevFoam = saturate(PrevFoam - FoamFade * DeltaSeconds / max(CurrFoam, 0.5f));
 	CurrFoam = max(CurrFoam, PrevFoam);
 
 	FoamTexture[DTID] = CurrFoam;

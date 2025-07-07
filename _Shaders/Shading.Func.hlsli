@@ -30,6 +30,7 @@ void BlinnPhong
 	const float ns = saturate(Input.Shininess) * 128 + 1;
 	const float3 R = normalize(reflect(L, N));
 	// From Suface To Camera
+	// V : E - P
 	const float3 V = normalize(Input.WorldSpaceCameraPosition - Input.WorldPosition); // also called as E for Eye-Vector
 	const float3 H = normalize(L + V);
 	const float NdotH = saturate(dot(H, N));

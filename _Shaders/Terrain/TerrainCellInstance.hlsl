@@ -179,10 +179,6 @@ DS_OUTPUT DSMain
 
 	float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
 	output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
-
-	float T = (input.Inside[0] + input.Inside[1]) * 0.5f;
-	output.DebugColor = float4(T, T, T, 1);
-	output.DebugColor /= MaxTessFactor;
 	return output;
 }
 

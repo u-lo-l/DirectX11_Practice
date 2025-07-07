@@ -40,7 +40,6 @@ struct DS_OUTPUT // PS_INPUT
 
     uint   LOD : LOD;
     float  CameraDistance : DISTANCE;
-	float4 DebugColor : COLOR;
 };
 
 #endif

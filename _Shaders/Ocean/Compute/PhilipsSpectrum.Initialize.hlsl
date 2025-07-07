@@ -9,23 +9,22 @@
 #  error "THREAD_Y Not Defined"
 # endif
 
-# define CASCADE_SIZE 3
-
 const static float Gravity = 9.81f;
 
-struct CascadeDesc
-{
-	float LengthScale;
-	float LowCutoff;
-	float HighCutoff;
-	float Padding;
-};
 cbuffer CB_Philips : register(b0)
 {
-    float Width;
-    float Height;
-    float2 Wind;
-	CascadeDesc CascadeData[CASCADE_SIZE];
+	float Width;
+	float Height;
+	float2 Wind;
+
+	float LowCutoff0;
+	float LowCutoff1;
+	float LowCutoff2;
+	float P1;
+	float HighCutoff0;
+	float HighCutoff1;
+	float HighCutoff2;
+	float P2;
 }
 
 Texture2D<Complex> GaussianNoise : register(t0);
@@ -52,6 +51,8 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 
 float GetPhillipSpectrum(uint3 DTID)
 {
+	float LowCutoff[3] = { LowCutoff0, LowCutoff1, LowCutoff2 };
+	float HighCutoff[3] = { HighCutoff0, HighCutoff1, HighCutoff2 };
 	float2 Position = float2(DTID.x - Width * 0.5f, DTID.y - Height * 0.5f);
 	float2 k = 2 * PI * float2(Position.x / Width, Position.y / Height);
 
@@ -60,13 +61,14 @@ float GetPhillipSpectrum(uint3 DTID)
 	float L = (WindSpeed * WindSpeed) / Gravity;
 
 	float kLength = length(k); // Pervent ZeroDividing
-	if(kLength > CascadeData[DTID.z].LowCutoff && kLength < CascadeData[DTID.z].HighCutoff)
+	if(kLength > LowCutoff[DTID.z] && kLength < HighCutoff[DTID.z])
 	{
 		float2 kDir = normalize(k);
 		float  kDotw = dot(kDir, w);
 		return (kLength < EPSILON) ? 0 : 2 * exp(-1 / pow(kLength * L , 2)) / pow(kLength, 4) * pow(kDotw, 2);
 	}
-	return 0;
+	else
+		return 0;
 }
 
 #endif

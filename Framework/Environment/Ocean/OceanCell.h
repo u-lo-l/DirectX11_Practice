@@ -26,8 +26,9 @@ public:
 	explicit OceanCell(const SceneryCellDesc & InDesc);
 	virtual ~OceanCell() override;
 	void SetHeightScaler(float InHeightScaler);
-
+	
 private:
+
 	struct LandScapeTessellationDesc
 	{
 		float HeightScaler = 100.f;

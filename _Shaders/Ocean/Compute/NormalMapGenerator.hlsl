@@ -1,5 +1,6 @@
 #ifndef __OCEAN_NORMALMAP_GENERATOR_HLSL__
 #define __OCEAN_NORMALMAP_GENERATOR_HLSL__
+#include "../Ocean.Common.hlsli"
 
 
 #define LEFT 0
@@ -60,9 +61,8 @@ uint2 GetWrappedTexCord(uint2 UV, int2 Offset);
 [numthreads(THREAD_X, THREAD_Y, 1)] // Dispatch()
 void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 {
-	const float DispScaler = 1 / DisplacementMapTiling;
-	const float Scaler = HeightScaler * DispScaler;
-
+	const float HorizontalScaler = GetHorizontalScaler(DisplacementMapTiling);
+	const float VerticalScaler = GetVerticalScaler(HeightScaler, DisplacementMapTiling);
 	const uint2 UV = DTID.xy;
 
 	int2 dUV[4];
@@ -77,8 +77,12 @@ void CSMain(uint3 DTID : SV_DISPATCHTHREADID)
 	for(int i = 0 ; i < 4 ; i++)
 	{
 		uint2 WrappedUV = GetWrappedTexCord(UV, dUV[i]);
-		float3 DisplacementVector = InDisplacementMap.Load(uint4(WrappedUV, DTID.z, 0)).rgb * Scaler;
-		SamplePositions[i] = float3(dUV[i], 0) * DispScaler + DisplacementVector;
+		float3 DisplacementVector = InDisplacementMap.Load(uint4(WrappedUV, DTID.z, 0)).rgb;
+		float FoamAmount = FoamGrid.Load(uint4(WrappedUV, DTID.z, 0)).r;
+
+		DisplacementVector.z *= VerticalScaler;
+		DisplacementVector.xy *= HorizontalScaler * (1 - FoamAmount);
+		SamplePositions[i] = float3(dUV[i], 0) * HorizontalScaler + DisplacementVector;
 	}
 
 	float3 Tangent =   normalize(SamplePositions[RIGHT] - SamplePositions[LEFT]);

@@ -84,6 +84,7 @@ void CSMain(CSInput Input)
 	Displacement[uint3(FFTCoord, CascadeChannel)] = float4(Disp, 1.f);
 	Disp = GetDisplacement(FFTCoordPair) / FFT_SIZE * float(LOG_N);
 	Displacement[uint3(FFTCoordPair, CascadeChannel)] = float4(Disp, 1.f);
+
 	return ;
 }
 

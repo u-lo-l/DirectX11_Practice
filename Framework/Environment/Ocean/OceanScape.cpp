@@ -51,6 +51,9 @@ void OceanScape::ReGeneratePopup()
 	{
 		ImGui::Text("CreateInitialSpectrum?");
 		ImGui::InputFloat2("Wind", Info.FFTData.Wind, "%.3f");
+		ImGui::InputFloat2("Wind", &PhillipsInitData.LowCutoff[0], "%.3f");
+		ImGui::InputFloat2("Wind", &PhillipsInitData.LowCutoff[1], "%.3f");
+		ImGui::InputFloat2("Wind", &PhillipsInitData.LowCutoff[2], "%.3f");
 		if (ImGui::Button("OK"))
 		{
 			CreateInitialSpectrum();  // 호출
@@ -109,8 +112,6 @@ void OceanScape::ShaderRecompilePopup()
 
 void OceanScape::Tick()
 {
-#pragma region Compute
-	// PhilipsUpdateData.RunningTime = (sdt::SystemTimer::Get()->GetRunningTime() - PhilipsUpdateData.InitTime);
 	ImGui::Begin("OceanScape");
 	if (ImGui::Button("Shaders") == true)
 	{
@@ -139,6 +140,7 @@ void OceanScape::Tick()
 	ImGui::SliderFloat("Time Scaler", &this->TimeScaler, 0.f, 5.f, "%.1f");
 	ImGui::SliderFloat("OceanHeightScaler", &Info.Dimension.Y, 0.f, static_cast<float>(Info.FFTData.Size), "%.3f");
 	CellInstance->SetHeightScaler(Info.Dimension.Y);
+#pragma region Compute
 	
 	// Update Spectrum
 	UpdateSpectrum();
@@ -156,7 +158,7 @@ void OceanScape::Tick()
 
 void OceanScape::SetupCSShaders()
 {
-	constexpr UINT TextureThreadGroupSize = 32;
+	constexpr UINT TextureThreadGroupSize = 16;
 	const UINT TextureDispatchSize = Info.FFTData.Size / TextureThreadGroupSize;
 	const string TextureThreadGroupSizeStr = std::to_string(TextureThreadGroupSize);
 	vector<pair<string, string>> TextureShaderMacros = {
@@ -251,14 +253,16 @@ void OceanScape::CreateInitialSpectrum()
 {
 	// World 기준 Wind가 info.FFTData.Wind로 들어온다.
 	// FFT하는 Texture는 좌상단이 0,0이기에 Y축을 반전시켜준다.
-	PhillipsInitData.Wind = PhillipsInitData.Wind = {Info.FFTData.Wind.X, -Info.FFTData.Wind.Y};
-	CB_PhillipsInit->UpdateData(&PhillipsInitData, sizeof(PhillipsInitData));
+	PhillipsInitData.Wind = {Info.FFTData.Wind.X, -Info.FFTData.Wind.Y};
+	PhillipsInitData.HighCutoff[0] = PhillipsInitData.LowCutoff[1];
+	PhillipsInitData.HighCutoff[1] = PhillipsInitData.LowCutoff[2];
+	PhillipsInitData.HighCutoff[2] = FLT_MAX;
+	
+	CB_PhillipsInit->UpdateData(&PhillipsInitData, sizeof(PhillipsInitDesc));
 	CS_SpectrumInitializer->BindCB(CB_PhillipsInit, 0);
 	CS_SpectrumInitializer->BindSRV(GaussianRandomTexture2D->GetSRV(), 0);
 	CS_SpectrumInitializer->BindUAV(InitialSpectrumTexture2D->GetUAV(), 0);
 	CS_SpectrumInitializer->Dispatch();
-
-	InitialSpectrumTexture2D->SaveOutputAsFile(L"Debug/HInits");
 }
 
 void OceanScape::SetupCSResources()
@@ -269,13 +273,14 @@ void OceanScape::SetupCSResources()
 	SetFoamResources();
 
 	CreateInitialSpectrum();
+	// InitialSpectrumTexture2D->SaveOutputAsFile(L"Debug/HInit");
 }
 
 void OceanScape::SetupCells(const OceanScapeDesc & InDesc)
 {
 	OceanMaterial::MaterialDesc MatDesc;
-	MatDesc.DisplacementMapTiling = InDesc.Dimension.X / static_cast<float>(InDesc.CellSize) * 2.f;
 	MatDesc.DisplacementMapSize = InDesc.FFTData.Size;
+	MatDesc.DisplacementMapTiling = InDesc.Dimension.X / static_cast<float>(MatDesc.DisplacementMapSize) * 2;
 	MatDesc.NoiseTiling = 1.f; // TODO
 	MatDesc.Name = "Ocean Material";
 	MatDesc.ShaderName = "Ocean";
@@ -304,10 +309,9 @@ void OceanScape::SetInitialSpectrumResources()
 	// World 기준 Wind가 info.FFTData.Wind로 들어온다.
 	// FFT하는 Texture는 좌상단이 0,0이기에 Y축을 반전시켜준다.
 	PhillipsInitData.Wind = {Info.FFTData.Wind.X, -Info.FFTData.Wind.Y};
-	PhillipsInitData.CascadeData[0] = {600, {0.f, 1.f}};	//Big Wave
-	PhillipsInitData.CascadeData[1] = {256, {1.f, 2.f}};	//Medium Wave
-	PhillipsInitData.CascadeData[2] = {50,  {2.f, FLT_MAX}}; //Small Wave
-
+	PhillipsInitData.LowCutoff[0] = 0.f;
+	PhillipsInitData.LowCutoff[1] = 1.f;
+	PhillipsInitData.LowCutoff[2] = 3.f;
 	CB_PhillipsInit = new ConstantBuffer(
 		ShaderType::ComputeShader,
 		0,
@@ -389,16 +393,18 @@ void OceanScape::UpdateSpectrum()
 	CS_SpectrumUpdater->BindSRV(InitialSpectrumTexture2D->GetSRV(), 0);
 	CS_SpectrumUpdater->BindUAV(SpectrumTexture2D->GetUAV(), 0);
 	CS_SpectrumUpdater->Dispatch();
-
+	// SpectrumTexture2D->SaveOutputAsFile(L"Debug/Ht");
+	
 }
 
 void OceanScape::IFFT()
 {
 	// 	Row IFFT
-	CS_RowPassIFFT->BindCB(CB_PhillipsInit, 0);
+	CS_RowPassIFFT->BindCB(CB_Transpose, 0);
 	CS_RowPassIFFT->BindSRV(SpectrumTexture2D->GetSRV(), 0);
 	CS_RowPassIFFT->BindUAV(IFFT_Result->GetUAV(), 0);
 	CS_RowPassIFFT->Dispatch(); // FFTSize, 1, 9
+
 	// 	Transpose
 	CS_TransposeTexArray->BindCB(CB_Transpose, 0);
 	CS_TransposeTexArray->BindSRV(IFFT_Result->GetSRV(), 0);
@@ -406,7 +412,7 @@ void OceanScape::IFFT()
 	CS_TransposeTexArray->Dispatch(); // TextureSize, TextureSize, 9
 	// 	Col IFFT
 	RWTexture2DArray * const DisplacementMaps = Mat->GetDisplacementMaps(); 
-	CS_ColPassIFFT->BindCB(CB_PhillipsInit, 0);
+	CS_ColPassIFFT->BindCB(CB_Transpose, 0);
 	CS_ColPassIFFT->BindSRV(IFFT_Result_Transposed->GetSRV(), 0);
 	CS_ColPassIFFT->BindUAV(DisplacementMaps->GetUAV(), 0);
 	CS_ColPassIFFT->Dispatch(); // FFTSize, 1, 3

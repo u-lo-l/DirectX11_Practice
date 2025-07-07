@@ -72,7 +72,7 @@ void OceanCell::CreateVertices(float DimensionX, float DimensionZ, UINT CellSize
 			Vertices[Index].Position = Vector(static_cast<float>(X), 0, static_cast<float>(Z)) * GridSize;
 			Vertices[Index].UV = Vector2D(
 				(Vertices[Index].Position.X) / DimensionX,
-				1 - (Vertices[Index].Position.Z) / DimensionZ
+				(DimensionZ - Vertices[Index].Position.Z) / DimensionZ
 			);
 		}
 	}
@@ -115,7 +115,10 @@ void OceanCell::CreateInstances(float TerrainDimensionX, float TerrainDimensionZ
 			Vector Position = {X * CellSize, 0.f, Z * CellSize};
 			UINT Index = Z * CellCount_X + X;
 			Instances[Index].LocalTransform = Matrix::CreateTranslation(Position) * World;
-			Instances[Index].TexCoord = {Position.X / TerrainDimensionX, Position.Z / TerrainDimensionZ};
+			Instances[Index].TexCoord = {
+				Position.X / TerrainDimensionX,
+				(TerrainDimensionZ - Position.Z) / TerrainDimensionZ
+			};
 		}
 	}
 }

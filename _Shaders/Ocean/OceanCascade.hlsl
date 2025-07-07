@@ -11,34 +11,29 @@
 #include "../Terrain/Terrain.Func.Tesellation.hlsli"
 #include "../Terrain/Terrain.Func.Texturing.hlsli"
 #include "./OceanShading.hlsli"
+#include "./Ocean.Common.hlsli"
 
 # define DOMAIN "quad"
 # define HS_PARTITION "integer"
 # define HS_INPUT_PATCH_SIZE 4
 # define HS_OUTPUT_PATCH_SIZE 4
 
-# define USE_DISTANCE_BASED_BLENDING
-
-# define NEAR_DISTANCE (500)
-# define FAR_DISTANCE (2500)
-
-static const float		CascadeLengthScaler[3] = { 0.5f, 3.f, 3.f};
-
-const static float MIPMIN = 0;
-const static float MIPMAX = 5;
-const static float WaterRefractionIndex = 1.33f; // 굴절률
-const static float WaterR0 = 0.02f;              // 수직 입사 반사 계수
-
-#define GET_MIP_LEVEL(x) (lerp(MIPMIN, MIPMAX, (x)))
-
-
-cbuffer CB_PerMaterial : register(b1) // PS
+struct CascadeDesc{
+	float Weight;
+	float UVScale;
+	float DisplacementScale;
+	float FoamScale;
+};
+cbuffer CB_PerMaterial : register(b1) // DS PS
 {
 	float  DisplacementMapTiling = 1.f;
 	float  NoiseTiling = 1.f;
 	float2 TextureSize;
-}
 
+	CascadeDesc CascadeData[3];
+
+	OceanShadingDesc ShadingParam;
+};
 cbuffer CB_PerRenderable : register(b2) // DS HS
 {
 	float  HeightScaler = 100.f;
@@ -46,17 +41,11 @@ cbuffer CB_PerRenderable : register(b2) // DS HS
 	float2 LODRange;
 }
 
-SamplerState		Linear_Wrap				: register(s0); // VS DS PS
-
+SamplerState			Linear_Wrap				: register(s0); // VS DS PS
 Texture2DArray<float4>	WaterDisplacementMap	: register(t0); // DS -> ArraySize : 3
 Texture2DArray<float4>	WaterNormalMap			: register(t1); // PS -> ArraySize : 3
 Texture2DArray<float>	FoamGrid				: register(t2); // DS PS -> ArraySize : 3
-
-TextureCube<float4>	SkyTexture				: register(t10); // PS
-
-// Texture2D<float> PerlinNoise : register(t5);         // VS DS PS
-
-float3 CalculateNormal(float2 UV, uint LOD, float DistanceBlend);
+TextureCube<float4>		SkyTexture				: register(t10); // PS
 
 // VS
 VS_OUTPUT VSMain(VS_INPUT input)
@@ -74,11 +63,11 @@ VS_OUTPUT VSMain(VS_INPUT input)
 // HS
 HS_CONSTANT_OUTPUT HSConstant
 (
-    InputPatch<VS_OUTPUT, HS_INPUT_PATCH_SIZE> patch,
-    uint PatchID : SV_PrimitiveID
+	InputPatch<VS_OUTPUT, HS_INPUT_PATCH_SIZE> patch,
+	uint PatchID : SV_PrimitiveID
 )
 {
-    HS_CONSTANT_OUTPUT output;
+	HS_CONSTANT_OUTPUT output;
 
 	float4 Points[4]; // Camera-Space Positions
 	bool bVisible = false;
@@ -156,135 +145,100 @@ DS_OUTPUT DSMain
 	output.Position = lerp(v1, v2, UV.y);
 
 	float MeanTessFactor = (input.Inside[0] + input.Inside[1]) * 0.5f;
-	output.LOD = (uint)(lerp(5, 0, MeanTessFactor / MaxTessFactor));
+	output.LOD = 0;
 
-	//Set Constants
-	const float DispScaler = 1 / DisplacementMapTiling;
-	const float Scaler = HeightScaler * DispScaler;
+	const float HorizontalScaler = GetHorizontalScaler(DisplacementMapTiling);
+	const float VerticalScaler = GetVerticalScaler(HeightScaler, DisplacementMapTiling);
 	const float2 DisplacementMapUV = output.UV * DisplacementMapTiling;
 
-	float3 CascadingUV[3] = {
-		float3(DisplacementMapUV * CascadeLengthScaler[0], 0),
-		float3(DisplacementMapUV * CascadeLengthScaler[1], 1),
-		float3(DisplacementMapUV * CascadeLengthScaler[2], 2),
-	};
-	//Read Texture
-	const float3 TangentSpaceDisplacement[3] = {
-		WaterDisplacementMap.SampleLevel(Linear_Wrap, CascadingUV[0], output.LOD).rgb,
-		WaterDisplacementMap.SampleLevel(Linear_Wrap, CascadingUV[1], output.LOD).rgb,
-		WaterDisplacementMap.SampleLevel(Linear_Wrap, CascadingUV[2], output.LOD).rgb
-	};
-	const float Folding[3] = {
-		saturate(1 - FoamGrid.SampleLevel(Linear_Wrap, CascadingUV[0], output.LOD).r),
-		saturate(1 - FoamGrid.SampleLevel(Linear_Wrap, CascadingUV[1], output.LOD).r),
-		saturate(1 - FoamGrid.SampleLevel(Linear_Wrap, CascadingUV[2], output.LOD).r)
-	};
-
 	const float3x3 TBN = float3x3(1, 0, 0, 0, 0, -1 , 0, 1, 0);
-	float3 WorldSpaceDisplacement[3] = {
-		TangentSpaceToLocalSpace(TangentSpaceDisplacement[0],TBN),
-		TangentSpaceToLocalSpace(TangentSpaceDisplacement[1],TBN),
-		TangentSpaceToLocalSpace(TangentSpaceDisplacement[2],TBN)
-	};
-
-	output.Position.y = 0;
+	float3 FinalDisplacement = 0;
 	[unroll] for(int i = 0 ; i < 3 ; i++)
 	{
-		output.Position.y += WorldSpaceDisplacement[i].y * Scaler;
-		output.Position.xz += WorldSpaceDisplacement[i].xz * Folding[i] * 10 * DispScaler;
+		float3 Texcoord = float3(DisplacementMapUV * CascadeData[i].UVScale, i);
+
+		float Foam = FoamGrid.SampleLevel(Linear_Wrap, Texcoord, 0).r * CascadeData[i].FoamScale;
+		Foam *= CascadeData[i].Weight;
+
+		float3 Displacement = WaterDisplacementMap.SampleLevel(Linear_Wrap, Texcoord, 0).rgb;
+		Displacement = TangentSpaceToLocalSpace(Displacement, TBN) * CascadeData[i].DisplacementScale;
+		Displacement *= CascadeData[i].Weight;
+
+		FinalDisplacement.y += Displacement.y;
+		FinalDisplacement.xz += Displacement.xz * (1 - Foam);
 	}
+	// [flatten]
+	// if ((CascadeData[0].Weight + CascadeData[1].Weight + CascadeData[2].Weight) != 0)
+	// 	FinalDisplacement /= (CascadeData[0].Weight + CascadeData[1].Weight + CascadeData[2].Weight);
+
+	output.Position.y = FinalDisplacement.y * VerticalScaler;
+	output.Position.xz += FinalDisplacement.xz * HorizontalScaler;
 
 	output.WorldPosition = output.Position.xyz;
 	output.Position = mul(output.Position, View);
 	output.CameraDistance = length(output.Position);
 	output.Position = mul(output.Position, Projection);
 
-	float T = (input.Inside[0] + input.Inside[1]) * 0.5f;
-	output.DebugColor = float4(T, T, T, 1);
-	output.DebugColor /= MaxTessFactor;
 	return output;
 }
 
 // PS
-float GetSpecularCoef(float VDotL);
-
 float4 PSMain(DS_OUTPUT input) : SV_TARGET
 {
 	// Set Constants
-	const float DispScaler = 1 / DisplacementMapTiling;
-	const float Scaler = HeightScaler * DispScaler;
+	const float DispScaler = 1 / DisplacementMapTiling * 2;
 	const float2 DisplacementMapUV = input.UV * DisplacementMapTiling;
 	const float2 NoiseUV = input.UV * NoiseTiling;
 
-	float3 CascadingUV[3] = {
-		float3(DisplacementMapUV * CascadeLengthScaler[0], 0),
-		float3(DisplacementMapUV * CascadeLengthScaler[1], 1),
-		float3(DisplacementMapUV * CascadeLengthScaler[2], 2),
-	};
-
+	// Read Texture
 	float  FoamAmount = 0.f;
 	float3 WorldSpaceNormal = 0;
+	float3 FinalDisplacement = 0;
 	const float3x3 TBN = float3x3(1, 0, 0, 0, 0, -1 , 0, 1, 0);
 	[unroll] for(int i = 0 ; i < 3 ; i++)
 	{
-		float3 TangentSpaceNormal = WaterNormalMap.SampleLevel(Linear_Wrap, CascadingUV[i], input.LOD).rgb;
-		WorldSpaceNormal += TangentSpaceToLocalSpace(TangentSpaceNormal * 2.f - 1.f, TBN).rgb;
-		FoamAmount += FoamGrid.SampleLevel(Linear_Wrap, CascadingUV[i], 0);
+		float3 Texcoord = float3(DisplacementMapUV * CascadeData[i].UVScale, i);
+		float3 Normal = WaterNormalMap.SampleLevel(Linear_Wrap, Texcoord, 0).rgb;
+		Normal = TangentSpaceToLocalSpace(Normal * 2.f - 1.f, TBN).rgb;
+		Normal = lerp(float3(0, 1, 0), Normal, CascadeData[i].DisplacementScale);
+		WorldSpaceNormal += Normal * CascadeData[i].Weight;
+
+		float Foam = FoamGrid.SampleLevel(Linear_Wrap, Texcoord, 0) * CascadeData[i].FoamScale;
+		FoamAmount += Foam * CascadeData[i].Weight;
 	}
-	FoamAmount /= 3;
+	// [flatten]
+	// if ((CascadeData[0].Weight + CascadeData[1].Weight + CascadeData[2].Weight) != 0)
+	// {
+	// 	WorldSpaceNormal /= (CascadeData[0].Weight + CascadeData[1].Weight + CascadeData[2].Weight);
+	// 	FoamAmount /= (CascadeData[0].Weight + CascadeData[1].Weight + CascadeData[2].Weight);
+	// }
+
 	WorldSpaceNormal = normalize(WorldSpaceNormal);
 	// Shading Constants
 	const float3 P = input.WorldPosition;
 	const float3 E = CameraWorldPosition;
 	const float3 dPE = P - E;
-	const float  Dist = length(dPE) / 1000;
-	const float3 nL = normalize(-LightDirection);
+	const float  Dist = length(dPE) / 1000; // unit : km
 	const float3 nN = normalize(WorldSpaceNormal);
+	const float3 nL = normalize(-LightDirection);
 	const float3 nV = normalize(dPE);
-	const float NDotL = saturate(dot(nL, nN));
-
-    float3 ShallowWaterColor = float3(0.7f, 0.85f, 0.8f);
-    float3 DeepWaterColor = float3(0.0f, 0.2f, 0.3f);
-
-
-    // Asume Distance to Sky : Infinity
-    float3 nR = reflect(-nL, nN); // WorldSpace
-    // float RDotN = dot(nR, nN);
-    float3 EnvColor = SkyTexture.Sample(Linear_Wrap, reflect(nV, nN)).rgb;
-
-	const float3 AirBubbleColor = float3(0.35, 0.51, 0.69);
-	const float3 SpecularColor = float3(1,1,1);
-	const float3 WaterScatteringColor = DeepWaterColor;
+	const float3 nR = reflect(nV, nN);
+	const float  NDotL = saturate(dot(nL, nN));
+	// Asume Distance to Sky : Infinity
+	float3 EnvColor = SkyTexture.Sample(Linear_Wrap, reflect(nV, nN)).rgb;
 	const float OceanHeight = input.WorldPosition.y;
-	const float BubbleDensity = 0.2f;
-	const float AmbientFactor = 0.2f;
-	const float ScatterFactor1 = 0.05f;
-	const float ScatterFactor2 = 0.5f;
-	const float ReflectFactor = 1.f;
-	float Fresnel;
-
-	float3 L_a, L_ss, L_s, L_r;
+	float3 La, Ls, Lss, Lr;
+	float F, S;
 	float3 Color = OceanShading(
-		L_a, L_ss, L_s, L_r, Fresnel,
+		La, Ls, Lss, Lr, F, S,
  		nN, nL, -nV, nR,
-		LightColor.rgb, AirBubbleColor, SpecularColor, WaterScatteringColor, EnvColor,
-		OceanHeight, BubbleDensity,
-		AmbientFactor,
-		ScatterFactor1,
-		ScatterFactor2,
-		ReflectFactor
+		LightColor.rgb, EnvColor, OceanHeight,
+		ShadingParam
 	);
-	return float4(FoamAmount.xxx, 1);
-	return float4(Color + FoamAmount.xxx, 1);
+	float3 FoamColor = FoamAmount.xxx;// * NDotL * LightColor.rgb;
+	return FoamAmount.x > 0.75 ? float4(FoamColor.xxx, 1) : float4(Color + FoamColor.xxx, 1);
 }
 
 /*======================================================================================*/
-
-// Fresnel
-float GetSpecularCoef(float VDotN)
-{
-    VDotN = max(0, VDotN);
-    return (WaterR0 + (1 - WaterR0) * pow(1 - VDotN, 5));
-}
 
 #endif

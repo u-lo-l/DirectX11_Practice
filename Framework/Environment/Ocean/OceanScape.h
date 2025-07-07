@@ -24,12 +24,6 @@ class OceanScape
 		UINT Size = 256;
 		Vector2D Wind = {50.f, 50.f};
 	};
-	struct CascadeDesc
-	{
-		float LengthScale = 1.f;
-		Vector2D CutoffRange = {0.f, 9999.f};
-		float Padding;
-	};
 public:
 	struct OceanScapeDesc
 	{
@@ -86,7 +80,11 @@ private:
 		float Width;
 		float Height;
 		Vector2D Wind = {50.f, 30.f};
-		CascadeDesc CascadeData[3];
+		
+		float LowCutoff[3];
+		float Padding1;
+		float HighCutoff[3];
+		float Padding2;
 	} PhillipsInitData;
 	struct PhilipsUpdateDesc
 	{
@@ -120,9 +118,6 @@ private:
 	RWTexture2DArray * SpectrumTexture2D = nullptr;		// H_t, DispX_t, DispZ_t 생성
 	RWTexture2DArray * IFFT_Result = nullptr;
 	RWTexture2DArray * IFFT_Result_Transposed = nullptr;
-	// RWTexture2D * DisplacementMap = nullptr;
-	// RWTexture2D * NormalMap = nullptr;
-	// RWTexture2D * FoamGrid = nullptr;
 
 	ConstantBuffer * CB_PhillipsInit = nullptr;
 	ConstantBuffer * CB_PhillipsUpdate = nullptr;
